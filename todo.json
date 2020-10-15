@@ -1,11 +1,19 @@
 [
     {
         "TODO-ID-1": {
-            "Description": "routes/auth.js",
+            "Description": "Update the code according to the task",
+            "File(s)": "routes/auth.js",
+            "Status": "Open",
             "Lines": [
                 "Ln 44",
                 "Ln 49"
             ]
+        },
+        "TODO-ID-2": {
+            "Description": "Add dynamic account name in the nav element of platform.ejs",
+            "File(s)": "views/partials/nav.ejs",
+            "Status": "Open",
+            "Lines": [null]
         }
     }
 ]

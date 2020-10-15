@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Register | ArmSocial</title>
+    <%- include ("./partials/cssPartials") %>
+    <!-- Static CSS -->
+    <link rel="stylesheet" href="/css/auth/register/style.css">
+</head>
+
+<body>
+
+    <div class="main uk-container-xsmall">
+        <div class="uk-margin">
+            <form class="form uk-margin-left uk-margin-right" id="form" action="/register/" method="POST">
+                <h1 align="center" class="uk-margin-bottom">Welcome to ArmSocial</h1>
+
+                <input required id="fullName" class="form-control uk-margin-bottom" name="fullName" type="text"
+                    placeholder="Full Name">
+
+                <input required id="email" class="form-control uk-margin-bottom" name="email" type="email"
+                    placeholder="Email">
+
+                <input required id="password" class="form-control uk-margin-bottom" name="password" type="password"
+                    placeholder="Password" minlength="8">
+
+                <textarea class="form-control" name="bio" id="bio" cols="30" rows="5"
+                    placeholder="Enter your biography..."></textarea>
+
+                <div class="form-check uk-margin-top uk-margin-bottom">
+                    <input name="private" class="form-check-input" type="checkbox" id="privateCheck">
+                    <label class="form-check-label" for="privateCheck">
+                        Private Account
+                    </label>
+                </div>
+
+                <button id="submit" class="btn btn-info " type="submit">Register</button>
+                |
+                <span>Have an account? <a href="/login">Login</a></span>
+
+            </form>
+        </div>
+    </div>
+
+    <script src="/js/register/script.js"></script>
+    <% include ("./partials/jsPartials") %>
+</body>
+
+</html>

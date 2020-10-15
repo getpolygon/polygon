@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="/css/platformAccount/style.css">
+    <%- include ("./partials/cssPartials") %> 
+    <title>Platform | ArmSocial</title>
+</head>
+<body>
+    
+    <h1 class="uk-margin-top" id="fullName"><%= account.fullName %></h1>
+    <h3 id="bio"><%= account.bio %></h3>
+    <h5>ID: <a href="#"><%= account._id%></a></h5>
+    <h6 class="uk-margin-top" id="redirect"><a href="/platform">Go back to the platform</a></h6>
+    <hr class="uk-divider-icon">
+
+    <% include ("./partials/jsPartials") %> 
+</body>
+</html>

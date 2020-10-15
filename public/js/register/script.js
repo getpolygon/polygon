@@ -1,11 +1,14 @@
 var privateCheck = document.getElementById("privateCheck");
 
 function checkboxValue() {
-    if (privateCheck.checked) {
-        privateCheck.checked = false;
+    let values = [];
+    if (privateCheck.value = true) {
+        privateCheck.value = false;
+        values.push(privateCheck.value)
     }
-    if (!privateCheck.checked) {
-        privateCheck.checked = true;
+    if (privateCheck.value = false) {
+        privateCheck.value = true;
+        values.push(privateCheck.value)
     }
 }
 

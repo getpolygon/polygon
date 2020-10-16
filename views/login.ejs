@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login | ArmSocial</title>
+    <%- include ("./partials/cssPartials") %>
+    <!-- Static CSS -->
+    <link rel="stylesheet" href="/css/auth/login/style.css">
+</head>
+
+<body>
+
+    <div class="main uk-container-xsmall">
+        <div class="uk-margin">
+            <form class="form uk-margin-left uk-margin-right" id="form" action="login/" method="POST">
+                <h1 align="center" class="uk-margin-bottom">Login to ArmSocial</h1>
+
+                <input required id="email" class="form-control uk-margin-bottom" name="email" type="email"
+                    placeholder="Email">
+
+                <input required id="password" class="form-control uk-margin-bottom" name="password" type="password"
+                    placeholder="Password" minlength="8">
+
+                <button id="submitButton" class="btn btn-primary" type="submit">Login</button>
+                |
+                <span>Don't have an account? </span><a href="/auth/register">Register</a>
+
+            </form>
+        </div>
+    </div>
+
+    <script src="/js/login/script.js"></script>
+    <% include ("./partials/jsPartials") %>
+</body>
+
+</html>

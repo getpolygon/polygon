@@ -1,57 +1,72 @@
 const router = require("express").Router();
 const mongoose = require("mongoose");
-const passportConfig = require("../config/passport");
-const passport = require("passport");
-const bcrypt = require("bcryptjs");
 
 const AccountSchema = require("../models/account");
 
-router.get("/", (req, res) => {
-    res.render("register");
-})
+// Register
+router.get("/register", (req, res) => {
 
-router.post("/register", (req, res) => {
+    if (!req.cookies.email & !req.cookies.password) {
+        res.clearCookie("email");
+        res.clearCookie("password");
+        res.render("register");
+    } else {
+        res.redirect("/")
+    }
+});
 
-    req.body.private = false;
+router.post("/register", async (req, res) => {
 
     const Account = new AccountSchema({
         fullName: req.body.fullName,
         email: req.body.email,
         password: req.body.password,
         bio: req.body.bio,
-        private: req.body.private?false:true,
+        pictureUrl: `https://firebasestorage.googleapis.com/v0/b/arm-social.appspot.com/o/${(req.body.email).replace("@", "%40")}.jpg?alt=media`,
+        private: req.body.private ? false : true,
         date: Date.now()
     })
 
-    bcrypt.genSalt(10, (err, salt) => {
-        bcrypt.hash(Account.password, salt, (err, hash) => {
-            if (err) throw err;
-
-            // Set password to hashed
-            Account.password = hash;
-            // Save User
-            Account.save()
-                .then(Account => {
-                    res.redirect(`/platform/${Account._id}`);
-                })
-                .catch(e => res.redirect("/"));
-
-            console.log(Account);
+    await Account.save()
+        .then(Account => {
+            res.cookie("email", Account.email);
+            res.cookie("password", Account.password);
+            console.log(req.cookies);
+            res.redirect(`/user/${Account._id}`);
+        })
+        .catch(e => {
+            console.log(e);
+            res.redirect("/");
         });
-    });
 });
 
-// TODO: Update the login page 
+
+// Login
 router.get("/login", (req, res) => {
-    res.render("login");
-});
 
-// TODO: Update the Login Handle -> https://youtu.be/6FOq4cUdH8k?t=4533
-router.post("/login", (req, res) => {
-    passport.authenticate("local", {
-        successRedirect: "/platform",
-        failureRedirect: "/login",
-    })(req, res, next)
+    if (!req.cookies.email && !req.cookies.password) {
+        res.clearCookie("email");
+        res.clearCookie("password");
+        res.render("login");
+    } else {
+        res.redirect("/");
+    };
+
+})
+
+router.post("/login", async (req, res) => {
+    const email = req.body.email;
+    const password = req.body.password;
+
+    const Account = await AccountSchema.findOne({ email: email, password: password })
+    if (email != Account.email || password != Account.password) {
+        res.redirect("/");
+    }
+    else {
+        res.cookie("email", email);
+        res.cookie("password", password);
+        res.redirect("/");
+    }
 })
 
 module.exports = router;

@@ -65,7 +65,7 @@
     <a class="navbar-brand" href="#">
         <img src="/img/logo.png" alt="logo" width="64">
     </a>
-    <a class="navbar-brand" href="/platform">
+    <a class="navbar-brand" href="/">
         <div class="icn-home uk-margin-left uk-margin-top"></div>
         <span>Home</span>
     </a>
@@ -73,6 +73,12 @@
         <form action="/search/" class="uk-search uk-search-default">
             <input class="uk-search-input" type="search" placeholder="Search...">
             <button type="submit" class="uk-search-icon-flip" uk-search-icon></button>
+        </form>
+    </div>
+    <div>
+        <form action="/logout/<%= currentAccount._id%>" method="POST">
+            <p>Logged in as: <a href="/user/<%= currentAccount._id %>"><%= currentAccount.fullName %></a></p>
+            <button type="submit">Logout</button>
         </form>
     </div>
 </nav>

@@ -9,10 +9,11 @@
 </head>
 <body>
     
+    <img src="<%= account.pictureUrl %>" alt="profile_picture">
     <h1 class="uk-margin-top" id="fullName"><%= account.fullName %></h1>
     <h3 id="bio"><%= account.bio %></h3>
     <h5>ID: <a href="#"><%= account._id%></a></h5>
-    <h6 class="uk-margin-top" id="redirect"><a href="/platform">Go back to the platform</a></h6>
+    <h6 class="uk-margin-top" id="redirect"><a href="/">Go back to the platform</a></h6>
     <hr class="uk-divider-icon">
 
     <% include ("./partials/jsPartials") %> 

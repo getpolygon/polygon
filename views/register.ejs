@@ -14,7 +14,7 @@
 
     <div class="main uk-container-xsmall">
         <div class="uk-margin">
-            <form class="form uk-margin-left uk-margin-right" id="form" action="/register/" method="POST">
+            <form class="form uk-margin-left uk-margin-right" id="form" action="register/" method="POST">
                 <h1 align="center" class="uk-margin-bottom">Welcome to ArmSocial</h1>
 
                 <input required id="fullName" class="form-control uk-margin-bottom" name="fullName" type="text"
@@ -29,6 +29,10 @@
                 <textarea class="form-control" name="bio" id="bio" cols="30" rows="5"
                     placeholder="Enter your biography..."></textarea>
 
+                <label class="uk-margin-top" for="avatar">Profile picture</label>
+                <input class="form-control" name="avatar" id="avatar" type="file" required>
+                <div id="imgError"></div>
+
                 <div class="form-check uk-margin-top uk-margin-bottom">
                     <input name="private" class="form-check-input" type="checkbox" id="privateCheck">
                     <label class="form-check-label" for="privateCheck">
@@ -36,13 +40,36 @@
                     </label>
                 </div>
 
-                <button id="submit" class="btn btn-info " type="submit">Register</button>
+                <button id="submitButton" class="btn btn-primary" type="submit">Register</button>
                 |
-                <span>Have an account? <a href="/login">Login</a></span>
+                <span>Have an account? </span><a href="/auth/login">Login</a>
 
             </form>
         </div>
     </div>
+
+    <!-- The core Firebase JS SDK is always required and must be listed first -->
+    <script src="https://www.gstatic.com/firebasejs/7.24.0/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/7.23.0/firebase-storage.js"></script>
+
+    <!-- TODO: Add SDKs for Firebase products that you want to use
+     https://firebase.google.com/docs/web/setup#available-libraries -->
+
+    <script>
+        // Your web app's Firebase configuration
+        var firebaseConfig = {
+            apiKey: "AIzaSyCz8yxHbNpwx-Ga16DbyS_YM4p2EETGSl0",
+            authDomain: "arm-social.firebaseapp.com",
+            databaseURL: "https://arm-social.firebaseio.com",
+            projectId: "arm-social",
+            storageBucket: "arm-social.appspot.com",
+            messagingSenderId: "909122030162",
+            appId: "1:909122030162:web:d69103f21efd47cb45ad8b"
+        };
+        // Initialize Firebase
+        firebase.initializeApp(firebaseConfig);
+
+    </script>
 
     <script src="/js/register/script.js"></script>
     <% include ("./partials/jsPartials") %>

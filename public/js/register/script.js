@@ -73,5 +73,19 @@ function uploadFile() {
     }
 }
 
+function checkForm() {
+    let email = document.getElementById("email");
+    let password = document.getElementById("password");
+    let fullName = document.getElementById("fullName");
+
+    if (email.value <= 0 || password.value < 7 || fullName.value <= 1) {
+        submitButton = submitButton;
+    } else {
+        submitButton.classList.remove("button is-info");
+        submitButton.classList.add("button is-info is-loading");
+    }
+}
+
+submitButton.addEventListener("click", checkForm);
 privateCheck.addEventListener("click", checkboxValue);
 avatarInput.addEventListener("change", uploadFile);

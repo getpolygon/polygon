@@ -1,5 +1,5 @@
+require("mongoose");
 const router = require("express").Router();
-const mongoose = require("mongoose");
 
 const AccountSchema = require("../models/account");
 
@@ -29,8 +29,8 @@ router.post("/register", async (req, res) => {
 
     await Account.save()
         .then(Account => {
-            res.cookie("email", Account.email);
-            res.cookie("password", Account.password);
+            res.cookie("email", Account.email, { expires: 24 * 60 * 60 * 1000 });
+            res.cookie("password", Account.password, { expires: 24 * 60 * 60 * 1000 });
             console.log(req.cookies);
             res.redirect(`/user/${Account._id}`);
         })

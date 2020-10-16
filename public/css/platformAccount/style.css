@@ -5,4 +5,23 @@ body {
 h1, h5, h3, h4, h6, p, a {
   text-align: center;
 }
+
+.profile-picture {
+  border-radius: 10rem;
+}
+
+.picture {
+  text-align: center;
+  -webkit-box-pack: center;
+      -ms-flex-pack: center;
+          justify-content: center;
+  -webkit-box-align: center;
+      -ms-flex-align: center;
+          align-items: center;
+}
+
+.account {
+  border-bottom: 2px solid #969696;
+  width: 100%;
+}
 /*# sourceMappingURL=style.css.map */

@@ -1,84 +1,180 @@
-<nav class="navbar navbar-light bg-light">
-    <style>
-        nav {
-            display: flex;
-        }
+<style>
+    nav {
+        display: flex;
+    }
 
-        .icn-home {
-            background:
-                linear-gradient(to left,
-                    currentColor 5px, transparent 0) no-repeat 0 bottom/4px 2px,
-                linear-gradient(to left,
-                    currentColor 5px, transparent 0) no-repeat right bottom/4px 2px;
-            box-sizing: border-box;
-            position: relative;
-            display: block;
-            transform: scale(var(--ggs, 1));
-            width: 18px;
-            height: 14px;
-            border: 2px solid;
-            border-top: 0;
-            border-bottom: 0;
-            border-top-right-radius: 3px;
-            border-top-left-radius: 3px;
-            border-bottom-right-radius: 0;
-            border-bottom-left-radius: 0;
-            margin-bottom: -2px
-        }
+    .icn-home {
+        background:
+            linear-gradient(to left,
+                currentColor 5px, transparent 0) no-repeat 0 bottom/4px 2px,
+            linear-gradient(to left,
+                currentColor 5px, transparent 0) no-repeat right bottom/4px 2px;
+        box-sizing: border-box;
+        position: relative;
+        display: block;
+        transform: scale(var(--ggs, 1));
+        width: 18px;
+        height: 14px;
+        border: 2px solid;
+        border-top: 0;
+        border-bottom: 0;
+        border-top-right-radius: 3px;
+        border-top-left-radius: 3px;
+        border-bottom-right-radius: 0;
+        border-bottom-left-radius: 0;
+        margin-bottom: -2px
+    }
 
-        .icn-home::after,
-        .icn-home::before {
-            content: "";
-            display: block;
-            box-sizing: border-box;
-            position: absolute
-        }
+    .icn-home::after,
+    .icn-home::before {
+        content: "";
+        display: block;
+        box-sizing: border-box;
+        position: absolute
+    }
 
-        .icn-home::before {
-            border-top: 2px solid;
-            border-left: 2px solid;
-            border-top-left-radius: 4px;
-            transform: rotate(45deg);
-            top: -5px;
-            border-radius: 3px;
-            width: 14px;
-            height: 14px;
-            left: 0
-        }
+    .icn-home::before {
+        border-top: 2px solid;
+        border-left: 2px solid;
+        border-top-left-radius: 4px;
+        transform: rotate(45deg);
+        top: -5px;
+        border-radius: 3px;
+        width: 14px;
+        height: 14px;
+        left: 0
+    }
 
-        .icn-home::after {
-            width: 8px;
-            height: 10px;
-            border: 2px solid;
-            border-radius: 100px;
-            border-bottom-left-radius: 0;
-            border-bottom-right-radius: 0;
-            border-bottom: 0;
-            left: 3px;
-            bottom: 0
-        }
+    .icn-home::after {
+        width: 8px;
+        height: 10px;
+        border: 2px solid;
+        border-radius: 100px;
+        border-bottom-left-radius: 0;
+        border-bottom-right-radius: 0;
+        border-bottom: 0;
+        left: 3px;
+        bottom: 0
+    }
 
-        a img {
-            border-radius: 2rem;
-        }
-    </style>
-    <a class="navbar-brand" href="#">
-        <img src="/img/logo.png" alt="logo" width="64">
+    .icn-user-list {
+        display: block;
+        transform: scale(var(--ggs, 1));
+        box-sizing: border-box;
+        width: 20px;
+        height: 18px;
+        background:
+            linear-gradient(to left,
+                currentColor 8px,
+                transparent 0) no-repeat 14px 4px/6px 2px,
+            linear-gradient(to left,
+                currentColor 8px,
+                transparent 0) no-repeat 14px 8px/6px 2px,
+            linear-gradient(to left,
+                currentColor 8px,
+                transparent 0) no-repeat 14px 12px/6px 2px
+    }
+
+    .icn-user-list::after,
+    .icn-user-list::before {
+        content: "";
+        display: block;
+        box-sizing: border-box;
+        position: absolute;
+        border: 2px solid
+    }
+
+    .icn-user-list::before {
+        width: 8px;
+        height: 8px;
+        border-radius: 30px;
+        top: 0;
+        left: 2px
+    }
+
+    .icn-user-list::after {
+        width: 12px;
+        height: 9px;
+        border-bottom: 0;
+        border-top-left-radius: 3px;
+        border-top-right-radius: 3px;
+        top: 9px
+    }
+
+    a img.logo {
+        border-radius: 4rem;
+        width: 64px;
+        height: 64px;
+    }
+
+    a img.user-image {
+        border-radius: 2rem;
+    }
+
+    nav {
+        text-align: center;
+        align-items: center;
+        justify-content: safe;
+        border-bottom: 2px solid rgb(150, 150, 150);
+        z-index: 999;
+    }
+
+    .navbar-item {
+        text-align: center;
+        justify-content: center;
+        align-items: center;
+    }
+
+    .logout {
+        position: absolute;
+        right: 0;
+    }
+
+    .logout button {
+        position: absolute;
+        right: 0;
+    }
+</style>
+
+<nav class="navbar" role="navigation" aria-label="main navigation">
+    <a href="/" class="navbar-brand uk-margin-medium-top uk-margin-medium-bottom uk-margin-left">
+        <img class="logo" src="/img/logo.png" />
     </a>
-    <a class="navbar-brand" href="/">
-        <div class="icn-home uk-margin-left uk-margin-top"></div>
-        <span>Home</span>
+    <a class="navbar-item uk-margin-bottom uk-margin-top uk-margin-right uk-margin-left" href="/">
+        <i class="icn-home uk-margin-left"></i>
+        <p class="uk-margin-left">Home</p>
     </a>
-    <div class="uk-margin">
-        <form action="/search/" class="uk-search uk-search-default">
-            <input class="uk-search-input" type="search" placeholder="Search...">
-            <button type="submit" class="uk-search-icon-flip" uk-search-icon></button>
-        </form>
-    </div>
-    <div>
-        <form action="/logout/<%= currentAccount._id%>" method="POST">
-            <p>Logged in as: <a href="/user/<%= currentAccount._id %>"><%= currentAccount.fullName %></a></p>
-            <button type="submit">Logout</button>
-        </form>
+    <a class="navbar-item uk-margin-top uk-margin-bottom" href="/">
+        <i class="icn-user-list uk-margin-left"></i>
+        <p class="uk-margin-left">Users</p>
+    </a>
+    <div class="logout uk-margin-right uk-margin-top">
+        <div class="navbar-item">
+            <a href="/user/<%= currentAccount._id %>">
+                <img class="user-image uk-margin-right" height="100" src="<%= currentAccount.pictureUrl%>">
+                <%= currentAccount.fullName %>
+            </a>
+        </div>
+            <div id="dropdown" class="dropdown uk-margin-medium-top" >
+                <div class="dropdown-trigger">
+                    <button class="button" id="dropdownTrigger" aria-haspopup="true" aria-controls="dropdown-menu">
+                        <span>More</span>
+                        <span class="icon is-small">
+                            <i class="fas fa-angle-down" aria-hidden="true"></i>
+                        </span>
+                    </button>
+                </div>
+                <div class="dropdown-menu" id="dropdown-menu" role="menu">
+                    <div class="dropdown-content">
+                        <div class="dropdown-item">
+                            <form id="logoutForm" action="/logout/<%= currentAccount._id%>" method="POST">
+                                <a id="logoutButton">
+                                    Logout
+                                </a>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+        </div>
     </div>
 </nav>

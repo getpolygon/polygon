@@ -7,7 +7,7 @@ const AccountSchema = require("../models/account")
 router.get("/user/:accountId", async (req, res) => {
     const accountId = await req.params.accountId;
     const Account = await AccountSchema.findById(accountId);
-    res.render("platformAccount", { account: Account });
+    res.render("platformAccount", { currentAccount: Account });
 });
 
 // Main page

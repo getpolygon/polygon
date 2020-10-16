@@ -5,3 +5,18 @@ body {
 h1, h5, h3, h4, h6, p, a {
     text-align: center;
 }
+
+.profile-picture {
+    border-radius: 10rem;
+}
+
+.picture {
+    text-align: center;
+    justify-content: center;
+    align-items: center;
+}
+
+.account {
+    border-bottom: 2px solid rgb(150, 150, 150);
+    width: 100%
+}

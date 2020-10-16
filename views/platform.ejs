@@ -14,11 +14,11 @@
     <%- include ("./partials/nav") %>
 
     <div class="posts" id="posts">
-        
+
     </div>
 
     <div class="rightPanel">
-        <h3 align="center" class="uk-margin-right">Public Accounts</h3>
+        <h3 align="center" class="title is-3 uk-margin-right">Public Accounts</h3>
 
         <%# If  account list's lenght is more or equal to 1 then display the cards%>
         <% if (accounts.length >= 1) {%>
@@ -29,7 +29,7 @@
                 <p>ID: <a href="/user/<%= account._id%>"><%= account._id %></a></p>
             </div>
         </div>
-        <hr class="uk-divider-icon">
+        <hr class="uk-divider">
         <%});%>
         <%}%>
 

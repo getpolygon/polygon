@@ -4,17 +4,23 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="/css/platformAccount/style.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.1/css/bulma.min.css">
     <%- include ("./partials/cssPartials") %> 
     <title>Platform | ArmSocial</title>
 </head>
 <body>
     
-    <img src="<%= account.pictureUrl %>" alt="profile_picture">
-    <h1 class="uk-margin-top" id="fullName"><%= account.fullName %></h1>
-    <h3 id="bio"><%= account.bio %></h3>
-    <h5>ID: <a href="#"><%= account._id%></a></h5>
-    <h6 class="uk-margin-top" id="redirect"><a href="/">Go back to the platform</a></h6>
-    <hr class="uk-divider-icon">
+    <%- include ("./partials/nav") %>
+
+    <div class="account">
+        <div class="picture uk-margin-top">
+            <img class="profile-picture" src="<%= currentAccount.pictureUrl %>" width="128" height="128" alt="profile_picture">
+        </div>
+        <h1 class="uk-margin-top" id="fullName"><%= currentAccount.fullName %></h1>
+        <h4>ID: <a href="#"><%= currentAccount._id%></a></h4>
+        <h3 id="bio"><%= currentAccount.bio %></h3>
+        <h6 class="uk-margin-top" id="redirect"><a href="/">Go back to the platform</a></h6>
+    </div>
 
     <% include ("./partials/jsPartials") %> 
 </body>

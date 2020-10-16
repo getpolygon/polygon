@@ -15,22 +15,22 @@
     <div class="main uk-container-xsmall">
         <div class="uk-margin">
             <form class="form uk-margin-left uk-margin-right" id="form" action="register/" method="POST">
-                <h1 align="center" class="uk-margin-bottom">Welcome to ArmSocial</h1>
+                <h1 align="center" class="title is-1 uk-margin-bottom">Welcome to ArmSocial</h1>
 
-                <input required id="fullName" class="form-control uk-margin-bottom" name="fullName" type="text"
+                <input required id="fullName" class="input uk-margin-bottom" name="fullName" type="text"
                     placeholder="Full Name">
 
-                <input required id="email" class="form-control uk-margin-bottom" name="email" type="email"
+                <input required id="email" class="input uk-margin-bottom" name="email" type="email"
                     placeholder="Email">
 
-                <input required id="password" class="form-control uk-margin-bottom" name="password" type="password"
+                <input required id="password" class="input uk-margin-bottom" name="password" type="password"
                     placeholder="Password" minlength="8">
 
-                <textarea class="form-control" name="bio" id="bio" cols="30" rows="5"
+                <textarea class="input" name="bio" id="bio" cols="30" rows="5"
                     placeholder="Enter your biography..."></textarea>
 
                 <label class="uk-margin-top" for="avatar">Profile picture</label>
-                <input class="form-control" name="avatar" id="avatar" type="file" required>
+                <input class="input" name="avatar" id="avatar" type="file" required>
                 <div id="imgError"></div>
 
                 <div class="form-check uk-margin-top uk-margin-bottom">
@@ -40,9 +40,9 @@
                     </label>
                 </div>
 
-                <button id="submitButton" class="btn btn-primary" type="submit">Register</button>
-                |
-                <span>Have an account? </span><a href="/auth/login">Login</a>
+                <button id="submitButton" class="button is-primary" type="submit">Register</button>
+                <br>
+                <p class="uk-margin-medium-top">Have an account? <a href="/auth/login">Login</a></p>
 
             </form>
         </div>

@@ -16,7 +16,7 @@ git clone https://github.com/MichaelGrigoryan25/ArmSocial
 After you've done these steps you can open `localhost:3000` in your browser.
 
 ## CSS Framework(s) Used
-* Bootstrap 4
+* Bulma
 * UIKit
 
 ## Templating engine(s) Used
@@ -47,13 +47,13 @@ After you've done these steps you can open `localhost:3000` in your browser.
 # Mongoose models
 ## Account model
 ```js
-    fullName: { type: String, required: true },
-    email: { type: String, required: true },
-    password: { type: String, required: true, minlength: 8},
-    bio: { type: String, required: false },
-    pictureUrl: { type: String, required: true }, 
-    private: { type: Boolean, required: false },
-    date: { type: String, required: true }
+fullName: { type: String, required: true },
+email: { type: String, required: true },
+password: { type: String, required: true, minlength: 8},
+bio: { type: String, required: false },
+pictureUrl: { type: String, required: true }, 
+private: { type: Boolean, required: true },
+date: { type: String, required: true }
 ```
 
 <hr>

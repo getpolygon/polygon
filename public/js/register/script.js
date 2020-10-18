@@ -1,8 +1,8 @@
 const submitButton = document.getElementById("submitButton");
 const avatarInput = document.getElementById("avatar");
-var emailStatus = document.getElementById("emailStatus");
-var privateCheck = document.getElementById("privateCheck");
-
+let emailStatus = document.getElementById("emailStatus");
+let privateCheck = document.getElementById("privateCheck");
+let email = document.getElementById("email");
 
 function checkboxValue() {
     if (privateCheck.checked) {
@@ -108,12 +108,11 @@ function checkForm() {
     }
 }
 
+avatarInput.addEventListener("change", uploadFile);
 submitButton.addEventListener("click", checkForm);
 privateCheck.addEventListener("click", checkboxValue);
-avatarInput.addEventListener("change", uploadFile);
-
-let email = document.getElementById("email");
-email.addEventListener("change", async () => {
+// Handling email change event
+email.addEventListener("keyup", async () => {
     await fetch("checkEmail",
         {
             method: "POST",
@@ -122,15 +121,59 @@ email.addEventListener("change", async () => {
         })
         .then((res) => { return res.json() })
         .then((response) => {
+            let firstName = document.getElementById("firstName");
+            let email = document.getElementById("email");
+            let password = document.getElementById("password");
+            let bio = document.getElementById("bio");
+
+            // If the API responds with true (duplicate)
             if (response.result == true) {
+
+                // Disallow user to create an account
                 emailStatus.innerText = "There is an account with this email";
                 emailStatus.classList.remove("ok");
                 emailStatus.classList.add("error");
+
+                // Disable all the inputs
+                firstName.setAttribute("disabled", true);
+                password.setAttribute("disabled", true);
+                bio.setAttribute("disabled", true);
+                avatarInput.setAttribute("disabled", true);
+                privateCheck.setAttribute("disabled", true);
+                submitButton.setAttribute("disabled", true);
             }
+            // If the API responds with false (not duplicate or null)
             else {
-                emailStatus.innerText = "You can use this email";
-                emailStatus.classList.remove("error");
-                emailStatus.classList.add("ok");
+
+                // If the email input value doesn't include "@" or "." signs disallow the user to create an account 
+                if (!email.value.includes("@") || !email.value.includes(".")) {
+                    emailStatus.innerText = "Enter a valid email";
+                    emailStatus.classList.add("error");
+                    emailStatus.classList.remove("ok");
+
+                    // Disable all the inputs
+                    firstName.setAttribute("disabled", true);
+                    password.setAttribute("disabled", true);
+                    bio.setAttribute("disabled", true);
+                    avatarInput.setAttribute("disabled", true);
+                    privateCheck.setAttribute("disabled", true);
+                    submitButton.setAttribute("disabled", true);
+                }
+                
+                // If there are all the required characters let the person create an account
+                else {
+                    emailStatus.innerText = "You can use this email";
+                    emailStatus.classList.remove("error");
+                    emailStatus.classList.add("ok");
+
+                    // Enable all the inputs
+                    firstName.removeAttribute("disabled");
+                    password.removeAttribute("disabled");
+                    bio.removeAttribute("disabled");
+                    avatarInput.removeAttribute("disabled");
+                    privateCheck.removeAttribute("disabled");
+                    submitButton.removeAttribute("disabled");
+                }
             }
         })
 })

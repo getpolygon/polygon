@@ -1,8 +1,0 @@
-User-Agent: *
-Disallow: 
-Allow: /auth/login
-Allow: /auth/register
-Allow: /
-Allow: /users
-Disallow: /checkEmail
-Disallow: /users/

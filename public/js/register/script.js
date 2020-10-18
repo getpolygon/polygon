@@ -121,7 +121,6 @@ email.addEventListener("keyup", async () => {
         })
         .then((res) => { return res.json() })
         .then((response) => {
-            let firstName = document.getElementById("firstName");
             let email = document.getElementById("email");
             let password = document.getElementById("password");
             let bio = document.getElementById("bio");
@@ -135,7 +134,6 @@ email.addEventListener("keyup", async () => {
                 emailStatus.classList.add("error");
 
                 // Disable all the inputs
-                firstName.setAttribute("disabled", true);
                 password.setAttribute("disabled", true);
                 bio.setAttribute("disabled", true);
                 avatarInput.setAttribute("disabled", true);
@@ -152,7 +150,6 @@ email.addEventListener("keyup", async () => {
                     emailStatus.classList.remove("ok");
 
                     // Disable all the inputs
-                    firstName.setAttribute("disabled", true);
                     password.setAttribute("disabled", true);
                     bio.setAttribute("disabled", true);
                     avatarInput.setAttribute("disabled", true);
@@ -167,7 +164,6 @@ email.addEventListener("keyup", async () => {
                     emailStatus.classList.add("ok");
 
                     // Enable all the inputs
-                    firstName.removeAttribute("disabled");
                     password.removeAttribute("disabled");
                     bio.removeAttribute("disabled");
                     avatarInput.removeAttribute("disabled");

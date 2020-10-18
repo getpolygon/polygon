@@ -1,20 +1,16 @@
-const dropdownDiv = document.getElementById("dropdown");
-const dropdownButton = document.getElementById("dropdownTrigger");
+const navbar = document.getElementById("navbar");
+const burger = document.getElementById("navbar-burger");
 
-const logoutButton = document.getElementById("logoutButton");
-const logoutForm = document.getElementById("logoutForm");
 
-function dropdown() {
-    if (dropdownDiv.classList.contains("is-active")) {
-        dropdownDiv.classList.remove("is-active");
+function activeNabar() {
+    if (burger.classList.contains("is-active")) {
+        burger.classList.remove("is-active");
+        navbar.classList.remove("is-active");
+
     } else {
-        dropdownDiv.classList.add("is-active");
+        burger.classList.add("is-active");
+        navbar.classList.add("is-active");
     };
 };
 
-function logout() {
-    logoutForm.submit();
-}
-
-dropdownButton.addEventListener("click", dropdown);
-logoutButton.addEventListener("click", logout);
+burger.addEventListener("click", activeNabar);

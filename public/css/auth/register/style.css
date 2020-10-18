@@ -8,4 +8,12 @@
 .main {
   margin: 5% auto;
 }
+
+#imgError {
+  color: #ff6464;
+}
+
+.emailDuplicate {
+  color: #ff6464;
+}
 /*# sourceMappingURL=style.css.map */

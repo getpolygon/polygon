@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Register | ArmSocial</title>
+    <title>ArmSocial | Register</title>
     <%- include ("./partials/cssPartials") %>
     <!-- Static CSS -->
     <link rel="stylesheet" href="/css/auth/register/style.css">
@@ -14,27 +14,36 @@
 
     <div class="main uk-container-xsmall">
         <div class="uk-margin">
-            <form class="form uk-margin-left uk-margin-right" id="form" action="register/" method="POST">
-                <h1 align="center" class="title is-1 uk-margin-bottom">Welcome to ArmSocial</h1>
+            <form class="form uk-margin-left uk-margin-right" id="form" action="/auth/register/" method="POST">
+                <h1 align="left" class="title is-1 uk-margin-bottom">Welcome to ArmSocial</h1>
 
                 <input required id="fullName" class="input uk-margin-bottom" name="fullName" type="text"
                     placeholder="Full Name">
 
-                <input required id="email" class="input uk-margin-bottom" name="email" type="email"
-                    placeholder="Email">
+                <div class="emailDuplicate">
+                    <% if (locals.duplicateErr) {%>
+                    <small>
+                        <%= duplicateErr %>
+                    </small>
+                    <%}%>
+                </div>
+
+                <input required id="email" class="input uk-margin-bottom" name="email" type="email" placeholder="Email">
 
                 <input required id="password" class="input uk-margin-bottom" name="password" type="password"
                     placeholder="Password" minlength="8">
 
-                <textarea class="input" name="bio" id="bio" cols="30" rows="5"
+                <textarea class="input uk-margin-bottom" name="bio" id="bio"
                     placeholder="Enter your biography..."></textarea>
 
                 <label class="uk-margin-top" for="avatar">Profile picture</label>
-                <input class="input" name="avatar" id="avatar" type="file" required>
+                <input accept="image/x-png,image/gif,image/jpeg" class="input" name="avatar" id="avatar" type="file"
+                    required>
+                <small>JPG, PNG, GIF</small>
                 <div id="imgError"></div>
 
                 <div class="form-check uk-margin-top uk-margin-bottom">
-                    <input name="private" class="form-check-input" type="checkbox" id="privateCheck">
+                    <input name="privateCheck" class="form-check-input" type="checkbox" value="false" id="privateCheck">
                     <label class="form-check-label" for="privateCheck">
                         Private Account
                     </label>
@@ -48,6 +57,7 @@
         </div>
     </div>
 
+    <script src="http://code.jquery.com/jquery-3.5.1.min.js" integrity="sha256-9/aliU8dGd2tb6OSsuzixeV4y/faTqgFtohetphbbj0=" crossorigin="anonymous"></script>
     <!-- The core Firebase JS SDK is always required and must be listed first -->
     <script src="https://www.gstatic.com/firebasejs/7.24.0/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/7.23.0/firebase-storage.js"></script>

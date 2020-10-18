@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <%- include ("./partials/cssPartials") %>
+    <link rel="stylesheet" href="/css/users/style.css">
+    <title>ArmSocial | Users</title>
+</head>
+
+<body>
+
+    <%- include ("./partials/nav") %>
+
+    <div class="uk-container uk-margin-large-top">
+        <h1 align="center" class="uk-margin-large-top title is-1"> Public Users </h1>
+        <hr class="solid">
+        <div class="accounts">
+            <div class="row" uk-scrollspy="target: > div; cls: uk-animation-fade; delay: 200">
+                <%# If  account list's lenght is more or equal to 1 then display the cards%>
+                <% if (accounts.length >= 1) {%>
+                <%accounts.forEach(account => {%>
+                <div class="uk-card uk-card-default uk-card-hover uk-card-body uk-margin-bottom">
+                    <img class="account-picture" width="100" height="100" src="<%= account.pictureUrl %>"
+                        alt="profile_picture">
+                    <h3 class="title is-3 uk-card-title uk-margin-top"><%= account.fullName %></h3>
+                    <p class="subtitle is-5">ID: <a href="/user/<%= account._id%>"><%= account._id %></a></p>
+                </div>
+                &nbsp;&nbsp;&nbsp;&nbsp;
+                <%});%>
+                <%}%>
+            </div>
+            <%# If the account lenght is lower than 1 display that there are currently no public accounts %>
+                <% if (accounts.length < 1) {%>
+                <p align="center" class="subtitle is-5"><%= err %></p>
+                <%}%>
+        </div>
+    </div>
+
+    <%- include ("./partials/jsPartials") %>
+    <script src="https://raw.githubusercontent.com/BolajiAyodeji/simple-ajax-library/master/dist/simpleAjax.min.js"></script>
+</body>
+
+</html>

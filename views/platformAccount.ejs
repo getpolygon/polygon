@@ -1,27 +1,31 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="/css/platformAccount/style.css">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.1/css/bulma.min.css">
-    <%- include ("./partials/cssPartials") %> 
-    <title>Platform | ArmSocial</title>
+    <%- include ("./partials/cssPartials") %>
+    <title>ArmSocial | My Account</title>
 </head>
+
 <body>
-    
+
     <%- include ("./partials/nav") %>
 
-    <div class="account">
-        <div class="picture uk-margin-top">
-            <img class="profile-picture" src="<%= currentAccount.pictureUrl %>" width="128" height="128" alt="profile_picture">
+    <div class="account uk-margin-xlarge-top">
+        <div class="picture uk-margin-xlarge-top">
+            <img class="profile-picture" src="<%= currentAccount.pictureUrl %>" width="128" height="128"
+                alt="profile_picture">
         </div>
-        <h1 class="uk-margin-top" id="fullName"><%= currentAccount.fullName %></h1>
-        <h4>ID: <a href="#"><%= currentAccount._id%></a></h4>
-        <h3 id="bio"><%= currentAccount.bio %></h3>
-        <h6 class="uk-margin-top" id="redirect"><a href="/">Go back to the platform</a></h6>
+        <h1 class="title is-1 uk-margin-top" id="fullName"><%= currentAccount.fullName %></h1>
+        <h4 class="title is-4">ID: <a href="#"><%= currentAccount._id%></a></h4>
+        <h3 class="title is-3" id="bio"><%= currentAccount.bio %></h3>
+        <h6 class="title is-6 uk-margin-top" id="redirect"><a href="/">Go back to the platform</a></h6>
     </div>
 
-    <% include ("./partials/jsPartials") %> 
+
+    <%- include ("./partials/jsPartials") %>
 </body>
+
 </html>

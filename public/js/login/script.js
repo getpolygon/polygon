@@ -4,9 +4,10 @@ function submitForm() {
     let email = document.getElementById("email");
     let password = document.getElementById("password");
 
-    if (email < 1 || password < 1) {
+    if (password.value.length < 8) {
         submitButton = submitButton;
-    } else {
+    }
+    else {
         submitButton.classList.add("is-loading")
     };
 

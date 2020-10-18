@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Login | ArmSocial</title>
+    <title>ArmSocial | Login</title>
     <%- include ("./partials/cssPartials") %>
     <!-- Static CSS -->
     <link rel="stylesheet" href="/css/auth/login/style.css">
@@ -14,14 +14,21 @@
 
     <div class="main uk-container-xsmall">
         <div class="uk-margin">
-            <form class="form uk-margin-left uk-margin-right" id="form" action="login/" method="POST">
+            <form class="form uk-margin-left uk-margin-right" id="form" action="login" method="POST">
                 <h1 align="center" class="title is-1 uk-margin-bottom">Login to ArmSocial</h1>
 
-                <input required id="email" class="input uk-margin-bottom" name="email" type="email"
-                    placeholder="Email">
+                <input required id="email" class="input uk-margin-bottom" name="email" type="email" placeholder="Email">
 
-                <input required id="password" class="input uk-margin-bottom" name="password" type="password"
+                <input required id="password" class="input" name="password" type="password"
                     placeholder="Password" minlength="8">
+
+                <div class="err uk-margin-bottom">
+                    <% if (locals.err) {%>
+                        <small>
+                            <%= err %>
+                        </small>
+                    <%}%>
+                </div>
 
                 <button id="submitButton" class="button is-link" type="submit">Login</button>
                 <br>

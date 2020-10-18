@@ -7,7 +7,13 @@ h1, h5, h3, h4, h6, p, a {
 }
 
 .profile-picture {
-  border-radius: 10rem;
+  border-radius: 5rem;
+  width: 128px;
+  height: 128px;
+  -o-object-fit: cover;
+     object-fit: cover;
+  -o-object-position: left;
+     object-position: left;
 }
 
 .picture {
@@ -21,7 +27,6 @@ h1, h5, h3, h4, h6, p, a {
 }
 
 .account {
-  border-bottom: 2px solid #969696;
   width: 100%;
 }
 /*# sourceMappingURL=style.css.map */

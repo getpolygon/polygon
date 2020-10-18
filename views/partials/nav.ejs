@@ -1,8 +1,4 @@
 <style>
-    nav {
-        display: flex;
-    }
-
     .icn-home {
         background:
             linear-gradient(to left,
@@ -101,22 +97,51 @@
         top: 9px
     }
 
-    a img.logo {
-        border-radius: 4rem;
-        width: 64px;
-        height: 64px;
+    .icn-search {
+        box-sizing: border-box;
+        position: relative;
+        display: block;
+        transform: scale(var(--ggs, 1));
+        width: 16px;
+        height: 16px;
+        border: 2px solid;
+        border-radius: 100%;
+        margin-left: -4px;
+        margin-top: -4px
     }
 
-    a img.user-image {
-        border-radius: 2rem;
+    .icn-search::after {
+        content: "";
+        display: block;
+        box-sizing: border-box;
+        position: absolute;
+        border-radius: 3px;
+        width: 2px;
+        height: 8px;
+        background: currentColor;
+        transform: rotate(-45deg);
+        top: 10px;
+        left: 12px
     }
 
     nav {
-        text-align: center;
-        align-items: center;
-        justify-content: safe;
         border-bottom: 2px solid rgb(150, 150, 150);
         z-index: 999;
+        box-shadow: 0 0 10px 1px;
+    }
+
+    .sticky {
+        position: fixed;
+        top: 0;
+        width: 100%;
+    }
+
+    .user-image {
+        border-radius: 2rem;
+        object-fit: cover;
+        object-position: left;
+        width: 25px;
+        height: 25px;
     }
 
     .navbar-item {
@@ -125,56 +150,89 @@
         align-items: center;
     }
 
-    .logout {
+    .account-container {
         position: absolute;
-        right: 0;
+        right: 0%;
+        top: 0%;
+        padding-right: 1.5rem;
     }
 
-    .logout button {
+    .dropdown {
         position: absolute;
-        right: 0;
+        right: 0%;
+        top: 0%;
     }
+
+    .image-link {
+        height: inherit;
+    }
+
 </style>
 
 <nav class="navbar" role="navigation" aria-label="main navigation">
-    <a href="/" class="navbar-brand uk-margin-medium-top uk-margin-medium-bottom uk-margin-left">
-        <img class="logo" src="/img/logo.png" />
-    </a>
-    <a class="navbar-item uk-margin-bottom uk-margin-top uk-margin-right uk-margin-left" href="/">
-        <i class="icn-home uk-margin-left"></i>
-        <p class="uk-margin-left">Home</p>
-    </a>
-    <a class="navbar-item uk-margin-top uk-margin-bottom" href="/">
-        <i class="icn-user-list uk-margin-left"></i>
-        <p class="uk-margin-left">Users</p>
-    </a>
-    <div class="logout uk-margin-right uk-margin-top">
-        <div class="navbar-item">
-            <a href="/user/<%= currentAccount._id %>">
-                <img class="user-image uk-margin-right" height="100" src="<%= currentAccount.pictureUrl%>">
-                <%= currentAccount.fullName %>
+    <div class="navbar-brand">
+        <a class="navbar-item" href="/">
+            <!-- <img src="/img/logo.png" width="112" height="28"> -->
+            <h4 class="title is-4">ArmSocial</h4>
+        </a>
+
+        <a role="button" id="navbar-burger" class="navbar-burger burger" aria-label="menu" aria-expanded="false"
+            data-target="navbar">
+            <span aria-hidden="true"></span>
+            <span aria-hidden="true"></span>
+            <span aria-hidden="true"></span>
+        </a>
+    </div>
+
+    <div id="navbar" class="navbar-menu is-right">
+        <div class="navbar-start">
+            <a href="/" class="home-link navbar-item uk-margin-bottom uk-margin-top uk-margin-right uk-margin-left">
+                <i class="icn-home uk-margin-left"></i>
+                <p class="uk-margin-left">Home</p>
+            </a>
+
+            <a class="users-link navbar-item uk-margin-top uk-margin-bottom" href="/users">
+                <i class="icn-user-list uk-margin-left"></i>
+                <p class="uk-margin-left">Users</p>
+            </a>
+
+            <a class="search-link navbar-item uk-margin-top uk-margin-bottom" href="/search">
+                <i class="icn-search uk-margin-left"></i>
+                <p class="uk-margin-left">Search</p>
             </a>
         </div>
-            <div id="dropdown" class="dropdown uk-margin-medium-top" >
-                <div class="dropdown-trigger">
-                    <button class="button" id="dropdownTrigger" aria-haspopup="true" aria-controls="dropdown-menu">
-                        <span>More</span>
-                        <span class="icon is-small">
-                            <i class="fas fa-angle-down" aria-hidden="true"></i>
-                        </span>
-                    </button>
-                </div>
-                <div class="dropdown-menu" id="dropdown-menu" role="menu">
-                    <div class="dropdown-content">
-                        <div class="dropdown-item">
-                            <form id="logoutForm" action="/logout/<%= currentAccount._id%>" method="POST">
-                                <a id="logoutButton">
-                                    Logout
-                                </a>
-                            </form>
-                        </div>
+
+        <div class="navbar-end">
+            <div class="image-link navbar-item uk-margin-large-right">
+                <a href="/user/<%= currentAccount._id %>">
+                    <img class="user-image" height="25" width="25" src="<%= currentAccount.pictureUrl%>">
+                    <span><%= currentAccount.fullName %></span>
+                </a>
+            </div>
+            <div class="navbar-item has-dropdown is-hoverable is-right">
+                <a class="navbar-link">
+                    More
+                </a>
+
+                <div class="navbar-dropdown">
+                    <div class="navbar-item">
+                        <a href="/user/<%= currentAccount._id %>">
+                            My Account
+                        </a>
+                    </div>
+                    <div class="navbar-item">
+                        <a href="/user/settings">
+                            Settings
+                        </a>
+                    </div>
+                    <hr class="navbar-divider">
+                    <div class="navbar-item">
+                        <form action="/logout/<%= currentAccount._id %>" method="POST">
+                            <button class="button is-danger" type="submit">Logout</button>
+                        </form>
                     </div>
                 </div>
+            </div>
         </div>
     </div>
 </nav>

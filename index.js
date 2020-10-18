@@ -17,15 +17,18 @@ app.set("views", "./views"); // Default view folder
 
 let authRoute = require("./routes/auth");
 let platformRoute = require("./routes/platform");
+let usersRoute = require("./routes/users");
 
 app.use("/", platformRoute);
 app.use("/auth", authRoute);
+app.use("/users", usersRoute);
 
 app.get("*", (req, res) => {
-    res.render("error/error", { status: 404, err: "Not Found" })
+    res.status(404).sendFile(__dirname + "/public/static/error.html");
 });
 
 mongoose.connect(process.env.mongo, { useNewUrlParser: true, useUnifiedTopology: true }) // Connect to mongoDB
     .then(console.log("MongoDB Connection: OK"))
     .catch((e) => (console.log("MongoDB Connection: Error\n%s"), e));
+
 app.listen(port, () => console.log(`Listening at port ${port}`)); // Start the server at ${port}

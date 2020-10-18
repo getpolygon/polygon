@@ -1,0 +1,22 @@
+.account-picture {
+    border-radius: 5rem;
+    width: 100px;
+    height: 100px;
+    object-fit: cover;
+    object-position: left;
+}
+
+.accounts {
+    justify-content: center;
+    align-items: center;
+    text-align: left;
+    display: flex;
+}
+
+.row {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    align-items: flex-start;
+    align-content: flex-start;
+}

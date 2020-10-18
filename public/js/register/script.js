@@ -1,17 +1,27 @@
-const privateCheck = document.getElementById("privateCheck");
-const submitButton = document.getElementById("submitButton")
+const submitButton = document.getElementById("submitButton");
 const avatarInput = document.getElementById("avatar");
+var privateCheck = document.getElementById("privateCheck");
 
 function checkboxValue() {
-    let values = [];
-    if (privateCheck.value = true) {
-        privateCheck.value = false;
-        values.push(privateCheck.value)
-    };
-    if (privateCheck.value = false) {
-        privateCheck.value = true;
-        values.push(privateCheck.value)
-    };
+    if (privateCheck.checked) {
+        privateCheck.setAttribute("value", true);
+        console.log(privateCheck.value);
+    }
+    else {
+        privateCheck.setAttribute("value", false);
+        console.log(privateCheck.value);
+    }
+    // $(privateCheck).text($('#privateCheck').val());
+
+    // $("#privateCheck").on('change', function () {
+    //     if ($(this).is(':checked')) {
+    //         $(this).attr('value', 'true');
+    //     } else {
+    //         $(this).attr('value', 'false');
+    //     }
+
+    //     $('#checkbox-value').text($('#privateCheck').val());
+    // });
 };
 
 function uploadFile() {
@@ -33,20 +43,15 @@ function uploadFile() {
         avatarImagesRef.name === avatarImagesRef.name            // true
         avatarImagesRef.fullPath === avatarImagesRef.fullPath    // false
 
-        var file = new File([avatarInput.files[0]], `${Date.now()}.jpeg`, { type: "image/png" }) // use the Blob or File API
-        avatarImagesRef.put(file).then(function (snapshot) {
-            console.log('Uploaded the profile picture to firebase');
-            console.log(snapshot);
-        });
-
+        var file = new File([avatarInput.files[0]], `${email.value}.jpeg`, { type: "image/png" }) // use the Blob or File API
+        avatarImagesRef.put(file);
         imgErr.innerHTML = "";
 
     }
-    if (email.value < 18) {
+    if (email.value == 0 || email.value < 7) {
         avatarInput.files.length = 0;
-        console.log("Broke the loop");
         avatarInput.value = "";
-        imgErr.innerHTML = "<small>Please enter your email and choose a file again</small>";
+        imgErr.innerHTML = "<small>Please enter your email. Email either has less than 7 characters or s empty.</small>";
     }
     else {
         // Create a reference to the file to delete
@@ -54,9 +59,7 @@ function uploadFile() {
 
         // Delete the file
         desertRef.delete()
-            .catch(function (error) {
-                console.log(error);
-            });
+            .catch((error) => error = error);
 
         // Create a root reference
         var storageRef = firebase.storage().ref();
@@ -66,10 +69,8 @@ function uploadFile() {
         avatarImagesRef.name === avatarImagesRef.name            // true
         avatarImagesRef.fullPath === avatarImagesRef.fullPath    // false
 
-        var file = new File([avatarInput.files[0]], `${Date.now()}.jpeg`, { type: "image/png" }) // use the Blob or File API
-        avatarImagesRef.put(file).then(function (snapshot) {
-            console.log('Uploaded the profile picture to firebase');
-        });
+        var file = new File([avatarInput.files[0]], `${email.value}.jpeg`, { type: "image/png" }) // use the Blob or File API
+        avatarImagesRef.put(file);
     }
 }
 
@@ -78,7 +79,7 @@ function checkForm() {
     let password = document.getElementById("password");
     let fullName = document.getElementById("fullName");
 
-    if (email.value <= 0 || password.value < 7 || fullName.value <= 1) {
+    if (email.value < 8 || password.value < 8) {
         submitButton = submitButton;
     } else {
         submitButton.classList.remove("button is-info");

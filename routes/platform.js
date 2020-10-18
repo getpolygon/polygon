@@ -3,13 +3,6 @@ const router = require("express").Router();
 
 const AccountSchema = require("../models/account")
 
-// User's Account Page
-router.get("/user/:accountId", async (req, res) => {
-    const accountId = await req.params.accountId;
-    const Account = await AccountSchema.findById(accountId);
-    res.render("platformAccount", { currentAccount: Account });
-});
-
 // Main page
 router.get("/", async (req, res) => {
 
@@ -22,7 +15,7 @@ router.get("/", async (req, res) => {
         * If not redirect to either login or register (Maybe login)
     */
 
-    if (!emailCookie & !passwordCookie) {
+    if (!emailCookie && !passwordCookie) {
         res.redirect("/auth/login");
     } else {
         Promise.all([
@@ -35,12 +28,25 @@ router.get("/", async (req, res) => {
             .catch(([err1, err2]) => {
                 res.clearCookie("email", req.params.accountId);
                 res.clearCookie("password", req.params.accountId);
-                res.redirect("/auth/register")
+                res.redirect("/auth/login", { err1: err1, err2: err2 });
+
                 console.log(err1);
                 console.log(err2);
             });
-    }
-})
+    };
+});
+
+// User's Account Page
+router.get("/user/:accountId", async (req, res) => {
+
+    if (!req.cookies.email || !req.cookies.password) {
+        res.redirect("/");
+    } else {
+        const accountId = await req.params.accountId;
+        const Account = await AccountSchema.findById(accountId);
+        res.render("platformAccount", { currentAccount: Account });
+    };
+});
 
 // Logout
 router.post("/logout/:accountId", (req, res) => {

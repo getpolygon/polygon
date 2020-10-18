@@ -1,7 +1,6 @@
 let submitButton = document.getElementById("submitButton");
 
 function submitForm() {
-    let email = document.getElementById("email");
     let password = document.getElementById("password");
 
     if (password.value.length < 8) {

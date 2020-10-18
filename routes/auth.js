@@ -51,36 +51,36 @@ router.post("/register", async (req, res) => {
 
 // May be taken to the API folder
 // Route to check email when registering (Using it for AJAX requests)
-router.post("/checkEmail", async(req, res) => {
+router.post("/checkEmail", async (req, res) => {
     const inputEmail = await req.body.email;
     await AccountSchema.findOne({ email: inputEmail })
-    .then(doc => {
-        if (doc < 1) {
-            res.json({
-                "Error": "Non existent"
-            })
-        }
-        if (doc.email == inputEmail) {
-            res.json({
-                "result": true
-            })
-        } 
-        if (!doc) {
-            res.json({
-                "result": err
-            })
-        }
-        else {
-            console.log(inputEmail);
-            console.log(doc);
-            res.json({
-                "result": false
-            })
-        }
-    })
-    .catch(e => {
-        console.log(e);
-    })
+        .then(doc => {
+            if (doc < 1) {
+                res.json({
+                    "Error": "Non existent"
+                })
+            }
+            if (doc.email == inputEmail) {
+                res.json({
+                    "result": true
+                })
+            }
+            if (!doc) {
+                res.json({
+                    "result": err
+                })
+            }
+            else {
+                console.log(inputEmail);
+                console.log(doc);
+                res.json({
+                    "result": false
+                })
+            }
+        })
+        .catch(e => {
+            console.log(e);
+        })
 })
 
 // Login
@@ -112,7 +112,7 @@ router.post("/login", async (req, res, next) => {
             }
         })
         .catch(e => console.log(e));
-    
+
     if (email != Account.email) {
         res.status(404).render("login", { err: "This account can't be found. Try checking your email and password and try again." });
     } else {

@@ -32,6 +32,14 @@
             "Lines": [
                 25
             ]
+        },
+        "TODO-ID-5": {
+            "Description": "Create an AJAX fetch function for checking email and password validity in the login page",
+            "Files": "views/login.ejs | routes/auth.ejs ",
+            "Status": "Open",
+            "Lines": [
+                null
+            ]
         }
     }
 ]

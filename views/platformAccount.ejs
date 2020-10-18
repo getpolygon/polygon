@@ -16,7 +16,7 @@
     <%- include ("./partials/nav") %>
 
     <div class="account uk-margin-xlarge-top">
-        
+
         <div class="picture uk-margin-xlarge-top">
             <img class="profile-picture" src="<%= platformAccount.pictureUrl %>" width="128" height="128"
                 alt="profile_picture">
@@ -25,9 +25,9 @@
         <h2 class="title is-2 uk-margin-top" id="fullName">
             <%= platformAccount.fullName %>
             <% if (platformAccount.private == true) {%>
-                <div class="privacy">
-                    <i class="gg-lock"></i>
-                </div>
+            <div class="privacy">
+                <i class="gg-lock"></i>
+            </div>
             <%}%>
         </h2>
 
@@ -35,10 +35,10 @@
             <div class="privacy">
                 <i class="gg-lock-unlock"></i>
             </div>
-        <%}%>
+            <%}%>
         <h3 class="title is-3" id="bio">Bio: <%= platformAccount.bio %></h3>
-        <h4 class="title is-4">ID: <a href="#"><%= platformAccount._id%></a></h4>
-        <h6 class="title is-6 uk-margin-top" id="redirect"><a href="/">Go back to the platform</a></h6>
+            <h4 class="title is-4">ID: <a href="#"><%= platformAccount._id%></a></h4>
+            <h6 class="title is-6 uk-margin-top" id="redirect"><a href="/">Go back to the platform</a></h6>
     </div>
 
 

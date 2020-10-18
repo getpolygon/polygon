@@ -113,7 +113,7 @@ privateCheck.addEventListener("click", checkboxValue);
 avatarInput.addEventListener("change", uploadFile);
 
 let email = document.getElementById("email");
-email.addEventListener("change", async() => {
+email.addEventListener("change", async () => {
     await fetch("checkEmail",
         {
             method: "POST",

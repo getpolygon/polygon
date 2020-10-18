@@ -9,11 +9,11 @@
   margin: 5% auto;
 }
 
-#imgError {
-  color: #ff6464;
+.error {
+  color: #ff6464 !important;
 }
 
-.emailDuplicate {
-  color: #ff6464;
+.ok {
+  color: #0ab428 !important;
 }
 /*# sourceMappingURL=style.css.map */

@@ -4,6 +4,8 @@ body {
 
 h1, h5, h3, h4, h6, p, a {
     text-align: center;
+    justify-content: right;
+    align-items: right;
 }
 
 .profile-picture {
@@ -21,5 +23,18 @@ h1, h5, h3, h4, h6, p, a {
 }
 
 .account {
-    width: 100%
+    align-items: center;
+}
+
+// TODO: Update the privacy icons so that they have he right overflow and position in mobile and PC
+.privacy {
+    display: block;
+    justify-content: center;
+    align-items: center;
+    position: absolute;
+    width: 5rem;
+    height: 5rem;
+    right: 0%;
+    bottom: 36.5%;
+    margin-right: 30rem;
 }

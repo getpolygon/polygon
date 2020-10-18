@@ -35,7 +35,7 @@ router.post("/register", async (req, res) => {
         })
 
     if (Account.email == duplicateAccount.email) {
-        res.render("register", { duplicateErr: "There is an account using this email. Try to login." });
+        res.render("register");
     }
     if (duplicateAccount == null || Account.email != duplicateAccount.email) {
         await Account.save();
@@ -49,6 +49,39 @@ router.post("/register", async (req, res) => {
     });
 });
 
+// May be taken to the API folder
+// Route to check email when registering (Using it for AJAX requests)
+router.post("/checkEmail", async(req, res) => {
+    const inputEmail = await req.body.email;
+    await AccountSchema.findOne({ email: inputEmail })
+    .then(doc => {
+        if (doc < 1) {
+            res.json({
+                "Error": "Non existent"
+            })
+        }
+        if (doc.email == inputEmail) {
+            res.json({
+                "result": true
+            })
+        } 
+        if (!doc) {
+            res.json({
+                "result": err
+            })
+        }
+        else {
+            console.log(inputEmail);
+            console.log(doc);
+            res.json({
+                "result": false
+            })
+        }
+    })
+    .catch(e => {
+        console.log(e);
+    })
+})
 
 // Login
 router.get("/login", (req, res) => {
@@ -82,16 +115,11 @@ router.post("/login", async (req, res, next) => {
     
     if (email != Account.email) {
         res.status(404).render("login", { err: "This account can't be found. Try checking your email and password and try again." });
-    }
-    // if (password != Account.password && Account.email == email) {
-    //     res.status(403).render("login", { errPassword: "Your password is incorrect." });
-    // } 
-    else {
+    } else {
         res.cookie("email", email);
         res.cookie("password", password);
         res.redirect("/");
     }
-    // (password == Account.password && email == Account.email)
 })
 
 module.exports = router;

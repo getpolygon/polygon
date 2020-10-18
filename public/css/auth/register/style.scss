@@ -8,10 +8,10 @@
     margin: 5% auto;
 }
 
-#imgError {
-    color: rgb(255, 100, 100);
+.error {
+    color: rgb(255, 100, 100) !important;
 }
 
-.emailDuplicate {
-    color: rgb(255, 100, 100);
+.ok {
+    color: rgb(10, 180, 40) !important;
 }

@@ -4,6 +4,12 @@ body {
 
 h1, h5, h3, h4, h6, p, a {
   text-align: center;
+  -webkit-box-pack: right;
+      -ms-flex-pack: right;
+          justify-content: right;
+  -webkit-box-align: right;
+      -ms-flex-align: right;
+          align-items: right;
 }
 
 .profile-picture {
@@ -27,6 +33,24 @@ h1, h5, h3, h4, h6, p, a {
 }
 
 .account {
-  width: 100%;
+  -webkit-box-align: center;
+      -ms-flex-align: center;
+          align-items: center;
+}
+
+.privacy {
+  display: block;
+  -webkit-box-pack: center;
+      -ms-flex-pack: center;
+          justify-content: center;
+  -webkit-box-align: center;
+      -ms-flex-align: center;
+          align-items: center;
+  position: absolute;
+  width: 5rem;
+  height: 5rem;
+  right: 0%;
+  bottom: 36.5%;
+  margin-right: 30rem;
 }
 /*# sourceMappingURL=style.css.map */

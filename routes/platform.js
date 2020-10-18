@@ -43,8 +43,9 @@ router.get("/user/:accountId", async (req, res) => {
         res.redirect("/");
     } else {
         const accountId = await req.params.accountId;
-        const Account = await AccountSchema.findById(accountId);
-        res.render("platformAccount", { currentAccount: Account });
+        const currentAccount = await AccountSchema.findOne({ email: req.cookies.email, password: req.cookies.password });
+        const platformAccount = await AccountSchema.findById(accountId);
+        res.render("platformAccount", { currentAccount: currentAccount, platformAccount: platformAccount });
     };
 });
 

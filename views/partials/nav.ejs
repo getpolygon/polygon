@@ -127,7 +127,7 @@
     nav {
         border-bottom: 2px solid rgb(150, 150, 150);
         z-index: 999;
-        box-shadow: 0 0 10px 1px;
+        box-shadow: 0 0 2px 1px;
     }
 
     .sticky {
@@ -184,7 +184,7 @@
         </a>
     </div>
 
-    <div id="navbar" class="navbar-menu is-right">
+    <div id="navbar" class="navbar-menu">
         <div class="navbar-start">
             <a href="/" class="home-link navbar-item uk-margin-bottom uk-margin-top uk-margin-right uk-margin-left">
                 <i class="icn-home uk-margin-left"></i>
@@ -203,18 +203,18 @@
         </div>
 
         <div class="navbar-end">
-            <div class="image-link navbar-item uk-margin-large-right">
+            <div class="image-link navbar-item uk-margin-right">
                 <a href="/user/<%= currentAccount._id %>">
                     <img class="user-image" height="25" width="25" src="<%= currentAccount.pictureUrl%>">
                     <span><%= currentAccount.fullName %></span>
                 </a>
             </div>
-            <div class="navbar-item has-dropdown is-hoverable is-right">
+            <div class="navbar-item has-dropdown is-hoverable uk-margin-large-right">
                 <a class="navbar-link">
                     More
                 </a>
 
-                <div class="navbar-dropdown">
+                <div class="navbar-dropdown" style="align-items: center; text-align: center;">
                     <div class="navbar-item">
                         <a href="/user/<%= currentAccount._id %>">
                             My Account

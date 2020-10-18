@@ -1,8 +1,9 @@
+require("dotenv").config(); // Load .env config
+
 // Packages
 const express = require("express");
 const mongoose = require("mongoose");
 const bodyParser = require("body-parser");
-const dotenv = require("dotenv");
 const cookieParser = require("cookie-parser");
 const cache = require('express-redis-cache')({
     host: "localhost", port: 6379, auth_pass: process.env.redis_pass
@@ -10,7 +11,6 @@ const cache = require('express-redis-cache')({
 const app = express(); // Create express server
 const port = 3000 || process.env.PORT; // Define the ports
 
-dotenv.config(); // Load .env config
 app.use(bodyParser.json()); // Use body-parser to parse html
 app.use(bodyParser.urlencoded({ extended: false })); // Use body-parser to parse html
 app.use(cookieParser());

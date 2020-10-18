@@ -111,11 +111,9 @@ router.post("/login", async (req, res, next) => {
     const Account = await AccountSchema.findOne({ email: email, password: password })
         .then((doc) => {
             if (doc <= 0) {
-                console.log(doc);
                 return [];
             }
             else {
-                console.log(doc.email)
                 return doc;
             }
         })

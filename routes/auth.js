@@ -51,7 +51,7 @@ router.post("/register", async (req, res) => {
 
 // May be taken to the API folder
 // Route to check email when registering (Using it for AJAX requests)
-router.post("/checkEmail", async (req, res, next) => {
+router.post("/checkEmail", async (req, res) => {
     const inputEmail = await req.body.email;
     await AccountSchema.findOne({ email: inputEmail })
         .then(doc => {

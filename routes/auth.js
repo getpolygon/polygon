@@ -71,8 +71,6 @@ router.post("/checkEmail", async (req, res) => {
                 })
             }
             else {
-                console.log(inputEmail);
-                console.log(doc);
                 res.json({
                     "result": false
                 })

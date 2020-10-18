@@ -1,7 +1,7 @@
 require("mongoose");
 const router = require("express").Router();
 
-const AccountSchema = require("../models/account")
+const AccountSchema = require("../models/account");
 
 // Main page
 router.get("/", async (req, res) => {

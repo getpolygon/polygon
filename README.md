@@ -25,6 +25,7 @@ After you've done these steps you can open `localhost:3000` in your browser.
 ## Database(s) Used
 * MongoDB ( for documents )
 * Firebase Storage ( for images )
+* Redis ( for caching )
 
 ## Cookie parser Used
 * npm install `cookie-parser`
@@ -37,6 +38,7 @@ After you've done these steps you can open `localhost:3000` in your browser.
     "dotenv": "^8.2.0",
     "ejs": "^3.1.5",
     "express": "^4.17.1",
+    "express-redis-cache": "^1.1.3",
     "mongoose": "^5.10.9"
 },
 "devDependencies": {

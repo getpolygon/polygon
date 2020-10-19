@@ -1,0 +1,18 @@
+nav {
+    border-bottom: 2px solid rgb(150, 150, 150);
+    box-shadow: 0 0 2px 1px;
+}
+
+.user-image {
+    border-radius: 2rem;
+    object-fit: cover;
+    object-position: left;
+    width: 25px;
+    height: 25px;
+}
+
+.navbar-dropdown {
+    text-align: left;
+    align-items: flex-end;
+    justify-content: left;
+}

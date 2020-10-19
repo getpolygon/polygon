@@ -1,0 +1,19 @@
+html,
+body {
+  background-color: #FAFAFA !important;
+}
+
+.image-rounded {
+  border-radius: 5rem;
+  width: 100px;
+  height: 100px;
+  -o-object-fit: cover;
+     object-fit: cover;
+  -o-object-position: left;
+     object-position: left;
+}
+
+.card-container {
+  border-radius: 1rem;
+}
+/*# sourceMappingURL=style.css.map */

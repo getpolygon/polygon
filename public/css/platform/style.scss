@@ -1,0 +1,16 @@
+html, 
+body {
+    background-color: #FAFAFA !important;
+}
+
+.image-rounded {
+    border-radius: 5rem;
+    width: 100px;
+    height: 100px;
+    object-fit: cover;
+    object-position: left;
+}
+
+.card-container {
+    border-radius: 1rem;
+}

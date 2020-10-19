@@ -9,6 +9,12 @@ html, body {
   background-color: #FAFAFA;
 }
 
+.nameInput {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+}
+
 .error {
   color: #ff6464 !important;
 }

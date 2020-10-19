@@ -1,177 +1,6 @@
-<style>
-    .icn-home {
-        background:
-            linear-gradient(to left,
-                currentColor 5px, transparent 0) no-repeat 0 bottom/4px 2px,
-            linear-gradient(to left,
-                currentColor 5px, transparent 0) no-repeat right bottom/4px 2px;
-        box-sizing: border-box;
-        position: relative;
-        display: block;
-        transform: scale(var(--ggs, 1));
-        width: 18px;
-        height: 14px;
-        border: 2px solid;
-        border-top: 0;
-        border-bottom: 0;
-        border-top-right-radius: 3px;
-        border-top-left-radius: 3px;
-        border-bottom-right-radius: 0;
-        border-bottom-left-radius: 0;
-        margin-bottom: -2px
-    }
-
-    .icn-home::after,
-    .icn-home::before {
-        content: "";
-        display: block;
-        box-sizing: border-box;
-        position: absolute
-    }
-
-    .icn-home::before {
-        border-top: 2px solid;
-        border-left: 2px solid;
-        border-top-left-radius: 4px;
-        transform: rotate(45deg);
-        top: -5px;
-        border-radius: 3px;
-        width: 14px;
-        height: 14px;
-        left: 0
-    }
-
-    .icn-home::after {
-        width: 8px;
-        height: 10px;
-        border: 2px solid;
-        border-radius: 100px;
-        border-bottom-left-radius: 0;
-        border-bottom-right-radius: 0;
-        border-bottom: 0;
-        left: 3px;
-        bottom: 0
-    }
-
-    .icn-user-list {
-        display: block;
-        transform: scale(var(--ggs, 1));
-        box-sizing: border-box;
-        width: 20px;
-        height: 18px;
-        background:
-            linear-gradient(to left,
-                currentColor 8px,
-                transparent 0) no-repeat 14px 4px/6px 2px,
-            linear-gradient(to left,
-                currentColor 8px,
-                transparent 0) no-repeat 14px 8px/6px 2px,
-            linear-gradient(to left,
-                currentColor 8px,
-                transparent 0) no-repeat 14px 12px/6px 2px
-    }
-
-    .icn-user-list::after,
-    .icn-user-list::before {
-        content: "";
-        display: block;
-        box-sizing: border-box;
-        position: absolute;
-        border: 2px solid
-    }
-
-    .icn-user-list::before {
-        width: 8px;
-        height: 8px;
-        border-radius: 30px;
-        top: 0;
-        left: 2px
-    }
-
-    .icn-user-list::after {
-        width: 12px;
-        height: 9px;
-        border-bottom: 0;
-        border-top-left-radius: 3px;
-        border-top-right-radius: 3px;
-        top: 9px
-    }
-
-    .icn-search {
-        box-sizing: border-box;
-        position: relative;
-        display: block;
-        transform: scale(var(--ggs, 1));
-        width: 16px;
-        height: 16px;
-        border: 2px solid;
-        border-radius: 100%;
-        margin-left: -4px;
-        margin-top: -4px
-    }
-
-    .icn-search::after {
-        content: "";
-        display: block;
-        box-sizing: border-box;
-        position: absolute;
-        border-radius: 3px;
-        width: 2px;
-        height: 8px;
-        background: currentColor;
-        transform: rotate(-45deg);
-        top: 10px;
-        left: 12px
-    }
-
-    nav {
-        border-bottom: 2px solid rgb(150, 150, 150);
-        z-index: 999;
-        box-shadow: 0 0 2px 1px;
-    }
-
-    .sticky {
-        position: fixed;
-        top: 0;
-        width: 100%;
-    }
-
-    .user-image {
-        border-radius: 2rem;
-        object-fit: cover;
-        object-position: left;
-        width: 25px;
-        height: 25px;
-    }
-
-    .navbar-item {
-        text-align: center;
-        justify-content: center;
-        align-items: center;
-    }
-
-    .account-container {
-        position: absolute;
-        right: 0%;
-        top: 0%;
-        padding-right: 1.5rem;
-    }
-
-    .dropdown {
-        position: absolute;
-        right: 0%;
-        top: 0%;
-    }
-
-    .image-link {
-        height: inherit;
-    }
-</style>
-
 <nav class="navbar" role="navigation" aria-label="main navigation">
     <div class="navbar-brand">
         <a class="navbar-item" href="/">
-            <!-- <img src="/img/logo.png" width="112" height="28"> -->
             <h4 class="title is-4">ArmSocial</h4>
         </a>
 
@@ -185,33 +14,32 @@
 
     <div id="navbar" class="navbar-menu">
         <div class="navbar-start">
-            <a href="/" class="home-link navbar-item uk-margin-bottom uk-margin-top uk-margin-right uk-margin-left">
-                <i class="icn-home uk-margin-left"></i>
-                <p class="uk-margin-left">Home</p>
+            <a href="/" class="home-link navbar-item ">
+                <svg id="homeSVG" style="width: 25px; height: 25px">
+                    <use xlink:href='/svg/all.svg#gg-home-alt' /></svg>
+                Home
             </a>
 
-            <a class="users-link navbar-item uk-margin-top uk-margin-bottom" href="/users">
-                <i class="icn-user-list uk-margin-left"></i>
-                <p class="uk-margin-left">Users</p>
+            <a class="navbar-item " href="/users">
+                <svg id="usersSVG" style="width: 25px; height: 25px">
+                    <use xlink:href='/svg/all.svg#gg-user-list' /></svg>
+                Users
             </a>
 
-            <a class="search-link navbar-item uk-margin-top uk-margin-bottom" href="/search">
-                <i class="icn-search uk-margin-left"></i>
-                <p class="uk-margin-left">Search</p>
+            <a class="navbar-item " href="/search">
+                <svg id="searchSVG" style="width: 25px; height: 25px">
+                    <use xlink:href='/svg/all.svg#gg-search' /></svg>
+                Search
             </a>
-        </div>
 
-        <div class="navbar-end">
-            <div class="image-link navbar-item uk-margin-right">
-                <a href="/user/<%= currentAccount._id %>">
-                    <img class="user-image" height="25" width="25" src="<%= currentAccount.pictureUrl%>">
-                    <span><%= currentAccount.fullName %></span>
-                </a>
-            </div>
-            <div class="navbar-item has-dropdown is-hoverable uk-margin-large-right">
+            <!-- Dropdown -->
+            <div class="navbar-item has-dropdown is-hoverable ">
                 <a class="navbar-link">
+                    <svg id="moreSVG" style="width: 25px; height: 25px">
+                        <use xlink:href='/svg/all.svg#gg-more-alt' /></svg>
                     More
                 </a>
+
 
                 <div class="navbar-dropdown" style="align-items: center; text-align: center;">
                     <div class="navbar-item">
@@ -233,5 +61,13 @@
                 </div>
             </div>
         </div>
+<!-- 
+        <div class="navbar-end">
+            <div class="image-link navbar-item uk-margin-right">
+                <a href="/user/<%#= currentAccount._id %>">
+                    <%#= currentAccount.fullName %>
+                </a>
+            </div>
+        </div> -->
     </div>
 </nav>

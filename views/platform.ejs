@@ -14,17 +14,24 @@
     <%- include ("./partials/nav") %>
 
 
-    <div class="container">
-        <div class="createPost" id="createPost">
-
+    <div style="align-content:center; text-align: center;" class="createPost-container container is-max-desktop uk-margin-large-top" id="createPost">
+        <h2 align="left" style="padding: 0px 35px;" class="title is-2">Create a post</h2>
+        <div style="padding: 0px 2em;" class="field" id="create">
+            <div class="control">
+                <textarea name="text" id="postTextarea" required class="textarea is-medium has-fixed-size"
+                    placeholder="What are you thinking about, <%= currentAccount.firstName %>?"></textarea>
+            </div>
         </div>
+        <button style="padding: 0px 30%" class="button is-info" id="postButton">Post</button>
+    </div>
 
-        <div class="posts">
 
-        </div>
+    <div style="width:100%; padding: 0px 2em; align-items: left; justify-content: left; text-align: left;" class="posts container is-max-desktop uk-margin-top" uk-scrollspy="target: > div; cls: uk-animation-fade; delay: 150" id="posts">
+
     </div>
 
     <%- include ("./partials/jsPartials") %>
+    <script src="/js/platform/script.js"></script>
 </body>
 
 </html>

@@ -1,0 +1,26 @@
+nav {
+  border-bottom: 2px solid #969696;
+  -webkit-box-shadow: 0 0 2px 1px;
+          box-shadow: 0 0 2px 1px;
+}
+
+.user-image {
+  border-radius: 2rem;
+  -o-object-fit: cover;
+     object-fit: cover;
+  -o-object-position: left;
+     object-position: left;
+  width: 25px;
+  height: 25px;
+}
+
+.navbar-dropdown {
+  text-align: left;
+  -webkit-box-align: end;
+      -ms-flex-align: end;
+          align-items: flex-end;
+  -webkit-box-pack: left;
+      -ms-flex-pack: left;
+          justify-content: left;
+}
+/*# sourceMappingURL=style.css.map */

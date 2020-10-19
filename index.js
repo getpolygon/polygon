@@ -1,43 +1,60 @@
-require("dotenv").config(); // Load .env config
+// Load .env config
+require("dotenv").config();
 
 // Packages
 const express = require("express");
 const mongoose = require("mongoose");
 const bodyParser = require("body-parser");
 const cookieParser = require("cookie-parser");
+// Connect to redis
 const cache = require('express-redis-cache')({
     host: "localhost", port: 6379, auth_pass: process.env.redis_pass
 });
-const app = express(); // Create express server
-const port = 3000 || process.env.PORT; // Define the ports
+const app = express();
+const port = 3000 || process.env.PORT;
 
-app.use(bodyParser.json()); // Use body-parser to parse html
-app.use(bodyParser.urlencoded({ extended: false })); // Use body-parser to parse html
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cookieParser());
-app.use(express.static("./public")); // Express Static
-app.set("view engine", "ejs"); // EJS
-app.set("views", "./views"); // Default view folder
+app.use(express.static("./public"));
+app.set("view engine", "ejs");
+app.set("views", "./views");
 
-let authRoute = require("./routes/auth");
-let platformRoute = require("./routes/platform");
-let usersRoute = require("./routes/users");
+const apiRoute = require("./routes/api");
+const authRoute = require("./routes/auth");
+const usersRoute = require("./routes/users");
+const platformRoute = require("./routes/platform");
+const checkEmailRoute = require("./api/checkEmail");
+const createPostRoute = require("./api/createPost");
+const fetchPostsRoute = require("./api/fetchPosts");
 
 app.use("/", platformRoute);
 app.use("/auth", authRoute);
 app.use("/users", usersRoute);
 
-app.get("*", /*Caching error route to redis*/ cache.route(), (_req, res) => {
+app.use("/api", apiRoute);
+app.use("/api/checkEmail", checkEmailRoute);
+app.use("/api/createPost", createPostRoute);
+app.use("/api/fetchPosts", fetchPostsRoute);
+
+// cache.route() -> Caching the error route to redis
+app.get("*", cache.route(), (_req, res) => {
     res.redirect("/static/error.html");
 });
 
-cache.once("connected", () => {  // Check redis connection (OK)
+// If redis connection ok
+cache.once("connected", () => {
     console.log("Redis connection: OK, port: %s", 6379);
 });
-cache.once("error", (e) => { // redis connection on error
+// If redis connection error
+cache.once("error", (e) => {
     console.log("Redis Connection: Error\n%s", e);
 });
-mongoose.connect(process.env.mongo, { useNewUrlParser: true, useUnifiedTopology: true }) // Connect to mongoDB
+
+// Connect to MongoDB
+mongoose.connect(process.env.mongo, { useNewUrlParser: true, useUnifiedTopology: true })
     .then(console.log("MongoDB Connection: OK"))
     .catch((e) => (console.log("MongoDB Connection: Error\n%s"), e));
 
-app.listen(port, () => console.log(`Server listening at port ${port}`)); // Start the server at ${port}
+// Start the server at ${port}
+app.listen(port, () => console.log(`Server listening at port ${port}`));

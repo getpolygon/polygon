@@ -18,8 +18,19 @@
             <form class="form uk-margin-left uk-margin-right" id="form" action="/auth/register" method="POST">
                 <h1 align="left" class="title is-1 uk-margin-bottom">Welcome to ArmSocial</h1>
 
-                <input required id="fullName" class="input uk-margin-bottom" name="fullName" type="text"
-                    placeholder="Full Name">
+                <div class="nameInput" id="nameInput">
+                    <input required id="firstName" class="input uk-margin-bottom" name="firstName" type="text"
+                        placeholder="First Name">
+
+                    &nbsp;
+                    &nbsp;
+                    &nbsp;
+                    &nbsp;
+
+                    <input required id="lastName" type="text" class="input uk-margin-bottom" name="lastName"
+                        placeholder="Last Name">
+                </div>
+
 
                 <div id="emailStatus" class="emailDuplicate"></div>
 
@@ -74,7 +85,7 @@
         firebase.initializeApp(firebaseConfig);
 
     </script>
-    
+
     <script src="/js/register/script.js"></script>
     <% include ("./partials/jsPartials") %>
 </body>

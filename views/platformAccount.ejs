@@ -29,13 +29,12 @@
                 <i class="gg-lock"></i>
             </div>
             <%}%>
-        </h2>
-
-        <% if (platformAccount.private == false) {%>
+            <% if (platformAccount.private == false) {%>
             <div class="privacy">
                 <i class="gg-lock-unlock"></i>
             </div>
             <%}%>
+        </h2>
         <h3 class="title is-3" id="bio">Bio: <%= platformAccount.bio %></h3>
             <h4 class="title is-4">ID: <a href="#"><%= platformAccount._id%></a></h4>
             <h6 class="title is-6 uk-margin-top" id="redirect"><a href="/">Go back to the platform</a></h6>

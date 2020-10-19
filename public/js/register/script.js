@@ -113,7 +113,7 @@ submitButton.addEventListener("click", checkForm);
 privateCheck.addEventListener("click", checkboxValue);
 // Handling email change event
 email.addEventListener("keyup", async () => {
-    await fetch("checkEmail",
+    await fetch("/api/checkEmail",
         {
             method: "POST",
             headers: { 'Content-Type': 'application/x-www-form-urlencoded' },

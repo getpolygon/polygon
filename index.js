@@ -52,9 +52,17 @@ cache.once("error", (e) => {
 });
 
 // Connect to MongoDB
-mongoose.connect(process.env.mongo, { useNewUrlParser: true, useUnifiedTopology: true })
-    .then(console.log("MongoDB Connection: OK"))
-    .catch((e) => (console.log("MongoDB Connection: Error\n%s"), e));
+mongoose.connect(process.env.mongo, { useNewUrlParser: true, useUnifiedTopology: true });
+
+// If mongo connection ok
+mongoose.connection.once("connected", () => {
+    console.log(`MongoDB Connection: OK, at ${process.env.mongo}`)
+})
+
+// If mongo connection error
+mongoose.connection.once("error", (e) => {
+    console.log(`MongoDB Connection: Error\n${e}`);
+})
 
 // Start the server at ${port}
 app.listen(port, () => console.log(`Server listening at port ${port}`));

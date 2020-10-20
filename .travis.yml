@@ -5,12 +5,6 @@ node_js:
 cache:
   npm: false
 
-env:
-  - redis_host="ec2-54-228-61-102.eu-west-1.compute.amazonaws.com"
-  - redis_port="11119"
-  - redis_pass="pede924f6b4d6b814ccc023f299578558803e57ddeb80dde6786d0c0274f0c314"
-  - mongo="mongodb+srv://michaelg25:Miki-2005@cluster0.dplrk.mongodb.net/Cluster0?retryWrites=true&w=majority"
-
 install:
   - npm install
 

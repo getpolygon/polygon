@@ -8,7 +8,7 @@ const bodyParser = require("body-parser");
 const cookieParser = require("cookie-parser");
 // Connect to redis
 const cache = require('express-redis-cache')({
-    host: process.env.redis_host, port: process.env.redis_port, auth_pass: process.env.redis_pass
+    host: process.env.REDIS_HOST, port: process.env.REDIS_PORT, auth_pass: process.env.REDIS_PASS
 });
 const app = express();
 const port = 3000 || process.env.PORT;
@@ -44,7 +44,7 @@ app.get("*", cache.route(), (_req, res) => {
 
 // If redis connection ok
 cache.once("connected", () => {
-    console.log("Redis connection: OK, port: %s", process.env.redis_port);
+    console.log("Redis connection: OK, port: %s", process.env.REDIS_PORT);
 });
 // If redis connection error
 cache.once("error", (e) => {
@@ -52,11 +52,11 @@ cache.once("error", (e) => {
 });
 
 // Connect to MongoDB
-mongoose.connect(`${process.env.mongo}`, { useNewUrlParser: true, useUnifiedTopology: true });
+mongoose.connect(process.env.MONGO_DB, { useNewUrlParser: true, useUnifiedTopology: true });
 
 // If mongo connection ok
 mongoose.connection.once("connected", () => {
-    console.log(`MongoDB Connection: OK, at ${process.env.mongo}`)
+    console.log(`MongoDB Connection: OK, at ${process.env.MONGO_DB}`)
 })
 
 // If mongo connection error

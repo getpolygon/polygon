@@ -1,0 +1,189 @@
+@import url("./hint.css/hint.min.css");
+*,
+*::before,
+**::after {
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  padding: 0;
+  margin: 0;
+  font-family: Arial, Helvetica, sans-serif;
+}
+
+nav.ncss-navbar-centered {
+  z-index: 999;
+  width: 100vw;
+  top: 0%;
+  height: inherit;
+  font-size: 2rem;
+  -webkit-box-shadow: 0px 0px 34px 1px rgba(75, 75, 75, 0.2);
+          box-shadow: 0px 0px 34px 1px rgba(75, 75, 75, 0.2);
+  white-space: normal;
+  -webkit-box-align: center;
+      -ms-flex-align: center;
+          align-items: center;
+  -ms-flex-line-pack: center;
+      align-content: center;
+  -webkit-box-pack: center;
+      -ms-flex-pack: center;
+          justify-content: center;
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -ms-flex-wrap: wrap;
+      flex-wrap: wrap;
+  position: fixed;
+  align-items: center;
+  background-color: #ffffff;
+}
+
+nav.ncss-navbar-centered .ncss-navbar-brand {
+  position: absolute;
+  left: 0%;
+  -webkit-box-align: center;
+      -ms-flex-align: center;
+          align-items: center;
+  text-align: left;
+  -webkit-box-pack: left;
+      -ms-flex-pack: left;
+          justify-content: left;
+  text-align: left;
+  padding-top: 30px;
+  padding-left: 15px;
+  padding-bottom: 20px;
+}
+
+nav.ncss-navbar-centered .ncss-navbar-brand img {
+  max-height: 38px;
+  max-width: 38px;
+}
+
+nav.ncss-navbar-centered a {
+  text-decoration: none;
+}
+
+nav.ncss-navbar-centered .ncss-navbar-item {
+  font-size: 1rem;
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  text-align: center;
+  -webkit-box-pack: center;
+      -ms-flex-pack: center;
+          justify-content: center;
+  -webkit-box-align: center;
+      -ms-flex-align: center;
+          align-items: center;
+  margin-top: 10px;
+  margin-left: 10px;
+  margin-bottom: 10px;
+  padding: 10px 30px;
+  color: #333333;
+  -webkit-transition: ease-in-out 100ms;
+  transition: ease-in-out 100ms;
+}
+
+nav.ncss-navbar-centered .ncss-navbar-item:hover {
+  text-align: center;
+  -webkit-box-pack: center;
+      -ms-flex-pack: center;
+          justify-content: center;
+  -webkit-box-align: center;
+      -ms-flex-align: center;
+          align-items: center;
+  background-color: #f0f0f0;
+  border-radius: 0.4rem;
+  -webkit-transition: ease-in-out 100ms;
+  transition: ease-in-out 100ms;
+}
+
+@media screen and (max-width: 425px) {
+  nav.ncss-navbar-centered {
+    height: inherit;
+    width: 100%;
+    top: 0%;
+    height: inherit;
+    font-size: 2rem;
+    -webkit-box-shadow: 0px 0px 34px 1px rgba(75, 75, 75, 0.2);
+            box-shadow: 0px 0px 34px 1px rgba(75, 75, 75, 0.2);
+    white-space: normal;
+    -webkit-box-align: center;
+        -ms-flex-align: center;
+            align-items: center;
+    -ms-flex-line-pack: center;
+        align-content: center;
+    -webkit-box-pack: center;
+        -ms-flex-pack: center;
+            justify-content: center;
+    display: -webkit-box;
+    display: -ms-flexbox;
+    display: flex;
+    -ms-flex-wrap: wrap;
+        flex-wrap: wrap;
+    position: fixed;
+    align-items: center;
+    background-color: #ffffff;
+  }
+  nav.ncss-navbar-centered .ncss-navbar-brand {
+    position: absolute;
+    left: 0%;
+    -webkit-box-align: center;
+        -ms-flex-align: center;
+            align-items: center;
+    text-align: left;
+    -webkit-box-pack: left;
+        -ms-flex-pack: left;
+            justify-content: left;
+    text-align: left;
+    padding-top: 30px;
+    padding-left: 15px;
+    padding-right: 15px;
+    padding-bottom: 20px;
+  }
+  nav.ncss-navbar-centered .ncss-navbar-brand img {
+    max-height: 38px;
+    max-width: 38px;
+  }
+  nav.ncss-navbar-centered .ncss-navbar-brand p, nav.ncss-navbar-centered .ncss-navbar-brand span, nav.ncss-navbar-centered .ncss-navbar-brand h1, nav.ncss-navbar-centered .ncss-navbar-brand h2, nav.ncss-navbar-centered .ncss-navbar-brand h3, nav.ncss-navbar-centered .ncss-navbar-brand h4, nav.ncss-navbar-centered .ncss-navbar-brand h5, nav.ncss-navbar-centered .ncss-navbar-brand h6 {
+    display: none;
+  }
+  nav.ncss-navbar-centered a {
+    text-decoration: none;
+  }
+  nav.ncss-navbar-centered .ncss-navbar-item {
+    font-size: 1rem;
+    display: -webkit-box;
+    display: -ms-flexbox;
+    display: flex;
+    text-align: center;
+    -webkit-box-pack: center;
+        -ms-flex-pack: center;
+            justify-content: center;
+    -webkit-box-align: center;
+        -ms-flex-align: center;
+            align-items: center;
+    margin-top: 12px;
+    margin-left: 10px;
+    margin-bottom: 10px;
+    padding: 10px 15px;
+    color: #333333;
+    -webkit-transition: ease-in-out 100ms;
+    transition: ease-in-out 100ms;
+  }
+  nav.ncss-navbar-centered .ncss-navbar-item:hover {
+    text-align: center;
+    -webkit-box-pack: center;
+        -ms-flex-pack: center;
+            justify-content: center;
+    -webkit-box-align: center;
+        -ms-flex-align: center;
+            align-items: center;
+    background-color: #f0f0f0;
+    border-radius: 0.4rem;
+    -webkit-transition: ease-in-out 100ms;
+    transition: ease-in-out 100ms;
+  }
+}
+/*# sourceMappingURL=style.css.map */

@@ -1,12 +1,8 @@
-// Load .env config
 require("dotenv").config();
-
-// Packages
 const express = require("express");
 const mongoose = require("mongoose");
 const bodyParser = require("body-parser");
 const cookieParser = require("cookie-parser");
-// Connect to redis
 const cache = require('express-redis-cache')({
     host: process.env.REDIS_HOST, port: process.env.REDIS_PORT, auth_pass: process.env.REDIS_PASS
 });
@@ -37,32 +33,23 @@ app.use("/api/checkEmail", checkEmailRoute);
 app.use("/api/createPost", createPostRoute);
 app.use("/api/fetchPosts", fetchPostsRoute);
 
-// cache.route() -> Caching the error route to redis
 app.get("*", cache.route(), (_req, res) => {
     res.redirect("/static/error.html");
 });
 
-// If redis connection ok
 cache.once("connected", () => {
     console.log("Redis connection: OK, port: %s", process.env.REDIS_PORT);
 });
-// If redis connection error
 cache.once("error", (e) => {
     console.log("Redis Connection: Error\n%s", e);
 });
 
-// Connect to MongoDB
 mongoose.connect(process.env.MONGO_DB, { useNewUrlParser: true, useUnifiedTopology: true });
-
-// If mongo connection ok
 mongoose.connection.once("connected", () => {
     console.log(`MongoDB Connection: OK, at ${process.env.MONGO_DB}`)
-})
-
-// If mongo connection error
+});
 mongoose.connection.once("error", (e) => {
     console.log(`MongoDB Connection: Error\n${e}`);
-})
+});
 
-// Start the server at ${port}
 app.listen(port, () => console.log(`Server listening at port ${port}`));

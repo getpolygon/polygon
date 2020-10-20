@@ -15,29 +15,41 @@
 
     <%- include ("./partials/nav") %>
 
-    <div class="account uk-margin-xlarge-top">
+    <div class="account" style="margin-top: 10rem;">
 
-        <div class="picture uk-margin-xlarge-top">
-            <img class="profile-picture" src="<%= platformAccount.pictureUrl %>" width="128" height="128"
-                alt="profile_picture">
+        <div class="account-picture">
+            <img class="profile-picture" src="<%= platformAccount.pictureUrl %>" alt="profile_picture">
         </div>
 
-        <h2 class="title is-2 uk-margin-top" id="fullName">
-            <%= platformAccount.fullName %>
-            <% if (platformAccount.private == true) {%>
-            <div class="privacy">
-                <i class="gg-lock"></i>
-            </div>
-            <%}%>
-            <% if (platformAccount.private == false) {%>
-            <div class="privacy">
-                <i class="gg-lock-unlock"></i>
-            </div>
-            <%}%>
-        </h2>
-        <h3 class="title is-3" id="bio">Bio: <%= platformAccount.bio %></h3>
-            <h4 class="title is-4">ID: <a href="#"><%= platformAccount._id%></a></h4>
-            <h6 class="title is-6 uk-margin-top" id="redirect"><a href="/">Go back to the platform</a></h6>
+        <div class="account-name">
+            <h2 align="center" class="title is-2 uk-margin-top" id="fullName">
+                <%= platformAccount.fullName %>
+
+                <% if (platformAccount.private == true) {%>
+                <h5 class="title is-5" align="center">
+                    Private Account
+                    <svg style='width: 25px; height: 25px;'>
+                        <use xlink:href='/svg/all.svg#gg-lock' /></svg>
+                </h5>
+                <%}%>
+
+                <% if (platformAccount.private == false) {%>
+                <h5 class="title is-5" align="center">
+                    Public Account
+                    <svg style='width: 25px; height: 25px;'>
+                        <use xlink:href='/svg/all.svg#gg-lock-unlock' /></svg>
+                </h5>
+                <%}%>
+            </h2>
+        </div>
+
+        <div class="account-info uk-margin-top">
+            <p align="center" class="account-id subtitle is-5">ID <a href="#"><%= platformAccount._id%></a></p>
+            <p align="center" class="account-bio subtitle is-5 uk-margin-top" id="bio"><%= platformAccount.bio %></p>
+        </div>
+
+        <hr class="uk-divider-solid">
+
     </div>
 
 

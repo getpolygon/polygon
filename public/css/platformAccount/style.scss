@@ -1,30 +1,19 @@
-.profile-picture {
-    border-radius: 5rem;
-    width: 128px;
-    height: 128px;
-    object-fit: cover;
-    object-position: left;
-}
-
-.picture {
-    text-align: center;
-    justify-content: center;
-    align-items: center;
-}
-
 .account {
     align-items: center;
-}
-
-// TODO: Update the privacy icons so that they have he right overflow and position in mobile and PC
-.privacy {
-    display: block;
-    justify-content: center;
-    align-items: center;
-    position: absolute;
-    width: 5rem;
-    height: 5rem;
-    right: 0%;
-    bottom: 36.5%;
-    margin-right: 30rem;
+    .account-picture {
+        text-align: center;
+        justify-content: center;
+        align-items: center;
+    
+        img.profile-picture {
+            border-radius: 5rem;
+            width: 128px;
+            height: 128px;
+            object-fit: cover;
+            object-position: center;
+        }
+    }
+    .account-info {
+        padding: 0 10px;
+    }
 }

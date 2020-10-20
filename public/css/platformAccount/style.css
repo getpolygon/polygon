@@ -1,14 +1,10 @@
-.profile-picture {
-  border-radius: 5rem;
-  width: 128px;
-  height: 128px;
-  -o-object-fit: cover;
-     object-fit: cover;
-  -o-object-position: left;
-     object-position: left;
+.account {
+  -webkit-box-align: center;
+      -ms-flex-align: center;
+          align-items: center;
 }
 
-.picture {
+.account .account-picture {
   text-align: center;
   -webkit-box-pack: center;
       -ms-flex-pack: center;
@@ -18,25 +14,17 @@
           align-items: center;
 }
 
-.account {
-  -webkit-box-align: center;
-      -ms-flex-align: center;
-          align-items: center;
+.account .account-picture img.profile-picture {
+  border-radius: 5rem;
+  width: 128px;
+  height: 128px;
+  -o-object-fit: cover;
+     object-fit: cover;
+  -o-object-position: center;
+     object-position: center;
 }
 
-.privacy {
-  display: block;
-  -webkit-box-pack: center;
-      -ms-flex-pack: center;
-          justify-content: center;
-  -webkit-box-align: center;
-      -ms-flex-align: center;
-          align-items: center;
-  position: absolute;
-  width: 5rem;
-  height: 5rem;
-  right: 0%;
-  bottom: 36.5%;
-  margin-right: 30rem;
+.account .account-info {
+  padding: 0 10px;
 }
 /*# sourceMappingURL=style.css.map */

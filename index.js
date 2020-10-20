@@ -52,7 +52,7 @@ cache.once("error", (e) => {
 });
 
 // Connect to MongoDB
-mongoose.connect(process.env.mongodb, { useNewUrlParser: true, useUnifiedTopology: true });
+mongoose.connect(`${process.env.mongo}`, { useNewUrlParser: true, useUnifiedTopology: true });
 
 // If mongo connection ok
 mongoose.connection.once("connected", () => {

@@ -108,11 +108,8 @@ function checkForm() {
   }
 }
 
-avatarInput.addEventListener("change", uploadFile);
-submitButton.addEventListener("click", checkForm);
-privateCheck.addEventListener("click", checkboxValue);
-email.addEventListener("keyup", async () => {
-  await fetch("/api/checkEmail",
+function checkEmail() {
+  fetch("/api/checkEmail",
     {
       method: "POST",
       headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
@@ -120,14 +117,12 @@ email.addEventListener("keyup", async () => {
     })
     .then((res) => { return res.json() })
     .then((response) => {
-      let email = document.getElementById("email");
+
       let password = document.getElementById("password");
       let bio = document.getElementById("bio");
 
-      // If the API responds with true (duplicate)
       if (response.result == true) {
-
-        // Disallow user to create an account
+        // Disallow user to create an account if found a duplicate ( if the email is valid )
         emailStatus.innerText = "There is an account with this email";
         emailStatus.classList.remove("ok");
         emailStatus.classList.add("error");
@@ -139,36 +134,41 @@ email.addEventListener("keyup", async () => {
         privateCheck.setAttribute("disabled", true);
         submitButton.setAttribute("disabled", true);
       }
-      // If the API responds with false (not duplicate or null)
-      else {
 
-        // If the email input value doesn't include "@" or "." signs disallow the user to create an account 
-        if (!email.value.includes("@") || !email.value.includes(".")) {
-          emailStatus.innerText = "Enter a valid email";
-          emailStatus.classList.add("error");
-          emailStatus.classList.remove("ok");
+      if (response.result == false) {
 
-          // Disable all the inputs
-          password.setAttribute("disabled", true);
-          bio.setAttribute("disabled", true);
-          avatarInput.setAttribute("disabled", true);
-          privateCheck.setAttribute("disabled", true);
-          submitButton.setAttribute("disabled", true);
-        }
+        // Allow the user to create an account if duplicates weren't found ( if the email is valid )
+        emailStatus.innerText = "You can use this email";
+        emailStatus.classList.remove("error");
+        emailStatus.classList.add("ok");
 
-        // If there are all the required characters let the person create an account
-        else {
-          emailStatus.innerText = "You can use this email";
-          emailStatus.classList.remove("error");
-          emailStatus.classList.add("ok");
-
-          // Enable all the inputs
-          password.removeAttribute("disabled");
-          bio.removeAttribute("disabled");
-          avatarInput.removeAttribute("disabled");
-          privateCheck.removeAttribute("disabled");
-          submitButton.removeAttribute("disabled");
-        }
+        // Enable all the inputs
+        password.removeAttribute("disabled");
+        bio.removeAttribute("disabled");
+        avatarInput.removeAttribute("disabled");
+        privateCheck.removeAttribute("disabled");
+        submitButton.removeAttribute("disabled");
       }
-    })
-})
+
+      if (response.emailValidity == false) {
+
+        // Disallow the user to create an account if the email is not valid
+        emailStatus.innerText = "Please enter a valid email";
+        emailStatus.classList.remove("ok");
+        emailStatus.classList.add("error");
+
+        // Disable all the inputs
+        password.setAttribute("disabled", true);
+        bio.setAttribute("disabled", true);
+        avatarInput.setAttribute("disabled", true);
+        privateCheck.setAttribute("disabled", true);
+        submitButton.setAttribute("disabled", true);
+      }
+    }
+    )
+}
+
+email.addEventListener('keyup', checkEmail);
+avatarInput.addEventListener("change", uploadFile);
+privateCheck.addEventListener("click", checkboxValue);
+submitButton.addEventListener("click", checkForm);

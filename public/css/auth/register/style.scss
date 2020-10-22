@@ -1,22 +1,23 @@
-html,body {
-    background-color: #F0F2F5;
+html,
+body {
+  background-color: #f0f2f5;
 }
 
 .main {
-    width: 100%;
-    height: 100%;
-    margin: 5% auto;
-    background-color: #F0F2F5;
+  width: 100%;
+  height: 100%;
+  margin: 5% auto;
+  background-color: #f0f2f5;
 }
 
 .nameInput {
-    display: flex;
+  display: flex;
 }
 
 .error {
-    color: rgb(255, 100, 100) !important;
+  color: rgb(255, 100, 100) !important;
 }
 
 .ok {
-    color: rgb(10, 180, 40) !important;
+  color: rgb(10, 180, 40) !important;
 }

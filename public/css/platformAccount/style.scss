@@ -1,19 +1,19 @@
 .account {
+  align-items: center;
+  .account-picture {
+    text-align: center;
+    justify-content: center;
     align-items: center;
-    .account-picture {
-        text-align: center;
-        justify-content: center;
-        align-items: center;
-    
-        img.profile-picture {
-            border-radius: 5rem;
-            width: 128px;
-            height: 128px;
-            object-fit: cover;
-            object-position: center;
-        }
+
+    img.profile-picture {
+      border-radius: 5rem;
+      width: 128px;
+      height: 128px;
+      object-fit: cover;
+      object-position: center;
     }
-    .account-info {
-        padding: 0 10px;
-    }
+  }
+  .account-info {
+    padding: 0 10px;
+  }
 }

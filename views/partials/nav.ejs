@@ -1,102 +1,25 @@
-<!-- <nav class="navbar" role="navigation" aria-label="main navigation">
-    <div class="navbar-brand">
-        <a class="navbar-item" href="/">
-            <img src="/svg/logo.svg" alt="logo">
-        </a>
+<nav style="display: flex">
+  <ul>
+    <li>
+      <a href="/"> Home </a>
+    </li>
 
-        <a role="button" id="navbar-burger" class="navbar-burger burger" aria-label="menu" aria-expanded="false"
-            data-target="navbar">
-            <span aria-hidden="true"></span>
-            <span aria-hidden="true"></span>
-            <span aria-hidden="true"></span>
-        </a>
-    </div>
+    <li>
+      <a href="/users"> Users </a>
+    </li>
 
-    <div id="navbar" class="navbar-menu">
-        <div class="navbar-start">
-            <a href="/" class="home-link navbar-item ">
-                <svg id="homeSVG" style="width: 25px; height: 25px">
-                    <use xlink:href='/svg/all.svg#gg-home-alt' /></svg>
-                Home
-            </a>
+    <li>
+      <a href="/user/<%= currentAccount._id %>"> My Account </a>
+    </li>
 
-            <a class="navbar-item " href="/users">
-                <svg id="usersSVG" style="width: 25px; height: 25px">
-                    <use xlink:href='/svg/all.svg#gg-user-list' /></svg>
-                Users
-            </a>
-
-            <a class="navbar-item " href="/search">
-                <svg id="searchSVG" style="width: 25px; height: 25px">
-                    <use xlink:href='/svg/all.svg#gg-search' /></svg>
-                Search
-            </a>
-
-             Dropdown 
-            <div class="navbar-item has-dropdown is-hoverable ">
-                <a class="navbar-link">
-                    <svg id="moreSVG" style="width: 25px; height: 25px">
-                        <use xlink:href='/svg/all.svg#gg-more-alt' /></svg>
-                    More
-                </a>
-
-
-                <div class="navbar-dropdown" style="align-items: center; text-align: center;">
-                    <div class="navbar-item">
-                        <a href="/user/<%= currentAccount._id %>">
-                            My Account
-                        </a>
-                    </div>
-                    <div class="navbar-item">
-                        <a href="/user/settings">
-                            Settings
-                        </a>
-                    </div>
-                    <hr class="navbar-divider">
-                    <div class="navbar-item">
-                        <form action="/logout/<%#= currentAccount._id %>" method="POST">
-                            <button class="button is-danger" type="submit">Logout</button>
-                        </form>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-</nav> -->
-
-<nav class="ncss-navbar-centered">
-
-    <div style="padding-bottom: 2rem; margin-right: 2rem;" class="ncss-navbar-brand">
-        <img src="https://facebookbrand.com/wp-content/uploads/2019/04/f_logo_RGB-Hex-Blue_512.png?w=512&h=512" alt="">
-    </div>
-
-    <a style="display: block;" href="/" class="ncss-navbar-item hint--bottom" aria-label="Home">
-        <svg style="width: 25px; height: 25px">
-            <use xlink:href="/svg/all.svg#gg-home-alt">
-        </svg>
-    </a>
-
-
-    <a style="display: block;" href="/users" class="ncss-navbar-item hint--bottom" aria-label="Users">
-        <svg style="width: 25px; height: 25px">
-            <use xlink:href="/svg/all.svg#gg-user-list">
-        </svg>
-    </a>
-
-    <a style="display: block;" href="/user/<%= currentAccount._id %>" class="ncss-navbar-item hint--bottom" aria-label="My Account">
-        <svg style="width: 25px; height: 25px">
-            <use xlink:href="/svg/all.svg#gg-user">
-        </svg>
-    </a>
-
-    <a style="display: block;" class="ncss-navbar-item hint--bottom" aria-label="Log out">
-        <form action="/logout/<%= currentAccount._id %>" method="POST">
-            <button type="submit" style="cursor: pointer;background-color: transparent; border: none; outline: none;">
-                <svg style="width: 25px; height:25px">
-                    <use xlink:href="/svg/all.svg#gg-log-out" />
-                </svg>
-            </button>
-        </form>
-    </a>
-
+    <li>
+      <form
+        id="logout"
+        method="POST"
+        action="/logout/<%= currentAccount._id %>"
+      >
+        <a href="#" id="submitLogout" type="submit"> Logout </a>
+      </form>
+    </li>
+  </ul>
 </nav>

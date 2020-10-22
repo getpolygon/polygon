@@ -1,8 +1,0 @@
-[
-    {
-        "Dev-Help-1": {
-            "Help": "To use svg sprites in html with css-gg this is the way.",
-            "Code": "<svg style='width: 50px; height: 50px;'><use xlink:href='/svg/all.svg#gg-lock'/></svg>"
-        }
-    }
-]

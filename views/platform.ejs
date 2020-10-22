@@ -1,37 +1,47 @@
 <!DOCTYPE html>
 <html lang="en">
-
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="/css/platform/style.css">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="/css/platform/style.css" />
     <%- include ("./partials/cssPartials") %>
     <title>ArmSocial | Platform</title>
-</head>
+  </head>
 
-<body>
-
+  <body>
     <%- include ("./partials/nav") %>
 
-
-    <div style="align-content:center; text-align: center; margin-top: 7rem;" class="createPost-container container is-max-desktop" id="createPost">
-        <h2 align="left" style="padding: 0px 35px;" class="title is-2 uk-margin-top">Create a post</h2>
-        <div style="padding: 0px 2em;" class="field" id="create">
-            <div class="control">
-                <textarea name="text" id="postTextarea" required class="textarea is-medium has-fixed-size"
-                    placeholder="What are you thinking about, <%= currentAccount.firstName %>?"></textarea>
-            </div>
+    <div
+      style="align-content: center; text-align: center; margin-top: 7rem"
+      class="createPost-container"
+      id="createPost"
+    >
+      <div style="padding: 0px 2em" id="create">
+        <div>
+          <textarea
+            name="text"
+            id="postTextarea"
+            required
+            placeholder="What are you thinking about, <%= currentAccount.firstName %>?"
+          ></textarea>
         </div>
-        <button style="padding: 0px 30%;" class="button is-info" id="postButton">Post</button>
+      </div>
+      <button id="postButton">Post</button>
     </div>
 
-
-    <div style="width:100%; padding: 0px 2em; align-items: left; justify-content: left; text-align: left;" class="posts container is-max-desktop uk-margin-top" uk-scrollspy="target: > div; cls: uk-animation-fade; delay: 150" id="posts">
-
-    </div>
+    <div
+      style="
+        width: 100%;
+        padding: 0px 2em;
+        align-items: left;
+        justify-content: left;
+        text-align: left;
+      "
+      class="posts"
+      id="posts"
+    ></div>
 
     <%- include ("./partials/jsPartials") %>
     <script src="/js/platform/script.js"></script>
-</body>
-
+  </body>
 </html>

@@ -1,10 +1,11 @@
-html, body {
-  background-color: #F0F2F5;
+html,
+body {
+  background-color: #f0f2f5;
 }
 
 .main {
   margin: 10% auto;
-  background-color: #F0F2F5;
+  background-color: #f0f2f5;
 }
 
 .err {

@@ -1,59 +1,58 @@
 <!DOCTYPE html>
 <html lang="en">
-
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="/css/platformAccount/style.css">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="/css/platformAccount/style.css" />
     <%- include ("./partials/cssPartials") %>
-    <link href='https://css.gg/lock.css' rel='stylesheet'>
-    <link href='https://css.gg/lock-unlock.css' rel='stylesheet'>
     <title>ArmSocial | My Account</title>
-</head>
+  </head>
 
-<body>
-
+  <body>
     <%- include ("./partials/nav") %>
 
-    <div class="account" style="margin-top: 10rem;">
+    <div class="account" style="margin-top: 10rem">
+      <div class="account-picture">
+        <img
+          class="profile-picture"
+          src="<%= platformAccount.pictureUrl %>"
+          alt="profile_picture"
+        />
+      </div>
 
-        <div class="account-picture">
-            <img class="profile-picture" src="<%= platformAccount.pictureUrl %>" alt="profile_picture">
-        </div>
+      <div class="account-name">
+        <h2 align="center" id="fullName">
+          <%= platformAccount.fullName %> <% if (platformAccount.private ==
+          true) {%>
+          <h5 align="center">
+            Private Account
+            <svg style="width: 25px; height: 25px">
+              <use xlink:href="/svg/all.svg#gg-lock" />
+            </svg>
+          </h5>
+          <%}%> <% if (platformAccount.private == false) {%>
+          <h5 align="center">
+            Public Account
+            <svg style="width: 25px; height: 25px">
+              <use xlink:href="/svg/all.svg#gg-lock-unlock" />
+            </svg>
+          </h5>
+          <%}%>
+        </h2>
+      </div>
 
-        <div class="account-name">
-            <h2 align="center" class="title is-2 uk-margin-top" id="fullName">
-                <%= platformAccount.fullName %>
+      <div class="account-info">
+        <p align="center" class="account-id">
+          ID <a href="#"><%= platformAccount._id%></a>
+        </p>
+        <p align="center" class="account-bio" id="bio">
+          <%= platformAccount.bio %>
+        </p>
+      </div>
 
-                <% if (platformAccount.private == true) {%>
-                <h5 class="title is-5" align="center">
-                    Private Account
-                    <svg style='width: 25px; height: 25px;'>
-                        <use xlink:href='/svg/all.svg#gg-lock' /></svg>
-                </h5>
-                <%}%>
-
-                <% if (platformAccount.private == false) {%>
-                <h5 class="title is-5" align="center">
-                    Public Account
-                    <svg style='width: 25px; height: 25px;'>
-                        <use xlink:href='/svg/all.svg#gg-lock-unlock' /></svg>
-                </h5>
-                <%}%>
-            </h2>
-        </div>
-
-        <div class="account-info uk-margin-top">
-            <p align="center" class="account-id subtitle is-5">ID <a href="#"><%= platformAccount._id%></a></p>
-            <p align="center" class="account-bio subtitle is-5 uk-margin-top" id="bio"><%= platformAccount.bio %></p>
-        </div>
-
-        <hr class="uk-divider-solid">
-
+      <hr class="solid" />
     </div>
 
-
     <%- include ("./partials/jsPartials") %>
-</body>
-
+  </body>
 </html>

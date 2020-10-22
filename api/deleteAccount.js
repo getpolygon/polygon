@@ -18,12 +18,12 @@ router.post("/", (req, res) => {
         res.json(accountDeleteResult);
         res.redirect("/");
     })
-    .catch(([err1, err2]) => {
-        res.clearCookie("email");
-        res.clearCookie("password");
-        res.redirect("/");
-        console.log([err1, err2].toString());
-    })
+        .catch(([err1, err2]) => {
+            res.clearCookie("email");
+            res.clearCookie("password");
+            res.redirect("/");
+            console.log([err1, err2].toString());
+        })
 })
 
 module.exports = router;

@@ -14,46 +14,46 @@ router.post("/", async (req, res) => {
         res.json({
             "emailValidity": false
         })
-    } 
-    
+    }
+
     // If email validation succeeds
     else {
         await AccountSchema.findOne({ email: inputEmail })
-        .then(doc => {
-            if (doc == null) {
-                res.json({
-                    "result": false,
-                    "emailValidity": true
-                })
-                return
-            }
-            
-            if (doc.email == inputEmail) {
-                res.json({
-                    "result": true,
-                    "emailValidity": true
-                })
-                return
-            }
+            .then(doc => {
+                if (doc == null) {
+                    res.json({
+                        "result": false,
+                        "emailValidity": true
+                    })
+                    return
+                }
 
-            if (!doc) {
-                res.json({
-                    "result": err
-                })
-                return
-            }
+                if (doc.email == inputEmail) {
+                    res.json({
+                        "result": true,
+                        "emailValidity": true
+                    })
+                    return
+                }
 
-            else {
-                res.json({
-                    "result": false,
-                    "emailValidity": true
-                })
-                return
-            }
-        })
-        .catch(e => {
-            console.log(e);
-        })
+                if (!doc) {
+                    res.json({
+                        "result": err
+                    })
+                    return
+                }
+
+                else {
+                    res.json({
+                        "result": false,
+                        "emailValidity": true
+                    })
+                    return
+                }
+            })
+            .catch(e => {
+                console.log(e);
+            })
     }
 })
 

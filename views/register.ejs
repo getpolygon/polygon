@@ -1,65 +1,93 @@
 <!DOCTYPE html>
 <html lang="en">
-
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <%- include ("./partials/metaPartials") %>
     <title>ArmSocial | Register</title>
     <%- include ("./partials/cssPartials") %>
     <!-- Static CSS -->
-    <link rel="stylesheet" href="/css/auth/register/style.css">
-</head>
+    <link rel="stylesheet" href="/css/auth/register/style.css" />
+  </head>
 
-<body>
+  <body>
+    <div>
+      <div>
+        <form id="form" action="/auth/register" method="POST">
+          <h1 align="left">Welcome to ArmSocial</h1>
 
-    <div class="main uk-container-xsmall">
-        <div class="uk-margin">
-            <form class="form uk-margin-left uk-margin-right" id="form" action="/auth/register" method="POST">
-                <h1 align="left" class="title is-1 uk-margin-bottom">Welcome to ArmSocial</h1>
+          <div id="nameInput">
+            <input
+              required
+              id="firstName"
+              name="firstName"
+              type="text"
+              placeholder="First Name"
+            />
 
-                <div class="nameInput" id="nameInput">
-                    <input required id="firstName" class="input uk-margin-bottom" name="firstName" type="text"
-                        placeholder="First Name">
+            &nbsp; &nbsp; &nbsp; &nbsp;
 
-                    &nbsp;
-                    &nbsp;
-                    &nbsp;
-                    &nbsp;
+            <input
+              required
+              id="lastName"
+              type="text"
+              name="lastName"
+              placeholder="Last Name"
+            />
+          </div>
 
-                    <input required id="lastName" type="text" class="input uk-margin-bottom" name="lastName"
-                        placeholder="Last Name">
-                </div>
+          <div id="emailStatus" class="emailDuplicate"></div>
 
+          <input
+            required
+            id="email"
+            name="email"
+            type="email"
+            placeholder="Email"
+          />
 
-                <div id="emailStatus" class="emailDuplicate"></div>
+          <input
+            required
+            id="password"
+            name="password"
+            type="password"
+            placeholder="Password"
+            minlength="8"
+          />
 
-                <input required id="email" class="input uk-margin-bottom" name="email" type="email" placeholder="Email">
+          <textarea
+            name="bio"
+            id="bio"
+            rows="2"
+            maxlength="100"
+            placeholder="Enter your biography..."
+          ></textarea>
 
-                <input required id="password" class="input uk-margin-bottom" name="password" type="password"
-                    placeholder="Password" minlength="8">
+          <label for="avatar">Profile picture</label>
+          <input
+            accept="image/x-png,image/gif,image/jpeg"
+            name="avatar"
+            id="avatar"
+            type="file"
+          />
+          <small>Optional</small>
+          <div id="imgError" class="imgError"></div>
 
-                <textarea class="textarea uk-margin-bottom" name="bio" id="bio" rows="2" maxlength="100"
-                    placeholder="Enter your biography..."></textarea>
+          <div>
+            <input
+              name="privateCheck"
+              type="checkbox"
+              value="false"
+              id="privateCheck"
+            />
+            <label for="privateCheck"> Private Account </label>
+          </div>
 
-                <label class="uk-margin-top" for="avatar">Profile picture</label>
-                <input accept="image/x-png,image/gif,image/jpeg" class="input" name="avatar" id="avatar" type="file">
-                <small>Optional</small>
-                <div id="imgError" class="imgError"></div>
-
-                <div class="form-check uk-margin-top uk-margin-bottom">
-                    <input name="privateCheck" class="form-check-input" type="checkbox" value="false" id="privateCheck">
-                    <label class="form-check-label" for="privateCheck">
-                        Private Account
-                    </label>
-                </div>
-
-                <button id="submitButton" class="button is-primary" type="submit">Register</button>
-                <br>
-                <p class="uk-margin-medium-top">Have an account? <a href="/auth/login">Login</a></p>
-
-            </form>
-        </div>
+          <button id="submitButton" type="submit">Register</button>
+          <br />
+          <p>Have an account? <a href="/auth/login">Login</a></p>
+        </form>
+      </div>
     </div>
 
     <!-- The core Firebase JS SDK is always required and must be listed first -->
@@ -70,23 +98,21 @@
      https://firebase.google.com/docs/web/setup#available-libraries -->
 
     <script>
-        // Your web app's Firebase configuration
-        var firebaseConfig = {
-            apiKey: "AIzaSyCz8yxHbNpwx-Ga16DbyS_YM4p2EETGSl0",
-            authDomain: "arm-social.firebaseapp.com",
-            databaseURL: "https://arm-social.firebaseio.com",
-            projectId: "arm-social",
-            storageBucket: "arm-social.appspot.com",
-            messagingSenderId: "909122030162",
-            appId: "1:909122030162:web:d69103f21efd47cb45ad8b"
-        };
-        // Initialize Firebase
-        firebase.initializeApp(firebaseConfig);
-
+      // Your web app's Firebase configuration
+      var firebaseConfig = {
+        apiKey: "AIzaSyCz8yxHbNpwx-Ga16DbyS_YM4p2EETGSl0",
+        authDomain: "arm-social.firebaseapp.com",
+        databaseURL: "https://arm-social.firebaseio.com",
+        projectId: "arm-social",
+        storageBucket: "arm-social.appspot.com",
+        messagingSenderId: "909122030162",
+        appId: "1:909122030162:web:d69103f21efd47cb45ad8b",
+      };
+      // Initialize Firebase
+      firebase.initializeApp(firebaseConfig);
     </script>
 
     <script src="/js/register/script.js"></script>
     <% include ("./partials/jsPartials") %>
-</body>
-
+  </body>
 </html>

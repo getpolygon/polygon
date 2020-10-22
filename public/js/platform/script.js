@@ -2,7 +2,7 @@ const postButton = document.getElementById("postButton");
 const postText = document.getElementById("postTextarea");
 
 // Classes that are going to be added to the cards
-const classes = ["card-container","uk-card", "uk-card-default", "uk-card-hover", "uk-card-body", "uk-margin-bottom"];
+const classes = ["card-container", "uk-card", "uk-card-default", "uk-card-hover", "uk-card-body", "uk-margin-bottom"];
 // Classes that are going to be added to the posters name divs
 const authorNameClasses = ["title", "is-3"];
 // Classes that are going to be added to the post's text

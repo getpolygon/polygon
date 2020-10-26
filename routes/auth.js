@@ -1,6 +1,8 @@
 require("mongoose");
 const router = require("express").Router();
 
+let avatarLinks = ["/static/img/1.png", "/static/img/2.png", "/static/img/3.png", "/static/img/4.png", "/static/img/5.png", "static/img/6.png"];
+
 const AccountSchema = require("../models/account");
 
 // Register
@@ -15,15 +17,15 @@ router.get("/register", (req, res) => {
 });
 
 router.post("/register", async (req, res) => {
-    const Account = new AccountSchema({
+    let Account = new AccountSchema({
         firstName: req.body.firstName,
         lastName: req.body.lastName,
         fullName: `${req.body.firstName} ${req.body.lastName}`,
         email: req.body.email,
         password: req.body.password,
         bio: req.body.bio,
-        pictureUrl: `https://firebasestorage.googleapis.com/v0/b/arm-social.appspot.com/o/${(req.body.email).replace("@", "%40")}.jpg?alt=media`,
-        private: req.body.privateCheck ? true : false,
+        pictureUrl: req.body.avatar.value,
+        isPrivate: req.body.privateCheck ? true : false,
         date: Date.now()
     })
 
@@ -40,15 +42,25 @@ router.post("/register", async (req, res) => {
         res.render("register");
     }
     if (duplicateAccount == null || Account.email != duplicateAccount.email) {
-        await Account.save();
-        res.cookie("email", Account.email, { maxAge: 24 * 60 * 60 * 1000 });
-        res.cookie("password", Account.password, { maxAge: 24 * 60 * 60 * 1000 });
-        res.redirect(`/user/${Account._id}`);
+        if (req.body.avatar) {
+            // Select the image link as a link from Firebase
+            Account.pictureUrl = `https://firebasestorage.googleapis.com/v0/b/arm-social.appspot.com/o/${(req.body.email).replace("@", "%40")}.jpg?alt=media`
+        } else {
+            // Select a random image link from where the image will be loaded
+            Account.pictureUrl = avatarLinks[Math.floor((Math.random() * avatarLinks.length))]
+        }
+        await Account.save()
+            .then(() => {
+                res.cookie("email", Account.email, { maxAge: 24 * 60 * 60 * 1000 });
+                res.cookie("password", Account.password, { maxAge: 24 * 60 * 60 * 1000 });
+                res.redirect(`/user/${Account._id}`);
+            })
+            .catch(e => {
+                res.redirect("/");
+                console.log(e);
+            })
+
     };
-    if (e => {
-        res.redirect("/");
-        console.log(e);
-    });
 });
 
 // Login

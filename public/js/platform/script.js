@@ -2,7 +2,7 @@ const postButton = document.getElementById("postButton");
 const postText = document.getElementById("postTextarea");
 
 // Classes that are going to be added to the cards
-const classes = ["card-container", "uk-card", "uk-card-default", "uk-card-hover", "uk-card-body", "uk-margin-bottom"];
+const classes = [];
 // Classes that are going to be added to the posters name divs
 const authorNameClasses = ["title", "is-3"];
 // Classes that are going to be added to the post's text
@@ -43,9 +43,6 @@ function fetchPosts() {
                 cardAuthor.innerHTML = `<br>${author}`;
                 cardAuthor.href = `/user/${authorId}`;
                 cardText.innerText = text;
-                cardText.classList.add("uk-margin-top");
-                cardAuthor.classList.add("uk-margin-left");
-                cardAuthor.classList.add("uk-margin-top");
                 cardAuthor.classList.add(authorNameClasses);
                 cardAuthorImage.classList.add("image-rounded");
                 cardContainer.appendChild(cardAuthorImage);
@@ -85,9 +82,6 @@ function createPost() {
             cardAuthor.innerHTML = `<br>${author}`;
             cardAuthor.href = `/user/${authorId}`;
             cardText.innerText = text;
-            cardText.classList.add("uk-margin-top");
-            cardAuthor.classList.add("uk-margin-left");
-            cardAuthor.classList.add("uk-margin-top");
             cardAuthorImage.classList.add("image-rounded");
             cardContainer.appendChild(cardAuthorImage);
             cardContainer.appendChild(cardAuthor);

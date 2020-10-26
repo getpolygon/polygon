@@ -13,13 +13,12 @@
 
     <div>
       <h1 align="center">Public Users</h1>
-      <hr class="solid" />
       <div class="accounts">
         <div class="row">
           <%# If account list's lenght is more or equal to 1 then display the
           cards%> <% if (accounts.length >= 1) {%> <%accounts.forEach(account =>
           {%>
-          <div style="border-radius: 2rem">
+          <div>
             <img
               class="account-picture"
               width="100"
@@ -27,8 +26,8 @@
               src="<%= account.pictureUrl %>"
               alt="profile_picture"
             />
-            <h3><%= account.fullName %></h3>
-            <p>ID: <a href="/user/<%= account._id%>"><%= account._id %></a></p>
+            <h3><a href="/user/<%= account._id%>"><%= account.fullName %></a></h3>
+            <p>ID: <%= account._id %></p>
           </div>
           &nbsp;&nbsp;&nbsp;&nbsp; <%});%> <%}%>
         </div>

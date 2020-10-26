@@ -2,6 +2,7 @@ require("mongoose");
 const router = require("express").Router();
 
 const AccountSchema = require("../models/account");
+const PostSchema = require("../models/post");
 
 // Main page
 router.get("/", async (req, res) => {
@@ -19,7 +20,7 @@ router.get("/", async (req, res) => {
         res.redirect("/auth/login");
     } else {
         Promise.all([
-            await AccountSchema.find({ private: false }),
+            await AccountSchema.find({ isPrivate: false }),
             await AccountSchema.findOne({ email: req.cookies.email, password: req.cookies.password })
         ])
             .then(([accounts, currentAccount]) => {
@@ -45,7 +46,8 @@ router.get("/user/:accountId", async (req, res) => {
         const accountId = await req.params.accountId;
         const currentAccount = await AccountSchema.findOne({ email: req.cookies.email, password: req.cookies.password });
         const platformAccount = await AccountSchema.findById(accountId);
-        res.render("platformAccount", { currentAccount: currentAccount, platformAccount: platformAccount });
+        const platformAccountPosts = await PostSchema.find({authorId: accountId});
+        res.render("platformAccount", { currentAccount: currentAccount, platformAccount: platformAccount, posts: platformAccountPosts });
     };
 });
 

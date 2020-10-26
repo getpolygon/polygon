@@ -1,6 +1,8 @@
 html,
 body {
   background-color: #f0f2f5 !important;
+  margin: 0;
+  width: 100vw;
 }
 
 .image-rounded {
@@ -15,5 +17,23 @@ body {
 
 .card-container {
   border-radius: 1rem;
+}
+
+.createPost-container {
+  -ms-flex-line-pack: center;
+      align-content: center;
+  text-align: center;
+  margin-top: 7rem;
+}
+
+.posts {
+  padding: 0px 2em;
+  -webkit-box-align: left;
+      -ms-flex-align: left;
+          align-items: left;
+  -webkit-box-pack: left;
+      -ms-flex-pack: left;
+          justify-content: left;
+  text-align: left;
 }
 /*# sourceMappingURL=style.css.map */

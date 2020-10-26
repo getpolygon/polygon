@@ -1,4 +1,5 @@
 .account {
+  margin-top: 10rem;
   align-items: center;
   .account-picture {
     text-align: center;
@@ -13,7 +14,19 @@
       object-position: center;
     }
   }
+  svg {
+    width: 25px;
+    height: 25px;
+  }
   .account-info {
     padding: 0 10px;
   }
+}
+
+.profile-picture {
+  border-radius: 5rem;
+  width: 100px;
+  height: 100px;
+  object-fit: cover;
+  object-position: center;
 }

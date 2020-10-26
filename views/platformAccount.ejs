@@ -11,7 +11,7 @@
   <body>
     <%- include ("./partials/nav") %>
 
-    <div class="account" style="margin-top: 10rem">
+    <div class="account">
       <div class="account-picture">
         <img
           class="profile-picture"
@@ -22,18 +22,18 @@
 
       <div class="account-name">
         <h2 align="center" id="fullName">
-          <%= platformAccount.fullName %> <% if (platformAccount.private ==
+          <%= platformAccount.fullName %> <% if (platformAccount.isPrivate ==
           true) {%>
           <h5 align="center">
             Private Account
-            <svg style="width: 25px; height: 25px">
+            <svg>
               <use xlink:href="/svg/all.svg#gg-lock" />
             </svg>
           </h5>
-          <%}%> <% if (platformAccount.private == false) {%>
+          <%}%> <% if (platformAccount.isPrivate == false) {%>
           <h5 align="center">
             Public Account
-            <svg style="width: 25px; height: 25px">
+            <svg>
               <use xlink:href="/svg/all.svg#gg-lock-unlock" />
             </svg>
           </h5>
@@ -51,6 +51,31 @@
       </div>
 
       <hr class="solid" />
+    </div>
+
+    <div class="posts">
+      <% if (posts) { %> <% posts.forEach(post => { %>
+      <div class="post">
+        <div class="author">
+          <a href="/user/<%= platformAccount._id%>" class="author">
+            <img
+              src="<%= post.authorImage %>"
+              height="100"
+              alt="profile_picture"
+              class="profile-picture"
+            />
+            <h3><%= post.author %></h3>
+          </a>
+        </div>
+        <div class="content">
+          <h4><%= post.text %></h4>
+        </div>
+      </div>
+      <% }); %> <% } %> <% if (posts.length < 1) {%>
+      <div class="posts">
+        <h3 align="center">This user doesn't have any posts</h3>
+      </div>
+      <% } %>
     </div>
 
     <%- include ("./partials/jsPartials") %>

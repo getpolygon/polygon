@@ -1,6 +1,8 @@
 html,
 body {
   background-color: #f0f2f5 !important;
+  margin: 0;
+  width: 100vw;
 }
 
 .image-rounded {
@@ -13,4 +15,17 @@ body {
 
 .card-container {
   border-radius: 1rem;
+}
+
+.createPost-container {
+  align-content: center;
+  text-align: center;
+  margin-top: 7rem;
+}
+
+.posts {
+  padding: 0px 2em;
+  align-items: left;
+  justify-content: left;
+  text-align: left;
 }

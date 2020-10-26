@@ -23,15 +23,21 @@ const platformRoute = require("./routes/platform");
 const checkEmailRoute = require("./api/checkEmail");
 const createPostRoute = require("./api/createPost");
 const fetchPostsRoute = require("./api/fetchPosts");
+const userSettingsRoute = require("./routes/settings");
+const deleteAccountRoute = require("./api/deleteAccount");
+const updateAccountRoute = require("./api/updateAccount");
 
 app.use("/", platformRoute);
 app.use("/auth", authRoute);
 app.use("/users", usersRoute);
+app.use("/settings", userSettingsRoute);
 
 app.use("/api", apiRoute);
 app.use("/api/checkEmail", checkEmailRoute);
 app.use("/api/createPost", createPostRoute);
 app.use("/api/fetchPosts", fetchPostsRoute);
+app.use("/api/deleteAccount", deleteAccountRoute);
+app.use("/api/updateAccount", updateAccountRoute);
 
 app.get("*", cache.route(), (_req, res) => {
     res.redirect("/static/error.html");

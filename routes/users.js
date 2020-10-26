@@ -9,7 +9,7 @@ router.get("/", async (req, res) => {
         res.clearCookie("email");
         res.redirect("/auth/login");
     } else {
-        const accounts = await AccountSchema.find({ private: false }).sort({ date: -1 /* Sorting by date from the latest to the oldesst */ })
+        const accounts = await AccountSchema.find({ isPrivate: false }).sort({ date: -1 /* Sorting by date from the latest to the oldesst */ })
         const currentAccount = await AccountSchema.findOne({ email: req.cookies.email, password: req.cookies.password });
         res.render("users", { accounts: accounts, currentAccount: currentAccount, err: "We couldn't find any public accounts." });
     }

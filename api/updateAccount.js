@@ -7,7 +7,10 @@ router.put("/", async (req, res, next) => {
   if (!req.cookies.email || !req.cookies.password) {
     res.json({ err: "Forbidden", status: 403 });
   } else {
-    let currentAccount = await AccountSchema.findOne({ email: req.cookies.email, password: req.cookies.password });
+    let currentAccount = await AccountSchema.findOne({
+      email: req.cookies.email,
+      password: req.cookies.password,
+    });
     let firstName = req.query.firstName;
     let lastName = req.query.lastName;
     let fullName;
@@ -17,15 +20,16 @@ router.put("/", async (req, res, next) => {
     let privacy = req.query.privacy;
 
     if (privacy) {
-      await currentAccount.updateOne({ isPrivate: privacy })
-      .then(response => {
-        res.json(response.privacy);
-      })
-      .catch(e => {
-        res.json(e);
-      });
-    };
-  };
+      await currentAccount
+        .updateOne({ isPrivate: privacy })
+        .then((response) => {
+          res.json(response.privacy);
+        })
+        .catch((e) => {
+          res.json(e);
+        });
+    }
+  }
 });
 
 module.exports = router;

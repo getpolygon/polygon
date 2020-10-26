@@ -13,12 +13,12 @@ router.post("/", async (req, res) => {
     await PostSchema.deleteMany({ authorEmail: email }),
     await AccountSchema.findOneAndDelete({ email: email, password: password }),
   ])
-    .then(result => {
+    .then((result) => {
       res.clearCookie("email");
       res.clearCookie("password");
-      res.json({ "result": result });
+      res.json({ result: result });
     })
-    .catch(e => {
+    .catch((e) => {
       console.log(e);
     });
 });

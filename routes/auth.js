@@ -24,7 +24,7 @@ router.post("/register", async (req, res) => {
         email: req.body.email,
         password: req.body.password,
         bio: req.body.bio,
-        pictureUrl: req.body.avatar.value,
+        pictureUrl: req.body.avatar,
         isPrivate: req.body.privateCheck ? true : false,
         date: Date.now()
     })

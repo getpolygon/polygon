@@ -85,7 +85,8 @@ function createPost() {
       cardContainer.appendChild(cardAuthorImage);
       cardContainer.appendChild(cardAuthor);
       cardContainer.appendChild(cardText);
-      postsContainer.appendChild(cardContainer);
+      // Append the card to the top of the div
+      postsContainer.prepend(cardContainer);
       postText.value = "";
     })
     .catch((e) => {

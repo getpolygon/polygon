@@ -1,83 +1,85 @@
-<!DOCTYPE html>
-<html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <link rel="stylesheet" href="/css/platformAccount/style.css" />
-    <%- include ("./partials/cssPartials") %>
-    <title>ArmSocial | My Account</title>
-  </head>
+<%-include ("./partials/head") %>
+<%- include ("./partials/nav") %>
 
-  <body>
-    <%- include ("./partials/nav") %>
+<link rel="stylesheet" href="/css/platformAccount/style.css">
 
-    <div class="account">
-      <div class="account-picture">
-        <img
-          class="profile-picture"
-          src="<%= platformAccount.pictureUrl %>"
-          alt="profile_picture"
-        />
-      </div>
+<div class="container justify-content-center">
+  <div class="container" style="align-items: center; justify-content: center;text-align: center;">
+    <img class="rounded-circle" height="128" width="128" src="<%= platformAccount.pictureUrl %>"
+      alt="profile_picture" />
+  </div>
 
-      <div class="account-name">
-        <h2 align="center" id="fullName">
-          <%= platformAccount.fullName %> <% if (platformAccount.isPrivate ==
-          true) {%>
-          <h5 align="center">
-            Private Account
-            <svg>
-              <use xlink:href="/svg/all.svg#gg-lock" />
-            </svg>
-          </h5>
-          <%}%> <% if (platformAccount.isPrivate == false) {%>
-          <h5 align="center">
-            Public Account
-            <svg>
-              <use xlink:href="/svg/all.svg#gg-lock-unlock" />
-            </svg>
-          </h5>
-          <%}%>
+  <div class="account-name container">
+    <h2 align="center" id="fullName">
+      <%= platformAccount.fullName %> <% if (platformAccount.isPrivate == true) {%>
+      <h5 align="center">
+        Private Account
+        <i class="fas fa-lock"></i>
+      </h5>
+      <%}%> 
+      <% if (platformAccount.isPrivate == false) {%>
+      <h5 align="center">
+        Public Account
+        <i class="fas fa-lock-open"></i>
+      </h5>
+      <%}%>
         </h2>
       </div>
 
-      <div class="account-info">
+      <div class="account-info container">
         <p align="center" class="account-id">
           ID <a href="#"><%= platformAccount._id%></a>
+      </p>
+      <p align="center" class="buttons">
+        <% if (currentAccount.email == platformAccount.email) {%>
+        <button class="btn btn-success disabled" disabled>Add Friend</button>
+        <%}%>
+          <% if (currentAccount.email != platformAccount.email) {%>
+        <button class="btn btn-success">Add Friend</button>
+        <%}%>
+          
         </p>
-        <p align="center" class="account-bio" id="bio">
+        <p align="center" class="account-bio pr-5 pl-5 pb-1" id="bio">
           <%= platformAccount.bio %>
-        </p>
-      </div>
+      </p>
+  </div>
 
-      <hr class="solid" />
+  <hr class="solid" />
+</div>
+<% if (currentAccount.email == platformAccount.email) {%>
+<div id="container">
+  <div class="container">
+    <h2>Create a post</h2>
+    <div>
+      <textarea required minlength="10" class="form-control w-100 mb-3" name="text" id="postTextarea" required
+        placeholder="What are you thinking about, <%= currentAccount.firstName %>?"></textarea>
     </div>
+    <button class="btn btn-primary mb-2" id="postButton" type="submit">
+      Post
+    </button>
+  </div>
+</div>
+<script src="/js/platformAccount/script.js"></script>
+<%}%> 
+    <% if (posts) { %>
+<div id="posts" class="posts container">
+  <% posts.forEach(post => { %>
+  <div class="post container shadow-sm rounded-lg mt-1 mb-4 pr-4 pl-4 pb-3 pt-3 bg-white">
+    <img src="<%= post.authorImage %>" alt="profile-photo" class="rounded-circle" width="80" height="80" />
+    <h4 class="text-dark mt-3 align-baseline">
+      <a href="/user/<%= platformAccount._id %>"><%= platformAccount.fullName %></a>
+    </h4>
+    <h6 class="text-dark align-baseline"><%= post.text %></h6>
+    <h6 class="text-secondary"><%= post.datefield %></h6>
+  </div>
 
-    <div class="posts">
-      <% if (posts) { %> <% posts.forEach(post => { %>
-      <div class="post">
-        <div class="author">
-          <a href="/user/<%= platformAccount._id%>" class="author">
-            <img
-              src="<%= post.authorImage %>"
-              height="100"
-              alt="profile_picture"
-              class="profile-picture"
-            />
-            <h3><%= post.author %></h3>
-          </a>
-        </div>
-        <div class="content">
-          <h4><%= post.text %></h4>
-        </div>
-      </div>
-      <% }); %> <% } %> <% if (posts.length < 1) {%>
-      <div class="posts">
-        <h3 align="center">This user doesn't have any posts</h3>
-      </div>
-      <% } %>
-    </div>
-
-    <%- include ("./partials/jsPartials") %>
-  </body>
-</html>
+  <% }); %>
+  <% } %>
+  <% if (posts.length < 1) {%>
+  <div class="posts container">
+    <h5 align="center">This user doesn't have any posts</h5>
+  </div>
+  <%}%>
+  </div>
+  
+<%- include ("./partials/footer") %>

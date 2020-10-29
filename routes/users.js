@@ -20,6 +20,7 @@ router.get("/", async (req, res) => {
       accounts: accounts,
       currentAccount: currentAccount,
       err: "We couldn't find any public accounts.",
+      title: "Users | ArmSocial"
     });
   }
 });

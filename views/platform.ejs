@@ -1,34 +1,19 @@
-<!DOCTYPE html>
-<html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <link rel="stylesheet" href="/css/platform/style.css" />
-    <%- include ("./partials/cssPartials") %>
-    <title>ArmSocial | Platform</title>
-  </head>
+<%- include ("./partials/head") %>
+<%- include ("./partials/nav") %>
 
-  <body>
-    <%- include ("./partials/nav") %>
-
-    <h1 align="center">Create a post</h1>
-    <div class="createPost-container" id="createPost">
-      <div id="create">
-        <div>
-          <textarea
-            name="text"
-            id="postTextarea"
-            required
-            placeholder="What are you thinking about, <%= currentAccount.firstName %>?"
-          ></textarea>
-        </div>
+<div class="container">
+  <div class="createPost container mb-5" id="createPost">
+    <h1 align="left" class="text-dark pb-1">Create a post</h1>
+    <div id="create">
+      <div>
+        <textarea rows="5" required minlength="10" class="form-control w-100 mb-3" name="text" id="postTextarea"
+          required placeholder="What are you thinking about, <%= currentAccount.firstName %>?"></textarea>
       </div>
-      <button id="postButton">Post</button>
+      <button class="btn btn-primary mb-2 w-100" id="postButton" type="submit">Post</button>
     </div>
+  </div>
 
-    <div class="posts" id="posts"></div>
-
-    <%- include ("./partials/jsPartials") %>
-    <script src="/js/platform/script.js"></script>
-  </body>
-</html>
+  <div class="posts container" id="posts"></div>
+</div>
+<script src="/js/platform/script.js"></script>
+<%-include ("./partials/footer") %>

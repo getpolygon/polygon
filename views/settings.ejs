@@ -1,130 +1,57 @@
-<!DOCTYPE html>
-<html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <%- include ("./partials/metaPartials") %> <%- include
-    ("./partials/cssPartials") %>
-    <title>Settings | ArmSocial</title>
-    <style>
-      .switch {
-        position: relative;
-        display: inline-block;
-        width: 60px;
-        height: 34px;
-      }
+<%- include ("./partials/head") %>
+<%- include ("./partials/nav") %>
 
-      .switch input {
-        opacity: 0;
-        width: 0;
-        height: 0;
-      }
-
-      .slider {
-        position: absolute;
-        cursor: pointer;
-        top: 0;
-        left: 0;
-        right: 0;
-        bottom: 0;
-        background-color: #ccc;
-        -webkit-transition: 0.4s;
-        transition: 0.4s;
-      }
-
-      .slider:before {
-        position: absolute;
-        content: "";
-        height: 26px;
-        width: 26px;
-        left: 4px;
-        bottom: 4px;
-        background-color: white;
-        -webkit-transition: 0.4s;
-        transition: 0.4s;
-      }
-
-      input:checked + .slider {
-        background-color: #2196f3;
-      }
-
-      input:focus + .slider {
-        box-shadow: 0 0 1px #2196f3;
-      }
-
-      input:checked + .slider:before {
-        -webkit-transform: translateX(26px);
-        -ms-transform: translateX(26px);
-        transform: translateX(26px);
-      }
-
-      /* Rounded sliders */
-      .slider.round {
-        border-radius: 34px;
-      }
-
-      .slider.round:before {
-        border-radius: 50%;
-      }
-    </style>
-  </head>
-  <body>
-    <%- include ("./partials/nav") %>
-
-    <h1 align="center">Settings</h1>
-    <ul>
-      <li>
-        <div id="privacyTab">
-          <h1>Change your privacy settings</h1>
-          <h3>Current privacy setting:</h3>
-          <% if(currentAccount.isPrivate == true) {%>
-          <label class="switch">
-            <input checked name="privacy" id="isPrivate" type="checkbox" />
-            <span class="slider round"></span>
-          </label>
-          <span id="currentStatus">Private Account</span> <% } %> <%
-          if(currentAccount.isPrivate == false) {%>
-          <label class="switch">
-            <input name="privacy" id="isPrivate" type="checkbox" />
-            <span class="slider round"></span>
-          </label>
-          <span id="currentStatus">Public Account</span> <% } %>
-          <p id="acUpdateStatus"></p>
+<h1 align="center">Settings</h1>
+<div class="container">
+  <ul class="list-group rounded shadow-sm">
+    <li class="list-group-item">
+      <div id="privacyTab">
+        <h4>Change your privacy settings</h4>
+        <% if(currentAccount.isPrivate == true) {%>
+        <div class="custom-control custom-switch checked">
+          <input checked id="isPrivate" type="checkbox" name="privacy" class="custom-control-input" />
+          <label class="custom-control-label" for="isPrivate"><span id="currentStatus">Private Account</span></label>
         </div>
-      </li>
-      <li>
-        <div>
-          <h1>Get Started deleting your account</h1>
-          <button id="deleteAccount">Delete your Account</button>
-          <div id="message" class="message"></div>
+        <% } %>
+        <%if(currentAccount.isPrivate == false) {%>
+        <div class="custom-control custom-switch">
+          <input id="isPrivate" type="checkbox" name="privacy" class="custom-control-input" />
+          <label class="custom-control-label" for="isPrivate"><span id="currentStatus">Public Account</span></label>
         </div>
-        <hr class="solid" />
-      </li>
-    </ul>
+        <% } %>
+        <p id="acUpdateStatus"></p>
+      </div>
+    </li>
+    <li class="list-group-item">
+      <div>
+        <h4>Get Started deleting your account</h4>
+        <button class="btn btn-outline-danger" id="deleteAccount">Delete Your Account</button>
+        <div id="message" class="message"></div>
+      </div>
+    </li>
+  </ul>
+</div>
 
-    <!-- The core Firebase JS SDK is always required and must be listed first -->
-    <script src="https://www.gstatic.com/firebasejs/7.24.0/firebase-app.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/7.23.0/firebase-storage.js"></script>
+<!-- The core Firebase JS SDK is always required and must be listed first -->
+<script src="https://www.gstatic.com/firebasejs/7.24.0/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/7.23.0/firebase-storage.js"></script>
 
-    <!-- TODO: Add SDKs for Firebase products that you want to use
+<!-- TODO: Add SDKs for Firebase products that you want to use
          https://firebase.google.com/docs/web/setup#available-libraries -->
 
-    <script>
-      // Your web app's Firebase configuration
-      var firebaseConfig = {
-        apiKey: "AIzaSyCz8yxHbNpwx-Ga16DbyS_YM4p2EETGSl0",
-        authDomain: "arm-social.firebaseapp.com",
-        databaseURL: "https://arm-social.firebaseio.com",
-        projectId: "arm-social",
-        storageBucket: "arm-social.appspot.com",
-        messagingSenderId: "909122030162",
-        appId: "1:909122030162:web:d69103f21efd47cb45ad8b",
-      };
-      // Initialize Firebase
-      firebase.initializeApp(firebaseConfig);
-    </script>
-
-    <%- include ("./partials/jsPartials") %>
-    <script src="/js/settings/script.js"></script>
-  </body>
-</html>
+<script>
+  // Your web app's Firebase configuration
+  var firebaseConfig = {
+    apiKey: "AIzaSyCz8yxHbNpwx-Ga16DbyS_YM4p2EETGSl0",
+    authDomain: "arm-social.firebaseapp.com",
+    databaseURL: "https://arm-social.firebaseio.com",
+    projectId: "arm-social",
+    storageBucket: "arm-social.appspot.com",
+    messagingSenderId: "909122030162",
+    appId: "1:909122030162:web:d69103f21efd47cb45ad8b",
+  };
+  // Initialize Firebase
+  firebase.initializeApp(firebaseConfig);
+</script>
+<script src="/js/settings/script.js"></script>
+<%- include ("./partials/footer") %>

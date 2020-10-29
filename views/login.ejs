@@ -1,52 +1,27 @@
-<!DOCTYPE html>
-<html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <%- include ("./partials/metaPartials") %>
-    <title>ArmSocial | Login</title>
-    <%- include ("./partials/cssPartials") %>
-    <!-- Static CSS -->
-    <link rel="stylesheet" href="/css/auth/login/style.css" />
-  </head>
+<%- include ("./partials/head") %>
 
-  <body>
-    <div>
-      <div>
-        <form id="form" action="login" method="POST">
-          <h1 align="left">Login to ArmSocial</h1>
+<div class="container-sm mt-5 w-75">
+    <div class="form-group">
+      <form id="form" class="form-group" action="login" method="POST">
+        <h2 align="left">Login to ArmSocial</h2>
 
-          <input
-            required
-            id="email"
-            name="email"
-            type="email"
-            placeholder="Email"
-          />
+        <input class="form-control" required id="email" name="email" type="email" placeholder="Email" />
 
-          <input
-            required
-            id="password"
-            name="password"
-            type="password"
-            placeholder="Password"
-            minlength="8"
-          />
+        <input class="form-control mt-2" required id="password" name="password" type="password" placeholder="Password"
+          minlength="8" />
 
-          <div class="err">
-            <% if (locals.err) {%>
-            <small> <%= err %> </small>
-            <%}%>
-          </div>
+        <div class="err">
+          <% if (locals.err) {%>
+          <small> <%= err %> </small>
+          <%}%>
+        </div>
 
-          <button id="submitButton" type="submit">Login</button>
+          <button class="btn btn-primary mt-3" id="submitButton" type="submit">Login</button>
           <br />
-          <p>Don't have an account? <a href="/auth/register">Register</a></p>
+          <p class="mt-3">Don't have an account? <a href="/auth/register">Register</a></p>
         </form>
       </div>
     </div>
 
     <script src="/js/login/script.js"></script>
-    <% include ("./partials/jsPartials") %>
-  </body>
-</html>
+<%- include ("./partials/footer") %>

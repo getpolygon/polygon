@@ -84,20 +84,6 @@ function uploadFile() {
 //-----------------------------------------------------------
 
 //-----------------------------------------------------------
-function checkForm() {
-  let email = document.getElementById("email");
-  let password = document.getElementById("password");
-
-  if (email.value < 8 || password.value < 8) {
-    submitButton = submitButton;
-  } else {
-    submitButton.classList.remove("button is-info");
-    submitButton.classList.add("button is-info is-loading");
-  }
-}
-//-----------------------------------------------------------
-
-//-----------------------------------------------------------
 function checkEmail() {
   fetch("/api/checkEmail", {
     method: "POST",

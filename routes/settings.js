@@ -14,7 +14,7 @@ router.get("/", async (req, res) => {
       email: email,
       password: password,
     });
-    res.render("settings", { currentAccount: currentAccount });
+    res.render("settings", { currentAccount: currentAccount, title: "Settings | ArmSocial" });
   }
 });
 

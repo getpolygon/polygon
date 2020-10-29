@@ -1,5 +1,6 @@
 require("mongoose");
 const router = require("express").Router();
+const moment = require("moment");
 
 const PostSchema = require("../models/post");
 const AccountSchema = require("../models/account");
@@ -19,7 +20,7 @@ router.post("/", async (req, res) => {
     authorEmail: req.cookies.email,
     authorId: authorId,
     authorImage: authorImage,
-    datefield: Date.now(),
+    datefield: moment(Date.now()).format('MMMM Do YYYY, h:mm:ss a'),
   });
 
   await Post.save()

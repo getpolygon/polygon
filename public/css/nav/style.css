@@ -1,24 +1,4 @@
 nav {
   z-index: 999;
 }
-
-.user-image {
-  border-radius: 2rem;
-  -o-object-fit: cover;
-     object-fit: cover;
-  -o-object-position: left;
-     object-position: left;
-  width: 25px;
-  height: 25px;
-}
-
-.navbar-dropdown {
-  text-align: left;
-  -webkit-box-align: end;
-      -ms-flex-align: end;
-          align-items: flex-end;
-  -webkit-box-pack: left;
-      -ms-flex-pack: left;
-          justify-content: left;
-}
 /*# sourceMappingURL=style.css.map */

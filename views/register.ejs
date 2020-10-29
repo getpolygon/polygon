@@ -1,133 +1,82 @@
-<!DOCTYPE html>
-<html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <%- include ("./partials/metaPartials") %>
-    <title>ArmSocial | Register</title>
-    <%- include ("./partials/cssPartials") %>
-    <!-- Static CSS -->
-    <link rel="stylesheet" href="/css/auth/register/style.css" />
-  </head>
+<%- include ("./partials/head") %>
+  <div class="container mt-5">
+    <div class="container-sm mt-5">
+      <form id="form" class="form-group container-sm" action="/auth/register" method="POST">
+        <h1 align="center" class="mb-3">Welcome to ArmSocial</h1>
 
-  <body>
-    <div>
-      <div>
-        <form id="form" action="/auth/register" method="POST">
-          <h1 align="left">Welcome to ArmSocial</h1>
-
-          <div id="nameInput">
-            <input
-              aria-label="firstName"
-              required
-              id="firstName"
-              name="firstName"
-              type="text"
-              placeholder="First Name"
-            />
-
-            <br />
-
-            <input
-              aria-label="lastName"
-              required
-              id="lastName"
-              type="text"
-              name="lastName"
-              placeholder="Last Name"
-            />
-          </div>
-
-          <div id="emailStatus" class="emailDuplicate"></div>
+        <div id="nameInput">
+          <input class="form-control" aria-label="firstName" required id="firstName" name="firstName" type="text"
+            placeholder="First Name" />
 
           <br />
 
-          <input
-            aria-label="email"
-            required
-            id="email"
-            name="email"
-            type="email"
-            placeholder="Email"
-          />
+          <input class="form-control" aria-label="lastName" required id="lastName" type="text" name="lastName"
+            placeholder="Last Name" />
+        </div>
 
-          <br />
+        <br />
 
-          <input
-            aria-label="password"
-            required
-            id="password"
-            name="password"
-            type="password"
-            placeholder="Password"
-            minlength="8"
-          />
+        <input class="form-control" aria-label="email" required id="email" name="email" type="email"
+          placeholder="Email" />
 
-          <br />
+        <div id="emailStatus" class="emailDuplicate"></div>
 
-          <textarea
-            aria-label="bio"
-            name="bio"
-            id="bio"
-            rows="2"
-            maxlength="100"
-            placeholder="Enter your biography..."
-          ></textarea>
+        <br />
 
-          <br />
+        <input class="form-control" aria-label="password" required id="password" name="password" type="password"
+          placeholder="Password" minlength="8" />
 
-          <label for="avatar">Profile picture( Optional )</label>
-          <input
-            accept="image/x-png,image/gif,image/jpeg"
-            name="avatar"
-            id="avatar"
-            type="file"
-          />
+        <br />
 
-          <div id="imgError" class="imgError"></div>
+        <textarea class="form-control" aria-label="bio" name="bio" id="bio" rows="2"
+          placeholder="Enter your biography..."></textarea>
 
-          <br />
+        <br />
 
-          <div>
-            <input
-              name="privateCheck"
-              type="checkbox"
-              value="false"
-              id="privateCheck"
-            />
-            <label for="privateCheck"> Private Account </label>
-          </div>
+        <label for="avatar">Profile picture ( Optional )</label>
+        <input class="form-control" accept="image/x-png,image/gif,image/jpeg" name="avatar" id="avatar" type="file" />
 
-          <button id="submitButton" type="submit">Register</button>
-          <br />
-        </form>
-        <p>Have an account? <a href="/auth/login">Login</a></p>
-      </div>
+        <div id="imgError" class="imgError"></div>
+
+        <br />
+
+        <label for="privateCheck">
+          Private Account
+          <input name="privateCheck" type="checkbox" value="false" id="privateCheck" /></label>
+
+        <br />
+
+        <button id="submitButton" class="btn btn-primary" type="submit">
+          <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true" hidden
+            id="loadingSpinner"></span>
+          Register
+        </button>
+        <br />
+        <p class="mt-2">Have an account? <a href="/auth/login">Login</a></p>
+      </form>
     </div>
+  </div>
 
-    <!-- The core Firebase JS SDK is always required and must be listed first -->
-    <script src="https://www.gstatic.com/firebasejs/7.24.0/firebase-app.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/7.23.0/firebase-storage.js"></script>
+  <!-- The core Firebase JS SDK is always required and must be listed first -->
+  <script src="https://www.gstatic.com/firebasejs/7.24.0/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/7.23.0/firebase-storage.js"></script>
 
-    <!-- TODO: Add SDKs for Firebase products that you want to use
+  <!-- TODO: Add SDKs for Firebase products that you want to use
      https://firebase.google.com/docs/web/setup#available-libraries -->
 
-    <script>
-      // Your web app's Firebase configuration
-      var firebaseConfig = {
-        apiKey: "AIzaSyCz8yxHbNpwx-Ga16DbyS_YM4p2EETGSl0",
-        authDomain: "arm-social.firebaseapp.com",
-        databaseURL: "https://arm-social.firebaseio.com",
-        projectId: "arm-social",
-        storageBucket: "arm-social.appspot.com",
-        messagingSenderId: "909122030162",
-        appId: "1:909122030162:web:d69103f21efd47cb45ad8b",
-      };
-      // Initialize Firebase
-      firebase.initializeApp(firebaseConfig);
-    </script>
-
-    <script src="/js/register/script.js"></script>
-    <% include ("./partials/jsPartials") %>
-  </body>
-</html>
+  <script>
+    // Your web app's Firebase configuration
+    var firebaseConfig = {
+      apiKey: "AIzaSyCz8yxHbNpwx-Ga16DbyS_YM4p2EETGSl0",
+      authDomain: "arm-social.firebaseapp.com",
+      databaseURL: "https://arm-social.firebaseio.com",
+      projectId: "arm-social",
+      storageBucket: "arm-social.appspot.com",
+      messagingSenderId: "909122030162",
+      appId: "1:909122030162:web:d69103f21efd47cb45ad8b",
+    };
+    // Initialize Firebase
+    firebase.initializeApp(firebaseConfig);
+  </script>
+  <script src="/js/register/script.js"></script>
+<%- include ("./partials/footer") %>

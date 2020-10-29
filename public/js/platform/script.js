@@ -1,13 +1,6 @@
 const postButton = document.getElementById("postButton");
 const postText = document.getElementById("postTextarea");
 
-// Classes that are going to be added to the cards
-const classes = [];
-// Classes that are going to be added to the posters name divs
-const authorNameClasses = ["title", "is-3"];
-// Classes that are going to be added to the post's text
-const postTextClasses = ["subtitle"];
-
 // Function for reading cookies on the client side
 function readCookie(name) {
   var nameEQ = name + "=";
@@ -29,27 +22,33 @@ function fetchPosts() {
         let author = obj.author;
         let authorId = obj.authorId;
         let authorImage = obj.authorImage;
+        let postDate = obj.datefield;
         let postsContainer = document.getElementById("posts");
         let cardContainer = document.createElement("div");
-        let cardText = document.createElement("p");
-        let cardAuthor = document.createElement("a");
-        let cardAuthorImage = document.createElement("img");
 
-        classes.forEach((obj) => cardContainer.classList.add(obj));
-        postTextClasses.forEach((obj) => cardText.classList.add(obj));
-        authorNameClasses.forEach((obj) => cardAuthor.classList.add(obj));
-
-        cardAuthorImage.src = authorImage;
-        cardAuthor.innerHTML = `<br>${author}`;
-        cardAuthor.href = `/user/${authorId}`;
-        cardText.innerText = text;
-        cardAuthor.classList.add(authorNameClasses);
-        cardAuthorImage.classList.add("image-rounded");
-        cardContainer.appendChild(cardAuthorImage);
-        cardContainer.appendChild(cardAuthor);
-        cardContainer.appendChild(cardText);
-        postsContainer.appendChild(cardContainer);
         postText.value = "";
+
+        cardContainer.innerHTML =
+          `
+            <div class="post container shadow-sm rounded-lg mt-1 mb-4 pr-4 pl-4 pb-3 pt-3 bg-white">
+            <img
+              src="${authorImage}"
+              alt="profile-photo"
+              class="rounded-circle"
+              width= "80"
+              height="80"
+            />
+            <h4 class="text-dark mt-3 align-baseline">
+              <a href="/user/${authorId}">${author}</a>
+            </h4>
+            <h6 class="text-dark align-baseline">
+              ${text}
+            </h6>
+            <h6 class="text-secondary">${postDate}</h6>
+          </div>
+        `;
+
+        postsContainer.appendChild(cardContainer);
       });
     })
     .catch((e) => console.log(e));
@@ -67,27 +66,33 @@ function createPost() {
       let author = data.author;
       let authorId = data.authorId;
       let authorImage = data.authorImage;
+      let postDate = data.datefield;
       let postsContainer = document.getElementById("posts");
       let cardContainer = document.createElement("div");
-      let cardText = document.createElement("p");
-      let cardAuthor = document.createElement("a");
-      let cardAuthorImage = document.createElement("img");
 
-      classes.forEach((obj) => cardContainer.classList.add(obj));
-      postTextClasses.forEach((obj) => cardText.classList.add(obj));
-      authorNameClasses.forEach((obj) => cardAuthor.classList.add(obj));
+      postText.value = "";
 
-      cardAuthorImage.src = authorImage;
-      cardAuthor.innerHTML = `<br>${author}`;
-      cardAuthor.href = `/user/${authorId}`;
-      cardText.innerText = text;
-      cardAuthorImage.classList.add("image-rounded");
-      cardContainer.appendChild(cardAuthorImage);
-      cardContainer.appendChild(cardAuthor);
-      cardContainer.appendChild(cardText);
+      cardContainer.innerHTML = `
+      <div class="post container shadow-sm rounded-lg mt-1 mb-4 pr-4 pl-4 pb-3 pt-3 bg-white">
+      <img
+        src="${authorImage}"
+        alt="profile-photo"
+        class="rounded-circle"
+        width= "80"
+        height="80"
+      />
+      <h4 class="text-dark mt-3 align-baseline">
+        <a href="/user/${authorId}">${author}</a>
+      </h4>
+      <h6 class="text-dark align-baseline">
+        ${text}
+      </h6>
+      <h6 class="text-secondary">${postDate}</h6>
+    </div>
+    `;
+
       // Append the card to the top of the div
       postsContainer.prepend(cardContainer);
-      postText.value = "";
     })
     .catch((e) => {
       console.log(e);

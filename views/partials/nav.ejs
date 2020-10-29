@@ -1,32 +1,26 @@
-<nav>
-  <ul>
-    <li>
-      <a href="/"> Home </a>
-    </li>
+<ul id="nav" class="nav justify-content-center sticky-top bg-white pr-5 pl-5 pt-3 pb-1 mb-3">
+  <li class="nav-item">
+    <a class="nav-link" href="/"> Home </a>
+  </li>
 
-    <li>
-      <a href="/users"> Users </a>
-    </li>
+  <li class="nav-item">
+    <a class="nav-link" href="/users"> Users </a>
+  </li>
 
-    <li>
-      <a href="/user/<%= currentAccount._id %>"> My Account </a>
-    </li>
+  <li class="nav-item">
+    <a class="nav-link" href="/user/<%= currentAccount._id %>"><i class=""></i> My Account </a>
+  </li>
 
-    <li>
-      <a href="/settings">
-        Settings
-      </a>
-    </li>
+  <li class="nav-item">
+    <a class="nav-link" href="/settings">
+      Settings
+    </a>
+  </li>
 
-    <li>
-      <form
-        id="logout"
-        method="POST"
-        action="/logout/<%= currentAccount._id %>"
-      >
-        <a href="#!" id="submitLogout" type="submit"> Logout </a>
-      </form>
-    </li>
-  </ul>
-</nav>
-<hr class="solid">
+  <li class="nav-item">
+    <a href="#!" class="nav-link" id="submitLogout" type="submit">
+      Logout
+      <form class="nav-link" id="logout" method="POST" action="/logout/<%= currentAccount._id %>"></form>
+    </a>
+  </li>
+</ul>

@@ -30,6 +30,7 @@ router.get("/", async (req, res) => {
           accounts: accounts,
           currentAccount: currentAccount,
           err: "We couldn't find any public accounts.",
+          title: "Platform | ArmSocial"
         });
       })
       .catch(([err1, err2]) => {
@@ -54,12 +55,17 @@ router.get("/user/:accountId", async (req, res) => {
       password: req.cookies.password,
     });
     const platformAccount = await AccountSchema.findById(accountId);
-    const platformAccountPosts = await PostSchema.find({ authorId: accountId });
-    res.render("platformAccount", {
-      currentAccount: currentAccount,
-      platformAccount: platformAccount,
-      posts: platformAccountPosts,
-    });
+    const platformAccountPosts = await PostSchema.find({ authorId: accountId }).sort({ datefield: -1 });
+    if (!platformAccount) {
+      res.redirect("/");
+    } else {
+      res.render("platformAccount", {
+        currentAccount: currentAccount,
+        platformAccount: platformAccount,
+        posts: platformAccountPosts,
+        title: `${platformAccount.fullName} | ArmSocial`
+      });
+    }
   }
 });
 

@@ -17,7 +17,7 @@ router.get("/register", (req, res) => {
   if (!req.cookies.email & !req.cookies.password) {
     res.clearCookie("email");
     res.clearCookie("password");
-    res.render("register");
+    res.render("register", { title: "Register | ArmSocial" });
   } else {
     res.redirect("/auth/register");
   }
@@ -47,7 +47,7 @@ router.post("/register", async (req, res) => {
   });
 
   if (Account.email == duplicateAccount.email) {
-    res.render("register");
+    res.redirect("/");
   }
   if (duplicateAccount == null || Account.email != duplicateAccount.email) {
     if (req.body.avatar) {
@@ -81,7 +81,7 @@ router.get("/login", (req, res) => {
   if (!req.cookies.email && !req.cookies.password) {
     res.clearCookie("email");
     res.clearCookie("password");
-    res.render("login");
+    res.render("login", { title: "Login | ArmSocial" });
   } else {
     res.redirect("/");
   }
@@ -110,6 +110,7 @@ router.post("/login", async (req, res, next) => {
       .render("login", {
         err:
           "This account can't be found. Try checking your email and password and try again.",
+        title: "Login | ArmSocial"
       });
   } else {
     res.cookie("email", email);

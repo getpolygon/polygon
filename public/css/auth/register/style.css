@@ -1,15 +1,3 @@
-.main {
-  width: 100%;
-  height: 100%;
-  margin: 5% auto;
-}
-
-.nameInput {
-  display: -webkit-box;
-  display: -ms-flexbox;
-  display: flex;
-}
-
 .error {
   color: #ff6464 !important;
 }

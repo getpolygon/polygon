@@ -2,18 +2,10 @@
 <%- include ("./partials/nav") %>
 
 <div class="container">
-  <div class="createPost container mb-5" id="createPost">
-    <h1 align="left" class="text-dark pb-1">Create a post</h1>
-    <div id="create">
-      <div>
-        <textarea rows="5" required minlength="10" class="form-control w-100 mb-3" name="text" id="postTextarea"
-          required placeholder="What are you thinking about, <%= currentAccount.firstName %>?"></textarea>
-      </div>
-      <button class="btn btn-primary mb-2 w-100" id="postButton" type="submit">Post</button>
-    </div>
-  </div>
+  <%-include ("./partials/createPost") %>
+</div>
 
-  <div class="posts container" id="posts"></div>
+<div class="posts container" id="posts"></div>
 </div>
 <script src="/js/platform/script.js"></script>
 <%-include ("./partials/footer") %>

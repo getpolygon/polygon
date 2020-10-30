@@ -90,9 +90,7 @@ function checkEmail() {
     headers: { "Content-Type": "application/x-www-form-urlencoded" },
     body: `email=${email.value}`,
   })
-    .then((res) => {
-      return res.json();
-    })
+    .then(response => response.json())
     .then((response) => {
       let password = document.getElementById("password");
       let bio = document.getElementById("bio");

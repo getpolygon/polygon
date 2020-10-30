@@ -10,7 +10,7 @@
   </div>
 
   <div class="account-name container">
-    <h2 align="center" id="fullName">
+    <h2 align="center" class="mt-2" id="fullName">
       <%= platformAccount.fullName %> <% if (platformAccount.isPrivate == true) {%>
       <h5 align="center">
         Private Account
@@ -47,24 +47,17 @@
   <hr class="solid" />
 </div>
 <% if (currentAccount.email == platformAccount.email) {%>
-<div id="container">
-  <div class="container">
-    <h2>Create a post</h2>
-    <div>
-      <textarea required minlength="10" class="form-control w-100 mb-3" name="text" id="postTextarea" required
-        placeholder="What are you thinking about, <%= currentAccount.firstName %>?"></textarea>
-    </div>
-    <button class="btn btn-primary mb-2" id="postButton" type="submit">
-      Post
-    </button>
-  </div>
-</div>
-<script src="/js/platformAccount/script.js"></script>
+<%-include ("./partials/createPost") %>
 <%}%> 
     <% if (posts) { %>
 <div id="posts" class="posts container">
   <% posts.forEach(post => { %>
   <div class="post container shadow-sm rounded-lg mt-1 mb-4 pr-4 pl-4 pb-3 pt-3 bg-white">
+    <% if (currentAccount.email == platformAccount.email) {%>
+    <div class="container-sm " style="text-align: right;">
+      <i postId="<%= post._id %>" class="fas fa-trash-alt submitDeleteForm" role="button"></i>
+    </div>
+    <%}%>
     <img src="<%= post.authorImage %>" alt="profile-photo" class="rounded-circle" width="80" height="80" />
     <h4 class="text-dark mt-3 align-baseline">
       <a href="/user/<%= platformAccount._id %>"><%= platformAccount.fullName %></a>
@@ -75,11 +68,6 @@
 
   <% }); %>
   <% } %>
-  <% if (posts.length < 1) {%>
-  <div class="posts container">
-    <h5 align="center">This user doesn't have any posts</h5>
-  </div>
-  <%}%>
-  </div>
-  
+</div>
+<script src="/js/platformAccount/script.js"></script>
 <%- include ("./partials/footer") %>

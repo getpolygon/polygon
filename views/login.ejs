@@ -1,27 +1,25 @@
 <%- include ("./partials/head") %>
 
-<div class="container-sm mt-5 w-75">
-    <div class="form-group">
-      <form id="form" class="form-group" action="login" method="POST">
-        <h2 align="left">Login to ArmSocial</h2>
+<div class="container-sm mt-5">
+  <form id="form" class="container form-group w-75" action="login" method="POST">
+    <h2 align="left">Login to ArmSocial</h2>
 
-        <input class="form-control" required id="email" name="email" type="email" placeholder="Email" />
+    <input class="form-control" required id="email" name="email" type="email" placeholder="Email" />
 
-        <input class="form-control mt-2" required id="password" name="password" type="password" placeholder="Password"
-          minlength="8" />
+    <input class="form-control mt-2" required id="password" name="password" type="password" placeholder="Password"
+      minlength="8" />
 
-        <div class="err">
-          <% if (locals.err) {%>
-          <small> <%= err %> </small>
-          <%}%>
+    <div class="err">
+      <% if (locals.err) {%>
+      <small> <%= err %> </small>
+      <%}%>
         </div>
 
           <button class="btn btn-primary mt-3" id="submitButton" type="submit">Login</button>
           <br />
           <p class="mt-3">Don't have an account? <a href="/auth/register">Register</a></p>
-        </form>
-      </div>
-    </div>
+      </form>
+</div>
 
     <script src="/js/login/script.js"></script>
 <%- include ("./partials/footer") %>

@@ -27,7 +27,6 @@ router.post("/", async (req, res) => {
           });
           return;
         }
-
         if (doc.email == inputEmail) {
           res.json({
             result: true,
@@ -35,10 +34,10 @@ router.post("/", async (req, res) => {
           });
           return;
         }
-
         if (!doc) {
           res.json({
-            result: err,
+            result: false,
+            emailValidity: true
           });
           return;
         } else {

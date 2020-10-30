@@ -26,7 +26,7 @@ function deleteAccount() {
     .then((res) => res.json())
     .then((res) => {
       msg.innerHTML =
-        "Your account has been deleted. <a href='/'>Go back to the main page</a>";
+        "<p class='mt-3'>Your account has been deleted. <a href='/'>Go back to the main page</a></p>";
       deleteUserImage;
     })
     .catch((e) => (msg.innerText = e.toString()));

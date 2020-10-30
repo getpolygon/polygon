@@ -7,7 +7,7 @@ let avatarLinks = [
   "/static/img/3.png",
   "/static/img/4.png",
   "/static/img/5.png",
-  "static/img/6.png",
+  "/static/img/6.png",
 ];
 
 const AccountSchema = require("../models/account");

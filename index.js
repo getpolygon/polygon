@@ -4,13 +4,21 @@ const mongoose = require("mongoose");
 const bodyParser = require("body-parser");
 const cookieParser = require("cookie-parser");
 const cache = require('express-redis-cache')({
-    host: process.env.REDIS_HOST, port: process.env.REDIS_PORT, auth_pass: process.env.REDIS_PASS
+    host: process.env.REDIS_HOST, 
+    port: process.env.REDIS_PORT, 
+    auth_pass: process.env.REDIS_PASS
 });
 const app = express();
 const port = 3000 || process.env.PORT;
+const session = require("express-session");
 
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
+app.use(session({
+    secret: process.env.SECRET,
+    resave: false,
+    saveUninitialized: true
+}));
 app.use(cookieParser());
 app.use(express.static("./public"));
 app.set("view engine", "ejs");
@@ -23,9 +31,11 @@ const platformRoute = require("./routes/platform");
 const checkEmailRoute = require("./api/checkEmail");
 const createPostRoute = require("./api/createPost");
 const fetchPostsRoute = require("./api/fetchPosts");
+const deletePostRoute = require("./api/deletePost");
 const userSettingsRoute = require("./routes/settings");
 const deleteAccountRoute = require("./api/deleteAccount");
 const updateAccountRoute = require("./api/updateAccount");
+const checkAccountRoute = require("./api//checkAccount");
 
 app.use("/", platformRoute);
 app.use("/auth", authRoute);
@@ -36,6 +46,8 @@ app.use("/api", apiRoute);
 app.use("/api/checkEmail", checkEmailRoute);
 app.use("/api/createPost", createPostRoute);
 app.use("/api/fetchPosts", fetchPostsRoute);
+app.use("/api/deletePost", deletePostRoute);
+app.use("/api/checkAccount", checkAccountRoute);
 app.use("/api/deleteAccount", deleteAccountRoute);
 app.use("/api/updateAccount", updateAccountRoute);
 

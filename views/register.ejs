@@ -1,79 +1,66 @@
 <%- include ("./partials/head") %>
-  <div class="container mt-5">
-    <div class="container-sm mt-5 w-75">
-      <form id="form" class="form-group container-sm" action="/auth/register" method="POST">
-        <h1 align="center" class="mb-3">Welcome to ArmSocial</h1>
+<div class="container vh-100 d-flex align-items-center col justify-content-center">
+  <div class="container">
+    <form id="form" class="form-group" action="/auth/register" method="POST">
+      <h1 align="center">Welcome to ArmSocial</h1>
 
-        <div id="nameInput">
-          <input class="form-control" aria-label="firstName" required id="firstName" name="firstName" type="text"
-            placeholder="First Name" />
+      <input autocomplete="given-name" class="form-control mt-3" aria-label="firstName" required id="firstName" name="firstName" type="text"
+        placeholder="First Name" />
 
-          <br />
+      <input autocomplete="given-name" class="form-control mt-3" aria-label="lastName" required id="lastName" type="text" name="lastName"
+        placeholder="Last Name" />
 
-          <input class="form-control" aria-label="lastName" required id="lastName" type="text" name="lastName"
-            placeholder="Last Name" />
-        </div>
+      <input autocomplete="email" class="form-control mt-3" aria-label="email" required id="email" name="email" type="email"
+        placeholder="Email" />
 
-        <br />
+      <div id="emailStatus" class="emailDuplicate"></div>
 
-        <input class="form-control" aria-label="email" required id="email" name="email" type="email"
-          placeholder="Email" />
+      <input autocomplete="current-password" class="form-control mt-3" aria-label="password" required id="password" name="password" type="password"
+        placeholder="Password" minlength="8" />
 
-        <div id="emailStatus" class="emailDuplicate"></div>
 
-        <br />
+      <textarea class="form-control mt-3" aria-label="bio" name="bio" id="bio" rows="2"
+        placeholder="Enter your biography..."></textarea>
 
-        <input class="form-control" aria-label="password" required id="password" name="password" type="password"
-          placeholder="Password" minlength="8" />
-
-        <br />
-
-        <textarea class="form-control" aria-label="bio" name="bio" id="bio" rows="2"
-          placeholder="Enter your biography..."></textarea>
-
-        <br />
-
-        <label for="avatar">Profile picture ( Optional )</label>
+      <label class="mt-3" for="avatar">Profile picture ( Optional )</label>
         <input class="form-control" accept="image/x-png,image/gif,image/jpeg" name="avatar" id="avatar" type="file" />
 
-        <div id="imgError" class="imgError"></div>
+      <div id="imgError" class="imgError"></div>
 
-        <br />
+      <label class="mt-3" for="privateCheck">
+        Private Account
+        <input name="privateCheck" type="checkbox" value="false" id="privateCheck" />
+      </label>
 
-        <label for="privateCheck">
-          Private Account
-          <input name="privateCheck" type="checkbox" value="false" id="privateCheck" /></label>
+      <br />
 
-        <br />
-
-        <button id="submitButton" class="btn btn-primary" type="submit">
-          <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true" hidden
-            id="loadingSpinner"></span>
-          Register
-        </button>
-        <br />
-        <p class="mt-2">Have an account? <a href="/auth/login">Login</a></p>
-      </form>
-    </div>
+      <button id="submitButton" class="btn btn-primary mt-1" type="submit">
+        <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true" hidden
+          id="loadingSpinner"></span>
+        Register
+      </button>
+      <p class="mt-2">Have an account? <a href="/auth/login">Login</a></p>
+    </form>
   </div>
+</div>
 
-  <!-- The core Firebase JS SDK is always required and must be listed first -->
-  <script src="https://www.gstatic.com/firebasejs/7.24.0/firebase-app.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/7.23.0/firebase-storage.js"></script>
+<!-- The core Firebase JS SDK is always required and must be listed first -->
+<script src="https://www.gstatic.com/firebasejs/7.24.0/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/7.23.0/firebase-storage.js"></script>
 
-  <script>
-    // Your web app's Firebase configuration
-    var firebaseConfig = {
-      apiKey: "AIzaSyCz8yxHbNpwx-Ga16DbyS_YM4p2EETGSl0",
-      authDomain: "arm-social.firebaseapp.com",
-      databaseURL: "https://arm-social.firebaseio.com",
-      projectId: "arm-social",
-      storageBucket: "arm-social.appspot.com",
-      messagingSenderId: "909122030162",
-      appId: "1:909122030162:web:d69103f21efd47cb45ad8b",
-    };
-    // Initialize Firebase
-    firebase.initializeApp(firebaseConfig);
-  </script>
-  <script src="/js/register/script.js"></script>
+<script>
+  // Your web app's Firebase configuration
+  var firebaseConfig = {
+    apiKey: "AIzaSyCz8yxHbNpwx-Ga16DbyS_YM4p2EETGSl0",
+    authDomain: "arm-social.firebaseapp.com",
+    databaseURL: "https://arm-social.firebaseio.com",
+    projectId: "arm-social",
+    storageBucket: "arm-social.appspot.com",
+    messagingSenderId: "909122030162",
+    appId: "1:909122030162:web:d69103f21efd47cb45ad8b",
+  };
+  // Initialize Firebase
+  firebase.initializeApp(firebaseConfig);
+</script>
+<script src="/js/register/script.js"></script>
 <%- include ("./partials/footer") %>

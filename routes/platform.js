@@ -16,6 +16,8 @@ router.get("/", async (req, res) => {
    */
 
   if (!emailCookie && !passwordCookie) {
+    res.clearCookie("email", req.cookies.email);
+    res.clearCookie("password", req.cookies.password);
     res.redirect("/auth/login");
   } else {
     Promise.all([
@@ -34,8 +36,8 @@ router.get("/", async (req, res) => {
         });
       })
       .catch(([err1, err2]) => {
-        res.clearCookie("email", req.params.accountId);
-        res.clearCookie("password", req.params.accountId);
+        res.clearCookie("email", req.cookies.email);
+        res.clearCookie("password", req.cookies.password);
         res.redirect("/auth/login", { err1: err1, err2: err2 });
 
         console.log(err1);

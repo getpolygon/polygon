@@ -26,4 +26,15 @@
 .post:hover .submitDeleteForm {
   visibility: visible;
 }
+
+.nav-item {
+  -webkit-transition: ease-in-out 300ms;
+  transition: ease-in-out 300ms;
+  margin-right: .5rem;
+  border-radius: .5rem;
+}
+
+.nav-item:hover {
+  background-color: #d4d4d4;
+}
 /*# sourceMappingURL=style.css.map */

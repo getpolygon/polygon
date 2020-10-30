@@ -1,28 +1,27 @@
-<ul id="nav" class="nav justify-content-center sticky-top bg-white pr-5 pl-5 pt-3 pb-1 mb-3">
+<ul id="nav" class="nav justify-content-center sticky-top bg-white mt-3 mb-3">
   <li class="nav-item">
-    <a class="nav-link" href="/"> Home </a>
+    <a class="nav-link text-dark" href="/"><i class="fas fa-home"></i></a>
   </li>
 
   <li class="nav-item">
-    <a class="nav-link" href="/users"> Users </a>
+    <a class="nav-link text-dark" href="/users"><i class="fas fa-users"></i></a>
   </li>
 
   <li class="nav-item">
-    <a class="nav-link" href="/user/<%= currentAccount._id %>"><i class=""></i> My Account </a>
+    <a class="nav-link text-dark" href="/user/<%= currentAccount._id %>"><i class="fas fa-user"></i></a>
   </li>
 
   <li class="nav-item">
-    <a class="nav-link" href="/settings">
-      Settings
-    </a>
+    <a class="nav-link text-dark" href="/settings"><i class="fas fa-cog"></i></a>
   </li>
 
   <li class="nav-item">
-    <a href="#!" class="nav-link" id="submitLogout" type="submit">
-      Logout
-      <form class="nav-link" id="logout" method="POST" action="/logout/<%= currentAccount._id %>"></form>
+    <a href="#!" class="nav-link text-dark" id="submitLogout">
+      <i class="fas fa-sign-out-alt">
+        <form id="logout" method="POST" class="bg-transparent" action="/logout/<%= currentAccount._id %>"></form>
+      </i>
     </a>
   </li>
 </ul>
 <!-- Nav -->
-<script defer src="/js/nav/script.js"></script>
+<script src="/js/nav/script.js"></script>

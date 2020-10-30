@@ -29,3 +29,13 @@
     visibility: visible;
   }
 }
+
+.nav-item {
+  transition: ease-in-out 300ms;
+  margin-right: .5rem;
+  border-radius: .5rem;
+}
+
+.nav-item:hover {
+  background-color: rgb(212, 212, 212);
+}

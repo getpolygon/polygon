@@ -7,9 +7,9 @@ const AccountSchema = require("../models/account");
 router.post("/", async (req, res) => {
     let currentEmail = req.cookies.email;
     let currentPassword = req.cookies.password;
-    let currentAccount = await AccountSchema.findOne({ email: currentEmail, password: currentPassword });
-
     let post = req.query.postId;
+
+    let currentAccount = await AccountSchema.findOne({ email: currentEmail, password: currentPassword });
     let foundPost = await PostSchema.findById(post);
 
     if (foundPost.authorId != currentAccount._id) {

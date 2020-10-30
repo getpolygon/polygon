@@ -57,7 +57,17 @@ router.get("/user/:accountId", async (req, res) => {
       password: req.cookies.password,
     });
     const platformAccount = await AccountSchema.findById(accountId);
-    const platformAccountPosts = await PostSchema.find({ authorId: accountId }).sort({ datefield: -1 });
+    const platformAccountPosts = await PostSchema.find({ authorId: accountId }).sort({ datefield: -1 })
+      .then(doc => {
+        doc.forEach(item => {
+          const moment = require("moment");
+          return item.datefield = moment().calendar(this.datefield);
+        });
+        return doc;
+      })
+      .catch(e => {
+        console.log(e);
+      })
     if (!platformAccount) {
       res.redirect("/");
     } else {

@@ -20,11 +20,12 @@ router.post("/", async (req, res) => {
     authorEmail: req.cookies.email,
     authorId: authorId,
     authorImage: authorImage,
-    datefield: moment(Date.now()).format('MMMM Do YYYY, h:mm:ss a'),
+    datefield: Date.now(),
   });
 
   await Post.save()
     .then((doc) => {
+      doc.datefield = moment().calendar(this.datefield);
       res.send(doc);
       return;
     })

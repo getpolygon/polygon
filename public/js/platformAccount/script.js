@@ -10,6 +10,26 @@ let postCount = document.getElementById("postCount");
   return deletePostButtons;
 })();
 
+function getCookie(name) {
+  // Split cookie string and get all individual name=value pairs in an array
+  var cookieArr = document.cookie.split(";");
+
+  // Loop through the array elements
+  for (var i = 0; i < cookieArr.length; i++) {
+    var cookiePair = cookieArr[i].split("=");
+
+    /* Removing whitespace at the beginning of the cookie name
+    and compare it with the given string */
+    if (name == cookiePair[0].trim()) {
+      // Decode the cookie value and return
+      return decodeURIComponent(cookiePair[1]);
+    }
+  }
+
+  // Return null if not found
+  return null;
+}
+
 function deletePost() {
   let postId = this.getAttribute("postId");
   let el = document.createElement("div");
@@ -41,6 +61,22 @@ function deletePost() {
       console.log(e);
     })
 }
+
+(function checkPostContainer() {
+  let postsContainer = document.getElementById("posts");
+  let postMsg = document.getElementById("postCount");
+  if (postsContainer.innerText.length < 1) {
+    postsContainer.innerHTML = `
+    <h5 id="postCount" class="pb-5" align="center">This user doesn't have any posts</h5>
+    `
+  } else {
+    if (postMsg) {
+      postMsg.innerText = "";
+      postMsg.innerHTML = "";
+      postsContainer.removeChild(postMsg);
+    }
+  }
+})()
 
 function checkPostContainer() {
   let postsContainer = document.getElementById("posts");
@@ -98,7 +134,7 @@ function createPost() {
       `;
       // Append the card to the top of the div
       postsContainer.prepend(cardContainer);
-      
+
       (function checkForDeleteButtons() {
         let deletePostButtons = document.querySelectorAll(".submitDeleteForm");
         deletePostButtons.forEach(element => {
@@ -114,4 +150,3 @@ function createPost() {
 
 postButton.addEventListener("click", createPost);
 postButton.addEventListener("click", checkPostContainer);
-window.addEventListener("load", checkPostContainer);

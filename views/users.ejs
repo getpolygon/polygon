@@ -6,8 +6,8 @@
   <div class="accounts container">
     <div class="row container">
       <%# If account list's lenght is more or equal to 1 then display the
-          cards%> <% if (accounts.length >= 1) {%> <%accounts.forEach(account =>
-          {%>
+          cards%> 
+      <% if (accounts.length >= 1) {%> <%accounts.forEach(account =>{%>
       <div class="card shadow-sm rounded-5 pr-3 pl-3 mr-3 border-none mt-1">
         <img class="account-picture rounded-circle mt-1 mb-1" width="100" height="100" src="<%= account.pictureUrl %>"
           alt="profile_picture" />
@@ -18,10 +18,11 @@
       </div>
       <%});%>
       <%}%>
-        </div>
+    </div>
         <%# If the account lenght is lower than 1 display that there are
-        currently no public accounts %> <% if (accounts.length < 1) {%>
-      <p align="center"><%= err %></p>
+        currently no public accounts %> 
+        <% if (accounts.length < 1) {%>
+          <p align="center"><%= err %></p>
       <%}%>
       </div>
     </div>

@@ -11,6 +11,7 @@
   "license": "Custom",
   "dependencies": {
     "body-parser": "^1.19.0",
+    "compression": "^1.7.4",
     "cookie-parser": "^1.4.5",
     "dotenv": "^8.2.0",
     "ejs": "^3.1.5",
@@ -18,7 +19,8 @@
     "express": "^4.17.1",
     "express-session": "^1.17.1",
     "moment": "^2.29.1",
-    "mongoose": "^5.10.9"
+    "mongoose": "^5.10.9",
+    "redis": "^3.0.2"
   },
   "devDependencies": {
     "nodemon": "^2.0.5"

@@ -5,8 +5,26 @@
 
 <div class="container justify-content-center">
   <div class="container" style="align-items: center; justify-content: center;text-align: center;">
-    <img class="rounded-circle" height="128" width="128" src="<%= platformAccount.pictureUrl %>"
-      alt="profile_picture" />
+    <img data-toggle="modal" data-target="#exampleModalCenter" role="button" class="rounded-circle" height="128"
+      width="128" src="<%= platformAccount.pictureUrl %>" alt="profile_picture" />
+    <br>
+    <!-- Modal -->
+    <div class="modal fade" id="exampleModalCenter" tabindex="-1" role="dialog" aria-labelledby="imageModal"
+      aria-hidden="true">
+      <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="imageModal"><%= platformAccount.fullName %></h5>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+          <div class="modal-body">
+            <img src="<%= platformAccount.pictureUrl %>" style="height: 15em;" alt="profile_picture">
+          </div>
+        </div>
+      </div>
+    </div>
   </div>
 
   <div class="account-name container">
@@ -28,7 +46,7 @@
 
       <div class="account-info container">
         <p align="center" class="account-id">
-          ID <a href="#"><%= platformAccount._id%></a>
+          ID <a id="accountId" href="#"><%= platformAccount._id%></a>
       </p>
       <p align="center" class="buttons">
         <% if (currentAccount.email == platformAccount.email) {%>
@@ -47,16 +65,16 @@
   <hr class="solid" />
 </div>
 <% if (currentAccount.email == platformAccount.email) {%>
-<%-include ("./partials/createPost") %>
+  <%-include ("./partials/createPost") %>
 <%}%> 
-    <% if (posts) { %>
+<% if (posts) { %>
 <div id="posts" class="posts container">
   <% posts.forEach(post => { %>
   <div class="post container shadow-sm rounded-lg mt-1 mb-4 pr-4 pl-4 pb-3 pt-3 bg-white">
     <% if (currentAccount.email == platformAccount.email) {%>
-    <div class="container-sm " style="text-align: right;">
-      <i postId="<%= post._id %>" class="fas fa-trash-alt submitDeleteForm" role="button"></i>
-    </div>
+      <div class="container-sm " style="text-align: right;">
+        <i postId="<%= post._id %>" class="fas fa-trash-alt submitDeleteForm" role="button"></i>
+      </div>
     <%}%>
     <img src="<%= post.authorImage %>" alt="profile-photo" class="rounded-circle" width="80" height="80" />
     <h4 class="text-dark mt-3 align-baseline">
@@ -65,7 +83,6 @@
     <h6 class="text-dark align-baseline"><%= post.text %></h6>
     <h6 class="text-secondary"><%= post.datefield %></h6>
   </div>
-
   <% }); %>
   <% } %>
 </div>

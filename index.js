@@ -3,6 +3,7 @@ const express = require("express");
 const mongoose = require("mongoose");
 const bodyParser = require("body-parser");
 const cookieParser = require("cookie-parser");
+const compression = require("compression");
 const app = express();
 const port = 3000 || process.env.PORT;
 const session = require("express-session");
@@ -15,6 +16,7 @@ app.use(session({
     saveUninitialized: true
 }));
 app.use(cookieParser());
+app.use(compression());
 app.use(express.static("./public"));
 app.set("view engine", "ejs");
 app.set("views", "./views");

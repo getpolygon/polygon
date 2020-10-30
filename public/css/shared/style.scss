@@ -18,3 +18,14 @@
 ::-webkit-scrollbar-thumb:hover {
   background: rgb(131, 131, 131);
 }
+
+.post {
+  .submitDeleteForm {
+    visibility: hidden;
+  }
+}
+.post:hover {
+  .submitDeleteForm {
+    visibility: visible;
+  }
+}

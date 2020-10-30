@@ -3,11 +3,11 @@ const express = require("express");
 const mongoose = require("mongoose");
 const bodyParser = require("body-parser");
 const cookieParser = require("cookie-parser");
-const cache = require('express-redis-cache')({
-    host: process.env.REDIS_HOST, 
-    port: process.env.REDIS_PORT, 
-    auth_pass: process.env.REDIS_PASS
-});
+// const cache = require('express-redis-cache')({
+//     host: process.env.REDIS_HOST, 
+//     port: process.env.REDIS_PORT, 
+//     auth_pass: process.env.REDIS_PASS
+// });
 const app = express();
 const port = 3000 || process.env.PORT;
 const session = require("express-session");
@@ -51,16 +51,16 @@ app.use("/api/checkAccount", checkAccountRoute);
 app.use("/api/deleteAccount", deleteAccountRoute);
 app.use("/api/updateAccount", updateAccountRoute);
 
-app.get("*", cache.route(), (_req, res) => {
+app.get("*", (_req, res) => {
     res.redirect("/static/error.html");
 });
 
-cache.once("connected", () => {
-    console.log("Redis connection: OK, port: %s", process.env.REDIS_PORT);
-});
-cache.once("error", (e) => {
-    console.log("Redis Connection: Error\n%s", e);
-});
+// cache.once("connected", () => {
+//     console.log("Redis connection: OK, port: %s", process.env.REDIS_PORT);
+// });
+// cache.once("error", (e) => {
+//     console.log("Redis Connection: Error\n%s", e);
+// });
 
 mongoose.connect(process.env.MONGO_DB, { useNewUrlParser: true, useUnifiedTopology: true });
 mongoose.connection.once("connected", () => {

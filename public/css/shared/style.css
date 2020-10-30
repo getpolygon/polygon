@@ -18,4 +18,12 @@
 ::-webkit-scrollbar-thumb:hover {
   background: #838383;
 }
+
+.post .submitDeleteForm {
+  visibility: hidden;
+}
+
+.post:hover .submitDeleteForm {
+  visibility: visible;
+}
 /*# sourceMappingURL=style.css.map */

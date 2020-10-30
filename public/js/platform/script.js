@@ -1,6 +1,10 @@
 const postButton = document.getElementById("postButton");
 const postText = document.getElementById("postTextarea");
 
+function checkAccount() {
+  // TODO: Add code to check the account validity
+}
+
 // For checking for delete buttons in the document
 function checkForDeleteButtons() {
   // Getting all the buttons with class name
@@ -174,7 +178,7 @@ function createPost() {
 
       cardContainer.innerHTML = `
       <div class="post container shadow-sm rounded-lg mt-1 mb-4 pr-4 pl-4 pb-3 pt-3 bg-white">
-        <div class="container-sm " style="text-align: right;">
+        <div class="container-sm" style="text-align: right;">
           <i postId="${postId}" class="submitDeleteForm fas fa-trash-alt" role="button"></i>
         </div>
         <img

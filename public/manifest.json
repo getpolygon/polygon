@@ -1,0 +1,9 @@
+{
+    "name": "ArmSocial — Socialize like a pro",
+    "short_name": "ArmSocial",
+    "description": "ArmSocial is connecting people from all around the globe. Join today!",
+    "lang": "en-US",
+    "start_url": "/",
+    "display": "standalone",
+    "theme_color": "#ffffff"
+  }

@@ -20,6 +20,7 @@
     "express-session": "^1.17.1",
     "moment": "^2.29.1",
     "mongoose": "^5.10.9",
+    "node-fetch": "^2.6.1",
     "redis": "^3.0.2"
   },
   "devDependencies": {

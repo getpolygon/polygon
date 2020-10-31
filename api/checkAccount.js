@@ -12,13 +12,13 @@ router.post("/", async (req, res) => {
             if (doc) {
                 res.json(doc);
             } else {
-                res.json({err: "No accounts with that email"})
-            }
+                res.json([]);
+            };
         })
         .catch(e => {
             res.json(e);
             console.log(e);
         });
-})
+});
 
 module.exports = router;

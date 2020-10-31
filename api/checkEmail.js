@@ -1,6 +1,5 @@
 const router = require("express").Router();
 const emailValidator = require("email-validator");
-
 const AccountSchema = require("../models/account");
 
 // Route to check email when registering (Using it for AJAX requests)

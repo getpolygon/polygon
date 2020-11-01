@@ -9,10 +9,6 @@ router.get("/", (req, res) => {
     .find()
     .sort({ datefield: -1 })
     .then((doc) => {
-      doc.forEach(item => {
-        // Converting to human readable date format
-        return item.datefield = moment().calendar(this.datefield)
-      })
       // Sending the updated doc
       res.json(doc);
     })

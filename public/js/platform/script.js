@@ -1,10 +1,6 @@
 const postButton = document.getElementById("postButton");
 const postText = document.getElementById("postTextarea");
 
-function checkAccount() {
-  // TODO: Add code to check the account validity
-}
-
 // For checking for delete buttons in the document
 function checkForDeleteButtons() {
   // Getting all the buttons with class name
@@ -40,26 +36,22 @@ function getCookie(name) {
 
 // For deleting posts
 function deletePost() {
+  // Getting the whole post div by id
+  let post = document.getElementById(this.parentNode.parentNode.id);
+  // Getting the postId attribute
   let postId = this.getAttribute("postId");
-  let el = document.createElement("div");
+
   fetch(`/api/deletePost?postId=${postId}`, {
     method: "POST",
     headers: { "Content-Type": "application/x-www-form-urlencoded" }
   })
     .then(response => response.json())
-    .then(response => {
-      el.innerHTML = `
-        <div class="alert alert-success alert-dismissible fade show" role="alert">
-          <strong>Your post has been deleted</strong>
-          <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-            <span aria-hidden="true">&times;</span>
-          </button>
-        </div>
-      `;
-      document.body.prepend(el);
+    .then(_response => {
+      post.parentNode.removeChild(post);
       checkForDeleteButtons();
     })
     .catch(e => {
+      let el = document.createElement("div");
       el.innerHTML = `
         <div class="alert alert-danger alert-dismissible fade show" role="alert">
           <strong>There was an error!</strong> Try refreshing your page.
@@ -102,7 +94,7 @@ function fetchPosts() {
             if (obj.authorId == response._id) {
               cardContainer.innerHTML =
                 `
-                <div class="post container shadow-sm rounded-lg mt-1 mb-4 pr-4 pl-4 pb-3 pt-3 bg-white">
+                <div id="${postId}" class="post container shadow-sm rounded-lg mt-1 mb-4 pr-4 pl-4 pb-3 pt-3 bg-white">
                   <div class="container-sm " style="text-align: right;">
                     <i postId="${postId}" class="submitDeleteForm fas fa-trash-alt" role="button"></i>
                   </div>
@@ -127,7 +119,7 @@ function fetchPosts() {
             else {
               cardContainer.innerHTML =
                 `
-              <div class="post container shadow-sm rounded-lg mt-1 mb-4 pr-4 pl-4 pb-3 pt-3 bg-white">
+              <div id="${postId}" class="post container shadow-sm rounded-lg mt-1 mb-4 pr-4 pl-4 pb-3 pt-3 bg-white">
                 <img
                   src="${authorImage}"
                   alt="profile-photo"
@@ -177,7 +169,7 @@ function createPost() {
       postText.value = "";
 
       cardContainer.innerHTML = `
-      <div class="post container shadow-sm rounded-lg mt-1 mb-4 pr-4 pl-4 pb-3 pt-3 bg-white">
+      <div id="${postId}" class="post container shadow-sm rounded-lg mt-1 mb-4 pr-4 pl-4 pb-3 pt-3 bg-white">
         <div class="container-sm" style="text-align: right;">
           <i postId="${postId}" class="submitDeleteForm fas fa-trash-alt" role="button"></i>
         </div>

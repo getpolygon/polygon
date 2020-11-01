@@ -31,24 +31,28 @@ function getCookie(name) {
 }
 
 function deletePost() {
+  // Getting the whole post div by id
+  let post = document.getElementById(this.parentNode.parentNode.id);
+  // Getting the postId attribute
   let postId = this.getAttribute("postId");
-  let el = document.createElement("div");
+
   fetch(`/api/deletePost?postId=${postId}`, {
     method: "POST",
     headers: { "Content-Type": "application/x-www-form-urlencoded" }
   })
     .then(response => response.json())
-    .then(response => {
-      el.innerHTML = `
-      <div class="alert alert-success alert-dismissible fade show" role="alert">
-      <strong>Your post has been deleted</strong>
-      <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-        <span aria-hidden="true">&times;</span>
-      </button>
-      </div>`
-      document.body.prepend(el);
+    .then(_response => {
+      post.parentNode.removeChild(post);
+      (function checkForDeleteButtons() {
+        let deletePostButtons = document.querySelectorAll(".submitDeleteForm");
+        deletePostButtons.forEach(element => {
+          element.addEventListener("click", deletePost);
+        });
+        return deletePostButtons;
+      })();
     })
     .catch(e => {
+      let el = document.createElement("div");
       el.innerHTML = `
       <div class="alert alert-danger alert-dismissible fade show" role="alert">
       <strong>There was an error!</strong> Try refreshing your page.
@@ -112,7 +116,7 @@ function createPost() {
       let cardContainer = document.createElement("div");
       postText.value = "";
       cardContainer.innerHTML = `
-        <div class="post container shadow-sm rounded-lg mt-1 mb-4 pr-4 pl-4 pb-3 pt-3 bg-white">
+        <div id="${postId}" class="post container shadow-sm rounded-lg mt-1 mb-4 pr-4 pl-4 pb-3 pt-3 bg-white">
         <div class="container-sm " style="text-align: right;">
             <i postId="${postId}" class="fas fa-trash-alt submitDeleteForm" role="button"></i>
         </div>

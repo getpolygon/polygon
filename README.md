@@ -22,24 +22,27 @@ After you've done these steps you can open `localhost:3000` in your browser.
 * EJS
 
 ## Database(s) Used
-* MongoDB ( for documents )
-* Firebase Storage ( for images )
-* Redis ( for caching )
-
-## Cookie parser Used
-* npm install `cookie-parser`
+* MongoDB ( For Documents )
+* MinIO ( Object Storage )
+* Redis ( For Caching )
 
 ## NPM dependencies Used
 ```json
 "dependencies": {
     "body-parser": "^1.19.0",
+    "compression": "^1.7.4",
     "cookie-parser": "^1.4.5",
     "dotenv": "^8.2.0",
     "ejs": "^3.1.5",
     "email-validator": "^2.0.4",
     "express": "^4.17.1",
-    "express-redis-cache": "^1.1.3",
-    "mongoose": "^5.10.9"
+    "express-session": "^1.17.1",
+    "minio": "^7.0.16",
+    "moment": "^2.29.1",
+    "mongoose": "^5.10.9",
+    "multer": "^1.4.2",
+    "node-fetch": "^2.6.1",
+    "redis": "^3.0.2"
 },
 "devDependencies": {
     "nodemon": "^2.0.5"

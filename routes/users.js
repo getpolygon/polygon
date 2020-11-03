@@ -1,4 +1,3 @@
-require("mongoose");
 const router = require("express").Router();
 
 const AccountSchema = require("../models/account");

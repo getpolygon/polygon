@@ -1,9 +1,11 @@
 const router = require("express").Router();
 const multer = require("multer");
+const fs = require("fs");
+const randomness = Math.round(Math.random());
 const storage = multer.diskStorage({
-    destination: __dirname + "/tmp/",
+    destination: "tmp/",
     filename: (err, file, cb) => {
-        cb(null, `${req.body.email}.png`);
+        cb(null, `${randomness}.png`);
     }
 })
 const upload = multer({ storage: storage });
@@ -41,7 +43,7 @@ router.post("/", upload.single("avatar"), async (req, res) => {
                 "Content-Type": req.file.mimetype
             });
             // Getting the link for the object
-            const presignedUrl = await MinIOClient.presignedGetObject("local", `${req.body.email}.png`, 24 * 60 * 60)
+            const presignedUrl = await MinIOClient.presignedGetObject("local", `${req.body.email}.png`, 24 * 60 * 60);
             return presignedUrl
         }
         // If the user didn't select an image return a random image link(string) that will be used to serve default avatars from the server
@@ -60,13 +62,20 @@ router.post("/", upload.single("avatar"), async (req, res) => {
         email: email,
         password: req.body.password,
         bio: req.body.bio,
-        // The value of this is undefined for some reason
         pictureUrl: pictureUrl,
         isPrivate: req.body.privateCheck ? true : false,
         date: Date.now()
     });
 
-    Account
+    // Delete the created file to save space
+    fs.unlink(`tmp/${randomness}.png`, (err) => {
+        if (err) {
+            console.error(err)
+            return
+        };
+    });
+
+    await Account
         .save()
         .then(() => {
             res.cookie("email", Account.email, { maxAge: 24 * 60 * 60 * 1000 });

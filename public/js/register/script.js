@@ -10,43 +10,6 @@ function checkboxValue() {
     privateCheck.setAttribute("value", false);
   };
 };
-function uploadFile() {
-  let email = document.getElementById("email");
-  let imgErr = document.getElementById("imgError");
-  let storageRef = firebase.storage().ref();
-  // If there is an image replace it with the new one and delete from firebase else create a new image
-  if (avatarInput.files.length < 1) {
-    let avatarImagesRef = storageRef.child(`${email.value}.jpg`);
-    avatarImagesRef.name === avatarImagesRef.name;
-    avatarImagesRef.fullPath === avatarImagesRef.fullPath;
-    let file = new File([avatarInput.files[0]], `${email.value}.jpeg`, { type: "image/png" });
-    avatarImagesRef.put(file);
-    avatarInput.classList.add("ok");
-    avatarInput.classList.remove("error");
-    imgErr.classList.add("ok");
-    imgErr.classList.remove("error");
-    imgErr.innerHTML = "Image Uploaded";
-  };
-  if (emailStatus.textContent.startsWith("Y")) {
-    let avatarImagesRef = storageRef.child(`${email.value}.jpg`);
-    avatarImagesRef.name === avatarImagesRef.name;
-    avatarImagesRef.fullPath === avatarImagesRef.fullPath;
-    let file = new File([avatarInput.files[0]], `${email.value}.jpeg`, { type: "image/png" });
-    avatarImagesRef.put(file);
-    avatarInput.classList.add("ok");
-    avatarInput.classList.remove("imgError");
-    imgErr.classList.add("ok");
-    imgErr.classList.remove("error");
-    imgErr.innerHTML = "Image Uploaded";
-  } else {
-    let storageRef = firebase.storage().ref();
-    let desertRef = storageRef.child(`${email.value}.jpg`);
-    let avatarImagesRef = storageRef.child(`${email.value}.jpg`);
-    avatarImagesRef.name === avatarImagesRef.name; // true
-    avatarImagesRef.fullPath === avatarImagesRef.fullPath; // false
-    desertRef.delete().catch((error) => (error = error));
-  };
-};
 function checkEmail() {
   fetch("/api/checkEmail", {
     method: "POST",
@@ -95,11 +58,6 @@ function checkEmail() {
       };
     });
 };
-function checkForm() {
-  checkEmail;
-  uploadFile;
-};
+
 email.addEventListener("keyup", checkEmail);
 privateCheck.addEventListener("click", checkboxValue);
-avatarInput.addEventListener("change", uploadFile);
-submitButton.addEventListener("click", checkForm);

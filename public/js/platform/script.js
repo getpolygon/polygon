@@ -94,7 +94,7 @@ function fetchPosts() {
             if (obj.authorId == response._id) {
               cardContainer.innerHTML =
                 `
-                <div id="${postId}" class="post container shadow-sm rounded-lg mt-1 mb-4 pr-4 pl-4 pb-3 pt-3 bg-white">
+                <div id="${postId}" class="post container shadow rounded-lg mt-1 mb-4 pr-4 pl-4 pb-3 pt-3 bg-white">
                   <div class="container-sm " style="text-align: right;">
                     <i postId="${postId}" class="submitDeleteForm fas fa-trash-alt" role="button"></i>
                   </div>
@@ -119,7 +119,7 @@ function fetchPosts() {
             else {
               cardContainer.innerHTML =
                 `
-              <div id="${postId}" class="post container shadow-sm rounded-lg mt-1 mb-4 pr-4 pl-4 pb-3 pt-3 bg-white">
+              <div id="${postId}" class="post container shadow rounded-lg mt-1 mb-4 pr-4 pl-4 pb-3 pt-3 bg-white">
                 <img
                   src="${authorImage}"
                   alt="profile-photo"
@@ -169,7 +169,7 @@ function createPost() {
       postText.value = "";
 
       cardContainer.innerHTML = `
-      <div id="${postId}" class="post container shadow-sm rounded-lg mt-1 mb-4 pr-4 pl-4 pb-3 pt-3 bg-white">
+      <div id="${postId}" class="post container shadow rounded-lg mt-1 mb-4 pr-4 pl-4 pb-3 pt-3 bg-white">
         <div class="container-sm" style="text-align: right;">
           <i postId="${postId}" class="submitDeleteForm fas fa-trash-alt" role="button"></i>
         </div>

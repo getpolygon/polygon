@@ -1,7 +1,8 @@
 <%- include ("./partials/head") %>
 <%- include ("./partials/nav") %>
 
-<h1 align="center">Settings</h1>
+<h1 align="center" class="mb-5">Settings</h1>
+
 <div class="container">
   <ul class="list-group rounded shadow-sm">
     <li class="list-group-item">
@@ -32,23 +33,5 @@
   </ul>
 </div>
 
-<!-- The core Firebase JS SDK is always required and must be listed first -->
-<script src="https://www.gstatic.com/firebasejs/7.24.0/firebase-app.js"></script>
-<script src="https://www.gstatic.com/firebasejs/7.23.0/firebase-storage.js"></script>
-
-<script>
-  // Your web app's Firebase configuration
-  var firebaseConfig = {
-    apiKey: "AIzaSyCz8yxHbNpwx-Ga16DbyS_YM4p2EETGSl0",
-    authDomain: "arm-social.firebaseapp.com",
-    databaseURL: "https://arm-social.firebaseio.com",
-    projectId: "arm-social",
-    storageBucket: "arm-social.appspot.com",
-    messagingSenderId: "909122030162",
-    appId: "1:909122030162:web:d69103f21efd47cb45ad8b",
-  };
-  // Initialize Firebase
-  firebase.initializeApp(firebaseConfig);
-</script>
 <script src="/js/settings/script.js"></script>
 <%- include ("./partials/footer") %>

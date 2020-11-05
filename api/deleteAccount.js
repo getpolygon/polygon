@@ -11,7 +11,6 @@ const MinIOClient = new minio.Client({
 });
 
 const AccountSchema = require("../models/account");
-const PostSchema = require("../models/post");
 
 router.post("/", async (req, res) => {
   const email = req.cookies.email;
@@ -24,8 +23,6 @@ router.post("/", async (req, res) => {
   });
 
   Promise.all([
-    // Find posts and the account associated with the email
-    await PostSchema.deleteMany({ authorEmail: email }),
     await AccountSchema.findOneAndDelete({ email: email, password: password }),
   ])
     .then((result) => {

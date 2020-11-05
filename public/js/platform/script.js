@@ -40,6 +40,16 @@ function deletePost() {
   let post = document.getElementById(this.parentNode.parentNode.id);
   // Getting the postId attribute
   let postId = this.getAttribute("postId");
+  // Progress bar at the top of the card
+  let deletionIndicator = document.createElement("div");
+
+  deletionIndicator.innerHTML =
+    `
+  <div id="progress" class="progress" style="position: relative;">
+    <div class="progress-bar progress-bar-striped indeterminate  progress-bar-animated bg-danger" style="width: 100%">
+  </div>
+  `
+  post.prepend(deletionIndicator);
 
   fetch(`/api/deletePost?postId=${postId}`, {
     method: "POST",
@@ -70,30 +80,41 @@ function fetchPosts() {
   fetch("/api/fetchPosts")
     .then((res) => res.json())
     .then((data) => {
-      data.forEach((obj) => {
-        let text = obj.text;
-        let author = obj.author;
-        let authorId = obj.authorId;
-        let authorImage = obj.authorImage;
-        let postDate = obj.datefield;
-        let postId = obj._id;
+      if (data.length < 1 || data.length == 0) {
+        let msg = document.createElement("div");
+        msg.innerHTML =
+          `
+        <h3 id="msg" align="center">Currently there are no posts</h3>
+        `;
         let postsContainer = document.getElementById("posts");
-        let cardContainer = document.createElement("div");
+        postsContainer.prepend(msg);
+        postsContainer.removeChild(document.getElementById("loader"));
+      }
+      else {
+        data.forEach((obj) => {
+          let text = obj.text;
+          let author = obj.author;
+          let authorId = obj.authorId;
+          let authorImage = obj.authorImage;
+          let postDate = obj.datefield;
+          let postId = obj._id;
+          let postsContainer = document.getElementById("posts");
+          let cardContainer = document.createElement("div");
 
-        postText.value = "";
+          postText.value = "";
 
-        let currentAccountEmail = getCookie("email").toString();
-        let currentAccountPassword = getCookie("password").toString();
+          let currentAccountEmail = getCookie("email").toString();
+          let currentAccountPassword = getCookie("password").toString();
 
-        fetch(`/api/checkAccount/?email=${currentAccountEmail}&password=${currentAccountPassword}`, {
-          method: "POST",
-          headers: { "Content-Type": "application/x-www-form-urlencoded" }
-        })
-          .then(response => response.json())
-          .then(response => {
-            if (obj.authorId == response._id) {
-              cardContainer.innerHTML =
-                `
+          fetch(`/api/checkAccount/?email=${currentAccountEmail}&password=${currentAccountPassword}`, {
+            method: "POST",
+            headers: { "Content-Type": "application/x-www-form-urlencoded" }
+          })
+            .then(response => response.json())
+            .then(response => {
+              if (obj.authorId == response._id) {
+                cardContainer.innerHTML =
+                  `
                 <div id="${postId}" class="post container shadow rounded-lg mt-1 mb-4 pr-4 pl-4 pb-3 pt-3 bg-white">
                   <div class="container-sm " style="text-align: right;">
                     <i postId="${postId}" class="submitDeleteForm fas fa-trash-alt" role="button"></i>
@@ -114,11 +135,11 @@ function fetchPosts() {
                    <h6 class="text-secondary">${postDate}</h6>
               </div>
           `;
-              checkForDeleteButtons();
-            }
-            else {
-              cardContainer.innerHTML =
-                `
+                checkForDeleteButtons();
+              }
+              else {
+                cardContainer.innerHTML =
+                  `
               <div id="${postId}" class="post container shadow rounded-lg mt-1 mb-4 pr-4 pl-4 pb-3 pt-3 bg-white">
                 <img
                   src="${authorImage}"
@@ -136,15 +157,17 @@ function fetchPosts() {
                 <h6 class="text-secondary">${postDate}</h6>
             </div>
           `;
-              checkForDeleteButtons();
-            }
-          })
-          .catch(e => {
-            console.log(e);
-          });
+                checkForDeleteButtons();
+              }
+              document.getElementById("loader").innerHTML = "";
+            })
+            .catch(e => {
+              console.log(e);
+            });
 
-        postsContainer.appendChild(cardContainer);
-      });
+          postsContainer.appendChild(cardContainer);
+        });
+      }
     })
     .catch((e) => console.log(e));
 };
@@ -155,8 +178,10 @@ function createPost() {
     headers: { "Content-Type": "application/x-www-form-urlencoded" },
     body: `text=${postText.value}`,
   })
-    .then((res) => res.json())
-    .then((data) => {
+    .then(data => data.json())
+    .then(data => {
+      console.log(data);
+      let msg = document.getElementById("msg");
       let text = data.text;
       let author = data.author;
       let postId = data._id;
@@ -167,6 +192,8 @@ function createPost() {
       let cardContainer = document.createElement("div");
 
       postText.value = "";
+
+      if (msg) msg.innerHTML = "";
 
       cardContainer.innerHTML = `
       <div id="${postId}" class="post container shadow rounded-lg mt-1 mb-4 pr-4 pl-4 pb-3 pt-3 bg-white">
@@ -199,5 +226,14 @@ function createPost() {
     });
 }
 
+window.addEventListener("load", () => {
+  let loaderContainer = document.createElement("h3");
+  let loader = document.createElement("div");
+  loaderContainer.id = "loader";
+  loaderContainer.setAttribute("align", "center");
+  loader.classList.add("loader");
+  loaderContainer.prepend(loader);
+  document.getElementById("posts").prepend(loaderContainer)
+})
 window.addEventListener("load", fetchPosts);
 postButton.addEventListener("click", createPost);

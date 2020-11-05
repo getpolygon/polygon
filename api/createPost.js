@@ -2,7 +2,6 @@ require("mongoose");
 const router = require("express").Router();
 // const moment = require("moment");
 
-const PostSchema = require("../models/post");
 const AccountSchema = require("../models/account");
 
 router.post("/", async (req, res) => {
@@ -14,24 +13,23 @@ router.post("/", async (req, res) => {
   let authorImage = authorAccount.pictureUrl;
   let authorId = authorAccount._id;
 
-  const Post = new PostSchema({
+  const Post = {
     text: req.body.text,
     author: author,
     authorEmail: req.cookies.email,
     authorId: authorId,
     authorImage: authorImage,
     datefield: Date.now(),
-  });
+  };
 
-  await Post.save()
-    .then((doc) => {
-      res.send(doc);
-      return;
-    })
-    .catch((e) => {
-      console.log(e);
-      return;
-    });
+  let newPost = authorAccount.posts.push(Post);
+  let post = authorAccount.posts.create(Post);
+
+  await authorAccount
+    .save()
+    .then(res.json(post))
+    .catch(e => console.error(e));
+  
 });
 
 module.exports = router;

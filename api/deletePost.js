@@ -1,7 +1,6 @@
 require("mongoose");
 const router = require("express").Router();
 
-const PostSchema = require("../models/post");
 const AccountSchema = require("../models/account");
 
 router.post("/", async (req, res) => {
@@ -9,22 +8,23 @@ router.post("/", async (req, res) => {
     let currentPassword = req.cookies.password;
     let post = req.query.postId;
 
-    let currentAccount = await AccountSchema.findOne({ email: currentEmail, password: currentPassword });
-    let foundPost = await PostSchema.findById(post);
-
-    if (foundPost.authorId != currentAccount._id) {
-        res.json({ err: "Forbidden" }).status(403);
-    }
-    if (!foundPost) {
-        res.json({ err: undefined });
-    }
-    else {
-        await foundPost.remove()
-            .catch(e => {
-                console.log(e);
-            });
-        res.json({ result: "Removed" });
-    }
+    await AccountSchema.findOne({ email: currentEmail, password: currentPassword })
+        .then(async(doc) => {
+            let foundPost = doc.posts.id(post)
+            if (foundPost.authorId != doc._id) {
+                res.json({ err: "Forbidden" }).status(403);
+            }
+            if (!foundPost) {
+                res.json({ err: undefined });
+            }
+            else {
+                doc.posts.pull(post)
+                await doc.save()
+                .then(res.json({ result: "Removed" }))
+                .catch(e => console.error(e));
+            }
+        })
+        .catch(e => console.error(e));
 });
 
 module.exports = router;

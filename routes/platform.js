@@ -1,5 +1,6 @@
 require("mongoose");
 const router = require("express").Router();
+const fetch = require("node-fetch");
 
 const AccountSchema = require("../models/account");
 
@@ -53,23 +54,50 @@ router.get("/user/:accountId", async (req, res) => {
     const accountId = req.params.accountId;
     const currentAccount = await AccountSchema.findOne({ email: req.cookies.email, password: req.cookies.password });
     const platformAccount = await AccountSchema.findById(accountId);
-    const platformAccountPosts = await AccountSchema.findById(accountId)
-      .then(doc => {
-        return doc.posts;
-      })
-      .catch(e => {
-        console.log(e);
-      })
     if (!platformAccount) {
-      res.redirect("/");
+      res.redirect("/static/no-account.html");
     } else {
       res.render("platformAccount", {
         currentAccount: currentAccount,
         platformAccount: platformAccount,
-        posts: platformAccountPosts,
         title: `${platformAccount.fullName} | ArmSocial`
       });
     }
+  }
+});
+
+// Notifications tab
+router.get("/notifications", async (req, res) => {
+  const currentAccount = await AccountSchema.findOne({
+    email: req.cookies.email,
+    password: req.cookies.password,
+  });
+  res.render("notifications", {
+    currentAccount: currentAccount,
+    title: `Notifications | ArmSocial`
+  })
+});
+
+// Users
+router.get("/users", async (req, res) => {
+  if (!req.cookies.email && !req.cookies.password) {
+    res.clearCookie("password");
+    res.clearCookie("email");
+    res.redirect("/auth/login");
+  } else {
+    const accounts = await AccountSchema.find({ isPrivate: false }).sort({
+      date: -1 /* Sorting by date from the latest to the oldesst */,
+    });
+    const currentAccount = await AccountSchema.findOne({
+      email: req.cookies.email,
+      password: req.cookies.password,
+    });
+    res.render("users", {
+      accounts: accounts,
+      currentAccount: currentAccount,
+      err: "We couldn't find any public accounts.",
+      title: "Users | ArmSocial"
+    });
   }
 });
 

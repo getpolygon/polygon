@@ -4,7 +4,7 @@ const router = require("express").Router();
 
 const AccountSchema = require("../models/account");
 
-router.post("/", async (req, res) => {
+router.put("/", async (req, res) => {
   let authorAccount = await AccountSchema.findOne({
     email: req.cookies.email,
     password: req.cookies.password,
@@ -22,7 +22,7 @@ router.post("/", async (req, res) => {
     datefield: Date.now(),
   };
 
-  let newPost = authorAccount.posts.push(Post);
+  authorAccount.posts.push(Post);
   let post = authorAccount.posts.create(Post);
 
   await authorAccount

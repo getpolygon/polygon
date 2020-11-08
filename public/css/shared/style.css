@@ -1,3 +1,7 @@
+a, p, h1, h2, h3, h4, h5, h6 {
+  font-family: "Helvetica Now Text";
+}
+
 /* width */
 ::-webkit-scrollbar {
   width: 10px;
@@ -25,17 +29,6 @@
 
 .post:hover .submitDeleteForm {
   visibility: visible;
-}
-
-.nav-item {
-  -webkit-transition: ease-in-out 300ms;
-  transition: ease-in-out 300ms;
-  margin-right: .5rem;
-  border-radius: .5rem;
-}
-
-.nav-item:hover {
-  background-color: #d4d4d4;
 }
 
 .loader {
@@ -69,5 +62,17 @@
     -webkit-transform: rotate(360deg);
             transform: rotate(360deg);
   }
+}
+
+#create-post {
+  width: 100%;
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+#posts {
+  width: 100%;
+  max-width: 600px;
+  margin: 0 auto;
 }
 /*# sourceMappingURL=style.css.map */

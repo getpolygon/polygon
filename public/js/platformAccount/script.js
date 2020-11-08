@@ -1,106 +1,156 @@
 let postButton = document.getElementById("postButton");
 let postText = document.getElementById("postTextarea");
 let postCount = document.getElementById("postCount");
+let addFriendButton = document.getElementById("addFriend");
 
-(function checkForDeleteButtons() {
+function checkForDeleteButtons() {
   let deletePostButtons = document.querySelectorAll(".submitDeleteForm");
   deletePostButtons.forEach(element => {
     element.addEventListener("click", deletePost);
   });
   return deletePostButtons;
-})();
+};
 
-function getCookie(name) {
-  // Split cookie string and get all individual name=value pairs in an array
-  var cookieArr = document.cookie.split(";");
+function fetchPosts() {
+  fetch(`/api/fetchPosts/?accountId=${document.getElementById("accountId").textContent}`)
+    .then((res) => res.json())
+    .then((data) => {
+      let msg = document.createElement("div");
+      if (data.length < 1 || data.length == 0) {
+        msg.innerHTML =
+          `
+        <h3 id="msg" class="pb-5" align="center">This user doesn't have any posts</h3>
+        `;
+        let postsContainer = document.getElementById("posts");
+        postsContainer.prepend(msg);
+        postsContainer.removeChild(document.getElementById("loader"));
+      }
+      else {
+        data.forEach((obj) => {
+          let text = obj.text;
+          let author = obj.author;
+          let authorId = obj.authorId;
+          let authorImage = obj.authorImage;
+          let postDate = obj.datefield;
+          let postId = obj._id;
+          let postsContainer = document.getElementById("posts");
+          let cardContainer = document.createElement("div");
 
-  // Loop through the array elements
-  for (var i = 0; i < cookieArr.length; i++) {
-    var cookiePair = cookieArr[i].split("=");
+          let currentAccountEmail = getCookie("email").toString();
+          let currentAccountPassword = getCookie("password").toString();
 
-    /* Removing whitespace at the beginning of the cookie name
-    and compare it with the given string */
-    if (name == cookiePair[0].trim()) {
-      // Decode the cookie value and return
-      return decodeURIComponent(cookiePair[1]);
-    }
-  }
+          fetch(`/api/checkAccount/?email=${currentAccountEmail}&password=${currentAccountPassword}`, {
+            method: "PUT",
+            headers: { "Content-Type": "application/x-www-form-urlencoded" }
+          })
+            .then(response => response.json())
+            .then(response => {
+              if (obj.authorId == response._id) {
+                cardContainer.innerHTML =
+                  `
+                <div id="${postId}" class="post container shadow rounded-lg mt-1 mb-4 pr-4 pl-4 pb-3 pt-3 bg-white">
+                  <div class="container-sm " style="text-align: right;">
+                    <i postId="${postId}" class="submitDeleteForm fas fa-trash-alt" role="button"></i>
+                  </div>
+                  <img
+                    src="${authorImage}"
+                    alt="profile-photo"
+                    class="rounded-circle"
+                    width= "80"
+                    height="80"
+                  />
+                  <h4 class="text-dark mt-3 align-baseline">
+                    <a href="/user/${authorId}">${author}</a>
+                  </h4>
+                  <h6 class="text-dark align-baseline">
+                    ${text}
+                  </h6>
+                   <h6 class="text-secondary">${postDate}</h6>
+              </div>
+          `;
+                msg.innerHTML = "";
+                checkForDeleteButtons();
+              }
+              else {
+                cardContainer.innerHTML =
+                  `
+              <div id="${postId}" class="post container shadow rounded-lg mt-1 mb-4 pr-4 pl-4 pb-3 pt-3 bg-white">
+                <img
+                  src="${authorImage}"
+                  alt="profile-photo"
+                  class="rounded-circle"
+                  width= "80"
+                  height="80"
+                />
+                <h4 class="text-dark mt-3 align-baseline">
+                  <a href="/user/${authorId}">${author}</a>
+                </h4>
+                <h6 class="text-dark align-baseline">
+                  ${text}
+                </h6>
+                <h6 class="text-secondary">${postDate}</h6>
+            </div>
+          `;
+                msg.innerHTML = "";
+                checkForDeleteButtons();
+              }
+              document.getElementById("loader").innerHTML = "";
+            })
+            .catch(e => {
+              console.log(e);
+            });
 
-  // Return null if not found
-  return null;
-}
+          postsContainer.appendChild(cardContainer);
+        });
+      }
+    })
+    .catch((e) => console.log(e));
+};
 
 function deletePost() {
   // Getting the whole post div by id
   let post = document.getElementById(this.parentNode.parentNode.id);
   // Getting the postId attribute
   let postId = this.getAttribute("postId");
+  // Progress bar at the top of the card
+  let deletionIndicator = document.createElement("div");
+
+  deletionIndicator.innerHTML =
+    `
+  <div id="progress" class="progress" style="position: relative;">
+    <div class="progress-bar progress-bar-striped indeterminate  progress-bar-animated bg-danger" style="width: 100%">
+  </div>
+  `
+  post.prepend(deletionIndicator);
 
   fetch(`/api/deletePost?postId=${postId}`, {
-    method: "POST",
+    method: "DELETE",
     headers: { "Content-Type": "application/x-www-form-urlencoded" }
   })
     .then(response => response.json())
     .then(_response => {
       post.parentNode.removeChild(post);
-      (function checkForDeleteButtons() {
-        let deletePostButtons = document.querySelectorAll(".submitDeleteForm");
-        deletePostButtons.forEach(element => {
-          element.addEventListener("click", deletePost);
-        });
-        return deletePostButtons;
-      })();
+      checkForDeleteButtons();
     })
     .catch(e => {
       let el = document.createElement("div");
       el.innerHTML = `
-      <div class="alert alert-danger alert-dismissible fade show" role="alert">
-      <strong>There was an error!</strong> Try refreshing your page.
-      <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-        <span aria-hidden="true">&times;</span>
-      </button>
-      </div>
+        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+          <strong>There was an error!</strong> Try refreshing your page.
+          <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
       `
       document.body.prepend(el);
       console.log(e);
-    })
-}
-
-(function checkPostContainer() {
-  let postsContainer = document.getElementById("posts");
-  let postMsg = document.getElementById("postCount");
-  if (postsContainer.innerText.length < 1) {
-    postsContainer.innerHTML = `
-    <h5 id="postCount" class="pb-5" align="center">This user doesn't have any posts</h5>
-    `
-  } else {
-    if (postMsg) {
-      postMsg.innerText = "";
-      postMsg.innerHTML = "";
-      postsContainer.removeChild(postMsg);
-    }
-  }
-})()
-
-function checkPostContainer() {
-  let postsContainer = document.getElementById("posts");
-  let postMsg = document.getElementById("postCount");
-  if (postsContainer.innerText.length < 1) {
-    postsContainer.innerHTML = `
-    <h5 id="postCount" class="pb-5" align="center">This user doesn't have any posts</h5>
-    `
-  } else {
-    if (postMsg) {
-      postMsg.innerText = "";
-      postMsg.innerHTML = "";
-      postsContainer.removeChild(postMsg);
-    }
-  }
-}
+    });
+  checkForDeleteButtons();
+};
 
 function createPost() {
   fetch("/api/createPost", {
-    method: "POST",
+    method: "PUT",
     headers: { "Content-Type": "application/x-www-form-urlencoded" },
     body: `text=${postText.value}`,
   })
@@ -138,19 +188,39 @@ function createPost() {
       `;
       // Append the card to the top of the div
       postsContainer.prepend(cardContainer);
-
-      (function checkForDeleteButtons() {
-        let deletePostButtons = document.querySelectorAll(".submitDeleteForm");
-        deletePostButtons.forEach(element => {
-          element.addEventListener("click", deletePost);
-        });
-        return deletePostButtons;
-      })();
+      checkForDeleteButtons();
     })
     .catch((e) => {
       console.log(e);
     });
 };
 
-postButton.addEventListener("click", createPost);
-postButton.addEventListener("click", checkPostContainer);
+function addFriend() {
+  let accountToAdd = document.getElementById("accountId").textContent;
+  fetch(`/api/addFriend/?addedAccount=${accountToAdd}`, {
+    method: "PUT",
+    headers: { "Content-Type": "application/x-www-form-urlencoded" }
+  })
+    .then(data => data.json())
+    .then(data => {
+      addFriendButton.innerText = "Pending";
+      addFriendButton.innerHTML += `
+      <i class="fas fa-user-clock"></i>
+      `;
+      addFriendButton.setAttribute("disabled", "true")
+      console.log(data);
+    })
+    .catch(e => console.error(e));
+}
+
+window.addEventListener("load", () => {
+  loader();
+  fetchPosts();
+  checkForDeleteButtons();
+  if (postButton == null) {
+    return null
+  } else {
+    postButton.addEventListener("click", createPost)
+  }
+});
+addFriendButton.addEventListener("click", addFriend);

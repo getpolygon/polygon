@@ -1,12 +1,6 @@
 let deleteButton = document.getElementById("deleteAccount");
 let privacyCheckbox = document.getElementById("isPrivate");
 
-function getCookie(name) {
-  var re = new RegExp(name + "=([^;]+)");
-  var value = re.exec(document.cookie);
-  return value != null ? unescape(value[1]) : null;
-}
-
 function deleteUserImage() {
   // Create a root reference
   var storageRef = firebase.storage().ref();
@@ -20,7 +14,7 @@ function deleteUserImage() {
 function deleteAccount() {
   let msg = document.getElementById("message");
   fetch("/api/deleteAccount", {
-    method: "POST",
+    method: "DELETE",
     headers: { "Content-Type": "application/x-www-form-urlencoded" },
   })
     .then((res) => res.json())

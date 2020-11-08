@@ -1,3 +1,5 @@
+const minioConfig = require("../minio.config");
+
 const router = require("express").Router();
 const multer = require("multer");
 const fs = require("fs");
@@ -12,11 +14,11 @@ const upload = multer({ storage: storage });
 // Instead of Firebase Storage, we are using MinIO
 const minio = require("minio");
 const MinIOClient = new minio.Client({
-    endPoint: "localhost",
-    port: 9000,
-    accessKey: "AKIAIOSFODNN7EXAMPLE",
-    secretKey: "wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY",
-    useSSL: false
+    endPoint:   "localhost",
+    port:       9000,
+    accessKey:  "miki2005",
+    secretKey:  "miki2005",
+    useSSL:     false
 });
 const AccountSchema = require("../models/account");
 const avatarLinks = ["/static/img/1.png", "/static/img/2.png", "/static/img/3.png", "/static/img/4.png", "/static/img/5.png", "/static/img/6.png"];
@@ -64,6 +66,12 @@ router.post("/", upload.single("avatar"), async (req, res) => {
         bio: req.body.bio,
         pictureUrl: pictureUrl,
         isPrivate: req.body.privateCheck ? true : false,
+        friends: {
+            pending: [],
+            approved: [],
+            dismissed: [],
+            requested: []
+        },
         date: Date.now()
     });
 

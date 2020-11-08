@@ -1,13 +1,6 @@
 const mongoose = require("mongoose");
-
-const PostSchema = new mongoose.Schema({
-  text: { type: String, required: true },
-  author: { type: String, required: true },
-  authorEmail: { type: String, required: true },
-  authorId: { type: String, required: true },
-  authorImage: { type: String, required: true },
-  datefield: { type: String, required: true },
-});
+const PostSchema = require("./post");
+const FriendSchema = require("./friend");
 
 const AccountSchema = new mongoose.Schema({
   firstName: { type: String, required: true },
@@ -18,7 +11,13 @@ const AccountSchema = new mongoose.Schema({
   bio: { type: String, required: false },
   pictureUrl: { type: String, required: true },
   isPrivate: { type: Boolean, required: true },
-  friends: { type: Array, required: true },
+  friends: {
+    type: mongoose.Schema.Types.Mixed,
+    pending: [FriendSchema],
+    approved: [FriendSchema],
+    dismissed: [FriendSchema],
+    requested: [FriendSchema]
+  },
   posts: [PostSchema],
   date: { type: String, required: true },
 });

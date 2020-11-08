@@ -2,6 +2,7 @@
 require("dotenv").config();
 
 // Dependencies
+const morgan = require("morgan");
 const express = require("express");
 const mongoose = require("mongoose");
 const bodyParser = require("body-parser");
@@ -14,11 +15,11 @@ const app = express();
 // Routes
 const apiRoute = require("./routes/api");
 const authRoute = require("./routes/auth");
-const usersRoute = require("./routes/users");
 const platformRoute = require("./routes/platform");
 const userSettingsRoute = require("./routes/settings");
 
 // Middleware
+app.use(morgan("dev"));
 app.use(compression());
 app.use(cookieParser());
 app.use(bodyParser.json());
@@ -33,16 +34,15 @@ app.set("view engine", "ejs");
 app.use("/", platformRoute);
 app.use("/api", apiRoute);
 app.use("/auth", authRoute);
-app.use("/users", usersRoute);
 app.use("/settings", userSettingsRoute);
 
 // Error page
 app.get("*", (req, res) => res.redirect("/static/error.html"));
 
 // Connect to MongoDB
-mongoose.connect(process.env.MONGO_DB, { useNewUrlParser: true, useUnifiedTopology: true })
+mongoose.connect(process.env.MONGO_DB, { useNewUrlParser: true, useUnifiedTopology: true, useFindAndModify: false })
     .then(console.log("MongoDB: OK"))
     .catch(e => console.error(e));
 
 // Start the server 
-app.listen(port, () => console.log(`Server listening at port ${port}`));
+app.listen(port, "0.0.0.0", () => console.log(`Server listening at port ${port}`));

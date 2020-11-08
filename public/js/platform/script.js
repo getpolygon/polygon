@@ -13,27 +13,6 @@ function checkForDeleteButtons() {
   return deletePostButtons;
 };
 
-// For getting specific cookies
-function getCookie(name) {
-  // Split cookie string and get all individual name=value pairs in an array
-  var cookieArr = document.cookie.split(";");
-
-  // Loop through the array elements
-  for (var i = 0; i < cookieArr.length; i++) {
-    var cookiePair = cookieArr[i].split("=");
-
-    /* Removing whitespace at the beginning of the cookie name
-    and compare it with the given string */
-    if (name == cookiePair[0].trim()) {
-      // Decode the cookie value and return
-      return decodeURIComponent(cookiePair[1]);
-    }
-  }
-
-  // Return null if not found
-  return null;
-}
-
 // For deleting posts
 function deletePost() {
   // Getting the whole post div by id
@@ -52,7 +31,7 @@ function deletePost() {
   post.prepend(deletionIndicator);
 
   fetch(`/api/deletePost?postId=${postId}`, {
-    method: "POST",
+    method: "DELETE",
     headers: { "Content-Type": "application/x-www-form-urlencoded" }
   })
     .then(response => response.json())
@@ -84,7 +63,7 @@ function fetchPosts() {
         let msg = document.createElement("div");
         msg.innerHTML =
           `
-        <h3 id="msg" align="center">Currently there are no posts</h3>
+        <h5 id="msg" align="center">We couldn't find any posts <br /><br /></h5>
         `;
         let postsContainer = document.getElementById("posts");
         postsContainer.prepend(msg);
@@ -107,7 +86,7 @@ function fetchPosts() {
           let currentAccountPassword = getCookie("password").toString();
 
           fetch(`/api/checkAccount/?email=${currentAccountEmail}&password=${currentAccountPassword}`, {
-            method: "POST",
+            method: "PUT",
             headers: { "Content-Type": "application/x-www-form-urlencoded" }
           })
             .then(response => response.json())
@@ -174,13 +153,12 @@ function fetchPosts() {
 
 function createPost() {
   fetch("/api/createPost", {
-    method: "POST",
+    method: "PUT",
     headers: { "Content-Type": "application/x-www-form-urlencoded" },
     body: `text=${postText.value}`,
   })
     .then(data => data.json())
     .then(data => {
-      console.log(data);
       let msg = document.getElementById("msg");
       let text = data.text;
       let author = data.author;
@@ -227,13 +205,7 @@ function createPost() {
 }
 
 window.addEventListener("load", () => {
-  let loaderContainer = document.createElement("h3");
-  let loader = document.createElement("div");
-  loaderContainer.id = "loader";
-  loaderContainer.setAttribute("align", "center");
-  loader.classList.add("loader");
-  loaderContainer.prepend(loader);
-  document.getElementById("posts").prepend(loaderContainer)
-})
-window.addEventListener("load", fetchPosts);
+  loader();
+  fetchPosts();
+});
 postButton.addEventListener("click", createPost);

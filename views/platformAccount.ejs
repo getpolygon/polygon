@@ -50,10 +50,10 @@
       </p>
       <p align="center" class="buttons">
         <% if (currentAccount.email == platformAccount.email) {%>
-        <button class="btn btn-success disabled" disabled>Add Friend</button>
+        <button id="addFriend" class="btn btn-success disabled" disabled>Add Friend</button>
         <%}%>
           <% if (currentAccount.email != platformAccount.email) {%>
-        <button class="btn btn-success">Add Friend</button>
+        <button id="addFriend" class="btn btn-success">Add Friend</button>
         <%}%>
           
         </p>
@@ -65,26 +65,13 @@
   <hr class="solid" />
 </div>
 <% if (currentAccount.email == platformAccount.email) {%>
-  <%-include ("./partials/createPost") %>
+<%-include ("./partials/createPost") %>
 <%}%> 
-<% if (posts) { %>
-<div id="posts" class="posts container">
-  <% posts.forEach(post => { %>
-  <div class="post container shadow-sm rounded-lg mt-1 mb-4 pr-4 pl-4 pb-3 pt-3 bg-white">
-    <% if (currentAccount.email == platformAccount.email) {%>
-      <div class="container-sm " style="text-align: right;">
-        <i postId="<%= post._id %>" class="fas fa-trash-alt submitDeleteForm" role="button"></i>
-      </div>
-    <%}%>
-    <img src="<%= post.authorImage %>" alt="profile-photo" class="rounded-circle" width="80" height="80" />
-    <h4 class="text-dark mt-3 align-baseline">
-      <a href="/user/<%= platformAccount._id %>"><%= platformAccount.fullName %></a>
-    </h4>
-    <h6 class="text-dark align-baseline"><%= post.text %></h6>
-    <h6 class="text-secondary"><%= post.datefield %></h6>
-  </div>
-  <% }); %>
-  <% } %>
+
+<div class="posts container" id="posts"></div>
 </div>
+
+<script src="/js/shared/getCookie.js"></script>
+<script src="/js/shared/loader.js"></script>
 <script src="/js/platformAccount/script.js"></script>
 <%- include ("./partials/footer") %>

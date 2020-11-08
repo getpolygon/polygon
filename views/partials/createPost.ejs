@@ -1,8 +1,21 @@
-<div class="container create-post mb-5 mt-5">
-    <h2 class="h2 mb-3">Create a post</h2>
-    <div>
-        <textarea rows="5" required minlength="10" class="form-control mb-3" name="text" id="postTextarea" required
-            placeholder="What are you thinking about, <%= currentAccount.firstName %>?"></textarea>
+<div id="create-post" class="container rounded shadow-sm create-post mb-5 mt-5 p-2">
+    <div class="d-flex">
+        <img height="50" src="<%= currentAccount.pictureUrl %>" class="rounded-circle shadow-sm mr-2"
+            alt="profile-picture">
+        <!-- <textarea required class="form-control" name="text" id="postTextarea" required
+            placeholder="Create post"></textarea> -->
+        <input type="text" required class="form-control" name="text" id="postTextarea" placeholder="Create post">
+        <button class="btn btn-primary ml-2" id="postButton" type="submit" disabled>Post</button>
     </div>
-    <button class="btn btn-primary btn-block mb-2" id="postButton" type="submit">Post</button>
 </div>
+<script>
+    let postTextListener = document.getElementById("postTextarea");
+    let postButtonListener = document.getElementById("postButton");
+    postText.addEventListener("keyup", () => {
+        if (postTextListener.value.length > 0) {
+            postButtonListener.removeAttribute("disabled");
+        } else {
+            postButtonListener.setAttribute("disabled", true);
+        };
+    });
+</script>

@@ -3,7 +3,7 @@ const router = require("express").Router();
 
 const AccountSchema = require("../models/account");
 
-router.post("/", async (req, res) => {
+router.put("/", async (req, res) => {
     let email = req.query.email;
     let password = req.query.password;
 

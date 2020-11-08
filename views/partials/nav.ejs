@@ -16,12 +16,30 @@
   </li>
 
   <li class="nav-item">
+    <% if (currentAccount.friends.pending.length > 0) { %>
+    <a href="/notifications" class="nav-link text-dark position-relative">
+      <i class="fas fa-bell">
+      </i>
+      <span
+        class="position-absolute top-0 left-100 translate-middle badge border border-light rounded-circle bg-danger p-2"><span
+          class="visually-hidden">unread messages</span></span>
+    </a>
+    <%}%>
+    <% if (currentAccount.friends.pending.length == 0){%>
+    <a href="/notifications" class="nav-link text-dark">
+      <i class="fas fa-bell"></i>
+    </a>
+    <%}%>
+  </li>
+
+  <li class="nav-item">
     <a href="#!" class="nav-link text-dark" id="submitLogout">
       <i class="fas fa-sign-out-alt">
         <form id="logout" method="POST" class="bg-transparent" action="/logout/<%= currentAccount._id %>"></form>
-      </i>
+    </i>
     </a>
   </li>
 </ul>
+
 <!-- Nav -->
 <script src="/js/nav/script.js"></script>

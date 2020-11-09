@@ -38,7 +38,7 @@ router.put("/", async (req, res, next) => {
       })
       .catch((e) => res.json(e));
   };
-  if (email || password) {
+  if (email && password) {
     if (email) {
       await currentAccount
         .updateOne({ email: email })

@@ -1,5 +1,6 @@
 const router = require("express").Router();
 
+const searchRoute = require("../api/search");
 const addFriendRoute = require("../api/addFriend");
 const checkEmailRoute = require("../api/checkEmail");
 const createPostRoute = require("../api/createPost");
@@ -12,6 +13,7 @@ const fetchNotificationsRoute = require("../api/fetchNotifications");
 
 router.get("/", (_req, res) => res.send("API Endpoint"));
 
+router.use("/search", searchRoute);
 router.use("/addFriend", addFriendRoute);
 router.use("/checkEmail", checkEmailRoute);
 router.use("/createPost", createPostRoute);

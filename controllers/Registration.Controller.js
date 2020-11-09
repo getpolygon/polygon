@@ -14,11 +14,11 @@ const upload = multer({ storage: storage });
 // Instead of Firebase Storage, we are using MinIO
 const minio = require("minio");
 const MinIOClient = new minio.Client({
-    endPoint:   "localhost",
-    port:       9000,
-    accessKey:  "miki2005",
-    secretKey:  "miki2005",
-    useSSL:     false
+    endPoint: minioConfig.MINIO_HOST,
+    port: minioConfig.MINIO_PORT,
+    accessKey: minioConfig.MINIO_ACCKEY,
+    secretKey: minioConfig.MINIO_SECKEY,
+    useSSL: minioConfig.MINIO_USESSL
 });
 const AccountSchema = require("../models/account");
 const avatarLinks = ["/static/img/1.png", "/static/img/2.png", "/static/img/3.png", "/static/img/4.png", "/static/img/5.png", "/static/img/6.png"];
@@ -77,10 +77,10 @@ router.post("/", upload.single("avatar"), async (req, res) => {
 
     // Delete the created file to save space
     fs.unlink(`tmp/${randomness}.png`, (err) => {
-        if (err) {
-            console.error(err)
-            return
-        };
+        if (err) console.error(err);
+    });
+    fs.unlink("tmp/0.png", (err) => {
+        if (err) console.error(err);
     });
 
     await Account

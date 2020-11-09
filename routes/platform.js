@@ -32,7 +32,7 @@ router.get("/", async (req, res) => {
           accounts: accounts,
           currentAccount: currentAccount,
           err: "We couldn't find any public accounts.",
-          title: "Platform | ArmSocial"
+          title: "ArmSocial"
         });
       })
       .catch(([err1, err2]) => {

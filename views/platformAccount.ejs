@@ -1,4 +1,4 @@
-<%-include ("./partials/head") %>
+<%-include ("./partials/header") %>
 <%- include ("./partials/nav") %>
 
 <link rel="stylesheet" itemprop="url" href="/css/platformAccount/style.css">
@@ -29,37 +29,26 @@
 
   <div class="account-name container">
     <h2 align="center" class="mt-2" id="fullName">
-      <%= platformAccount.fullName %> <% if (platformAccount.isPrivate == true) {%>
-      <h5 align="center">
-        Private Account
-        <i class="fas fa-lock"></i>
-      </h5>
-      <%}%> 
-      <% if (platformAccount.isPrivate == false) {%>
-      <h5 align="center">
-        Public Account
-        <i class="fas fa-lock-open"></i>
-      </h5>
-      <%}%>
-        </h2>
-      </div>
+      <%= platformAccount.fullName %>
+    </h2>
+  </div>
 
-      <div class="account-info container">
-        <p align="center" class="account-id">
-          ID <a id="accountId" href="#"><%= platformAccount._id%></a>
-      </p>
-      <p align="center" class="buttons">
-        <% if (currentAccount.email == platformAccount.email) {%>
-        <button id="addFriend" class="btn btn-success disabled" disabled>Add Friend</button>
-        <%}%>
+  <div class="account-info container">
+    <p align="center" class="account-id">
+      ID <a id="accountId" href="#"><%= platformAccount._id%></a>
+    </p>
+    <p align="center" class="buttons">
+      <% if (currentAccount.email == platformAccount.email) {%>
+      <button id="addFriend" class="btn btn-success disabled" disabled>Add Friend</button>
+      <%}%>
           <% if (currentAccount.email != platformAccount.email) {%>
-        <button id="addFriend" class="btn btn-success">Add Friend</button>
-        <%}%>
+      <button id="addFriend" class="btn btn-success">Add Friend</button>
+      <%}%>
           
         </p>
         <p align="center" class="account-bio pr-5 pl-5 pb-1" id="bio">
           <%= platformAccount.bio %>
-      </p>
+    </p>
   </div>
 
   <hr class="solid" />

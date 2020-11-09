@@ -1,36 +1,61 @@
-<%- include ("./partials/head") %>
+<%- include ("./partials/header") %>
 <%- include ("./partials/nav") %>
 
-<h1 align="center" class="mb-5">Settings</h1>
+<div class="container mt-5">
+  <h2>
+    <i class="fas fa-cog"></i>
+    Settings
+  </h2>
 
-<div class="container">
-  <ul class="list-group rounded shadow-sm">
-    <li class="list-group-item">
-      <div id="privacyTab">
-        <h4>Change your privacy settings</h4>
-        <% if(currentAccount.isPrivate == true) {%>
-        <div class="custom-control custom-switch checked">
-          <input checked id="isPrivate" type="checkbox" name="privacy" class="custom-control-input" />
-          <label class="custom-control-label" for="isPrivate"><span id="currentStatus">Private Account</span></label>
-        </div>
-        <% } %>
-        <%if(currentAccount.isPrivate == false) {%>
-        <div class="custom-control custom-switch">
-          <input id="isPrivate" type="checkbox" name="privacy" class="custom-control-input" />
-          <label class="custom-control-label" for="isPrivate"><span id="currentStatus">Public Account</span></label>
-        </div>
-        <% } %>
-        <p id="acUpdateStatus"></p>
-      </div>
-    </li>
-    <li class="list-group-item">
-      <div>
-        <h4>Get Started deleting your account</h4>
-        <button class="btn btn-outline-danger" id="deleteAccount">Delete Your Account</button>
-        <div id="message" class="message"></div>
-      </div>
-    </li>
-  </ul>
+  <div id="accountTab" class="mt-5">
+    <h6>
+      Account
+    </h6>
+    <hr class="solid">
+    <label for="email">Email</label>
+    <input required placeholder="<%= currentAccount.email %>" class="form-control w-50" type="email" name="email"
+      id="email" />
+    <label class="mt-2" for="password">Password</label>
+    <input required placeholder="********" class="form-control mt-2 w-50" type="password" name="password"
+      id="password" />
+    <button style="font-family: url('/font/HelveticaNowText-Bold.ttf') !important;" class="btn btn-outline-primary mt-2"
+      id="accountSave">SAVE</button>
+
+  </div>
+
+  <div id="privacyTab" class="mt-5">
+    <h6>
+      Privacy
+    </h6>
+    <hr class="solid">
+    <% if(currentAccount.isPrivate == true) {%>
+    <div class="custom-control custom-switch checked">
+      <input checked id="isPrivate" type="checkbox" name="privacy" class="custom-control-input" />
+      <label class="custom-control-label" for="isPrivate"><span id="currentStatus">Private Account</span></label>
+    </div>
+    <% } %>
+    <%if(currentAccount.isPrivate == false) {%>
+    <div class="custom-control custom-switch">
+      <input id="isPrivate" type="checkbox" name="privacy" class="custom-control-input" />
+      <label class="custom-control-label" for="isPrivate"><span id="currentStatus">Public Account</span></label>
+    </div>
+    <% } %>
+    <p id="acUpdateStatus"></p>
+  </div>
+
+  <div class="mt-5 pb-5">
+    <h6>
+      Get Started deleting your account
+    </h6>
+    <hr class="solid">
+    <div style="text-align: right;">
+      <button class="btn btn-outline-danger" id="deleteAccount">
+        <i class="fas fa-trash-alt"></i>
+        Delete Your Account
+      </button>
+      <div id="message" class="message"></div>
+    </div>
+  </div>
 </div>
 
 <script src="/js/shared/getCookie.js"></script>

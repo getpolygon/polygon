@@ -94,24 +94,22 @@ function fetchPosts() {
               if (obj.authorId == response._id) {
                 cardContainer.innerHTML =
                   `
-                <div id="${postId}" class="post container shadow rounded-lg mt-1 mb-4 pr-4 pl-4 pb-3 pt-3 bg-white">
-                  <div class="container-sm " style="text-align: right;">
-                    <i postId="${postId}" class="submitDeleteForm fas fa-trash-alt" role="button"></i>
-                  </div>
+                <div id="${postId}" class="post container shadow-sm rounded-lg mt-1 mb-4 pr-4 pl-4 pb-3 pt-3 bg-white">
+                  <i style="float: right" postId="${postId}" class="submitDeleteForm fas fa-trash-alt" role="button"></i>
                   <img
                     src="${authorImage}"
                     alt="profile-photo"
                     class="rounded-circle"
-                    width= "80"
-                    height="80"
+                    width= "50"
+                    height="50"
                   />
-                  <h4 class="text-dark mt-3 align-baseline">
+                  <h5 class="text-dark mt-3 align-baseline">
                     <a href="/user/${authorId}">${author}</a>
-                  </h4>
+                  </h5>
                   <h6 class="text-dark align-baseline">
                     ${text}
                   </h6>
-                   <h6 class="text-secondary">${postDate}</h6>
+                  <h6 class="text-secondary">${moment().calendar(postDate)}</h6>
               </div>
           `;
                 checkForDeleteButtons();
@@ -119,21 +117,21 @@ function fetchPosts() {
               else {
                 cardContainer.innerHTML =
                   `
-              <div id="${postId}" class="post container shadow rounded-lg mt-1 mb-4 pr-4 pl-4 pb-3 pt-3 bg-white">
+              <div id="${postId}" class="post container shadow-sm rounded-lg mt-1 mb-4 pr-4 pl-4 pb-3 pt-3 bg-white">
                 <img
                   src="${authorImage}"
                   alt="profile-photo"
                   class="rounded-circle"
-                  width= "80"
-                  height="80"
+                  width= "50"
+                  height="50"
                 />
-                <h4 class="text-dark mt-3 align-baseline">
+                <h5 class="text-dark mt-3 align-baseline">
                   <a href="/user/${authorId}">${author}</a>
-                </h4>
+                </h5>
                 <h6 class="text-dark align-baseline">
                   ${text}
                 </h6>
-                <h6 class="text-secondary">${postDate}</h6>
+                <h6 class="text-secondary">${moment().calendar(postDate)}</h6>
             </div>
           `;
                 checkForDeleteButtons();
@@ -174,16 +172,14 @@ function createPost() {
       if (msg) msg.innerHTML = "";
 
       cardContainer.innerHTML = `
-      <div id="${postId}" class="post container shadow rounded-lg mt-1 mb-4 pr-4 pl-4 pb-3 pt-3 bg-white">
-        <div class="container-sm" style="text-align: right;">
-          <i postId="${postId}" class="submitDeleteForm fas fa-trash-alt" role="button"></i>
-        </div>
+      <div id="${postId}" class="post container shadow-sm rounded-lg mt-1 mb-4 pr-4 pl-4 pb-3 pt-3 bg-white">
+        <i style="float: right" postId="${postId}" class="submitDeleteForm fas fa-trash-alt p-2" role="button"></i>
         <img
           src="${authorImage}"
           alt="profile-photo"
           class="rounded-circle"
-          width= "80"
-          height="80"
+          width= "50"
+          height="50"
         />
         <h4 class="text-dark mt-3 align-baseline">
           <a href="/user/${authorId}">${author}</a>

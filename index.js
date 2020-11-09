@@ -2,6 +2,7 @@
 require("dotenv").config();
 
 // Dependencies
+const cors = require("cors");
 const morgan = require("morgan");
 const express = require("express");
 const mongoose = require("mongoose");
@@ -19,6 +20,7 @@ const platformRoute = require("./routes/platform");
 const userSettingsRoute = require("./routes/settings");
 
 // Middleware
+app.use(cors());
 app.use(morgan("dev"));
 app.use(compression());
 app.use(cookieParser());

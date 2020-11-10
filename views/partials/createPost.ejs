@@ -1,8 +1,22 @@
+<style>
+    .dropzone {
+        background: white;
+        border-radius: 5px;
+        border: 2px dashed rgb(0, 135, 247);
+        border-image: none;
+        max-width: 500px;
+        margin-left: auto;
+        margin-right: auto;
+        margin-top: 100px;
+        margin-bottom: 100px;
+    }
+</style>
+
 <div id="create-post" class="bg-white container rounded shadow-sm create-post mb-5 mt-5 p-2">
     <div class="d-flex">
         <img height="50" src="<%= currentAccount.pictureUrl %>" class="rounded-circle shadow-sm mr-2"
             alt="profile-picture">
-        <input type="text" style="height: inherit;" required class="form-control" name="text" id="postTextarea"
+        <input type="text" style="height: inherit;" class="form-control" name="text" id="postTextarea"
             placeholder="Create post">
         <button class="btn btn-primary ml-2" id="postButton" type="submit" disabled>Post</button>
     </div>
@@ -19,20 +33,28 @@
             <div class="modal-dialog">
                 <div class="modal-content">
                     <div class="modal-header">
-                        <h5 class="modal-title" id="photoModalLabel">Modal title</h5>
+                        <h5 class="modal-title" id="photoModalLabel">Upload a photo</h5>
                         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                             <span aria-hidden="true">&times;</span>
                         </button>
                     </div>
                     <div class="modal-body">
-                        <input type="file" class="form-control">
-                        <div class="container">
-                            <span>Preview</span>
+
+                        <!-- Dropzone.js to upload photos -->
+                        <!-- TODO: MAKE PHOTO UPLOAD WORK -->
+                        <div id="dropzone">
+                            <form class="dropzone needsclick" id="photo-upload" action="/upload">
+
+                                <div class="dz-message needsclick">
+                                    Drop files here or click to upload.<br>
+                                </div>
+                            </form>
                         </div>
+                        <div class="container" id="preview-template"></div>
                     </div>
-                    <div class="modal-footer">
-                        <!-- <button type="button" class="btn btn-primary">ADD</button> -->
-                    </div>
+                    <!-- <div class="modal-footer">
+                        <button type="button" class="btn btn-primary">ADD</button>
+                    </div> -->
                 </div>
             </div>
         </div>
@@ -49,16 +71,22 @@
             <div class="modal-dialog">
                 <div class="modal-content">
                     <div class="modal-header">
-                        <h5 class="modal-title" id="videoModalLabel">Modal title</h5>
+                        <h5 class="modal-title" id="videoModalLabel">Upload a video</h5>
                         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                             <span aria-hidden="true">&times;</span>
                         </button>
                     </div>
                     <div class="modal-body">
-                        <input type="file" class="form-control">
-                        <div class="container">
-                            <span>Preview</span>
+                        <!-- Dropzone.js to upload videos -->
+                        <!-- TODO: MAKE VIDEO UPLOAD WORK -->
+                        <div id="dropzone">
+                            <form class="dropzone needsclick" id="video-upload" action="/upload">
+                                <div class="dz-message needsclick">
+                                    Drop files here or click to upload.<br>
+                                </div>
+                            </form>
                         </div>
+                        <div class="container" id="preview-template"></div>
                     </div>
                     <div class="modal-footer">
                         <!-- <button type="button" class="btn btn-primary">ADD</button> -->

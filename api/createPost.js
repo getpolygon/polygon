@@ -1,6 +1,6 @@
 require("mongoose");
 const router = require("express").Router();
-// const moment = require("moment");
+const { fromUnixTime, format } = require("date-fns");
 
 const AccountSchema = require("../models/account");
 
@@ -27,7 +27,10 @@ router.put("/", async (req, res) => {
 
   await authorAccount
     .save()
-    .then(res.json(post))
+    .then(() => {
+      post.datefield = format(fromUnixTime(post.datefield / 1000), "MMM d/y h:mm b");
+      res.json(post)
+    })
     .catch(e => console.error(e));
   
 });

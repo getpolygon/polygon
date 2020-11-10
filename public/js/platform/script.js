@@ -16,7 +16,7 @@ function checkForDeleteButtons() {
 // For deleting posts
 function deletePost() {
   // Getting the whole post div by id
-  let post = document.getElementById(this.parentNode.parentNode.id);
+  let post = document.getElementById(this.parentNode.id);
   // Getting the postId attribute
   let postId = this.getAttribute("postId");
   // Progress bar at the top of the card
@@ -109,7 +109,7 @@ function fetchPosts() {
                   <h6 class="text-dark align-baseline">
                     ${text}
                   </h6>
-                  <h6 class="text-secondary">${moment().calendar(postDate)}</h6>
+                  <h6 class="text-secondary">${postDate}</h6>
               </div>
           `;
                 checkForDeleteButtons();
@@ -131,7 +131,7 @@ function fetchPosts() {
                 <h6 class="text-dark align-baseline">
                   ${text}
                 </h6>
-                <h6 class="text-secondary">${moment().calendar(postDate)}</h6>
+                <h6 class="text-secondary">${postDate}</h6>
             </div>
           `;
                 checkForDeleteButtons();
@@ -142,7 +142,7 @@ function fetchPosts() {
               console.log(e);
             });
 
-          postsContainer.appendChild(cardContainer);
+          postsContainer.prepend(cardContainer);
         });
       }
     })

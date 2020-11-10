@@ -8,17 +8,16 @@ function fetchNotifications() {
             if (data.length == 0) {
                 msg.innerHTML =
                     `
-                    <h3>You don't have any notifications.</h3>
+                    <h5>You don't have any notifications.</h5>
                 `;
+                notificationContainer.prepend(msg);
             } else {
                 data.forEach(notification => {
                     let notificationCreated = document.createElement("div");
                     notificationCreated.innerHTML =
                         `
-                    <li id=${notification._id} class="list-group-item shadow-sm rounded-lg mb-2 p-5">
-                        <p align="right">
-                            <button type="button" class="btn-close" aria-label="Close"></button>
-                        </p>
+                    <li id=${notification._id} class="list-group-item shadow-sm rounded-lg mb-2">
+                        <i style="float:right" type="button" class="btn-close" aria-label="Close" role="button"></i>
                         <h3 align="left"><b>${notification.fullName}</b> sent you a friend request</h3>
                         <p align="right">
                             <a href="/user/${notification.accountId}" class="btn btn-primary">

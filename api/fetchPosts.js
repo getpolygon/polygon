@@ -1,6 +1,7 @@
 require("mongoose");
 const router = require("express").Router();
-const moment = require("moment");
+// Required to convert unix timestamp to readable time
+const { fromUnixTime, format } = require("date-fns");
 
 const AccountSchema = require("../models/account");
 
@@ -14,7 +15,7 @@ router.get("/", async (req, res) => {
         let foundPosts = [];
         doc.forEach(account => {
           account.posts.forEach(post => {
-            post.datefield = post.datefield;
+            post.datefield = format(fromUnixTime(post.datefield / 1000), "MMM d/y h:mm b");
             foundPosts.push(post);
           })
         })
@@ -28,6 +29,7 @@ router.get("/", async (req, res) => {
       .then((doc) => {
         let foundPosts = [];
         doc.posts.forEach(post => {
+          post.datefield = format(fromUnixTime(post.datefield / 1000), "MMM d/y h:mm b");
           foundPosts.push(post);
         });
         res.json(foundPosts);

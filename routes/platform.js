@@ -1,6 +1,5 @@
 require("mongoose");
 const router = require("express").Router();
-const fetch = require("node-fetch");
 
 const AccountSchema = require("../models/account");
 
@@ -15,97 +14,115 @@ router.get("/", async (req, res) => {
    * If not redirect to either login or register (Maybe login)
    */
 
-  if (!emailCookie && !passwordCookie) {
-    res.clearCookie("email", req.cookies.email);
-    res.clearCookie("password", req.cookies.password);
-    res.redirect("/auth/login");
-  } else {
-    Promise.all([
-      await AccountSchema.find({ isPrivate: false }),
+  try {
+    if (!emailCookie && !passwordCookie) {
+      res
+        .clearCookie("email")
+        .clearCookie("password")
+        .redirect("/auth/login")
+    } else {
       await AccountSchema.findOne({
         email: req.cookies.email,
         password: req.cookies.password,
-      }),
-    ])
-      .then(([accounts, currentAccount]) => {
-        res.render("platform", {
-          accounts: accounts,
-          currentAccount: currentAccount,
-          err: "We couldn't find any public accounts.",
-          title: "ArmSocial"
-        });
       })
-      .catch(([err1, err2]) => {
-        res.clearCookie("email", req.cookies.email);
-        res.clearCookie("password", req.cookies.password);
-        res.redirect("/auth/login", { err1: err1, err2: err2 });
+        .then(currentAccount => {
+          if (currentAccount == null) {
+            res
+              .clearCookie("email")
+              .clearCookie("password")
+              .redirect("/auth/login")
+          } else {
+            res.render("platform", {
+              currentAccount: currentAccount,
+              title: "ArmSocial"
+            });
+          }
 
-        console.log(err1);
-        console.log(err2);
-      });
+        })
+        .catch(err => {
+          res
+            .clearCookie("email")
+            .clearCookie("password")
+            .redirect("/auth/login");
+          console.log(err);
+        });
+    };
   }
+  catch (err) {
+    res
+      .clearCookie("email")
+      .clearCookie("password")
+      .redirect("/auth/login")
+  };
 });
+
 
 // User's Account Page
 router.get("/user/:accountId", async (req, res) => {
-  if (!req.cookies.email || !req.cookies.password) {
-    res.redirect("/");
-  } else {
-    const accountId = req.params.accountId;
-    const currentAccount = await AccountSchema.findOne({ email: req.cookies.email, password: req.cookies.password });
-    const platformAccount = await AccountSchema.findById(accountId);
-    if (!platformAccount) {
-      res.redirect("/static/no-account.html");
+  try {
+    if (!req.cookies.email || !req.cookies.password) {
+      res.redirect("/");
     } else {
-      res.render("platformAccount", {
-        currentAccount: currentAccount,
-        platformAccount: platformAccount,
-        title: `${platformAccount.fullName} | ArmSocial`
-      });
+      const accountId = req.params.accountId;
+      const currentAccount = await AccountSchema.findOne({ email: req.cookies.email, password: req.cookies.password });
+      const platformAccount = await AccountSchema.findById(accountId);
+      if (currentAccount == null) {
+        res
+          .clearCookie("email")
+          .clearCookie("password")
+          .redirect("/auth/login")
+      } if (!platformAccount) {
+        res.redirect("/static/no-account.html");
+      } else {
+        res.render("platformAccount", {
+          currentAccount: currentAccount,
+          platformAccount: platformAccount,
+          title: `${platformAccount.fullName} | ArmSocial`
+        });
+      }
     }
   }
+  catch (err) {
+    res
+      .clearCookie("email")
+      .clearCookie("password")
+      .redirect("/auth/login")
+  };
 });
 
 // Notifications tab
 router.get("/notifications", async (req, res) => {
-  const currentAccount = await AccountSchema.findOne({
-    email: req.cookies.email,
-    password: req.cookies.password,
-  });
-  res.render("notifications", {
-    currentAccount: currentAccount,
-    title: `Notifications | ArmSocial`
-  })
-});
-
-// Users
-router.get("/users", async (req, res) => {
-  if (!req.cookies.email && !req.cookies.password) {
-    res.clearCookie("password");
-    res.clearCookie("email");
-    res.redirect("/auth/login");
-  } else {
-    const accounts = await AccountSchema.find({ isPrivate: false }).sort({
-      date: -1 /* Sorting by date from the latest to the oldesst */,
-    });
+  try {
     const currentAccount = await AccountSchema.findOne({
       email: req.cookies.email,
       password: req.cookies.password,
     });
-    res.render("users", {
-      accounts: accounts,
-      currentAccount: currentAccount,
-      err: "We couldn't find any public accounts.",
-      title: "Users | ArmSocial"
-    });
+    if (currentAccount == null) {
+      res
+        .clearCookie("email")
+        .clearCookie("password")
+        .redirect("/auth/login")
+    } else {
+      res.render("notifications", {
+        currentAccount: currentAccount,
+        title: `Notifications | ArmSocial`
+      });
+    };
+  }
+  catch (err) {
+    res
+      .clearCookie("email")
+      .clearCookie("password")
+      .redirect("/auth/login")
   }
 });
 
 // Logout
 router.post("/logout/:accountId", (req, res) => {
-  res.clearCookie("email", req.params.accountId);
-  res.clearCookie("password", req.params.accountId);
-  res.redirect("/");
+  res
+    .clearCookie("email")
+    .clearCookie("password")
+    .redirect("/")
 });
 
 module.exports = router;

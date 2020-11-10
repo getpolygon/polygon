@@ -44,8 +44,8 @@ function fetchNotifications() {
 };
 
 function closeNotificationContainer() {
-    let el = this.parentNode.parentNode.parentNode;
-    fetch(`/api/fetchNotifications/?dismiss=true&notification=${this.parentNode.parentNode.id}`)
+    let el = this.parentNode;
+    fetch(`/api/fetchNotifications/?dismiss=true&notification=${el.id}`)
     .then(data => data.json())
     .then(data => {
         console.log(data);

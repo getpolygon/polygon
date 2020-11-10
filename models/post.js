@@ -5,6 +5,10 @@ const PostSchema = new mongoose.Schema({
     authorEmail: { type: String, required: true },
     authorId: { type: String, required: true },
     authorImage: { type: String, required: true },
+    attachments: {
+        photo: { type: Array },
+        video: { type: Array }
+    },
     datefield: { type: String, required: true },
 });
 module.exports = PostSchema;

@@ -12,10 +12,8 @@ const AccountSchema = new mongoose.Schema({
   pictureUrl: { type: String, required: true },
   isPrivate: { type: Boolean, required: true },
   friends: {
-    type: mongoose.Schema.Types.Mixed,
     pending: [FriendSchema],
     approved: [FriendSchema],
-    dismissed: [FriendSchema],
     requested: [FriendSchema]
   },
   posts: [PostSchema],

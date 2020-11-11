@@ -3,7 +3,7 @@ function loader() {
     let loader = document.createElement("div");
     loaderContainer.id = "loader";
     loaderContainer.setAttribute("align", "center");
-    loader.classList.add("loader");
+    loader.classList.add("three-quarters-loader");
     loaderContainer.prepend(loader);
     document.getElementById("posts").prepend(loaderContainer)
 };

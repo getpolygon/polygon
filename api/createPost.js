@@ -1,5 +1,8 @@
 require("mongoose");
 
+// For deleting files
+const { unlink } = require("fs");
+
 const { MINIO_HOST, MINIO_PORT, MINIO_ACCKEY, MINIO_SECKEY, MINIO_USESSL } = require("../minio.config");
 const minio = require("minio");
 const MinIOClient = new minio.Client({
@@ -11,7 +14,14 @@ const MinIOClient = new minio.Client({
 })
 
 const multer = require("multer");
-const upload = multer({ dest: "tmp/" });
+const storage = multer.diskStorage({
+  destination: "tmp/",
+  filename: (err, file, cb) => {
+    cb(null, `${file.originalname.toString()}`);
+    if (err) console.error(err);
+  }
+})
+const upload = multer({ storage: storage });
 
 const router = require("express").Router();
 const { fromUnixTime, format } = require("date-fns");
@@ -29,9 +39,9 @@ router.put("/", upload.single("image"), async (req, res) => {
 
   if (req.file) {
     // Upload user image to the database
-    await MinIOClient.fPutObject("local", `${authorAccount.email}/media/${req.file.filename}.png`, req.file.path, { "Content-Type": req.file.mimetype });
+    await MinIOClient.fPutObject("local", `${authorAccount.email}/media/${req.file.originalname}`, req.file.path, { "Content-Type": req.file.mimetype });
     // Getting the link for the user's image
-    const presignedUrl = await MinIOClient.presignedGetObject("local", `${authorAccount.email}/media/${req.file.filename}.png`, 24 * 60 * 60);
+    const presignedUrl = await MinIOClient.presignedGetObject("local", `${authorAccount.email}/media/${req.file.originalname}`, 24 * 60 * 60);
 
     const Post = {
       text: req.body.text,
@@ -50,7 +60,11 @@ router.put("/", upload.single("image"), async (req, res) => {
       .save()
       .then(() => {
         post.datefield = format(fromUnixTime(post.datefield / 1000), "MMM d/y h:mm b");
-        res.json(post)
+        res.json(post);
+        // Deleting the file from the drive
+        unlink(`tmp/${req.file.originalname.toString()}`, (err) => {
+          if (err) console.error(err);
+        });
       })
       .catch(e => console.error(e));
   } else {

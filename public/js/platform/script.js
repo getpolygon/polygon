@@ -206,7 +206,6 @@ function createPost() {
   let imageInput = document.getElementById("imageUpload");
   let image = imageInput.files[0];
   if (image == null) {
-
     fetch("/api/createPost", {
       method: "PUT",
       headers: { "Content-Type": "application/x-www-form-urlencoded" },
@@ -300,6 +299,7 @@ function createPost() {
       `;
 
         // Append the card to the top of the div
+        imageInput = "";
         postsContainer.prepend(cardContainer);
         checkForDeleteButtons();
       })

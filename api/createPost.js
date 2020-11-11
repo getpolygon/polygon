@@ -50,6 +50,7 @@ router.put("/", upload.single("image"), async (req, res) => {
       authorId: authorId,
       authorImage: authorImage,
       attachedImage: presignedUrl,
+      attachedImageFileName: req.file.originalname.toString(),
       datefield: Date.now(),
     };
 

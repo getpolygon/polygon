@@ -45,7 +45,7 @@ router.post("/", upload.single("avatar"), async (req, res) => {
                 "Content-Type": req.file.mimetype
             });
             // Getting the link for the user's image
-            const presignedUrl = await MinIOClient.presignedGetObject("local", `${req.body.email}/${req.body.email}.png`, 24 * 60 * 60);
+            const presignedUrl = await MinIOClient.presignedGetObject("local", `${req.body.email}/${req.body.email}.png`);
             return presignedUrl
         }
         // If the user didn't select an image return a random image link(string) that will be used to serve default avatars from the server

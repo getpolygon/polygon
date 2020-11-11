@@ -41,10 +41,9 @@
       <% if (currentAccount.email == platformAccount.email) {%>
       <button id="addFriend" class="btn btn-success disabled" disabled>Add Friend</button>
       <%}%>
-          <% if (currentAccount.email != platformAccount.email) {%>
+      <% if (currentAccount.email != platformAccount.email) {%>
       <button id="addFriend" class="btn btn-success">Add Friend</button>
-      <%}%>
-          
+      <%}%>          
         </p>
         <p align="center" class="account-bio pr-5 pl-5 pb-1" id="bio">
           <%= platformAccount.bio %>
@@ -62,5 +61,5 @@
 
 <script src="/js/shared/getCookie.js"></script>
 <script src="/js/shared/loader.js"></script>
-<script src="/js/platformAccount/script.js"></script>
+<script src="/js/platform/script.js"></script>
 <%- include ("./partials/footer") %>

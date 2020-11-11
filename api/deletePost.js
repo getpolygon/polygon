@@ -21,19 +21,23 @@ router.delete("/", async (req, res) => {
 
     await AccountSchema.findOne({ email: currentEmail, password: currentPassword })
         .then(async (doc) => {
-            let foundPost = doc.posts.id(post)
-            // if (foundPost.attachedPhoto) {
-            //     const foundPhotoRegex = new RegExp(foundPost.attachedPhoto, "i")
-            //     MinIOClient.removeObject('local', `${currentEmail}/photos/${foundPost.attachedPhoto}.png`, function (err) {
-            //         if (err) {
-            //             return console.log('Unable to remove object', err)
-            //         }
-            //     });
-            // }
-            doc.posts.pull(foundPost)
-            await doc.save()
-                .then(res.json({ result: "Removed" }))
-                .catch(e => console.error(e));
+            let foundPost = doc.posts.id(post);
+            if (foundPost.attachedImage) {
+                MinIOClient.removeObject('local', `${currentEmail}/media/${foundPost.attachedImageFileName}`, function (err) {
+                    if (err) {
+                        return console.log('Unable to remove object', err)
+                    }
+                });
+                doc.posts.pull(foundPost)
+                await doc.save()
+                    .then(res.json({ result: "Removed" }))
+                    .catch(e => console.error(e));
+            } else {
+                doc.posts.pull(foundPost)
+                await doc.save()
+                    .then(res.json({ result: "Removed" }))
+                    .catch(e => console.error(e));
+            }
         })
         .catch(e => console.error(e));
 });

@@ -6,6 +6,7 @@ const PostSchema = new mongoose.Schema({
     authorId: { type: String, required: true },
     authorImage: { type: String, required: true },
     attachedImage: { type: String },
+    attachedImageFileName: { type: String },
     datefield: { type: String, required: true },
 });
 module.exports = PostSchema;

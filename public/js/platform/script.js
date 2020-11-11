@@ -38,6 +38,7 @@ function deletePost() {
     .then(_response => {
       post.parentNode.removeChild(post);
       checkForDeleteButtons();
+      fetchPosts();
     })
     .catch(e => {
       let el = document.createElement("div");
@@ -167,7 +168,7 @@ function fetchPosts() {
           `;
                 } else {
                   cardContainer.innerHTML =
-                  `
+                    `
             <div id="${postId}" class="post container shadow-sm rounded-lg mt-1 mb-4 pr-4 pl-4 pb-3 pt-3 bg-white">
               <img
                 src="${authorImage}"
@@ -190,8 +191,7 @@ function fetchPosts() {
                 checkForDeleteButtons();
               }
               document.getElementById("loader").innerHTML = "";
-            })
-            .catch(e => {
+            }).catch(e => {
               console.log(e);
             });
 
@@ -205,11 +205,20 @@ function fetchPosts() {
 function createPost() {
   let imageInput = document.getElementById("imageUpload");
   let image = imageInput.files[0];
+
   if (image == null) {
+    let formData = new FormData();
+    formData.append("text", postText.value);
+
+    let loader = document.createElement("div");
+    loader.classList.add("full-loader");
+    loader.classList.add("full-loader-default");
+    loader.classList.add("is-active");
+    document.body.appendChild(loader);
+
     fetch("/api/createPost", {
       method: "PUT",
-      headers: { "Content-Type": "application/x-www-form-urlencoded" },
-      body: `text=${postText.value}`,
+      body: formData,
     })
       .then(data => data.json())
       .then(data => {
@@ -245,6 +254,7 @@ function createPost() {
       `;
         // Append the card to the top of the div
         postsContainer.prepend(cardContainer);
+        document.body.removeChild(loader);
         checkForDeleteButtons();
       })
       .catch((e) => {
@@ -254,6 +264,13 @@ function createPost() {
     let formData = new FormData();
     formData.append("text", postText.value);
     formData.append("image", image);
+
+    let loader = document.createElement("div");
+    loader.classList.add("full-loader");
+    loader.classList.add("full-loader-default");
+    loader.classList.add("is-active");
+    document.body.appendChild(loader);
+
     fetch("/api/createPost", {
       method: "PUT",
       body: formData
@@ -296,11 +313,11 @@ function createPost() {
           </div>
           <h6 class="text-secondary">${postDate}</h6>
         </div>
-      `;
+        `;
 
-        // Append the card to the top of the div
         imageInput = "";
         postsContainer.prepend(cardContainer);
+        document.body.removeChild(loader);
         checkForDeleteButtons();
       })
       .catch((e) => {

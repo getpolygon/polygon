@@ -65,6 +65,9 @@ function fetchPosts() {
                   <h6 class="text-dark align-baseline">
                     ${text}
                   </h6>
+                  <div class="container p-3">
+                  <img src="${obj.attachedImage}" width="500"/>
+                </div>
                    <h6 class="text-secondary">${postDate}</h6>
               </div>
           `;
@@ -88,6 +91,9 @@ function fetchPosts() {
                 <h6 class="text-dark align-baseline">
                   ${text}
                 </h6>
+                <div class="container p-3">
+                <img src="${obj.attachedImage}" width="500"/>
+              </div>
                 <h6 class="text-secondary">${postDate}</h6>
             </div>
           `;
@@ -100,7 +106,7 @@ function fetchPosts() {
               console.log(e);
             });
 
-          postsContainer.appendChild(cardContainer);
+          postsContainer.prepend(cardContainer);
         });
       }
     })
@@ -183,6 +189,9 @@ function createPost() {
         <h6 class="text-dark align-baseline">
           ${text}
         </h6>
+        <div class="container p-3">
+          <img src="${data.attachedImage}" width="500"/>
+        </div>
         <h6 class="text-secondary">${postDate}</h6>
       </div>
       `;

@@ -77,6 +77,7 @@ function fetchPosts() {
           let authorImage = obj.authorImage;
           let postDate = obj.datefield;
           let postId = obj._id;
+          let image = obj.attachedImage;
           let postsContainer = document.getElementById("posts");
           let cardContainer = document.createElement("div");
 
@@ -92,8 +93,33 @@ function fetchPosts() {
             .then(response => response.json())
             .then(response => {
               if (obj.authorId == response._id) {
-                cardContainer.innerHTML =
-                  `
+                if (image) {
+                  cardContainer.innerHTML =
+                    `
+                <div id="${postId}" class="post container shadow-sm rounded-lg mt-1 mb-4 pr-4 pl-4 pb-3 pt-3 bg-white">
+                  <i style="float: right" postId="${postId}" class="submitDeleteForm fas fa-trash-alt" role="button"></i>
+                  <img
+                    src="${authorImage}"
+                    alt="profile-photo"
+                    class="rounded-circle"
+                    width= "50"
+                    height="50"
+                  />
+                  <h5 class="text-dark mt-3 align-baseline">
+                    <a href="/user/${authorId}">${author}</a>
+                  </h5>
+                  <h6 class="text-dark align-baseline">
+                    ${text}
+                  </h6>
+                  <div class="container p-2">
+                    <img src="${image}" width="500" alt="image" />
+                  </div>
+                  <h6 class="text-secondary">${postDate}</h6>
+              </div>
+              `;
+                } else {
+                  cardContainer.innerHTML =
+                    `
                 <div id="${postId}" class="post container shadow-sm rounded-lg mt-1 mb-4 pr-4 pl-4 pb-3 pt-3 bg-white">
                   <i style="float: right" postId="${postId}" class="submitDeleteForm fas fa-trash-alt" role="button"></i>
                   <img
@@ -111,12 +137,14 @@ function fetchPosts() {
                   </h6>
                   <h6 class="text-secondary">${postDate}</h6>
               </div>
-          `;
+              `;
+                }
                 checkForDeleteButtons();
               }
               else {
-                cardContainer.innerHTML =
-                  `
+                if (image) {
+                  cardContainer.innerHTML =
+                    `
               <div id="${postId}" class="post container shadow-sm rounded-lg mt-1 mb-4 pr-4 pl-4 pb-3 pt-3 bg-white">
                 <img
                   src="${authorImage}"
@@ -131,9 +159,34 @@ function fetchPosts() {
                 <h6 class="text-dark align-baseline">
                   ${text}
                 </h6>
+                <div class="container p-2">
+                <img src="${image}" width="500" alt="image" />
+                  </div>
                 <h6 class="text-secondary">${postDate}</h6>
             </div>
           `;
+                } else {
+                  cardContainer.innerHTML =
+                  `
+            <div id="${postId}" class="post container shadow-sm rounded-lg mt-1 mb-4 pr-4 pl-4 pb-3 pt-3 bg-white">
+              <img
+                src="${authorImage}"
+                alt="profile-photo"
+                class="rounded-circle"
+                width= "50"
+                height="50"
+              />
+              <h5 class="text-dark mt-3 align-baseline">
+                <a href="/user/${authorId}">${author}</a>
+              </h5>
+              <h6 class="text-dark align-baseline">
+                ${text}
+              </h6>
+              <h6 class="text-secondary">${postDate}</h6>
+          </div>
+        `;
+                }
+
                 checkForDeleteButtons();
               }
               document.getElementById("loader").innerHTML = "";
@@ -150,54 +203,110 @@ function fetchPosts() {
 };
 
 function createPost() {
-  fetch("/api/createPost", {
-    method: "PUT",
-    headers: { "Content-Type": "application/x-www-form-urlencoded" },
-    body: `text=${postText.value}`,
-  })
-    .then(data => data.json())
-    .then(data => {
-      let msg = document.getElementById("msg");
-      let text = data.text;
-      let author = data.author;
-      let postId = data._id;
-      let authorId = data.authorId;
-      let authorImage = data.authorImage;
-      let postDate = data.datefield;
-      let postsContainer = document.getElementById("posts");
-      let cardContainer = document.createElement("div");
+  let imageInput = document.getElementById("imageUpload");
+  let image = imageInput.files[0];
+  if (image == null) {
 
-      postText.value = "";
-
-      if (msg) msg.innerHTML = "";
-
-      cardContainer.innerHTML = `
-      <div id="${postId}" class="post container shadow-sm rounded-lg mt-1 mb-4 pr-4 pl-4 pb-3 pt-3 bg-white">
-        <i style="float: right" postId="${postId}" class="submitDeleteForm fas fa-trash-alt p-2" role="button"></i>
-        <img
-          src="${authorImage}"
-          alt="profile-photo"
-          class="rounded-circle"
-          width= "50"
-          height="50"
-        />
-        <h4 class="text-dark mt-3 align-baseline">
-          <a href="/user/${authorId}">${author}</a>
-        </h4>
-        <h6 class="text-dark align-baseline">
-          ${text}
-        </h6>
-        <h6 class="text-secondary">${postDate}</h6>
-      </div>
-    `;
-
-      // Append the card to the top of the div
-      postsContainer.prepend(cardContainer);
-      checkForDeleteButtons();
+    fetch("/api/createPost", {
+      method: "PUT",
+      headers: { "Content-Type": "application/x-www-form-urlencoded" },
+      body: `text=${postText.value}`,
     })
-    .catch((e) => {
-      console.log(e);
-    });
+      .then(data => data.json())
+      .then(data => {
+        let msg = document.getElementById("msg");
+        let text = data.text;
+        let author = data.author;
+        let postId = data._id;
+        let authorId = data.authorId;
+        let authorImage = data.authorImage;
+        let postDate = data.datefield;
+        let postsContainer = document.getElementById("posts");
+        let cardContainer = document.createElement("div");
+        if (msg) msg.innerHTML = "";
+        postText.value = "";
+        cardContainer.innerHTML = `
+        <div id="${postId}" class="post container shadow-sm rounded-lg mt-1 mb-4 pr-4 pl-4 pb-3 pt-3 bg-white">
+          <i style="float: right" postId="${postId}" class="submitDeleteForm fas fa-trash-alt p-2" role="button"></i>
+          <img
+            src="${authorImage}"
+            alt="profile-photo"
+            class="rounded-circle"
+            width= "50"
+            height="50"
+          />
+          <h4 class="text-dark mt-3 align-baseline">
+            <a href="/user/${authorId}">${author}</a>
+          </h4>
+          <h6 class="text-dark align-baseline">
+            ${text}
+          </h6>
+          <h6 class="text-secondary">${postDate}</h6>
+        </div>
+      `;
+        // Append the card to the top of the div
+        postsContainer.prepend(cardContainer);
+        checkForDeleteButtons();
+      })
+      .catch((e) => {
+        console.log(e);
+      });
+  } else {
+    let formData = new FormData();
+    formData.append("text", postText.value);
+    formData.append("image", image);
+    fetch("/api/createPost", {
+      method: "PUT",
+      body: formData
+    })
+      .then(data => data.json())
+      .then(data => {
+        let msg = document.getElementById("msg");
+        let text = data.text;
+        let author = data.author;
+        let postId = data._id;
+        let authorId = data.authorId;
+        let authorImage = data.authorImage;
+        let postDate = data.datefield;
+        let image = data.attachedImage;
+        let postsContainer = document.getElementById("posts");
+        let cardContainer = document.createElement("div");
+
+        postText.value = "";
+
+        if (msg) msg.innerHTML = "";
+
+        cardContainer.innerHTML = `
+        <div id="${postId}" class="post container shadow-sm rounded-lg mt-1 mb-4 pr-4 pl-4 pb-3 pt-3 bg-white">
+          <i style="float: right" postId="${postId}" class="submitDeleteForm fas fa-trash-alt p-2" role="button"></i>
+          <img
+            src="${authorImage}"
+            alt="profile-photo"
+            class="rounded-circle"
+            width= "50"
+            height="50"
+          />
+          <h4 class="text-dark mt-3 align-baseline">
+            <a href="/user/${authorId}">${author}</a>
+          </h4>
+          <h6 class="text-dark align-baseline">
+            ${text}
+          </h6>
+          <div class="container p-2">
+            <img src="${image}" width="500" alt="image" />
+          </div>
+          <h6 class="text-secondary">${postDate}</h6>
+        </div>
+      `;
+
+        // Append the card to the top of the div
+        postsContainer.prepend(cardContainer);
+        checkForDeleteButtons();
+      })
+      .catch((e) => {
+        console.log(e);
+      });
+  }
 }
 
 window.addEventListener("load", () => {

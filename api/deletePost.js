@@ -1,4 +1,15 @@
 require("mongoose");
+
+const { MINIO_HOST, MINIO_PORT, MINIO_ACCKEY, MINIO_SECKEY, MINIO_USESSL } = require("../minio.config");
+const minio = require("minio");
+const MinIOClient = new minio.Client({
+    endPoint: MINIO_HOST,
+    port: MINIO_PORT,
+    accessKey: MINIO_ACCKEY,
+    secretKey: MINIO_SECKEY,
+    useSSL: MINIO_USESSL
+})
+
 const router = require("express").Router();
 
 const AccountSchema = require("../models/account");
@@ -11,6 +22,14 @@ router.delete("/", async (req, res) => {
     await AccountSchema.findOne({ email: currentEmail, password: currentPassword })
         .then(async (doc) => {
             let foundPost = doc.posts.id(post)
+            // if (foundPost.attachedPhoto) {
+            //     const foundPhotoRegex = new RegExp(foundPost.attachedPhoto, "i")
+            //     MinIOClient.removeObject('local', `${currentEmail}/photos/${foundPost.attachedPhoto}.png`, function (err) {
+            //         if (err) {
+            //             return console.log('Unable to remove object', err)
+            //         }
+            //     });
+            // }
             doc.posts.pull(foundPost)
             await doc.save()
                 .then(res.json({ result: "Removed" }))

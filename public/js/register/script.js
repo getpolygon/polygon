@@ -8,15 +8,15 @@ function checkboxValue() {
     privateCheck.setAttribute("value", true);
   } else {
     privateCheck.setAttribute("value", false);
-  };
-};
+  }
+}
 function checkEmail() {
   fetch("/api/checkEmail", {
     method: "POST",
     headers: { "Content-Type": "application/x-www-form-urlencoded" },
     body: `email=${email.value}`,
   })
-    .then(response => response.json())
+    .then((response) => response.json())
     .then((response) => {
       let password = document.getElementById("password");
       let bio = document.getElementById("bio");
@@ -31,7 +31,7 @@ function checkEmail() {
         avatarInput.setAttribute("disabled", true);
         privateCheck.setAttribute("disabled", true);
         submitButton.setAttribute("disabled", true);
-      };
+      }
       // Allow the user to create an account if duplicates weren't found ( if the email is valid )
       if (response.result == false) {
         emailStatus.innerText = "You can use this email";
@@ -43,7 +43,7 @@ function checkEmail() {
         avatarInput.removeAttribute("disabled");
         privateCheck.removeAttribute("disabled");
         submitButton.removeAttribute("disabled");
-      };
+      }
       // Disallow the user to create an account if the email is not valid
       if (response.emailValidity == false) {
         emailStatus.innerText = "Please enter a valid email";
@@ -55,9 +55,9 @@ function checkEmail() {
         avatarInput.setAttribute("disabled", true);
         privateCheck.setAttribute("disabled", true);
         submitButton.setAttribute("disabled", true);
-      };
+      }
     });
-};
+}
 
 email.addEventListener("keyup", checkEmail);
 privateCheck.addEventListener("click", checkboxValue);

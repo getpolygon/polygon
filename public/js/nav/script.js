@@ -4,14 +4,14 @@ let searchBox = document.getElementById("search");
 
 function search() {
   fetch(`/api/search/?query=${searchBox.value}`)
-    .then(doc => doc.json())
-    .then(doc => {
+    .then((doc) => doc.json())
+    .then((doc) => {
       let foundItemsContainer = document.getElementById("foundItems");
 
       if (searchBox.value == "") {
         foundItemsContainer.innerHTML = "";
       } else {
-        doc.forEach(result => {
+        doc.forEach((result) => {
           let dupl = document.getElementById(result._id);
 
           if (dupl) {
@@ -23,20 +23,19 @@ function search() {
             el.classList.add("shadow-sm");
             el.style.border = "1px solid gainsboro";
             el.style.borderRadius = "10px";
-            el.href = `/user/${result._id}`
+            el.href = `/user/${result._id}`;
             el.id = result._id;
-            el.innerHTML =
-              `
+            el.innerHTML = `
               <img height="32" src="${result.pictureUrl}">
               <h6>${result.fullName}</h6>
-            `
+            `;
             foundItemsContainer.appendChild(el);
           }
         });
-      };
+      }
     })
-    .catch(e => console.error(e));
-};
+    .catch((e) => console.error(e));
+}
 
 logoutButton.addEventListener("click", () => logoutForm.submit());
 searchBox.addEventListener("keyup", search);

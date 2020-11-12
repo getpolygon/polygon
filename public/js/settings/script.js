@@ -13,7 +13,7 @@ function deleteUserImage() {
 
 function deleteAccount() {
   let msg = document.getElementById("message");
-  fetch("/api/deleteAccount", {
+  fetch("/api/accounts/delete", {
     method: "DELETE",
     headers: { "Content-Type": "application/x-www-form-urlencoded" },
   })

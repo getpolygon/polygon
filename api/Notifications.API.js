@@ -8,21 +8,12 @@ router.get("/fetch", async (req, res) => {
     const { dismiss } = req.query;
     if (dismiss) {
         const { notification } = req.query;
-        await currentAccount
-            .friends
-            .pending
-            .pull(notification);
-        await currentAccount.save()
-            .then(doc => {
-                res.json(doc);
-            })
-            .catch(e => console.error(e));
+        await currentAccount.friends.pending.pull(notification);
+        await currentAccount.save().then(doc => res.json(doc)).catch(e => console.error(e));
     };
     if (!dismiss) {
         const notifications = [];
-        currentAccount.friends.pending.forEach(request => {
-            notifications.push(request);
-        });
+        currentAccount.friends.pending.forEach(request => notifications.push(request));
         res.json(notifications);
     };
 });

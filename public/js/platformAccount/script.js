@@ -32,7 +32,7 @@ function deletePost() {
   `
   post.prepend(deletionIndicator);
 
-  fetch(`/api/deletePost?postId=${postId}`, {
+  fetch(`/api/posts/delete?post=${postId}`, {
     method: "DELETE",
     headers: { "Content-Type": "application/x-www-form-urlencoded" }
   })
@@ -59,7 +59,7 @@ function deletePost() {
 };
 
 function fetchPosts() {
-  fetch(`/api/fetchPosts/?accountId=${accountId}`)
+  fetch(`/api/posts/fetch/?accountId=${accountId}`)
     .then((res) => res.json())
     .then((data) => {
       if (data.length < 1 || data.length == 0) {
@@ -215,7 +215,7 @@ function createPost() {
     loader.classList.add("is-active");
     document.body.appendChild(loader);
 
-    fetch("/api/createPost", {
+    fetch("/api/posts/create", {
       method: "PUT",
       body: formData,
     })
@@ -270,7 +270,7 @@ function createPost() {
     loader.classList.add("is-active");
     document.body.appendChild(loader);
 
-    fetch("/api/createPost", {
+    fetch("/api/posts/create", {
       method: "PUT",
       body: formData
     })
@@ -327,7 +327,7 @@ function createPost() {
 
 function addFriend() {
   let accountToAdd = document.getElementById("accountId").textContent;
-  fetch(`/api/addFriend/?addedAccount=${accountToAdd}`, {
+  fetch(`/api/friends/add/?addedAccount=${accountToAdd}`, {
     method: "PUT",
     headers: { "Content-Type": "application/x-www-form-urlencoded" }
   })

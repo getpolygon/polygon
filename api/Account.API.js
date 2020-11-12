@@ -3,18 +3,18 @@ const minioConfig = require("../minio.config");
 // Instead of Firebase Storage, we are using MinIO
 const minio = require("minio");
 const MinIOClient = new minio.Client({
-    endPoint: minioConfig.MINIO_HOST,
-    port: minioConfig.MINIO_PORT,
-    accessKey: minioConfig.MINIO_ACCKEY,
-    secretKey: minioConfig.MINIO_SECKEY,
-    useSSL: minioConfig.MINIO_USESSL
+    endPoint:   minioConfig.MINIO_HOST,
+    port:       minioConfig.MINIO_PORT,
+    accessKey:  minioConfig.MINIO_ACCKEY,
+    secretKey:  minioConfig.MINIO_SECKEY,
+    useSSL:     minioConfig.MINIO_USESSL
 });
 const AccountSchema = require("../models/account");
 
 // For checking the account
 router.put("/check", async (req, res) => {
-    let email = req.query.email;
-    let password = req.query.password;
+    let email =     req.query.email;
+    let password =  req.query.password;
 
     AccountSchema.findOne({ email: email, password: password })
         .then(doc => {
@@ -60,9 +60,9 @@ router.put("/update", async (req, res) => {
             .update({ firstName: firstName, lastName: lastName, fullName: `${firstName} ${lastName}` })
             .then((response) => {
                 res.json({
-                    "firstName": response.firstName,
-                    "lastName": response.lastName,
-                    "fullName": response.fullName
+                    "firstName":    response.firstName,
+                    "lastName":     response.lastName,
+                    "fullName":     response.fullName
                 });
             })
             .catch((e) => res.json(e));
@@ -106,8 +106,8 @@ router.put("/update", async (req, res) => {
 
 // For deleting the account
 router.delete("/delete", async (req, res) => {
-    const email = req.cookies.email;
-    const password = req.cookies.password;
+    const email =       req.cookies.email;
+    const password =    req.cookies.password;
 
     MinIOClient.removeObject('local', `${email}.png`, function (err) {
         if (err) {

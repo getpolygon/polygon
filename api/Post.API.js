@@ -1,29 +1,38 @@
 // For deleting files
 const { unlink } = require("fs");
 // For displaying dates
-const { fromUnixTime, format } = require("date-fns");
+const { 
+    fromUnixTime,
+    format
+} = require("date-fns");
 // MinIO Configuration
-const { MINIO_HOST, MINIO_PORT, MINIO_ACCKEY, MINIO_SECKEY, MINIO_USESSL } = require("../minio.config");
+const { 
+    MINIO_HOST, 
+    MINIO_PORT, 
+    MINIO_ACCKEY, 
+    MINIO_SECKEY, 
+    MINIO_USESSL 
+} = require("../minio.config");
 
-const minio = require("minio");
+const minio =       require("minio");
 const MinIOClient = new minio.Client({
-    endPoint: MINIO_HOST,
-    port: MINIO_PORT,
-    accessKey: MINIO_ACCKEY,
-    secretKey: MINIO_SECKEY,
-    useSSL: MINIO_USESSL
+    endPoint:   MINIO_HOST,
+    port:       MINIO_PORT,
+    accessKey:  MINIO_ACCKEY,
+    secretKey:  MINIO_SECKEY,
+    useSSL:     MINIO_USESSL
 })
-const multer = require("multer");
+const multer =  require("multer");
 const storage = multer.diskStorage({
     destination: "tmp/",
     filename: (err, file, cb) => {
         cb(null, `${file.originalname.toString()}`);
         if (err) console.error(err);
     }
-})
-const upload = multer({ storage: storage });
-const router = require("express").Router();
-const AccountSchema = require("../models/account");
+});
+const upload =          multer({ storage: storage });
+const router =          require("express").Router();
+const AccountSchema =   require("../models/account");
 
 // For fetching posts
 router.get("/fetch", async (req, res) => {
@@ -74,12 +83,12 @@ router.get("/fetch", async (req, res) => {
 // For creating post
 router.put("/create", upload.single("image"), async (req, res) => {
     let authorAccount = await AccountSchema.findOne({
-        email: req.cookies.email,
-        password: req.cookies.password,
+        email:      req.cookies.email,
+        password:   req.cookies.password,
     });
-    let author = authorAccount.fullName;
-    let authorImage = authorAccount.pictureUrl;
-    let authorId = authorAccount._id;
+    let author =        authorAccount.fullName;
+    let authorImage =   authorAccount.pictureUrl;
+    let authorId =      authorAccount._id;
 
     if (req.file) {
         // Upload user image to the database
@@ -88,14 +97,14 @@ router.put("/create", upload.single("image"), async (req, res) => {
         const presignedUrl = await MinIOClient.presignedGetObject("local", `${authorAccount.email}/media/${req.file.originalname}`, 24 * 60 * 60);
 
         const Post = {
-            text: req.body.text,
-            author: author,
-            authorEmail: req.cookies.email,
-            authorId: authorId,
-            authorImage: authorImage,
-            attachedImage: presignedUrl,
-            attachedImageFileName: req.file.originalname.toString(),
-            datefield: Date.now(),
+            text:                   req.body.text,
+            author:                 author,
+            authorEmail:            req.cookies.email,
+            authorId:               authorId,
+            authorImage:            authorImage,
+            attachedImage:          presignedUrl,
+            attachedImageFileName:  req.file.originalname.toString(),
+            datefield:              Date.now(),
         };
 
         authorAccount.posts.push(Post);
@@ -115,12 +124,12 @@ router.put("/create", upload.single("image"), async (req, res) => {
     } else {
 
         const Post = {
-            text: req.body.text,
-            author: author,
-            authorEmail: req.cookies.email,
-            authorId: authorId,
-            authorImage: authorImage,
-            datefield: Date.now(),
+            text:           req.body.text,
+            author:         author,
+            authorEmail:    req.cookies.email,
+            authorId:       authorId,
+            authorImage:    authorImage,
+            datefield:      Date.now(),
         };
 
         authorAccount.posts.push(Post);
@@ -148,10 +157,10 @@ router.delete("/delete", async (req, res) => {
             if (foundPost.attachedImage) {
                 MinIOClient.removeObject('local', `${currentEmail}/media/${foundPost.attachedImageFileName}`, function (err) {
                     if (err) {
-                        return console.log('Unable to remove object', err)
-                    }
+                        return console.log('Unable to remove object', err);
+                    };
                 });
-                doc.posts.pull(foundPost)
+                doc.posts.pull(foundPost);
                 await doc.save()
                     .then(res.json({ result: "Removed" }))
                     .catch(e => console.error(e));
@@ -160,7 +169,7 @@ router.delete("/delete", async (req, res) => {
                 await doc.save()
                     .then(res.json({ result: "Removed" }))
                     .catch(e => console.error(e));
-            }
+            };
         })
         .catch(e => console.error(e));
 });

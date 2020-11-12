@@ -39,7 +39,6 @@ function deletePost() {
     .then((_response) => {
       post.parentNode.removeChild(post);
       checkForDeleteButtons();
-      fetchPosts();
     })
     .catch((e) => {
       let el = document.createElement("div");
@@ -84,10 +83,9 @@ function fetchPosts() {
           let currentAccountPassword = getCookie("password").toString();
 
           fetch(
-            `/api/checkAccount/?email=${currentAccountEmail}&password=${currentAccountPassword}`,
+            `/api/accounts/check/?email=${currentAccountEmail}&password=${currentAccountPassword}`,
             {
               method: "PUT",
-              headers: { "Content-Type": "application/x-www-form-urlencoded" },
             }
           )
             .then((response) => response.json())
@@ -325,7 +323,6 @@ function addFriend() {
   let accountToAdd = document.getElementById("accountId").textContent;
   fetch(`/api/friends/add/?addedAccount=${accountToAdd}`, {
     method: "PUT",
-    headers: { "Content-Type": "application/x-www-form-urlencoded" },
   })
     .then((data) => data.json())
     .then((data) => {

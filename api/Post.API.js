@@ -178,11 +178,7 @@ router.delete("/delete", async (req, res) => {
     password: currentPassword,
   })
     .then(async (doc) => {
-      console.log();
       let foundPost = doc.posts.id(post);
-      console.log(post); // ID
-      console.log(doc); // Whole Doc
-      console.log(foundPost); // FoundPost
       if (foundPost.attachedImage) {
         MinIOClient.removeObject(
           "local",

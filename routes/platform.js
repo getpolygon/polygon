@@ -1,9 +1,7 @@
-require("mongoose");
 const router = require("express").Router();
-
 const AccountSchema = require("../models/account");
 
-// Main page
+// Platform
 router.get("/", async (req, res) => {
   var emailCookie = req.cookies.email;
   var passwordCookie = req.cookies.password;
@@ -57,7 +55,7 @@ router.get("/", async (req, res) => {
 });
 
 
-// User's Account Page
+// User Account
 router.get("/user/:accountId", async (req, res) => {
   try {
     if (!req.cookies.email || !req.cookies.password) {
@@ -90,7 +88,7 @@ router.get("/user/:accountId", async (req, res) => {
   };
 });
 
-// Notifications tab
+// Notifications
 router.get("/notifications", async (req, res) => {
   try {
     const currentAccount = await AccountSchema.findOne({
@@ -115,6 +113,36 @@ router.get("/notifications", async (req, res) => {
       .clearCookie("password")
       .redirect("/auth/login")
   }
+});
+
+// Settings
+router.get("/settings", async (req, res) => {
+  let email = req.cookies.email;
+  let password = req.cookies.password;
+
+  try {
+    if (!email || !password) {
+      res.redirect("/");
+    } else {
+      const currentAccount = await AccountSchema.findOne({
+        email: email,
+        password: password,
+      });
+      if (currentAccount == null) {
+        res
+          .clearCookie("email")
+          .clearCookie("password")
+          .redirect("/auth/login")
+      }
+      else res.render("settings", { currentAccount: currentAccount, title: "Settings | ArmSocial" });
+    }
+  }
+  catch (err) {
+    res
+      .clearCookie("email")
+      .clearCookie("password")
+      .redirect("/")
+  };
 });
 
 // Logout

@@ -17,7 +17,6 @@ const app = express();
 const apiRoute = require("./routes/api");
 const authRoute = require("./routes/auth");
 const platformRoute = require("./routes/platform");
-const userSettingsRoute = require("./routes/settings");
 
 // Middleware
 app.use(cors());
@@ -36,7 +35,6 @@ app.set("view engine", "ejs");
 app.use("/", platformRoute);
 app.use("/api", apiRoute);
 app.use("/auth", authRoute);
-app.use("/settings", userSettingsRoute);
 
 // Error page
 app.get("*", (req, res) => res.redirect("/static/error.html"));

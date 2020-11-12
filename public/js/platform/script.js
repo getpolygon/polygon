@@ -30,7 +30,7 @@ function deletePost() {
   `
   post.prepend(deletionIndicator);
 
-  fetch(`/api/deletePost?postId=${postId}`, {
+  fetch(`/api/posts/delete/?post=${postId}`, {
     method: "DELETE",
     headers: { "Content-Type": "application/x-www-form-urlencoded" }
   })
@@ -57,7 +57,7 @@ function deletePost() {
 };
 
 function fetchPosts() {
-  fetch("/api/fetchPosts")
+  fetch("/api/posts/fetch")
     .then((res) => res.json())
     .then((data) => {
       if (data.length < 1 || data.length == 0) {
@@ -87,7 +87,7 @@ function fetchPosts() {
           let currentAccountEmail = getCookie("email").toString();
           let currentAccountPassword = getCookie("password").toString();
 
-          fetch(`/api/checkAccount/?email=${currentAccountEmail}&password=${currentAccountPassword}`, {
+          fetch(`/api/accounts/check/?email=${currentAccountEmail}&password=${currentAccountPassword}`, {
             method: "PUT",
             headers: { "Content-Type": "application/x-www-form-urlencoded" }
           })
@@ -216,7 +216,7 @@ function createPost() {
     loader.classList.add("is-active");
     document.body.appendChild(loader);
 
-    fetch("/api/createPost", {
+    fetch("/api/posts/create", {
       method: "PUT",
       body: formData,
     })
@@ -271,7 +271,7 @@ function createPost() {
     loader.classList.add("is-active");
     document.body.appendChild(loader);
 
-    fetch("/api/createPost", {
+    fetch("/api/posts/create", {
       method: "PUT",
       body: formData
     })

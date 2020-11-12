@@ -5,42 +5,41 @@ const postText = document.getElementById("postTextarea");
 function checkForDeleteButtons() {
   // Getting all the buttons with class name
   let deletePostButtons = document.querySelectorAll(".submitDeleteForm");
-  deletePostButtons.forEach(element => {
+  deletePostButtons.forEach((element) => {
     // Delete the post when the button is clicked
     element.addEventListener("click", deletePost);
   });
   // Return deleteButtons
   return deletePostButtons;
-};
+}
 
 // For deleting posts
 function deletePost() {
-  // Getting the whole post div by id
-  let post = document.getElementById(this.parentNode.id);
   // Getting the postId attribute
   let postId = this.getAttribute("postId");
+  // Getting the whole post div by the Id of postId attribute
+  let post = document.getElementById(postId);
   // Progress bar at the top of the card
   let deletionIndicator = document.createElement("div");
 
-  deletionIndicator.innerHTML =
-    `
+  deletionIndicator.innerHTML = `
   <div id="progress" class="progress" style="position: relative;">
     <div class="progress-bar progress-bar-striped indeterminate  progress-bar-animated bg-danger" style="width: 100%">
   </div>
-  `
+  `;
   post.prepend(deletionIndicator);
 
   fetch(`/api/posts/delete/?post=${postId}`, {
     method: "DELETE",
-    headers: { "Content-Type": "application/x-www-form-urlencoded" }
   })
-    .then(response => response.json())
-    .then(_response => {
+    .then((response) => response.json())
+    .then((response) => {
+      console.log(response);
       post.parentNode.removeChild(post);
       checkForDeleteButtons();
       fetchPosts();
     })
-    .catch(e => {
+    .catch((e) => {
       let el = document.createElement("div");
       el.innerHTML = `
         <div class="alert alert-danger alert-dismissible fade show" role="alert">
@@ -49,12 +48,12 @@ function deletePost() {
             <span aria-hidden="true">&times;</span>
           </button>
         </div>
-      `
+      `;
       document.body.prepend(el);
       console.log(e);
     });
   checkForDeleteButtons();
-};
+}
 
 function fetchPosts() {
   fetch("/api/posts/fetch")
@@ -62,15 +61,13 @@ function fetchPosts() {
     .then((data) => {
       if (data.length < 1 || data.length == 0) {
         let msg = document.createElement("div");
-        msg.innerHTML =
-          `
+        msg.innerHTML = `
         <h5 id="msg" align="center">We couldn't find any posts <br /><br /></h5>
         `;
         let postsContainer = document.getElementById("posts");
         postsContainer.prepend(msg);
         postsContainer.removeChild(document.getElementById("loader"));
-      }
-      else {
+      } else {
         data.forEach((obj) => {
           let text = obj.text;
           let author = obj.author;
@@ -87,16 +84,20 @@ function fetchPosts() {
           let currentAccountEmail = getCookie("email").toString();
           let currentAccountPassword = getCookie("password").toString();
 
-          fetch(`/api/accounts/check/?email=${currentAccountEmail}&password=${currentAccountPassword}`, {
-            method: "PUT",
-            headers: { "Content-Type": "application/x-www-form-urlencoded" }
-          })
-            .then(response => response.json())
-            .then(response => {
+          fetch(
+            `/api/accounts/check/?email=${currentAccountEmail}&password=${currentAccountPassword}`,
+            {
+              method: "PUT",
+              headers: {
+                "Content-Type": "application/x-www-form-urlencoded",
+              },
+            }
+          )
+            .then((response) => response.json())
+            .then((response) => {
               if (obj.authorId == response._id) {
                 if (image) {
-                  cardContainer.innerHTML =
-                    `
+                  cardContainer.innerHTML = `
                 <div id="${postId}" class="post container shadow-sm rounded-lg mt-1 mb-4 pr-4 pl-4 pb-3 pt-3 bg-white">
                   <i style="float: right" postId="${postId}" class="submitDeleteForm fas fa-trash-alt" role="button"></i>
                   <img
@@ -119,8 +120,7 @@ function fetchPosts() {
               </div>
               `;
                 } else {
-                  cardContainer.innerHTML =
-                    `
+                  cardContainer.innerHTML = `
                 <div id="${postId}" class="post container shadow-sm rounded-lg mt-1 mb-4 pr-4 pl-4 pb-3 pt-3 bg-white">
                   <i style="float: right" postId="${postId}" class="submitDeleteForm fas fa-trash-alt" role="button"></i>
                   <img
@@ -141,11 +141,9 @@ function fetchPosts() {
               `;
                 }
                 checkForDeleteButtons();
-              }
-              else {
+              } else {
                 if (image) {
-                  cardContainer.innerHTML =
-                    `
+                  cardContainer.innerHTML = `
               <div id="${postId}" class="post container shadow-sm rounded-lg mt-1 mb-4 pr-4 pl-4 pb-3 pt-3 bg-white">
                 <img
                   src="${authorImage}"
@@ -167,8 +165,7 @@ function fetchPosts() {
             </div>
           `;
                 } else {
-                  cardContainer.innerHTML =
-                    `
+                  cardContainer.innerHTML = `
             <div id="${postId}" class="post container shadow-sm rounded-lg mt-1 mb-4 pr-4 pl-4 pb-3 pt-3 bg-white">
               <img
                 src="${authorImage}"
@@ -191,7 +188,8 @@ function fetchPosts() {
                 checkForDeleteButtons();
               }
               document.getElementById("loader").innerHTML = "";
-            }).catch(e => {
+            })
+            .catch((e) => {
               console.log(e);
             });
 
@@ -200,16 +198,19 @@ function fetchPosts() {
       }
     })
     .catch((e) => console.log(e));
-};
+}
 
 function createPost() {
   let imageInput = document.getElementById("imageUpload");
   let image = imageInput.files[0];
 
+  // If the image input is null send only the text
   if (image == null) {
+    // Form
     let formData = new FormData();
     formData.append("text", postText.value);
 
+    // Loader
     let loader = document.createElement("div");
     loader.classList.add("full-loader");
     loader.classList.add("full-loader-default");
@@ -220,8 +221,8 @@ function createPost() {
       method: "PUT",
       body: formData,
     })
-      .then(data => data.json())
-      .then(data => {
+      .then((data) => data.json())
+      .then((data) => {
         let msg = document.getElementById("msg");
         let text = data.text;
         let author = data.author;
@@ -260,7 +261,10 @@ function createPost() {
       .catch((e) => {
         console.log(e);
       });
-  } else {
+    checkForDeleteButtons();
+  }
+  // Create apost with image and text
+  else {
     let formData = new FormData();
     formData.append("text", postText.value);
     formData.append("image", image);
@@ -273,10 +277,10 @@ function createPost() {
 
     fetch("/api/posts/create", {
       method: "PUT",
-      body: formData
+      body: formData,
     })
-      .then(data => data.json())
-      .then(data => {
+      .then((data) => data.json())
+      .then((data) => {
         let msg = document.getElementById("msg");
         let text = data.text;
         let author = data.author;
@@ -291,6 +295,7 @@ function createPost() {
         postText.value = "";
 
         if (msg) msg.innerHTML = "";
+        else return;
 
         cardContainer.innerHTML = `
         <div id="${postId}" class="post container shadow-sm rounded-lg mt-1 mb-4 pr-4 pl-4 pb-3 pt-3 bg-white">
@@ -323,6 +328,7 @@ function createPost() {
       .catch((e) => {
         console.log(e);
       });
+    checkForDeleteButtons();
   }
 }
 

@@ -26,7 +26,13 @@ app.use(cookieParser());
 app.use(bodyParser.json());
 app.use(express.static("./public"));
 app.use(bodyParser.urlencoded({ extended: false }));
-app.use(session({ secret: process.env.SECRET, resave: false, saveUninitialized: true }));
+app.use(
+  session({
+    secret: process.env.SECRET,
+    resave: false,
+    saveUninitialized: true,
+  })
+);
 
 app.set("views", "./views");
 app.set("view engine", "ejs");
@@ -40,9 +46,16 @@ app.use("/auth", authRoute);
 app.get("*", (req, res) => res.redirect("/static/error.html"));
 
 // Connect to MongoDB
-mongoose.connect(process.env.MONGO_DB, { useNewUrlParser: true, useUnifiedTopology: true, useFindAndModify: false })
-    .then(console.log("MongoDB: OK"))
-    .catch(e => console.error(e));
+mongoose
+  .connect(process.env.MONGO_DB, {
+    useNewUrlParser: true,
+    useUnifiedTopology: true,
+    useFindAndModify: false,
+  })
+  .then(console.log("MongoDB: OK"))
+  .catch((e) => console.error(e));
 
-// Start the server 
-app.listen(port, "0.0.0.0", () => console.log(`Server listening at port http://localhost:${port}`));
+// Start the server
+app.listen(port, "0.0.0.0", () =>
+  console.log(`Server listening at port http://localhost:${port}`)
+);

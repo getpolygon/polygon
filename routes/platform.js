@@ -14,46 +14,37 @@ router.get("/", async (req, res) => {
 
   try {
     if (!emailCookie && !passwordCookie) {
-      res
-        .clearCookie("email")
-        .clearCookie("password")
-        .redirect("/auth/login")
+      res.clearCookie("email").clearCookie("password").redirect("/auth/login");
     } else {
       await AccountSchema.findOne({
         email: req.cookies.email,
         password: req.cookies.password,
       })
-        .then(currentAccount => {
+        .then((currentAccount) => {
           if (currentAccount == null) {
             res
               .clearCookie("email")
               .clearCookie("password")
-              .redirect("/auth/login")
+              .redirect("/auth/login");
           } else {
             res.render("platform", {
               currentAccount: currentAccount,
-              title: "ArmSocial"
+              title: "ArmSocial",
             });
           }
-
         })
-        .catch(err => {
+        .catch((err) => {
           res
             .clearCookie("email")
             .clearCookie("password")
             .redirect("/auth/login");
           console.log(err);
         });
-    };
+    }
+  } catch (err) {
+    res.clearCookie("email").clearCookie("password").redirect("/auth/login");
   }
-  catch (err) {
-    res
-      .clearCookie("email")
-      .clearCookie("password")
-      .redirect("/auth/login")
-  };
 });
-
 
 // User Account
 router.get("/user/:accountId", async (req, res) => {
@@ -62,30 +53,30 @@ router.get("/user/:accountId", async (req, res) => {
       res.redirect("/");
     } else {
       const accountId = req.params.accountId;
-      const currentAccount = await AccountSchema.findOne({ email: req.cookies.email, password: req.cookies.password });
+      const currentAccount = await AccountSchema.findOne({
+        email: req.cookies.email,
+        password: req.cookies.password,
+      });
       const platformAccount = await AccountSchema.findById(accountId);
       if (currentAccount == null) {
         res
           .clearCookie("email")
           .clearCookie("password")
-          .redirect("/auth/login")
-      } if (!platformAccount) {
+          .redirect("/auth/login");
+      }
+      if (!platformAccount) {
         res.redirect("/static/no-account.html");
       } else {
         res.render("platformAccount", {
           currentAccount: currentAccount,
           platformAccount: platformAccount,
-          title: `${platformAccount.fullName} | ArmSocial`
+          title: `${platformAccount.fullName} | ArmSocial`,
         });
       }
     }
+  } catch (err) {
+    res.clearCookie("email").clearCookie("password").redirect("/auth/login");
   }
-  catch (err) {
-    res
-      .clearCookie("email")
-      .clearCookie("password")
-      .redirect("/auth/login")
-  };
 });
 
 // Notifications
@@ -96,22 +87,15 @@ router.get("/notifications", async (req, res) => {
       password: req.cookies.password,
     });
     if (currentAccount == null) {
-      res
-        .clearCookie("email")
-        .clearCookie("password")
-        .redirect("/auth/login")
+      res.clearCookie("email").clearCookie("password").redirect("/auth/login");
     } else {
       res.render("notifications", {
         currentAccount: currentAccount,
-        title: `Notifications | ArmSocial`
+        title: `Notifications | ArmSocial`,
       });
-    };
-  }
-  catch (err) {
-    res
-      .clearCookie("email")
-      .clearCookie("password")
-      .redirect("/auth/login")
+    }
+  } catch (err) {
+    res.clearCookie("email").clearCookie("password").redirect("/auth/login");
   }
 });
 
@@ -132,25 +116,21 @@ router.get("/settings", async (req, res) => {
         res
           .clearCookie("email")
           .clearCookie("password")
-          .redirect("/auth/login")
-      }
-      else res.render("settings", { currentAccount: currentAccount, title: "Settings | ArmSocial" });
+          .redirect("/auth/login");
+      } else
+        res.render("settings", {
+          currentAccount: currentAccount,
+          title: "Settings | ArmSocial",
+        });
     }
+  } catch (err) {
+    res.clearCookie("email").clearCookie("password").redirect("/");
   }
-  catch (err) {
-    res
-      .clearCookie("email")
-      .clearCookie("password")
-      .redirect("/")
-  };
 });
 
 // Logout
 router.post("/logout/:accountId", (req, res) => {
-  res
-    .clearCookie("email")
-    .clearCookie("password")
-    .redirect("/")
+  res.clearCookie("email").clearCookie("password").redirect("/");
 });
 
 module.exports = router;

@@ -14,7 +14,7 @@ const AccountSchema = new mongoose.Schema({
   friends: {
     pending: [FriendSchema],
     approved: [FriendSchema],
-    requested: [FriendSchema]
+    requested: [FriendSchema],
   },
   posts: [PostSchema],
   date: { type: String, required: true },

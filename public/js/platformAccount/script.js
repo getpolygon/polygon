@@ -2,7 +2,7 @@ let postButton = document.getElementById("postButton");
 let postText = document.getElementById("postTextarea");
 let postCount = document.getElementById("postCount");
 let addFriendButton = document.getElementById("addFriend");
-
+let accountId = document.getElementById("accountId").textContent;
 // For checking for delete buttons in the document
 function checkForDeleteButtons() {
   // Getting all the buttons with class name
@@ -59,7 +59,7 @@ function deletePost() {
 };
 
 function fetchPosts() {
-  fetch("/api/fetchPosts")
+  fetch(`/api/fetchPosts/?accountId=${accountId}`)
     .then((res) => res.json())
     .then((data) => {
       if (data.length < 1 || data.length == 0) {
@@ -83,9 +83,6 @@ function fetchPosts() {
           let image = obj.attachedImage;
           let postsContainer = document.getElementById("posts");
           let cardContainer = document.createElement("div");
-
-          postText.value = "";
-
           let currentAccountEmail = getCookie("email").toString();
           let currentAccountPassword = getCookie("password").toString();
 

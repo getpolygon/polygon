@@ -10,3 +10,14 @@ const PostSchema = new mongoose.Schema({
     datefield: { type: String, required: true },
 });
 module.exports = PostSchema;
+
+// attachments: {
+//     image: {
+//         attachedImage: { type: String },
+//         attachedImageFileName: { type: String },
+//     },
+//     video: {
+//         attachedVideo: { type: String },
+//         attachedVideoFileName: { type: String }
+//     }
+// },

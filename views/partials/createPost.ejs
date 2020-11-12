@@ -10,9 +10,10 @@
         </div>
         <hr class="solid" />
         <div class="d-flex">
+            <!-- Photo -->
             <!-- Button trigger modal -->
-            <button type="button" class="btn btn-primary btn-block" data-toggle="modal" data-target="#photoModal">
-                <i class="fas fa-file-image"></i>
+            <button type="button" class="btn btn-success btn-block mr-1" data-toggle="modal" data-target="#photoModal">
+                <i class="fas fa-camera"></i>
                 Photo
             </button>
 
@@ -30,6 +31,32 @@
                             <input id="imageUpload" accept="image/gif, image/jpeg, image/png" type="file" name="image"
                                 onchange="readURL(this)" />
                             <img class="container" id="imagePreview" />
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Video -->
+            <!-- Button trigger modal -->
+            <button type="button" class="btn btn-danger btn-block ml-1" data-toggle="modal" data-target="#photoModal">
+                <i class="fas fa-video"></i>
+                Video
+            </button>
+
+            <!-- Modal -->
+            <div class="modal fade" id="videoModal" tabindex="-1" aria-labelledby="videoModalLabel" aria-hidden="true">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="videoModalLabel">Upload a video</h5>
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
+                        <div class="modal-body">
+                            <input id="videoUpload" accept="image/gif, image/jpeg, image/png" type="file" name="video"
+                                onchange="readURL(this)" />
+                            <video class="container" id="videoPreview" />
                         </div>
                     </div>
                 </div>

@@ -47,4 +47,4 @@ mongoose.connect(process.env.MONGO_DB, { useNewUrlParser: true, useUnifiedTopolo
     .catch(e => console.error(e));
 
 // Start the server 
-app.listen(port, "0.0.0.0", () => console.log(`Server listening at port ${port}`));
+app.listen(port, "0.0.0.0", () => console.log(`Server listening at port http://localhost:${port}`));

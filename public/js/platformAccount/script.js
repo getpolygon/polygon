@@ -3,6 +3,7 @@ let postText = document.getElementById("postTextarea");
 let postCount = document.getElementById("postCount");
 let addFriendButton = document.getElementById("addFriend");
 let accountId = document.getElementById("accountId").textContent;
+
 // For checking for delete buttons in the document
 function checkForDeleteButtons() {
   // Getting all the buttons with class name
@@ -33,7 +34,6 @@ function deletePost() {
 
   fetch(`/api/posts/delete?post=${postId}`, {
     method: "DELETE",
-    headers: { "Content-Type": "application/x-www-form-urlencoded" },
   })
     .then((response) => response.json())
     .then((_response) => {
@@ -336,22 +336,18 @@ function addFriend() {
     .catch((e) => console.error(e));
 }
 
-function checkFriendship() {
+async function checkFriendship() {
   let accountToCheck = document.getElementById("accountId").textContent;
-  fetch(`/api/friends/check/?accountId=${accountToCheck}`)
-    .then((data) => data.json())
-    .then((data) => {
-      if (data.length != 0) {
-        addFriendButton.innerText = "Pending";
-        addFriendButton.innerHTML += `
+  let data = await fetch(`/api/friends/check/?accountId=${accountToCheck}`);
+  if (data.length != 0) {
+    addFriendButton.innerText = "Pending";
+    addFriendButton.innerHTML += `
         <i class="fas fa-user-clock"></i>
         `;
-        addFriendButton.setAttribute("disabled", "true");
-      } else {
-        addFriendButton = addFriendButton;
-      }
-    })
-    .catch((e) => console.error(e));
+    addFriendButton.setAttribute("disabled", "true");
+  } else {
+    addFriendButton = addFriendButton;
+  }
 }
 
 window.addEventListener("load", () => {

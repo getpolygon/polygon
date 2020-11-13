@@ -1,6 +1,6 @@
 <%- include ("./partials/header") %>
 
-<link rel="stylesheet" href="/css/auth/login/style.css" />
+<link rel="stylesheet" href="/css/login/style.css" />
 
 <form id="form" class="form-signin" action="login" method="POST">
   <h1 align="center">
@@ -23,11 +23,6 @@
       minlength="8">
   </div>
 
-  <!-- <div class="checkbox mb-3">
-    <label>
-      <input type="checkbox" value="remember-me"> Remember me
-    </label>
-  </div> -->
   <div class="err mb-3 mt-1">
     <% if (locals.err) {%>
     <small> <%= err %> </small>
@@ -37,5 +32,4 @@
   <p class="mt-3">Don't have an account? <a href="/auth/register" class="text-link">Register</a></p>
 </form>
 
-  <script src="/js/login/script.js"></script>
 <%- include ("./partials/footer") %>

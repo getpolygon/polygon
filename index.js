@@ -25,6 +25,7 @@ app.use(compression());
 app.use(cookieParser());
 app.use(bodyParser.json());
 app.use(express.static("./public"));
+app.use(express.static("./lib")); // This is for working with .min.* files ( May change file structure later )
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(
   session({

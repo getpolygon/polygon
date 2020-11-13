@@ -53,11 +53,17 @@ router.get("/check", async (req, res) => {
     password: req.cookies.password,
   });
 
-  currentAccount.friends.requested.forEach((obj) => {
-    if ((obj._authorId = accountId)) {
-      res.json(obj);
-    }
-  });
+  if (accountId == currentAccount._id) {
+    res.json([]);
+  } else {
+    currentAccount.friends.requested.forEach((obj) => {
+      if ((obj._authorId = accountId)) {
+        res.json(obj);
+      } else {
+        res.json([]);
+      }
+    });
+  }
 });
 
 module.exports = router;

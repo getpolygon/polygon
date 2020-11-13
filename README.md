@@ -15,6 +15,22 @@ git clone https://github.com/MichaelGrigoryan25/ArmSocial
 
 After you've done these steps you can open `localhost:3000` in your browser.
 
+## Configuring MinIO
+### Steps to reproduce
+* Move to the project root
+* Create a file and name it `minio.config.js`
+* Update your settings respectively
+
+```js
+module.exports = {
+    "MINIO_HOST":   "The MinIO host endpoint",
+    "MINIO_PORT":   9000, // Change it to the port of the MinIO host (9000 in the most cases)
+    "MINIO_ACCKEY": "12345678", // Change these to your keys
+    "MINIO_SECKEY": "12345678", // Change these to your keys
+    "MINIO_USESSL": false // false by default
+}
+```
+
 ## CSS Framework(s) Used
 * Bootstrap
 

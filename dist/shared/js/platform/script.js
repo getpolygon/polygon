@@ -1,8 +1,6 @@
-let postButton = document.getElementById("postButton");
-let postText = document.getElementById("postTextarea");
-let postCount = document.getElementById("postCount");
-let addFriendButton = document.getElementById("addFriend");
-let accountId = document.getElementById("accountId").textContent;
+const postButton = document.getElementById("postButton");
+const postText = document.getElementById("postTextarea");
+
 // For checking for delete buttons in the document
 function checkForDeleteButtons() {
   // Getting all the buttons with class name
@@ -17,10 +15,10 @@ function checkForDeleteButtons() {
 
 // For deleting posts
 function deletePost() {
-  // Getting the whole post div by id
-  let post = document.getElementById(this.parentNode.id);
   // Getting the postId attribute
   let postId = this.getAttribute("postId");
+  // Getting the whole post div by the Id of postId attribute
+  let post = document.getElementById(postId);
   // Progress bar at the top of the card
   let deletionIndicator = document.createElement("div");
 
@@ -31,14 +29,15 @@ function deletePost() {
   `;
   post.prepend(deletionIndicator);
 
-  fetch(`/api/posts/delete?post=${postId}`, {
+  fetch(`/api/posts/delete/?post=${postId}`, {
     method: "DELETE",
-    headers: { "Content-Type": "application/x-www-form-urlencoded" },
   })
     .then((response) => response.json())
-    .then((_response) => {
+    .then((response) => {
+      console.log(response);
       post.parentNode.removeChild(post);
       checkForDeleteButtons();
+      fetchPosts();
     })
     .catch((e) => {
       let el = document.createElement("div");
@@ -57,7 +56,7 @@ function deletePost() {
 }
 
 function fetchPosts() {
-  fetch(`/api/posts/fetch/?accountId=${accountId}`)
+  fetch("/api/posts/fetch")
     .then((res) => res.json())
     .then((data) => {
       if (data.length < 1 || data.length == 0) {
@@ -79,6 +78,9 @@ function fetchPosts() {
           let image = obj.attachedImage;
           let postsContainer = document.getElementById("posts");
           let cardContainer = document.createElement("div");
+
+          postText.value = "";
+
           let currentAccountEmail = getCookie("email").toString();
           let currentAccountPassword = getCookie("password").toString();
 
@@ -86,6 +88,9 @@ function fetchPosts() {
             `/api/accounts/check/?email=${currentAccountEmail}&password=${currentAccountPassword}`,
             {
               method: "PUT",
+              headers: {
+                "Content-Type": "application/x-www-form-urlencoded",
+              },
             }
           )
             .then((response) => response.json())
@@ -199,10 +204,13 @@ function createPost() {
   let imageInput = document.getElementById("imageUpload");
   let image = imageInput.files[0];
 
+  // If the image input is null send only the text
   if (image == null) {
+    // Form
     let formData = new FormData();
     formData.append("text", postText.value);
 
+    // Loader
     let loader = document.createElement("div");
     loader.classList.add("full-loader");
     loader.classList.add("full-loader-default");
@@ -253,7 +261,10 @@ function createPost() {
       .catch((e) => {
         console.log(e);
       });
-  } else {
+    checkForDeleteButtons();
+  }
+  // Create apost with image and text
+  else {
     let formData = new FormData();
     formData.append("text", postText.value);
     formData.append("image", image);
@@ -284,6 +295,7 @@ function createPost() {
         postText.value = "";
 
         if (msg) msg.innerHTML = "";
+        else return;
 
         cardContainer.innerHTML = `
         <div id="${postId}" class="post container shadow-sm rounded-lg mt-1 mb-4 pr-4 pl-4 pb-3 pt-3 bg-white">
@@ -316,53 +328,12 @@ function createPost() {
       .catch((e) => {
         console.log(e);
       });
+    checkForDeleteButtons();
   }
-}
-
-function addFriend() {
-  let accountToAdd = document.getElementById("accountId").textContent;
-  fetch(`/api/friends/add/?addedAccount=${accountToAdd}`, {
-    method: "PUT",
-  })
-    .then((data) => data.json())
-    .then((data) => {
-      addFriendButton.innerText = "Pending";
-      addFriendButton.innerHTML += `
-      <i class="fas fa-user-clock"></i>
-      `;
-      addFriendButton.setAttribute("disabled", "true");
-      console.log(data);
-    })
-    .catch((e) => console.error(e));
-}
-
-function checkFriendship() {
-  let accountToCheck = document.getElementById("accountId").textContent;
-  fetch(`/api/friends/check/?accountId=${accountToCheck}`)
-    .then((data) => data.json())
-    .then((data) => {
-      if (data.length != 0) {
-        addFriendButton.innerText = "Pending";
-        addFriendButton.innerHTML += `
-        <i class="fas fa-user-clock"></i>
-        `;
-        addFriendButton.setAttribute("disabled", "true");
-      } else {
-        addFriendButton = addFriendButton;
-      }
-    })
-    .catch((e) => console.error(e));
 }
 
 window.addEventListener("load", () => {
-  checkFriendship();
   loader();
   fetchPosts();
-  checkForDeleteButtons();
-  if (postButton == null) {
-    return null;
-  } else {
-    postButton.addEventListener("click", createPost);
-  }
 });
-addFriendButton.addEventListener("click", addFriend);
+postButton.addEventListener("click", createPost);

@@ -12,7 +12,7 @@ function checkboxValue() {
 }
 function checkEmail() {
   // TODO: MAybe update the API for this
-  fetch("/api/accounts/check/email", {
+  fetch("/api/accounts/check/?q=email", {
     method: "PUT",
     headers: { "Content-Type": "application/x-www-form-urlencoded" },
     body: `email=${email.value}`,

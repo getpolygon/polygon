@@ -15,69 +15,70 @@ const emailValidator = require("email-validator");
 router.put("/check", async (req, res) => {
   let email = req.query.email;
   let password = req.query.password;
+  let { q } = req.query;
 
-  AccountSchema.findOne({
-    email: email,
-    password: password,
-  })
-    .then((doc) => {
-      if (doc) {
-        res.json(doc);
-      } else {
-        res.json([]);
-      }
+  if (q == "email") {
+    const inputEmail = await req.body.email;
+    // Validating user's email
+    const validateEmail = await emailValidator.validate(inputEmail);
+
+    // If email validation fails
+    if (validateEmail == false) {
+      res.json({
+        emailValidity: false,
+      });
+    }
+
+    // If email validation succeeds
+    else {
+      await AccountSchema.findOne({ email: inputEmail })
+        .then((doc) => {
+          if (doc == null) {
+            res.json({
+              result: false,
+              emailValidity: true,
+            });
+            return;
+          }
+          if (doc.email == inputEmail) {
+            res.json({
+              result: true,
+              emailValidity: true,
+            });
+            return;
+          }
+          if (!doc) {
+            res.json({
+              result: false,
+              emailValidity: true,
+            });
+            return;
+          } else {
+            res.json({
+              result: false,
+              emailValidity: true,
+            });
+            return;
+          }
+        })
+        .catch((e) => {
+          console.log(e);
+        });
+    }
+  } else {
+    AccountSchema.findOne({
+      email: email,
+      password: password,
     })
-    .catch((e) => {
-      res.json(e);
-      console.log(e);
-    });
-});
-
-router.put("/check/email", async (req, res) => {
-  const inputEmail = await req.body.email;
-  // Validating user's email
-  const validateEmail = await emailValidator.validate(inputEmail);
-
-  // If email validation fails
-  if (validateEmail == false) {
-    res.json({
-      emailValidity: false,
-    });
-  }
-
-  // If email validation succeeds
-  else {
-    await AccountSchema.findOne({ email: inputEmail })
       .then((doc) => {
-        if (doc == null) {
-          res.json({
-            result: false,
-            emailValidity: true,
-          });
-          return;
-        }
-        if (doc.email == inputEmail) {
-          res.json({
-            result: true,
-            emailValidity: true,
-          });
-          return;
-        }
-        if (!doc) {
-          res.json({
-            result: false,
-            emailValidity: true,
-          });
-          return;
+        if (doc) {
+          res.json(doc);
         } else {
-          res.json({
-            result: false,
-            emailValidity: true,
-          });
-          return;
+          res.json([]);
         }
       })
       .catch((e) => {
+        res.json(e);
         console.log(e);
       });
   }

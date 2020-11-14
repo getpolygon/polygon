@@ -5,19 +5,16 @@ const PostSchema = new mongoose.Schema({
   authorEmail: { type: String, required: true },
   authorId: { type: String, required: true },
   authorImage: { type: String, required: true },
-  attachedImage: { type: String },
-  attachedImageFileName: { type: String },
+  attachments: {
+    image: {
+      attachedImage: { type: String },
+      attachedImageFileName: { type: String },
+    },
+    video: {
+      attachedVideo: { type: String },
+      attachedVideoFileName: { type: String },
+    },
+  },
   datefield: { type: String, required: true },
 });
 module.exports = PostSchema;
-
-// attachments: {
-//     image: {
-//         attachedImage: { type: String },
-//         attachedImageFileName: { type: String },
-//     },
-//     video: {
-//         attachedVideo: { type: String },
-//         attachedVideoFileName: { type: String }
-//     }
-// },

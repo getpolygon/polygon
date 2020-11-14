@@ -53,7 +53,7 @@ router.get("/check", async (req, res) => {
     password: req.cookies.password,
   });
 
-  if (accountId == currentAccount._id) {
+  if (accountId = currentAccount._id) {
     res.json([]);
   } else {
     currentAccount.friends.requested.forEach((obj) => {

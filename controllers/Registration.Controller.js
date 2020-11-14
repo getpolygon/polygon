@@ -1,13 +1,11 @@
 const minioConfig = require("../minio.config");
-
 const router = require("express").Router();
 const multer = require("multer");
 const fs = require("fs");
-const randomness = Math.round(Math.random());
 const storage = multer.diskStorage({
   destination: "tmp/",
   filename: (err, file, cb) => {
-    cb(null, `${randomness}.png`);
+    cb(null, `${file.originalname}`);
   },
 });
 const upload = multer({ storage: storage });
@@ -91,10 +89,7 @@ router.post("/", upload.single("avatar"), async (req, res) => {
   });
 
   // Delete the created file to save space
-  fs.unlink(`tmp/${randomness}.png`, (err) => {
-    if (err) console.error(err);
-  });
-  fs.unlink("tmp/0.png", (err) => {
+  fs.unlink(`tmp/${req.file.originalname}`, (err) => {
     if (err) console.error(err);
   });
 

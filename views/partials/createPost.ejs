@@ -38,7 +38,7 @@
 
             <!-- Video -->
             <!-- Button trigger modal -->
-            <button type="button" class="btn btn-danger btn-block ml-1" data-toggle="modal" data-target="#photoModal">
+            <button type="button" class="btn btn-danger btn-block ml-1" data-toggle="modal" data-target="#videoModal">
                 <i class="fas fa-video"></i>
                 Video
             </button>
@@ -54,9 +54,7 @@
                             </button>
                         </div>
                         <div class="modal-body">
-                            <input id="videoUpload" accept="image/gif, image/jpeg, image/png" type="file" name="video"
-                                onchange="readURL(this)" />
-                            <video class="container" id="videoPreview" />
+                            <input id="videoUpload" accept="video/mp4,video/x-m4v,video/*" type="file" name="video"/>
                         </div>
                     </div>
                 </div>

@@ -33,7 +33,7 @@ const upload = multer({
 const router = require("express").Router();
 const AccountSchema = require("../models/account");
 
-// For fetching posts
+// FETCH POSTS
 router.get("/fetch", async (req, res) => {
   const currentAccount = await AccountSchema.findOne({
     email: req.cookies.email,
@@ -91,83 +91,203 @@ router.get("/fetch", async (req, res) => {
   }
 });
 
-// For creating post
-router.put("/create", upload.single("image"), async (req, res) => {
-  let authorAccount = await AccountSchema.findOne({
-    email: req.cookies.email,
-    password: req.cookies.password,
-  });
-  let author = authorAccount.fullName;
-  let authorImage = authorAccount.pictureUrl;
-  let authorId = authorAccount._id;
+// CREATE A POST
+router.put(
+  "/create",
+  upload.fields([{ name: "image" }, { name: "video" }]),
+  async (req, res) => {
+    let authorAccount = await AccountSchema.findOne({
+      email: req.cookies.email,
+      password: req.cookies.password,
+    });
+    let author = authorAccount.fullName;
+    let authorImage = authorAccount.pictureUrl;
+    let authorId = authorAccount._id;
+    let { q } = req.query;
 
-  if (req.file) {
-    // Upload user image to the database
-    await MinIOClient.fPutObject(
-      "local",
-      `${authorAccount.email}/media/${req.file.originalname}`,
-      req.file.path,
-      {
-        "Content-Type": req.file.mimetype,
-      }
-    );
-    // Getting the link for the user's image
-    const presignedUrl = await MinIOClient.presignedGetObject(
-      "local",
-      `${authorAccount.email}/media/${req.file.originalname}`,
-      24 * 60 * 60
-    );
-    const Post = {
-      _id: new mongoose.Types.ObjectId(),
-      text: req.body.text,
-      author: author,
-      authorEmail: req.cookies.email,
-      authorId: authorId,
-      authorImage: authorImage,
-      attachedImage: presignedUrl,
-      attachedImageFileName: req.file.originalname.toString(),
-      datefield: Date.now(),
-    };
-    authorAccount.posts.push(Post);
-    await authorAccount
-      .save()
-      .then(() => {
-        Post.datefield = format(
-          fromUnixTime(Post.datefield / 1000),
-          "MMM d/y h:mm b"
-        );
-        res.json(Post);
-        // Deleting the file from the drive
-        unlink(`tmp/${req.file.originalname.toString()}`, (err) => {
-          if (err) console.error(err);
-        });
-      })
-      .catch((e) => console.error(e));
-  } else {
-    const Post = {
-      _id: new mongoose.Types.ObjectId(),
-      text: req.body.text,
-      author: author,
-      authorEmail: req.cookies.email,
-      authorId: authorId,
-      authorImage: authorImage,
-      datefield: Date.now(),
-    };
-    authorAccount.posts.push(Post);
-    await authorAccount
-      .save()
-      .then(() => {
-        Post.datefield = format(
-          fromUnixTime(Post.datefield / 1000),
-          "MMM d/y h:mm b"
-        );
-        res.json(Post);
-      })
-      .catch((e) => console.error(e));
+    if (q == "txt") {
+      const Post = {
+        _id: new mongoose.Types.ObjectId(),
+        text: req.body.text,
+        author: author,
+        authorEmail: req.cookies.email,
+        authorId: authorId,
+        authorImage: authorImage,
+        hasAttachments: false,
+        datefield: Date.now(),
+      };
+      authorAccount.posts.push(Post);
+      await authorAccount
+        .save()
+        .then(() => {
+          Post.datefield = format(
+            fromUnixTime(Post.datefield / 1000),
+            "MMM d/y h:mm b"
+          );
+          res.json(Post);
+        })
+        .catch((e) => console.error(e));
+    }
+
+    if (q == "vid") {
+      await MinIOClient.fPutObject(
+        "local",
+        `${authorAccount.email}/media/${req.files.video[0].originalname}`,
+        req.files.video[0].path,
+        {
+          "Content-Type": req.files.video[0].mimetype,
+        }
+      );
+      const presignedUrl = await MinIOClient.presignedGetObject(
+        "local",
+        `${authorAccount.email}/media/${req.files.video[0].originalname}`
+      );
+
+      const Post = {
+        _id: new mongoose.Types.ObjectId(),
+        text: req.body.text,
+        author: author,
+        authorEmail: req.cookies.email,
+        authorId: authorId,
+        authorImage: authorImage,
+        hasAttachments: true,
+        attachments: {
+          hasAttachedImage: false,
+          hasAttachedVideo: true,
+          video: {
+            attachedVideo: presignedUrl,
+            attachedVideoFileName: req.files.video[0].originalname.toString(),
+          },
+        },
+        datefield: Date.now(),
+      };
+
+      authorAccount.posts.push(Post);
+      await authorAccount
+        .save()
+        .then(() => {
+          Post.datefield = format(
+            fromUnixTime(Post.datefield / 1000),
+            "MMM d/y h:mm b"
+          );
+          res.json(Post);
+        })
+        .catch((e) => console.error(e));
+    }
+
+    if (q == "img") {
+      await MinIOClient.fPutObject(
+        "local",
+        `${authorAccount.email}/media/${req.files.image[0].originalname}`,
+        req.files.image[0].path,
+        {
+          "Content-Type": req.file.image[0].mimetype,
+        }
+      );
+      const presignedUrl = await MinIOClient.presignedGetObject(
+        "local",
+        `${authorAccount.email}/media/${req.files.image[0].originalname}`
+      );
+
+      const Post = {
+        _id: new mongoose.Types.ObjectId(),
+        text: req.body.text,
+        author: author,
+        authorEmail: req.cookies.email,
+        authorId: authorId,
+        authorImage: authorImage,
+        hasAttachments: true,
+        attachments: {
+          hasAttachedImage: true,
+          hasAttachedVideo: false,
+          video: {
+            attachedImage: presignedUrl,
+            attachedImageFileName: req.files.image[0].originalname.toString(),
+          },
+        },
+        datefield: Date.now(),
+      };
+
+      authorAccount.posts.push(Post);
+      await authorAccount
+        .save()
+        .then(() => {
+          Post.datefield = format(
+            fromUnixTime(Post.datefield / 1000),
+            "MMM d/y h:mm b"
+          );
+          res.json(Post);
+        })
+        .catch((e) => console.error(e));
+    }
+    if (q == "imgvid") {
+      await MinIOClient.fPutObject(
+        "local",
+        `${authorAccount.email}/media/${req.files.video[0].originalname}`,
+        req.files.video[0].path,
+        {
+          "Content-Type": req.files.video[0].mimetype,
+        }
+      );
+      await MinIOClient.fPutObject(
+        "local",
+        `${authorAccount.email}/media/${req.files.image[0].originalname}`,
+        req.files.image[0].path,
+        {
+          "Content-Type": req.files.image[0].mimetype,
+        }
+      );
+      const presignedUrlImage = await MinIOClient.presignedGetObject(
+        "local",
+        `${authorAccount.email}/media/${req.files.image[0].originalname}`
+      );
+      const presignedUrlVideo = await MinIOClient.presignedGetObject(
+        "local",
+        `${authorAccount.email}/media/${req.files.video[0].originalname}`
+      );
+
+      const Post = {
+        _id: new mongoose.Types.ObjectId(),
+        text: req.body.text,
+        author: author,
+        authorEmail: req.cookies.email,
+        authorId: authorId,
+        authorImage: authorImage,
+        hasAttachments: true,
+        attachments: {
+          hasAttachedImage: true,
+          hasAttachedVideo: true,
+          video: {
+            attachedVideo: presignedUrlVideo,
+            attachedVideoFileName: req.files.video[0].originalname.toString(),
+          },
+          image: {
+            attachedImage: presignedUrlImage,
+            attachedImageFileName: req.files.image[0].originalname.toString(),
+          },
+        },
+        datefield: Date.now(),
+      };
+
+      authorAccount.posts.push(Post);
+      await authorAccount
+        .save()
+        .then(() => {
+          Post.datefield = format(
+            fromUnixTime(Post.datefield / 1000),
+            "MMM d/y h:mm b"
+          );
+          res.json(Post);
+        })
+        .catch((e) => console.error(e));
+    } else {
+      res.json("error");
+      console.log("error");
+    }
   }
-});
+);
 
-// For deleting post
+// DELETE A POST
 router.delete("/delete", async (req, res) => {
   let currentEmail = req.cookies.email;
   let currentPassword = req.cookies.password;
@@ -179,16 +299,53 @@ router.delete("/delete", async (req, res) => {
   })
     .then(async (doc) => {
       let foundPost = doc.posts.id(post);
-      if (foundPost.attachedImage) {
-        MinIOClient.removeObject(
-          "local",
-          `${currentEmail}/media/${foundPost.attachedImageFileName}`,
-          function (err) {
-            if (err) {
-              return console.log("Unable to remove object", err);
+      if (foundPost.hasAttachments == true) {
+        if (foundPost.attachments.hasAttachedImage == true) {
+          MinIOClient.removeObject(
+            "local",
+            `${currentEmail}/media/${foundPost.attachments.image.attachedImageFileName}`,
+            function (err) {
+              if (err) {
+                return console.log("Unable to remove object", err);
+              }
             }
-          }
-        );
+          );
+        }
+        if (foundPost.attachments.hasAttachedVideo == true) {
+          MinIOClient.removeObject(
+            "local",
+            `${currentEmail}/media/${foundPost.attachments.video.attachedVideoFileName}`,
+            function (err) {
+              if (err) {
+                return console.log("Unable to remove object", err);
+              }
+            }
+          );
+        }
+        if (
+          foundPost.attachments.hasAttachedVideo == true &&
+          foundPost.attachments.hasAttachedImage
+        ) {
+          MinIOClient.removeObject(
+            "local",
+            `${currentEmail}/media/${foundPost.attachments.image.attachedImageFileName}`,
+            function (err) {
+              if (err) {
+                return console.log("Unable to remove object", err);
+              }
+            }
+          );
+          MinIOClient.removeObject(
+            "local",
+            `${currentEmail}/media/${foundPost.attachments.image.attachedImageFileName}`,
+            function (err) {
+              if (err) {
+                return console.log("Unable to remove object", err);
+              }
+            }
+          );
+        }
+
         doc.posts.pull(foundPost);
         await doc
           .save()

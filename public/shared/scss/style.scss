@@ -269,9 +269,19 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.*/
   width: 200px;
   height: 20px;
   transform: translate(-50%, -50%);
-  background: linear-gradient(-45deg, #4183d7 25%, #52b3d9 0, #52b3d9 50%, #4183d7 0, #4183d7 75%, #52b3d9 0, #52b3d9);
+  background: linear-gradient(
+    -45deg,
+    #4183d7 25%,
+    #52b3d9 0,
+    #52b3d9 50%,
+    #4183d7 0,
+    #4183d7 75%,
+    #52b3d9 0,
+    #52b3d9
+  );
   background-size: 20px 20px;
-  box-shadow: inset 0 10px 0 hsla(0, 0%, 100%, 0.2), 0 0 0 5px rgba(0, 0, 0, 0.2);
+  box-shadow: inset 0 10px 0 hsla(0, 0%, 100%, 0.2),
+    0 0 0 5px rgba(0, 0, 0, 0.2);
   animation: moveBar 1.5s linear infinite reverse;
 }
 .full-loader-bar[data-rounded]:after {
@@ -448,8 +458,13 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.*/
   border: 5px solid #fd0;
   border-radius: 10px;
   box-shadow: inset 0 5px 0 0 #fd0;
-  background: radial-gradient(circle at 50% 90%, rgba(0, 0, 0, 0.5) 6px, transparent 0),
-    linear-gradient(0deg, #fd0 22px, transparent 0), linear-gradient(0deg, rgba(0, 0, 0, 0.5) 22px, rgba(0, 0, 0, 0.5));
+  background: radial-gradient(
+      circle at 50% 90%,
+      rgba(0, 0, 0, 0.5) 6px,
+      transparent 0
+    ),
+    linear-gradient(0deg, #fd0 22px, transparent 0),
+    linear-gradient(0deg, rgba(0, 0, 0, 0.5) 22px, rgba(0, 0, 0, 0.5));
   animation: shake 2s cubic-bezier(0.36, 0.07, 0.19, 0.97) both infinite;
 }
 .full-loader-smartphone[data-screen=""]:after {
@@ -499,7 +514,13 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.*/
   border-radius: 50%;
   margin: -60px 0 0 -60px;
   background: linear-gradient(180deg, transparent 50%, #f5f5f5 0),
-    linear-gradient(90deg, transparent 55px, #2ecc71 0, #2ecc71 65px, transparent 0),
+    linear-gradient(
+      90deg,
+      transparent 55px,
+      #2ecc71 0,
+      #2ecc71 65px,
+      transparent 0
+    ),
     linear-gradient(180deg, #f5f5f5 50%, #f5f5f5 0);
   box-shadow: inset 0 0 0 10px #f5f5f5, 0 0 0 5px #555, 0 0 0 10px #7b7b7b;
   animation: rotation infinite 2s linear;
@@ -519,7 +540,13 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.*/
   border-radius: 20px 0 0 20px;
   background: radial-gradient(circle at 14px 20px, #25a25a 10px, transparent 0),
     radial-gradient(circle at 14px 20px, #1b7943 14px, transparent 0),
-    linear-gradient(180deg, transparent 15px, #2ecc71 0, #2ecc71 25px, transparent 0);
+    linear-gradient(
+      180deg,
+      transparent 15px,
+      #2ecc71 0,
+      #2ecc71 25px,
+      transparent 0
+    );
   animation: rotation infinite 24s linear;
   transform-origin: 15px center;
 }
@@ -558,7 +585,8 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.*/
   animation: maskColorful 2s linear infinite alternate both;
 }
 .full-loader-curtain[data-colorful]:after {
-  animation: curtain 1s linear infinite alternate both, maskColorful-front 2s 1s linear infinite alternate both;
+  animation: curtain 1s linear infinite alternate both,
+    maskColorful-front 2s 1s linear infinite alternate both;
   color: #000;
 }
 @keyframes maskColorful {
@@ -643,7 +671,8 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.*/
   animation: coin 2.5s linear infinite, no 5s linear infinite both;
 }
 .full-loader-music[data-we-are]:before {
-  animation: coinBack 2.5s linear infinite, theWorld 5s 1.25s linear infinite both;
+  animation: coinBack 2.5s linear infinite,
+    theWorld 5s 1.25s linear infinite both;
   background: radial-gradient(ellipse at center, #4ecdc4 0, #556270);
 }
 .full-loader-music[data-we-are]:after {
@@ -651,7 +680,8 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.*/
   background: radial-gradient(ellipse at center, #26d0ce 0, #1a2980);
 }
 .full-loader-music[data-rock-you]:before {
-  animation: coinBack 2.5s linear infinite, rockYou 5s 1.25s linear infinite both;
+  animation: coinBack 2.5s linear infinite,
+    rockYou 5s 1.25s linear infinite both;
   background: #444;
 }
 .full-loader-music[data-rock-you]:after {
@@ -788,7 +818,8 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.*/
   background-color: #fff;
   border-radius: 50%;
   z-index: 2;
-  animation: movePokeball 1s linear infinite both, flashPokeball 0.5s infinite alternate;
+  animation: movePokeball 1s linear infinite both,
+    flashPokeball 0.5s infinite alternate;
   border: 2px solid #000;
   box-shadow: 0 0 0 5px #fff, 0 0 0 10px #000;
 }
@@ -842,4 +873,13 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.*/
     opacity: 0.3;
     transform: translateY(-1rem);
   }
+}
+
+// Bootstrap Carousel Button Colors
+.carousel-control-prev-icon {
+  background-image: url("data:image/svg+xml;charset=utf8,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='%23999999' viewBox='0 0 8 8'%3E%3Cpath d='M5.25 0l-4 4 4 4 1.5-1.5-2.5-2.5 2.5-2.5-1.5-1.5z'/%3E%3C/svg%3E") !important;
+}
+
+.carousel-control-next-icon {
+  background-image: url("data:image/svg+xml;charset=utf8,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='%23999999' viewBox='0 0 8 8'%3E%3Cpath d='M2.75 0l-1.5 1.5 2.5 2.5-2.5 2.5 1.5 1.5 4-4-4-4z'/%3E%3C/svg%3E") !important;
 }

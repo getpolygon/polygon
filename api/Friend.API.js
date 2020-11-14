@@ -2,7 +2,6 @@ const router = require("express").Router();
 const mongoose = require("mongoose");
 
 const AccountSchema = require("../models/account");
-const { obj } = require("../models/post");
 
 router.put("/add", async (req, res) => {
   let currentAccount = await AccountSchema.findOne({
@@ -47,20 +46,18 @@ router.put("/add", async (req, res) => {
 });
 
 router.get("/check", async (req, res) => {
-  const { accountId } = req.query;
-  const currentAccount = await AccountSchema.findOne({
+  let accountToCheck = req.query.accountId;
+  let currentAccount = await AccountSchema.findOne({
     email: req.cookies.email,
     password: req.cookies.password,
   });
 
-  if (accountId == currentAccount._id) {
+  if (accountToCheck == currentAccount._id) {
     res.json([]);
   } else {
     currentAccount.friends.requested.forEach((obj) => {
-      if ((obj._authorId = accountId)) {
+      if (obj.accountId == accountToCheck) {
         res.json(obj);
-      } else {
-        res.json([]);
       }
     });
   }

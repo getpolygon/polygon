@@ -58,7 +58,7 @@ function deletePost() {
 }
 
 function fetchPosts() {
-  fetch("/api/posts/fetch")
+  fetch(`/api/posts/fetch/?accountId=${accountId}`)
     .then((res) => res.json())
     .then((data) => {
       if (data.length < 1 || data.length == 0) {

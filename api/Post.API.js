@@ -173,6 +173,9 @@ router.put(
           res.json(Post);
         })
         .catch((e) => console.error(e));
+      unlink(`tmp/${req.files.video[0].originalname}`, (err) => {
+        if (err) console.error(err);
+      });
     }
 
     if (q == "img") {
@@ -181,7 +184,7 @@ router.put(
         `${authorAccount.email}/media/${req.files.image[0].originalname}`,
         req.files.image[0].path,
         {
-          "Content-Type": req.file.image[0].mimetype,
+          "Content-Type": req.files.image[0].mimetype,
         }
       );
       const presignedUrl = await MinIOClient.presignedGetObject(
@@ -200,7 +203,7 @@ router.put(
         attachments: {
           hasAttachedImage: true,
           hasAttachedVideo: false,
-          video: {
+          image: {
             attachedImage: presignedUrl,
             attachedImageFileName: req.files.image[0].originalname.toString(),
           },
@@ -219,6 +222,9 @@ router.put(
           res.json(Post);
         })
         .catch((e) => console.error(e));
+      unlink(`tmp/${req.files.image[0].originalname}`, (err) => {
+        if (err) console.error(err);
+      });
     }
     if (q == "imgvid") {
       await MinIOClient.fPutObject(
@@ -280,9 +286,12 @@ router.put(
           res.json(Post);
         })
         .catch((e) => console.error(e));
-    } else {
-      res.json("error");
-      console.log("error");
+      unlink(`tmp/${req.files.video[0].originalname}`, (err) => {
+        if (err) console.error(err);
+      });
+      unlink(`tmp/${req.files.image[0].originalname}`, (err) => {
+        if (err) console.error(err);
+      });
     }
   }
 );

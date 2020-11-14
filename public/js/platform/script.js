@@ -423,7 +423,7 @@ function createPost() {
     document.body.appendChild(loader);
 
     // q is to specify the type of post that we want
-    fetch("/api/posts/create/?q=txt", {
+    fetch("/api/posts/create?q=txt", {
       method: "PUT",
       body: formData,
     })
@@ -473,7 +473,7 @@ function createPost() {
   }
 
   // VIDEO, TEXT POST
-  if (video.length > 0 && image.length == 0) {
+  if (video[0] && !image[0]) {
     let formData = new FormData();
     formData.append("text", postText.value);
     formData.append("video", video[0]);
@@ -484,7 +484,7 @@ function createPost() {
     loader.classList.add("is-active");
     document.body.appendChild(loader);
 
-    fetch("/api/posts/create/?q=vid", {
+    fetch("/api/posts/create?q=vid", {
       method: "PUT",
       body: formData,
     })
@@ -554,7 +554,7 @@ function createPost() {
   }
 
   // IMAGE,VIDEO,TEXT POST
-  if (image.length > 0 && video.length > 0) {
+  if (image[0] && video[0]) {
     let formData = new FormData();
     formData.append("text", postText.value);
     formData.append("video", video[0]);
@@ -566,7 +566,7 @@ function createPost() {
     loader.classList.add("is-active");
     document.body.appendChild(loader);
 
-    fetch("/api/posts/create/?q=imgvid", {
+    fetch("/api/posts/create?q=imgvid", {
       method: "PUT",
       body: formData,
     })
@@ -654,7 +654,7 @@ function createPost() {
       });
   }
   // IMAGE,TEXT POST
-  if (image.length > 0 && video.length == 0) {
+  if (image[0] && !video[0]) {
     let formData = new FormData();
     formData.append("text", postText.value);
     formData.append("image", image[0]);
@@ -665,7 +665,7 @@ function createPost() {
     loader.classList.add("is-active");
     document.body.appendChild(loader);
 
-    fetch("/api/posts/create/?q=img", {
+    fetch("/api/posts/create?q=img", {
       method: "PUT",
       body: formData,
     })

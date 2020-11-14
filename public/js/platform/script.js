@@ -136,7 +136,7 @@ function fetchPosts() {
                       <div class="container p-2">
                         <video
                         class="video-js vjs-theme-city"
-                        style="margin: auto 0; margin-left: 100px; margin-right:100px"
+                        
                         controls
                         preload="auto"
                         width= "500"
@@ -184,7 +184,7 @@ function fetchPosts() {
                             <div class="carousel-item active">
                             <video
                             class="video-js vjs-theme-city"
-                            style="margin: auto 0; margin-left: 100px; margin-right:100px"
+                            
                             controls
                             preload="auto"
                             width="500"
@@ -285,7 +285,7 @@ function fetchPosts() {
                       <div class="container p-2">
                       <video
                       class="video-js vjs-theme-city"
-                      style="margin: auto 0; margin-left: 100px; margin-right:100px"
+                      
                       controls
                       preload="auto"
                       width="500"
@@ -332,7 +332,7 @@ function fetchPosts() {
                             <div class="carousel-item active">
                             <video
                             class="video-js vjs-theme-city"
-                            style="margin: auto 0; margin-left: 100px; margin-right:100px"
+                            
                             controls
                             preload="auto"
                             width="500"
@@ -520,7 +520,7 @@ function createPost() {
         <div class="container p-2">
         <video
         class="video-js vjs-theme-city"
-        style="margin: auto 0; margin-left: 100px; margin-right:100px"
+        
         controls
         preload="auto"
         width="500"
@@ -606,7 +606,7 @@ function createPost() {
                   <div class="carousel-item active">
                   <video
                   class="video-js vjs-theme-city"
-                  style="margin: auto 0; margin-left: 100px; margin-right:100px"
+                  
                   style="margin: 0 auto"
                   controls
                   preload="auto"

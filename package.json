@@ -5,7 +5,8 @@
   "main": "index.js",
   "scripts": {
     "start": "node index",
-    "dev": "nodemon index"
+    "dev": "nodemon index",
+    "build": "gulp build"
   },
   "author": "Michael Grigoryan",
   "license": "Custom",

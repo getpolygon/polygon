@@ -60,3 +60,7 @@ exports.default = function () {
   );
   gulp.watch(["public/js/**/*.js", "public/shared/js/**/*.js"], compressJS);
 };
+
+exports.build = function () {
+  return compressJS(), compileSCSS();
+};

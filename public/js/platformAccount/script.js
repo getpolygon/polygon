@@ -464,8 +464,8 @@ function checkFriendship() {
 
 window.addEventListener("load", () => {
   checkFriendship();
-  loader();
   fetchPosts();
+  // TODO: Add the loader
   checkForDeleteButtons();
   if (postButton == null) {
     return null;

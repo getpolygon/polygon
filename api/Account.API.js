@@ -118,7 +118,7 @@ router.put("/update", async (req, res) => {
   }
   if (firstName || lastName) {
     await currentAccount
-      .update({
+      .updateOne({
         firstName: firstName,
         lastName: lastName,
         fullName: `${firstName} ${lastName}`,
@@ -133,46 +133,15 @@ router.put("/update", async (req, res) => {
       .catch((e) => res.json(e));
   }
   if (email && password) {
-    if (email) {
-      await currentAccount
-        .updateOne({
-          email: email,
-        })
-        .then((response) => {
-          res.json(response.email);
-        })
-        .catch((e) => {
-          res.json(e);
-        });
-    }
-    if (password) {
-      await currentAccount
-        .updateOne({
-          password: password,
-        })
-        .then((response) => {
-          res.json(response.password);
-        })
-        .catch((e) => {
-          res.json(e);
-        });
-    }
-    if (email && password) {
-      await currentAccount
-        .update({
-          email: email,
-          password: password,
-        })
-        .then((response) => {
-          res.json({
-            email: response.email,
-            password: response.password,
-          });
-        })
-        .catch((e) => {
-          res.json(e);
-        });
-    }
+    await currentAccount.updateOne({ email: email, password: password });
+    await AccountSchema.findOne({ email: email, password: password })
+      .then((doc) => {
+        res
+          .cookie("email", doc.email)
+          .cookie("password", doc.password)
+          .json({ email: doc.email, password: doc.password });
+      })
+      .catch((e) => res.json(e));
   }
 });
 

@@ -1,11 +1,13 @@
-let deleteButton = document.getElementById("deleteAccount");
-let privacyCheckbox = document.getElementById("isPrivate");
+const deleteButton = document.getElementById("deleteAccount");
+const privacyCheckbox = document.getElementById("isPrivate");
+const passwordField = document.getElementById("password");
+const emailField = document.getElementById("email");
+const SaveAccountButton = document.getElementById("accountSave");
 
 function deleteAccount() {
-  let msg = document.getElementById("message");
+  const msg = document.getElementById("message");
   fetch("/api/accounts/delete", {
     method: "DELETE",
-    headers: { "Content-Type": "application/x-www-form-urlencoded" },
   })
     .then((res) => res.json())
     .then((res) => {
@@ -16,14 +18,13 @@ function deleteAccount() {
 }
 
 function updatePrivacy() {
-  let msg = document.getElementById("acUpdateStatus");
-  let currentStatus = document.getElementById("currentStatus");
+  const msg = document.getElementById("acUpdateStatus");
+  const currentStatus = document.getElementById("currentStatus");
 
   if (privacyCheckbox.checked) {
     privacyCheckbox.setAttribute("value", true);
-    fetch("/api/updateAccount/?privacy=true", {
+    fetch("/api/accounts/update/?privacy=true", {
       method: "PUT",
-      headers: { "Content-Type": "application/x-www-form-urlencoded" },
     })
       .then((res) => {
         res.json();
@@ -39,9 +40,8 @@ function updatePrivacy() {
       });
   } else {
     privacyCheckbox.setAttribute("value", false);
-    fetch("/api/updateAccount/?privacy=false", {
+    fetch("/api/accounts/update/?privacy=false", {
       method: "PUT",
-      headers: { "Content-Type": "application/x-www-form-urlencoded" },
     })
       .then((res) => {
         res.json();
@@ -58,5 +58,35 @@ function updatePrivacy() {
   }
 }
 
+function updateCredentials() {
+  const email = emailField.value;
+  const password = passwordField.value;
+  const msg = document.createElement("div");
+  fetch(`/api/accounts/update/?email=${email}&password=${password}`, {
+    method: "PUT",
+  })
+    .then((data) => data.json())
+    .then((_data) => {
+      msg.innerHTML = `
+        <div class="alert alert-success" role="alert">
+          Your account has been updated
+          <i class="fas fa-check"></i>
+        </div>
+        `;
+    })
+    .catch((e) => {
+      msg.innerHTML = `
+      <div class="alert alert-danger" role="alert">
+        It looks like we are having some trouble updating your account
+        <i class="far fa-frown"></i>
+        Try to refresh the page
+      </div>
+      `;
+      console.error(e);
+    });
+  document.body.prepend(msg);
+}
+
 deleteButton.addEventListener("click", deleteAccount);
 privacyCheckbox.addEventListener("change", updatePrivacy);
+SaveAccountButton.addEventListener("click", updateCredentials);

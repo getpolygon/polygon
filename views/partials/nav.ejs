@@ -35,15 +35,15 @@
       <span><%= currentAccount.fullName %></span>
     </button>
     <div class="dropdown-menu dropdown-menu-right">
-      <!-- Settings -->
-      <a href="/settings" class="dropdown-item" type="button">
-        <i class="fas fa-cog"></i>
-        User Settings
-      </a>
       <!-- My Account -->
       <a href="/user/<%= currentAccount._id %>" class="dropdown-item" type="button">
         <i class="fas fa-user"></i>
         My account
+      </a>
+      <!-- Settings -->
+      <a href="/settings" class="dropdown-item" type="button">
+        <i class="fas fa-cog"></i>
+        User Settings
       </a>
       <!-- Notifications -->
       <a href="/notifications" class="dropdown-item">

@@ -2,7 +2,9 @@ import ImageComponent from "/components/image-component.mjs";
 import VideoComponent from "/components/video-component.mjs";
 import ComboComponent from "/components/combo-component.mjs";
 import TextComponent from "/components/text-component.mjs";
+import Loader from "/components/loader-component.mjs";
 
+const postsContainer = document.getElementById("posts");
 const postButton = document.getElementById("postButton");
 const postText = document.getElementById("postTextarea");
 const addFriendButton = document.getElementById("addFriend");
@@ -465,7 +467,8 @@ function checkFriendship() {
 window.addEventListener("load", () => {
   checkFriendship();
   fetchPosts();
-  // TODO: Add the loader
+  let loader = new Loader({ fullScreen: false });
+  postsContainer.prepend(loader);
   checkForDeleteButtons();
   if (postButton == null) {
     return null;

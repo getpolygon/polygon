@@ -430,8 +430,8 @@ function createPost() {
 }
 
 window.addEventListener("load", () => {
-  const loader = new Loader({ fullScreen: false });
-  postsContainer.appendChild(loader);
+  let loader = new Loader({ fullScreen: false });
+  postsContainer.prepend(loader);
   fetchPosts();
 });
 postButton.addEventListener("click", createPost);

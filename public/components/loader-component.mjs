@@ -8,15 +8,14 @@ class Loader {
       loader.id = "loader-full";
       return loader;
     } else {
-      let container = document.createElement("div");
       let loader = document.createElement("div");
-      container.style.paddingBottom = "40px";
-      loader.classList.add("spinner-border");
-      loader.classList.add("text-primary");
-      container.style.textAlign = "center";
-      container.id = "loader";
-      container.appendChild(loader);
-      return container;
+      loader.id = "loader";
+      loader.classList.add("d-flex");
+      loader.classList.add("justify-content-center");
+      loader.innerHTML = `
+        <div class="spinner-border text-primary" role="status"></div>
+      `;
+      return loader;
     }
   }
 }

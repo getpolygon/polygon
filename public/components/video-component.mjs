@@ -28,16 +28,13 @@ class VideoComponent {
         </h6>
         <div class="container p-2">
         <video
-        class="video-js vjs-theme-city"
-
+        class="video-js vjs-theme-forest"
         controls
         preload="auto"
-        width="500"
-        height="500"
-
         data-setup="{}"
         >
-        <source src="${video}"/>
+        <source src="${video}" />
+
         <p class="vjs-no-js">
           To view this video please enable JavaScript, and consider upgrading to a
           web browser that
@@ -69,16 +66,13 @@ class VideoComponent {
         </h6>
         <div class="container p-2">
         <video
-        class="video-js vjs-theme-city"
-      
+        class="video-js vjs-theme-forest"
         controls
         preload="auto"
-        width="500"
-        height="500"
-      
+
         data-setup="{}"
         >
-        <source src="${video}"/>
+        <source src="${video}" type="video/mp4" />
         <p class="vjs-no-js">
           To view this video please enable JavaScript, and consider upgrading to a
           web browser that

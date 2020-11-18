@@ -28,18 +28,14 @@ class ComboComponent {
           ${text}
         </h6>
         <div class="container p-2">
-          <div id="carouselExampleControls" class="carousel slide" data-ride="carousel">
+          <div id="carousel" class="carousel slide" data-ride="carousel">
             <div class="carousel-inner">
               <div class="carousel-item active">
               <video
               class="video-js vjs-theme-city"
-
               style="margin: 0 auto"
               controls
               preload="auto"
-              width="500"
-              height="500"
-
               data-setup="{}"
             >
               <source src="${video}"/>
@@ -55,11 +51,11 @@ class ComboComponent {
               <div class="carousel-item">
                 <img src="${image}" class="d-block w-100" alt="...">
               </div>
-            <a class="carousel-control-prev" href="#carouselExampleControls" role="button" data-slide="prev">
+            <a class="carousel-control-prev" href="#carousel" role="button" data-slide="prev">
               <span class="carousel-control-prev-icon" aria-hidden="true"></span>
               <span class="sr-only">Previous</span>
             </a>
-            <a class="carousel-control-next" href="#carouselExampleControls" role="button" data-slide="next">
+            <a class="carousel-control-next" href="#carousel" role="button" data-slide="next">
               <span class="carousel-control-next-icon" aria-hidden="true"></span>
               <span class="sr-only">Next</span>
             </a>
@@ -85,18 +81,14 @@ class ComboComponent {
           ${text}
         </h6>
         <div class="container p-2">
-          <div id="carouselExampleControls" class="carousel slide" data-ride="carousel">
+          <div id="carousel" class="carousel slide" data-ride="carousel">
             <div class="carousel-inner">
               <div class="carousel-item active">
               <video
               class="video-js vjs-theme-city"
-
               style="margin: 0 auto"
               controls
               preload="auto"
-              width="500"
-              height="500"
-
               data-setup="{}"
             >
               <source src="${video}"/>
@@ -112,11 +104,11 @@ class ComboComponent {
               <div class="carousel-item">
                 <img src="${image}" class="d-block w-100" alt="...">
               </div>
-            <a class="carousel-control-prev" href="#carouselExampleControls" role="button" data-slide="prev">
+            <a class="carousel-control-prev" href="#carousel" role="button" data-slide="prev">
               <span class="carousel-control-prev-icon" aria-hidden="true"></span>
               <span class="sr-only">Previous</span>
             </a>
-            <a class="carousel-control-next" href="#carouselExampleControls" role="button" data-slide="next">
+            <a class="carousel-control-next" href="#carousel" role="button" data-slide="next">
               <span class="carousel-control-next-icon" aria-hidden="true"></span>
               <span class="sr-only">Next</span>
             </a>

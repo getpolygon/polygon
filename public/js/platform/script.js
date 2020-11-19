@@ -265,11 +265,11 @@ function createPost() {
         videoInput.value = "";
         document.body.removeChild(loader);
         postsContainer.prepend(cardContainer);
+        checkForDeleteButtons();
       })
       .catch((e) => {
         console.log(e);
       });
-    checkForDeleteButtons();
   }
 
   // VIDEO, TEXT POST
@@ -316,11 +316,11 @@ function createPost() {
         videoInput.value = "";
         document.body.removeChild(loader);
         postsContainer.prepend(cardContainer);
+        checkForDeleteButtons();
       })
       .catch((e) => {
         console.log(e);
       });
-    checkForDeleteButtons();
   }
 
   // IMAGE,VIDEO,TEXT POST
@@ -370,11 +370,11 @@ function createPost() {
         videoInput.value = "";
         document.body.removeChild(loader);
         postsContainer.prepend(cardContainer);
+        checkForDeleteButtons();
       })
       .catch((e) => {
         console.log(e);
       });
-    checkForDeleteButtons();
   }
   // IMAGE,TEXT POST
   if (image[0] && !video[0]) {

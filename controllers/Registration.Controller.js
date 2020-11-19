@@ -89,8 +89,7 @@ router.post("/", upload.single("avatar"), async (req, res) => {
     }
   };
 
-  let pictureUrl = await url();
-
+  const pictureUrl = await url();
   Account.pictureUrl = pictureUrl;
 
   // Delete the created file to save space

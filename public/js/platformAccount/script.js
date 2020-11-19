@@ -4,11 +4,11 @@ import ComboComponent from "/components/combo-component.mjs";
 import TextComponent from "/components/text-component.mjs";
 import Loader from "/components/loader-component.mjs";
 
-const postsContainer = document.getElementById("posts");
-const postButton = document.getElementById("postButton");
-const postText = document.getElementById("postTextarea");
-const addFriendButton = document.getElementById("addFriend");
-const accountId = document.getElementById("accountId").textContent;
+var postsContainer = document.getElementById("posts");
+var postButton = document.getElementById("postButton");
+var postText = document.getElementById("postTextarea");
+var addFriendButton = document.getElementById("addFriend");
+var accountId = document.getElementById("accountId").textContent;
 
 // For checking for delete buttons in the document
 function checkForDeleteButtons() {

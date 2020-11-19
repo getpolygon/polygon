@@ -118,10 +118,14 @@ router.put("/update", async (req, res) => {
   }
 
   // TODO: Implement some kind of a dynamic api that will update data everywhere it exists
+
   if (email && password) {
     const checkDupl = await AccountSchema.findOne({ email: email });
     if (checkDupl == null) {
-      await currentAccount.updateOne({ email: email, password: password });
+      await currentAccount.updateOne({
+        email: email,
+        password: password,
+      });
       await AccountSchema.findOne({ email: email, password: password })
         .then((doc) => {
           res

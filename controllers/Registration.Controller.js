@@ -1,5 +1,6 @@
 const minioConfig = require("../minio.config");
 const router = require("express").Router();
+const mongoose = require("mongoose");
 const multer = require("multer");
 const fs = require("fs");
 const storage = multer.diskStorage({
@@ -19,6 +20,7 @@ const MinIOClient = new minio.Client({
   useSSL: minioConfig.MINIO_USESSL,
 });
 const AccountSchema = require("../models/account");
+const account = require("../models/account");
 const avatarLinks = [
   "/static/img/1.png",
   "/static/img/2.png",
@@ -41,6 +43,26 @@ router.get("/", (req, res) => {
 
 // To register the account
 router.post("/", upload.single("avatar"), async (req, res) => {
+  let email = req.body.email.toLowerCase();
+  let Account = new AccountSchema({
+    _id: new mongoose.Types.ObjectId(),
+    firstName: req.body.firstName,
+    lastName: req.body.lastName,
+    fullName: `${req.body.firstName} ${req.body.lastName}`,
+    email: email,
+    password: req.body.password,
+    bio: req.body.bio,
+    // pictureUrl: pictureUrl,
+    isPrivate: req.body.privateCheck ? true : false,
+    friends: {
+      pending: [],
+      approved: [],
+      dismissed: [],
+      requested: [],
+    },
+    date: Date.now(),
+  });
+
   // If a custom image was selected by the client set the picture URL to Firebase's  CDN
   const url = async () => {
     // If the user has selected a file
@@ -48,7 +70,7 @@ router.post("/", upload.single("avatar"), async (req, res) => {
       // Upload user image to the database
       await MinIOClient.fPutObject(
         "local",
-        `${req.body.email}/${req.body.email}.png`,
+        `${Account._id}/${Account._id}.png`,
         req.file.path,
         {
           "Content-Type": req.file.mimetype,
@@ -57,7 +79,7 @@ router.post("/", upload.single("avatar"), async (req, res) => {
       // Getting the link for the user's image
       const presignedUrl = await MinIOClient.presignedGetObject(
         "local",
-        `${req.body.email}/${req.body.email}.png`
+        `${Account._id}/${Account._id}.png`
       );
       return presignedUrl;
     }
@@ -68,25 +90,8 @@ router.post("/", upload.single("avatar"), async (req, res) => {
   };
 
   let pictureUrl = await url();
-  let email = req.body.email.toLowerCase();
 
-  let Account = new AccountSchema({
-    firstName: req.body.firstName,
-    lastName: req.body.lastName,
-    fullName: `${req.body.firstName} ${req.body.lastName}`,
-    email: email,
-    password: req.body.password,
-    bio: req.body.bio,
-    pictureUrl: pictureUrl,
-    isPrivate: req.body.privateCheck ? true : false,
-    friends: {
-      pending: [],
-      approved: [],
-      dismissed: [],
-      requested: [],
-    },
-    date: Date.now(),
-  });
+  Account.pictureUrl = pictureUrl;
 
   // Delete the created file to save space
   fs.unlink(`tmp/${req.file.originalname}`, (err) => {

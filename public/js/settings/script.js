@@ -1,3 +1,5 @@
+import Alert from "/components/alert-component.mjs";
+
 const deleteButton = document.getElementById("deleteAccount");
 const privacyCheckbox = document.getElementById("isPrivate");
 const SaveAccountButton = document.getElementById("accountSave");
@@ -72,28 +74,21 @@ function updateCredentials() {
     .then((data) => data.json())
     .then((data) => {
       if (data.status === "ERR_ACC_EXISTS") {
-        msg.innerHTML = `
-        <div class="alert alert-danger" role="alert">
-          There is an account using that email.
-        </div>
-        `;
+        msg.innerHTML = new Alert().create(
+          "There is an account using that email.",
+          { type: "danger" }
+        );
       } else {
-        msg.innerHTML = `
-        <div class="alert alert-success" role="alert">
-          Your account has been updated
-          <i class="fas fa-check"></i>
-        </div>
-        `;
+        msg.innerHTML = new Alert().create("Your account has been updated", {
+          type: "success",
+        });
       }
     })
     .catch((e) => {
-      msg.innerHTML = `
-      <div class="alert alert-danger" role="alert">
-        It looks like we are having some trouble updating your account
-        <i class="far fa-frown"></i>
-        Try to refresh the page
-      </div>
-      `;
+      msg.innerHTML = new Alert().create(
+        "It looks like we are having some trouble updating your account. Try to refresh the page",
+        { type: "danger" }
+      );
       console.error(e);
     });
   document.body.prepend(msg);
@@ -109,23 +104,18 @@ function updateBasicInfo() {
     .then((res) => {
       if (res.status === "OK") {
         console.log(res);
-        container.innerHTML = `
-      <div class="alert alert-success" role="alert">
-      Your account has been updated
-      <i class="fas fa-check"></i>
-      </div>
-      `;
+        container.innerHTML = new Alert().create(
+          "Your account has been updated",
+          { type: "success" }
+        );
       }
     })
     .catch((e) => {
       console.log(e);
-      container.innerHTML = `
-        <div class="alert alert-danger" role="alert">
-          It looks like we are having some trouble updating your account
-          <i class="far fa-frown"></i>
-          Try to refresh the page
-        </div>
-      `;
+      container.innerHTML = new Alert().create(
+        "It looks like we are having some trouble updating your account",
+        { type: "danger" }
+      );
     });
 }
 

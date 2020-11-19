@@ -1,8 +1,12 @@
 const deleteButton = document.getElementById("deleteAccount");
 const privacyCheckbox = document.getElementById("isPrivate");
+const SaveAccountButton = document.getElementById("accountSave");
+const SaveBasicInfoButton = document.getElementById("accountSaveBasic");
+
 const passwordField = document.getElementById("password");
 const emailField = document.getElementById("email");
-const SaveAccountButton = document.getElementById("accountSave");
+const firstNameField = document.getElementById("firstName");
+const lastNameField = document.getElementById("lastName");
 
 function deleteAccount() {
   const msg = document.getElementById("message");
@@ -66,13 +70,21 @@ function updateCredentials() {
     method: "PUT",
   })
     .then((data) => data.json())
-    .then((_data) => {
-      msg.innerHTML = `
+    .then((data) => {
+      if (data.status === "ERR_ACC_EXISTS") {
+        msg.innerHTML = `
+        <div class="alert alert-danger" role="alert">
+          There is an account using that email.
+        </div>
+        `;
+      } else {
+        msg.innerHTML = `
         <div class="alert alert-success" role="alert">
           Your account has been updated
           <i class="fas fa-check"></i>
         </div>
         `;
+      }
     })
     .catch((e) => {
       msg.innerHTML = `
@@ -87,6 +99,37 @@ function updateCredentials() {
   document.body.prepend(msg);
 }
 
+function updateBasicInfo() {
+  const container = document.createElement("div");
+  fetch(
+    `/api/accounts/update/?firstName=${firstNameField.value}&lastName=${lastNameField.value}`,
+    { method: "PUT" }
+  )
+    .then((res) => res.json())
+    .then((res) => {
+      if (res.status === "OK") {
+        console.log(res);
+        container.innerHTML = `
+      <div class="alert alert-success" role="alert">
+      Your account has been updated
+      <i class="fas fa-check"></i>
+      </div>
+      `;
+      }
+    })
+    .catch((e) => {
+      console.log(e);
+      container.innerHTML = `
+        <div class="alert alert-danger" role="alert">
+          It looks like we are having some trouble updating your account
+          <i class="far fa-frown"></i>
+          Try to refresh the page
+        </div>
+      `;
+    });
+}
+
 deleteButton.addEventListener("click", deleteAccount);
 privacyCheckbox.addEventListener("change", updatePrivacy);
 SaveAccountButton.addEventListener("click", updateCredentials);
+SaveBasicInfoButton.addEventListener("click", updateBasicInfo);

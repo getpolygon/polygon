@@ -54,6 +54,8 @@ function compressJS() {
 }
 
 exports.default = function () {
+  compileSCSS();
+  compressJS();
   gulp.watch(
     ["public/scss/**/*.scss", "public/shared/scss/**/*.scss"],
     compileSCSS

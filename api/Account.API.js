@@ -116,32 +116,23 @@ router.put("/update", async (req, res) => {
         res.json(e);
       });
   }
-  if (firstName || lastName) {
-    await currentAccount
-      .updateOne({
-        firstName: firstName,
-        lastName: lastName,
-        fullName: `${firstName} ${lastName}`,
-      })
-      .then((response) => {
-        res.json({
-          firstName: response.firstName,
-          lastName: response.lastName,
-          fullName: response.fullName,
-        });
-      })
-      .catch((e) => res.json(e));
-  }
+
+  // TODO: Implement some kind of a dynamic api that will update data everywhere it exists
   if (email && password) {
-    await currentAccount.updateOne({ email: email, password: password });
-    await AccountSchema.findOne({ email: email, password: password })
-      .then((doc) => {
-        res
-          .cookie("email", doc.email)
-          .cookie("password", doc.password)
-          .json({ email: doc.email, password: doc.password });
-      })
-      .catch((e) => res.json(e));
+    const checkDupl = await AccountSchema.findOne({ email: email });
+    if (checkDupl == null) {
+      await currentAccount.updateOne({ email: email, password: password });
+      await AccountSchema.findOne({ email: email, password: password })
+        .then((doc) => {
+          res
+            .cookie("email", doc.email)
+            .cookie("password", doc.password)
+            .json({ email: doc.email, password: doc.password, status: "OK" });
+        })
+        .catch((e) => res.json(e));
+    } else {
+      res.json({ status: "ERR_ACC_EXISTS" });
+    }
   }
 });
 

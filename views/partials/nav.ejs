@@ -22,11 +22,6 @@
         <i class="fas fa-user"></i>
         My account
       </a>
-      <!-- Settings -->
-      <a href="/settings" class="dropdown-item" type="button">
-        <i class="fas fa-cog"></i>
-        User Settings
-      </a>
       <!-- Notifications -->
       <a href="/notifications" class="dropdown-item">
         <% if (currentAccount.friends.pending.length > 0) { %>
@@ -34,10 +29,15 @@
           <span class="badge badge-danger"><%= currentAccount.friends.pending.length %></span>
         </i>
         <%}%>
-        <% if (currentAccount.friends.pending.length == 0){%>
+              <% if (currentAccount.friends.pending.length == 0){%>
         <i class="fas fa-bell"></i>
         <%}%>
-        Notifications
+              Notifications
+      </a>
+      <!-- Settings -->
+      <a href="/settings" class="dropdown-item" type="button">
+        <i class="fas fa-cog"></i>
+        User Settings
       </a>
       <!-- Logout -->
       <hr class="solid">

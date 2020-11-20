@@ -66,7 +66,7 @@ router.post("/", upload.single("avatar"), async (req, res) => {
   // If a custom image was selected by the client set the picture URL to Firebase's  CDN
   const url = async () => {
     // If the user has selected a file
-    if (req.file) {
+    if (req.file /*&& req.file.originalname !== undefined*/) {
       // Upload user image to the database
       await MinIOClient.fPutObject(
         "local",
@@ -92,16 +92,15 @@ router.post("/", upload.single("avatar"), async (req, res) => {
   const pictureUrl = await url();
   Account.pictureUrl = pictureUrl;
 
-  // Delete the created file to save space
-  fs.unlink(`tmp/${req.file.originalname}`, (err) => {
-    if (err) console.error(err);
-  });
-
   await Account.save()
     .then(() => {
       res.cookie("email", Account.email, { maxAge: 24 * 60 * 60 * 1000 });
       res.cookie("password", Account.password, { maxAge: 24 * 60 * 60 * 1000 });
       res.redirect(`/user/${Account._id}`);
+      // Delete the created file to save space
+      fs.unlink(`tmp/${req.file.originalname}`, (err) => {
+        if (err) console.error(err);
+      });
     })
     .catch((e) => {
       res.redirect("/");

@@ -7,7 +7,7 @@ import Loader from "/components/loader-component.mjs";
 var postsContainer = document.getElementById("posts");
 var postButton = document.getElementById("postButton");
 var postText = document.getElementById("postTextarea");
-var addFriendButton = document.getElementById("addFriend");
+var addFriendButton = document.getElementById("add_friend");
 var accountId = document.getElementById("accountId").textContent;
 
 // For checking for delete buttons in the document
@@ -435,12 +435,18 @@ function createPost() {
 
 function addFriend() {
   let accountToAdd = document.getElementById("accountId").textContent;
-  fetch(`/api/friends/add/?addedAccount=${accountToAdd}`, { method: "PUT" })
+  fetch(`/api/friends/add/?account=${accountToAdd}`, { method: "PUT" })
     .then((data) => data.json())
     .then((data) => {
       addFriendButton.innerText = "Pending";
       addFriendButton.innerHTML += `
-      <i class="fas fa-user-clock"></i>
+        <i class="fas fa-user-clock"></i>
+        `;
+      addFriendButton.setAttribute("disabled", "true");
+      buttonContainer.innerHTML += `
+        <br />
+        <br />
+        <button class="btn btn-danger">Cancel friend request <i class="fas fa-times"></i></button>
       `;
       addFriendButton.setAttribute("disabled", "true");
       console.log(data);
@@ -449,15 +455,39 @@ function addFriend() {
 }
 
 function checkFriendship() {
+  var buttonContainer = document.querySelector(".buttons");
   fetch(`/api/friends/check/?accountId=${accountId}`)
     .then((data) => data.json())
     .then((data) => {
-      if (data.length != 0) {
+      if (data.pending) {
+        addFriendButton.innerText = "Sent you a friend request";
+        addFriendButton.innerHTML += `
+            <i class="fas fa-user-clock"></i>
+            `;
+        buttonContainer.innerHTML += `
+          <br />
+          <br />
+          <button class="btn btn-info">Accept friend request <i class="fas fa-check"></i></button>
+          <button class="btn btn-danger">Decline friend request <i class="fas fa-times"></i></button>
+        `;
+      }
+      if (data.approved) {
+        addFriendButton.innerText = "Friends";
+        addFriendButton.innerHTML += `
+          <i class="fas fa-user-check"></i>
+          `;
+      }
+      if (data.requested) {
         addFriendButton.innerText = "Pending";
         addFriendButton.innerHTML += `
           <i class="fas fa-user-clock"></i>
           `;
         addFriendButton.setAttribute("disabled", "true");
+        buttonContainer.innerHTML += `
+          <br />
+          <br />
+          <button class="btn btn-danger">Cancel friend request <i class="fas fa-times"></i></button>
+        `;
       } else {
         addFriendButton = addFriendButton;
       }

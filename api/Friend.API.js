@@ -1,15 +1,19 @@
 const router = require("express").Router();
 const mongoose = require("mongoose");
+const axios = require("axios").default;
 
 const AccountSchema = require("../models/account");
 
 router.put("/add", async (req, res) => {
-  let currentAccount = await AccountSchema.findOne({
+  var currentAccount = await AccountSchema.findOne({
     email: req.cookies.email,
     password: req.cookies.password,
   });
-  let addedAccount = await AccountSchema.findById(req.query.addedAccount);
-
+  /*
+  TODO: Add duplicate friend request handling ( using axios )
+  ISSUE: I think there was an issue with cookies
+  */
+  var addedAccount = await AccountSchema.findById(req.query.account);
   await currentAccount.updateOne({
     $push: {
       "friends.requested": {
@@ -46,8 +50,8 @@ router.put("/add", async (req, res) => {
 });
 
 router.get("/check", async (req, res) => {
-  let accountToCheck = req.query.accountId;
-  let currentAccount = await AccountSchema.findOne({
+  var accountToCheck = req.query.accountId;
+  var currentAccount = await AccountSchema.findOne({
     email: req.cookies.email,
     password: req.cookies.password,
   });
@@ -55,10 +59,34 @@ router.get("/check", async (req, res) => {
   if (accountToCheck == currentAccount._id) {
     res.json([]);
   } else {
-    currentAccount.friends.requested.forEach((obj) => {
-      if (obj.accountId == accountToCheck) {
-        res.json(obj);
+    function get_requested() {
+      for (var i = 0; i < currentAccount.friends.requested.length; i++) {
+        if (currentAccount.friends.requested[i].accountId == accountToCheck) {
+          return currentAccount.friends.requested[i];
+        }
       }
+    }
+
+    function get_approved() {
+      for (var i = 0; i < currentAccount.friends.approved.length; i++) {
+        if (currentAccount.friends.approved[i].accountId == accountToCheck) {
+          return currentAccount.friends.approved[i];
+        }
+      }
+    }
+
+    function get_pending() {
+      for (var i = 0; i < currentAccount.friends.pending.length; i++) {
+        if (currentAccount.friends.pending[i].accountId == accountToCheck) {
+          return currentAccount.friends.pending[i];
+        }
+      }
+    }
+
+    res.json({
+      approved: get_approved(),
+      requested: get_requested(),
+      pending: get_pending(),
     });
   }
 });

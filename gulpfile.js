@@ -1,4 +1,3 @@
-"use strict";
 const gulp = require("gulp");
 const minify = require("gulp-minify");
 const cleanCSS = require("gulp-clean-css");

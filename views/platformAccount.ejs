@@ -1,6 +1,7 @@
 <%-include ("./partials/header") %>
 <%- include ("./partials/nav") %>
 
+<link rel="stylesheet" href="/dist/js/platform_account.min.js" as="preload" type="module">
 
 <div class="container justify-content-center">
   <div class="container" style="align-items: center; justify-content: center;text-align: center;">
@@ -38,10 +39,10 @@
     </p>
     <p align="center" class="buttons">
       <% if (currentAccount.email == platformAccount.email) {%>
-      <button id="addFriend" class="btn btn-success disabled" disabled>Add Friend</button>
+      <button id="add_friend" class="btn btn-success disabled" disabled>Add Friend</button>
       <%}%>
       <% if (currentAccount.email != platformAccount.email) {%>
-      <button id="addFriend" class="btn btn-success">Add Friend</button>
+      <button id="add_friend" class="btn btn-success">Add Friend</button>
       <%}%>          
         </p>
         <p align="center" class="account-bio pr-5 pl-5 pb-1" id="bio">

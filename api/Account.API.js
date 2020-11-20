@@ -125,9 +125,8 @@ router.put("/update", async (req, res) => {
       await currentAccount.updateOne({
         email: email,
         password: password,
-        // TODO: update post authorEmail parameter after the change
       });
-
+      // TODO: Add a function that will update the emails in the posts
       await AccountSchema.findOne({ email: email, password: password })
         .then((doc) => {
           res

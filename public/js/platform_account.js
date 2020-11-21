@@ -437,7 +437,7 @@ function addFriend() {
   let accountToAdd = document.getElementById("accountId").textContent;
   fetch(`/api/friends/add/?account=${accountToAdd}`, { method: "PUT" })
     .then((data) => data.json())
-    .then((data) => {
+    .then((_data) => {
       addFriendButton.innerText = "Pending";
       addFriendButton.innerHTML += `
         <i class="fas fa-user-clock"></i>
@@ -446,10 +446,9 @@ function addFriend() {
       buttonContainer.innerHTML += `
         <br />
         <br />
-        <button class="btn btn-danger">Cancel friend request <i class="fas fa-times"></i></button>
+        <button class="btn btn-danger" id="cancel-friend-request">Cancel friend request <i class="fas fa-times"></i></button>
       `;
       addFriendButton.setAttribute("disabled", "true");
-      console.log(data);
     })
     .catch((e) => console.error(e));
 }
@@ -488,6 +487,9 @@ function checkFriendship() {
           <br />
           <button class="btn btn-danger">Cancel friend request <i class="fas fa-times"></i></button>
         `;
+      }
+      if (data.is_current_account === true) {
+        addFriendButton.setAttribute("disabled", "true");
       } else {
         addFriendButton = addFriendButton;
       }

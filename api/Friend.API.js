@@ -56,39 +56,44 @@ router.get("/check", async (req, res) => {
     password: req.cookies.password,
   });
 
-  if (accountToCheck == currentAccount._id) {
-    res.json([]);
-  } else {
-    function get_requested() {
-      for (var i = 0; i < currentAccount.friends.requested.length; i++) {
-        if (currentAccount.friends.requested[i].accountId == accountToCheck) {
-          return currentAccount.friends.requested[i];
-        }
+  function get_requested() {
+    for (var i = 0; i < currentAccount.friends.requested.length; i++) {
+      if (currentAccount.friends.requested[i].accountId == accountToCheck) {
+        return currentAccount.friends.requested[i];
       }
     }
-
-    function get_approved() {
-      for (var i = 0; i < currentAccount.friends.approved.length; i++) {
-        if (currentAccount.friends.approved[i].accountId == accountToCheck) {
-          return currentAccount.friends.approved[i];
-        }
-      }
-    }
-
-    function get_pending() {
-      for (var i = 0; i < currentAccount.friends.pending.length; i++) {
-        if (currentAccount.friends.pending[i].accountId == accountToCheck) {
-          return currentAccount.friends.pending[i];
-        }
-      }
-    }
-
-    res.json({
-      approved: get_approved(),
-      requested: get_requested(),
-      pending: get_pending(),
-    });
   }
+
+  function get_approved() {
+    for (var i = 0; i < currentAccount.friends.approved.length; i++) {
+      if (currentAccount.friends.approved[i].accountId == accountToCheck) {
+        return currentAccount.friends.approved[i];
+      }
+    }
+  }
+
+  function get_pending() {
+    for (var i = 0; i < currentAccount.friends.pending.length; i++) {
+      if (currentAccount.friends.pending[i].accountId == accountToCheck) {
+        return currentAccount.friends.pending[i];
+      }
+    }
+  }
+
+  function get_current_account() {
+    if (currentAccount._id == accountToCheck) {
+      return true;
+    } else {
+      return false;
+    }
+  }
+
+  res.json({
+    approved: get_approved(),
+    requested: get_requested(),
+    pending: get_pending(),
+    is_current_account: get_current_account(),
+  });
 });
 
 module.exports = router;

@@ -18,6 +18,12 @@ function search() {
             dupl = dupl;
           } else {
             let el = document.createElement("a");
+            // This is to add 3 dots if the full name has 10+ characters
+            var trimmed_full_name = (str, speclength) => {
+              if (str.length > speclength)
+                return `${str.slice(0, speclength)}...`;
+              else return str;
+            };
             el.classList.add("p-3");
             el.classList.add("mt-1");
             el.classList.add("shadow-sm");
@@ -26,8 +32,8 @@ function search() {
             el.href = `/user/${result._id}`;
             el.id = result._id;
             el.innerHTML = `
-              <img height="32" src="${result.pictureUrl}">
-              <h6>${result.fullName}</h6>
+              <img class="rounded-lg" height="32" src="${result.pictureUrl}">
+              <h6>${trimmed_full_name(result.fullName, 10)}</h6>
             `;
             foundItemsContainer.appendChild(el);
           }

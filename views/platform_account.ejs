@@ -38,15 +38,10 @@
       ID <a id="accountId" href="#"><%= platformAccount._id%></a>
     </p>
     <p align="center" class="buttons">
-      <% if (currentAccount.email == platformAccount.email) {%>
-      <button id="add_friend" class="btn btn-success disabled" disabled>Add Friend</button>
-      <%}%>
-      <% if (currentAccount.email != platformAccount.email) {%>
       <button id="add_friend" class="btn btn-success">Add Friend</button>
-      <%}%>          
-        </p>
-        <p align="center" class="account-bio pr-5 pl-5 pb-1" id="bio">
-          <%= platformAccount.bio %>
+    </p>
+    <p align="center" class="account-bio pr-5 pl-5 pb-1" id="bio">
+      <%= platformAccount.bio %>
     </p>
   </div>
 

@@ -1,4 +1,3 @@
-"use strict";
 const gulp = require("gulp");
 const minify = require("gulp-minify");
 const cleanCSS = require("gulp-clean-css");
@@ -54,9 +53,15 @@ function compressJS() {
 }
 
 exports.default = function () {
+  compileSCSS();
+  compressJS();
   gulp.watch(
     ["public/scss/**/*.scss", "public/shared/scss/**/*.scss"],
     compileSCSS
   );
   gulp.watch(["public/js/**/*.js", "public/shared/js/**/*.js"], compressJS);
+};
+
+exports.build = function () {
+  return compressJS(), compileSCSS();
 };

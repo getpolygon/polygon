@@ -1,7 +1,7 @@
 <%-include ("./partials/header") %>
 <%- include ("./partials/nav") %>
 
-<link rel="stylesheet" itemprop="url" href="/dist/css/platformAccount/style.css">
+<link rel="stylesheet" href="/dist/js/platform_account.min.js" as="preload" type="module">
 
 <div class="container justify-content-center">
   <div class="container" style="align-items: center; justify-content: center;text-align: center;">
@@ -38,15 +38,10 @@
       ID <a id="accountId" href="#"><%= platformAccount._id%></a>
     </p>
     <p align="center" class="buttons">
-      <% if (currentAccount.email == platformAccount.email) {%>
-      <button id="addFriend" class="btn btn-success disabled" disabled>Add Friend</button>
-      <%}%>
-      <% if (currentAccount.email != platformAccount.email) {%>
-      <button id="addFriend" class="btn btn-success">Add Friend</button>
-      <%}%>          
-        </p>
-        <p align="center" class="account-bio pr-5 pl-5 pb-1" id="bio">
-          <%= platformAccount.bio %>
+      <button id="add_friend" class="btn btn-success">Add Friend</button>
+    </p>
+    <p align="center" class="account-bio pr-5 pl-5 pb-1" id="bio">
+      <%= platformAccount.bio %>
     </p>
   </div>
 
@@ -60,6 +55,5 @@
 </div>
 
 <script src="/dist/shared/js/getCookie.min.js"></script>
-<script src="/dist/shared/js/loader.min.js"></script>
-<script src="/dist/js/platformAccount/script.min.js"></script>
+<script type="module" src="/dist/js/platform_account.min.js"></script>
 <%- include ("./partials/footer") %>

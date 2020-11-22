@@ -116,62 +116,27 @@ router.put("/update", async (req, res) => {
         res.json(e);
       });
   }
-  if (firstName || lastName) {
-    await currentAccount
-      .update({
-        firstName: firstName,
-        lastName: lastName,
-        fullName: `${firstName} ${lastName}`,
-      })
-      .then((response) => {
-        res.json({
-          firstName: response.firstName,
-          lastName: response.lastName,
-          fullName: response.fullName,
-        });
-      })
-      .catch((e) => res.json(e));
-  }
+
+  // TODO: Implement some kind of a dynamic api that will update data everywhere it exists
+
   if (email && password) {
-    if (email) {
-      await currentAccount
-        .updateOne({
-          email: email,
+    const checkDupl = await AccountSchema.findOne({ email: email });
+    if (checkDupl == null) {
+      await currentAccount.updateOne({
+        email: email,
+        password: password,
+      });
+      // TODO: Add a function that will update the emails in the posts
+      await AccountSchema.findOne({ email: email, password: password })
+        .then((doc) => {
+          res
+            .cookie("email", doc.email)
+            .cookie("password", doc.password)
+            .json({ email: doc.email, password: doc.password, status: "OK" });
         })
-        .then((response) => {
-          res.json(response.email);
-        })
-        .catch((e) => {
-          res.json(e);
-        });
-    }
-    if (password) {
-      await currentAccount
-        .updateOne({
-          password: password,
-        })
-        .then((response) => {
-          res.json(response.password);
-        })
-        .catch((e) => {
-          res.json(e);
-        });
-    }
-    if (email && password) {
-      await currentAccount
-        .update({
-          email: email,
-          password: password,
-        })
-        .then((response) => {
-          res.json({
-            email: response.email,
-            password: response.password,
-          });
-        })
-        .catch((e) => {
-          res.json(e);
-        });
+        .catch((e) => res.json(e));
+    } else {
+      res.json({ status: "ERR_ACC_EXISTS" });
     }
   }
 });

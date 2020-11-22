@@ -10,7 +10,11 @@ router.get("/fetch", async (req, res) => {
   });
   const { dismiss } = req.query;
   if (dismiss) {
+    const otherAccount = await AccountSchema.friends.findOne({ _id: dismiss });
+    console.log(otherAccount);
     const { notification } = req.query;
+    // TODO: This is not working I guess
+    await AccountSchema.findByIdAndDelete(notification);
     await currentAccount.friends.pending.pull(notification);
     await currentAccount
       .save()

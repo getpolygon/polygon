@@ -67,7 +67,7 @@ router.get("/user/:accountId", async (req, res) => {
       if (!platformAccount) {
         res.redirect("/static/no-account.html");
       } else {
-        res.render("platformAccount", {
+        res.render("platform_account", {
           currentAccount: currentAccount,
           platformAccount: platformAccount,
           title: `${platformAccount.fullName} | ArmSocial`,

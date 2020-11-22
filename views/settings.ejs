@@ -12,14 +12,35 @@
       Account
     </h6>
     <hr class="solid">
-    <label for="email">Email</label>
-    <input required placeholder="<%= currentAccount.email %>" class="form-control w-50" type="email" name="email"
-      id="email" />
-    <label class="mt-2" for="password">Password</label>
-    <input required placeholder="********" class="form-control mt-2 w-50" type="password" name="password"
-      id="password" />
-    <button style="font-family: url('/font/HelveticaNowText-Bold.ttf') !important;" class="btn btn-outline-primary mt-2"
-      id="accountSave">SAVE</button>
+
+    <div>
+      <h4>Basic Info</h4>
+      <form>
+        <label for="firstName" class="mt-2">First name<span class="text-danger">*</span></label>
+        <input type="text" required placeholder="<%= currentAccount.firstName %>" class="form-control w-50"
+          name="firstName" id="firstName" />
+        <label class="mt-2" for="lastName">Last name<span class="text-danger">*</span></label>
+        <input type="text" required placeholder="<%= currentAccount.lastName %>" class="form-control mt w-50"
+          name="lastName" id="lastName" />
+        <button class="btn btn-outline-primary btn-block mt-2 w-50" type="button" id="accountSaveBasic">UPDATE</button>
+      </form>
+      <br />
+      <br />
+      <hr class="solid" />
+      <br />
+      <br />
+      <h4>Credentials</h4>
+      <form class="mt-2">
+        <label class="mt-2" for="email">Email<span class="text-danger">*</span></label>
+        <input required placeholder="<%= currentAccount.email %>" class="form-control w-50" type="email" name="email"
+          id="email" />
+        <label class="mt-2" for="password">Password<span class="text-danger">*</span></label>
+        <input required placeholder="********" class="form-control w-50" type="password" name="password"
+          id="password" />
+        <button class="btn btn-outline-primary btn-block mt-2 w-50" type="button" id="accountSave">UPDATE</button>
+      </form>
+    </div>
+
 
   </div>
 
@@ -59,5 +80,5 @@
 </div>
 
 <script src="/dist/shared/js/getCookie.min.js"></script>
-<script src="/dist/js/settings/script.min.js"></script>
+<script type="module" src="/dist/js/settings.min.js"></script>
 <%- include ("./partials/footer") %>

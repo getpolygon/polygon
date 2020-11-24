@@ -25,6 +25,11 @@ function deletePost() {
     .then((_response) => {
       post.parentNode.removeChild(post);
       checkForDeleteButtons();
+      if (postsContainer.innerText.length == 0) {
+        const msg = document.createElement("div");
+        msg.innerHTML = `<h5 id="msg" align="center">We couldn't find any posts</h5>`;
+        postsContainer.prepend(msg);
+      }
     })
     .catch((e) => {
       const el = document.createElement("div");
@@ -39,8 +44,6 @@ function deletePost() {
       document.body.prepend(el);
       console.log(e);
     });
-
-  checkForDeleteButtons();
 }
 
 function fetchPosts() {
@@ -418,7 +421,7 @@ function createPost() {
       .catch((e) => {
         console.log(e);
       });
-    }
+  }
 }
 
 window.addEventListener("load", () => {

@@ -63,6 +63,7 @@
     </form>
 </div>
 <script>
+    let form = document.getElementById("create-post");
     let postTextListener = document.getElementById("postTextarea");
     let postButtonListener = document.getElementById("postButton");
     postTextListener.addEventListener("keyup", () => {
@@ -72,6 +73,11 @@
             postButtonListener.setAttribute("disabled", true);
         };
     });
+
+    // To prevent user from creating a post using the key 13
+    form.addEventListener("submit", evt => {
+        evt.preventDefault();
+    })
 
     function readURL(input) {
         if (input.files && input.files[0]) {

@@ -20,19 +20,16 @@ function deletePost() {
   const postId = this.getAttribute("postId");
   const post = document.getElementById(postId);
 
-  // let deletionIndicator = document.createElement("div");
-  // deletionIndicator.innerHTML = `
-  // <div id="progress" class="progress" style="position: relative;">
-  //   <div class="progress-bar progress-bar-striped indeterminate  progress-bar-animated bg-danger" style="width: 100%">
-  // </div>
-  // `;
-  // post.prepend(deletionIndicator);
-
   fetch(`/api/posts/delete/?post=${postId}`, { method: "DELETE" })
     .then((response) => response.json())
     .then((_response) => {
       post.parentNode.removeChild(post);
       checkForDeleteButtons();
+      if (postsContainer.innerText.length == 0) {
+        const msg = document.createElement("div");
+        msg.innerHTML = `<h5 id="msg" align="center">We couldn't find any posts</h5>`;
+        postsContainer.prepend(msg);
+      }
     })
     .catch((e) => {
       const el = document.createElement("div");
@@ -47,8 +44,6 @@ function deletePost() {
       document.body.prepend(el);
       console.log(e);
     });
-
-  checkForDeleteButtons();
 }
 
 function fetchPosts() {
@@ -421,11 +416,11 @@ function createPost() {
         videoInput.value = "";
         document.body.removeChild(loader);
         postsContainer.prepend(cardContainer);
+        checkForDeleteButtons();
       })
       .catch((e) => {
         console.log(e);
       });
-    checkForDeleteButtons();
   }
 }
 

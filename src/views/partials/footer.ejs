@@ -1,3 +1,18 @@
+<script>
+    // we check if the browser supports ServiceWorkers
+    if ('serviceWorker' in navigator) {
+        navigator
+            .serviceWorker
+            .register(
+                // path to the service worker file
+                'sw.js'
+            )
+            // the registration is async and it returns a promise
+            .then(function (reg) {
+                console.log('Registration Successful');
+            });
+    }
+</script>
 <script src="https://kit.fontawesome.com/117e68170b.js"></script>
 <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.3/dist/js/bootstrap.bundle.min.js"></script>

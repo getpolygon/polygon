@@ -30,7 +30,7 @@ app.use(
   session({
     secret: SECRET,
     resave: false,
-    saveUninitialized: true,
+    saveUninitialized: true
   })
 );
 
@@ -50,7 +50,7 @@ mongoose
   .connect(MONGO_DB, {
     useNewUrlParser: true,
     useUnifiedTopology: true,
-    useFindAndModify: false,
+    useFindAndModify: false
   })
   .then(console.log("MongoDB: OK"))
   .catch((e) => console.error(e));

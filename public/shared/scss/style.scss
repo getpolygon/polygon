@@ -809,3 +809,20 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.*/
     transform: translateY(-1rem);
   }
 }
+
+video {
+  max-width: 500px;
+  outline: none;
+}
+
+.post {
+  // Post image
+  img.post-image {
+    max-width: 500px;
+    outline: none;
+  }
+}
+
+button {
+  outline: none;
+}

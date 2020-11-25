@@ -4,20 +4,20 @@ const { unlink } = require("fs");
 const { fromUnixTime, format } = require("date-fns");
 // MinIO Configuration
 const {
-  MINIO_HOST,
-  MINIO_PORT,
-  MINIO_ACCKEY,
-  MINIO_SECKEY,
-  MINIO_USESSL,
-} = require("../minio.config");
+  ENDPOINT,
+  PORT,
+  ACCKEY,
+  SECKEY,
+  USESSL,
+} = require("../../config/minio");
 const mongoose = require("mongoose");
 const minio = require("minio");
 const MinIOClient = new minio.Client({
-  endPoint: MINIO_HOST,
-  port: MINIO_PORT,
-  accessKey: MINIO_ACCKEY,
-  secretKey: MINIO_SECKEY,
-  useSSL: MINIO_USESSL,
+  endPoint: ENDPOINT,
+  port: PORT,
+  accessKey: ACCKEY,
+  secretKey: SECKEY,
+  useSSL: USESSL,
 });
 const multer = require("multer");
 const storage = multer.diskStorage({

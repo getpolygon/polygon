@@ -1,5 +1,5 @@
-// .env configuration
-require("dotenv").config();
+const { MONGO_DB } = require("../config/mongo");
+const { SECRET } = require("../config/globals");
 
 // Dependencies
 const cors = require("cors");
@@ -24,17 +24,17 @@ app.use(morgan("dev"));
 app.use(compression());
 app.use(cookieParser());
 app.use(bodyParser.json());
-app.use(express.static("./public"));
+app.use(express.static("public/"));
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(
   session({
-    secret: process.env.SECRET,
+    secret: SECRET,
     resave: false,
     saveUninitialized: true,
   })
 );
 
-app.set("views", "./views");
+app.set("views", "src/views/");
 app.set("view engine", "ejs");
 
 // Use the routes
@@ -47,7 +47,7 @@ app.get("*", (req, res) => res.redirect("/static/error.html"));
 
 // Connect to MongoDB
 mongoose
-  .connect(process.env.MONGO_DB, {
+  .connect(MONGO_DB, {
     useNewUrlParser: true,
     useUnifiedTopology: true,
     useFindAndModify: false,

@@ -27,7 +27,7 @@ class ImageComponent {
           ${text}
         </h6>
         <div class="container p-2">
-          <img src="${image}" width="500" alt="image" />
+          <img class="post-image" src="${image}" width="500" alt="image" />
         </div>
         <h6 class="text-secondary">${postDate}</h6>
       </div>       
@@ -49,7 +49,7 @@ class ImageComponent {
           ${text}
         </h6>
         <div class="container p-2">
-          <img src="${image}" width="500" alt="image" />
+          <img class="post-image" src="${image}" width="500" alt="image" />
         </div>
         <h6 class="text-secondary">${postDate}</h6>
       </div>       

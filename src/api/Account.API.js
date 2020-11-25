@@ -1,13 +1,19 @@
 const router = require("express").Router();
-const minioConfig = require("../minio.config");
+const {
+  ENDPOINT,
+  PORT,
+  ACCKEY,
+  SECKEY,
+  USESSL,
+} = require("../../config/minio");
 // Instead of Firebase Storage, we are using MinIO
 const minio = require("minio");
 const MinIOClient = new minio.Client({
-  endPoint: minioConfig.MINIO_HOST,
-  port: minioConfig.MINIO_PORT,
-  accessKey: minioConfig.MINIO_ACCKEY,
-  secretKey: minioConfig.MINIO_SECKEY,
-  useSSL: minioConfig.MINIO_USESSL,
+  endPoint: ENDPOINT,
+  port: PORT,
+  accessKey: ACCKEY,
+  secretKey: SECKEY,
+  useSSL: USESSL,
 });
 const AccountSchema = require("../models/account");
 const emailValidator = require("email-validator");

@@ -1,5 +1,4 @@
 node_modules/
-tmp/
+config/
 dist/
-.env
-minio.config.js
+tmp/

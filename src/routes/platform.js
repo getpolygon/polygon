@@ -18,7 +18,7 @@ router.get("/", async (req, res) => {
     } else {
       await AccountSchema.findOne({
         email: req.cookies.email,
-        password: req.cookies.password,
+        password: req.cookies.password
       })
         .then((currentAccount) => {
           if (currentAccount == null) {
@@ -29,7 +29,7 @@ router.get("/", async (req, res) => {
           } else {
             res.render("platform", {
               currentAccount: currentAccount,
-              title: "ArmSocial",
+              title: "ArmSocial"
             });
           }
         })
@@ -55,7 +55,7 @@ router.get("/user/:accountId", async (req, res) => {
       const accountId = req.params.accountId;
       const currentAccount = await AccountSchema.findOne({
         email: req.cookies.email,
-        password: req.cookies.password,
+        password: req.cookies.password
       });
       const platformAccount = await AccountSchema.findById(accountId);
       if (currentAccount == null) {
@@ -70,7 +70,7 @@ router.get("/user/:accountId", async (req, res) => {
         res.render("platform_account", {
           currentAccount: currentAccount,
           platformAccount: platformAccount,
-          title: `${platformAccount.fullName} | ArmSocial`,
+          title: `${platformAccount.fullName} | ArmSocial`
         });
       }
     }
@@ -84,14 +84,14 @@ router.get("/notifications", async (req, res) => {
   try {
     const currentAccount = await AccountSchema.findOne({
       email: req.cookies.email,
-      password: req.cookies.password,
+      password: req.cookies.password
     });
     if (currentAccount == null) {
       res.clearCookie("email").clearCookie("password").redirect("/auth/login");
     } else {
       res.render("notifications", {
         currentAccount: currentAccount,
-        title: `Notifications | ArmSocial`,
+        title: `Notifications | ArmSocial`
       });
     }
   } catch (err) {
@@ -110,7 +110,7 @@ router.get("/settings", async (req, res) => {
     } else {
       const currentAccount = await AccountSchema.findOne({
         email: email,
-        password: password,
+        password: password
       });
       if (currentAccount == null) {
         res
@@ -120,7 +120,7 @@ router.get("/settings", async (req, res) => {
       } else
         res.render("settings", {
           currentAccount: currentAccount,
-          title: "Settings | ArmSocial",
+          title: "Settings | ArmSocial"
         });
     }
   } catch (err) {
@@ -129,8 +129,9 @@ router.get("/settings", async (req, res) => {
 });
 
 // Logout
-router.post("/logout/:accountId", (req, res) => {
+router.post("/logout", (req, res) => {
   res.clearCookie("email").clearCookie("password").redirect("/");
+  req.session.destroy;
 });
 
 module.exports = router;

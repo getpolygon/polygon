@@ -4,8 +4,8 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "start": "node src/index",
-    "dev": "nodemon src/index",
+    "start": "node index",
+    "dev": "nodemon index",
     "build": "gulp build"
   },
   "author": "Michael Grigoryan",
@@ -23,7 +23,7 @@
     "express-session": "^1.17.1",
     "lodash": "^4.17.20",
     "minio": "^7.0.16",
-    "mongoose": "^5.10.9",
+    "mongoose": "^5.10.15",
     "morgan": "^1.10.0",
     "multer": "^1.4.2"
   },
@@ -32,7 +32,7 @@
     "gulp-clean-css": "^4.3.0",
     "gulp-minify": "^3.1.0",
     "gulp-sass": "^4.1.0",
-    "nodemon": "^2.0.5",
+    "nodemon": "^2.0.6",
     "parcel-bundler": "^1.12.4"
   }
 }

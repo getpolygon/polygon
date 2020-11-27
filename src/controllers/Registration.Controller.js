@@ -3,8 +3,9 @@ const {
   PORT,
   ACCKEY,
   SECKEY,
-  USESSL,
+  USESSL
 } = require("../../config/minio");
+const bcrypt = require("bcrypt");
 const router = require("express").Router();
 const mongoose = require("mongoose");
 const multer = require("multer");
@@ -13,17 +14,16 @@ const storage = multer.diskStorage({
   destination: "tmp/",
   filename: (err, file, cb) => {
     cb(null, `${file.originalname}`);
-  },
+  }
 });
 const upload = multer({ storage: storage });
-// Instead of Firebase Storage, we are using MinIO
 const minio = require("minio");
 const MinIOClient = new minio.Client({
   endPoint: ENDPOINT,
   port: PORT,
   accessKey: ACCKEY,
   secretKey: SECKEY,
-  useSSL: USESSL,
+  useSSL: USESSL
 });
 const AccountSchema = require("../models/account");
 const avatarLinks = [
@@ -32,7 +32,7 @@ const avatarLinks = [
   "/static/img/3.png",
   "/static/img/4.png",
   "/static/img/5.png",
-  "/static/img/6.png",
+  "/static/img/6.png"
 ];
 
 // Registration Page
@@ -55,7 +55,6 @@ router.post("/", upload.single("avatar"), async (req, res) => {
     lastName: req.body.lastName,
     fullName: `${req.body.firstName} ${req.body.lastName}`,
     email: email,
-    password: req.body.password,
     bio: req.body.bio,
     // pictureUrl: pictureUrl,
     isPrivate: req.body.privateCheck ? true : false,
@@ -63,9 +62,9 @@ router.post("/", upload.single("avatar"), async (req, res) => {
       pending: [],
       approved: [],
       dismissed: [],
-      requested: [],
+      requested: []
     },
-    date: Date.now(),
+    date: Date.now()
   });
 
   // If a custom image was selected by the client set the picture URL to Firebase's  CDN
@@ -78,7 +77,7 @@ router.post("/", upload.single("avatar"), async (req, res) => {
         `${Account._id}/${Account._id}.png`,
         req.file.path,
         {
-          "Content-Type": req.file.mimetype,
+          "Content-Type": req.file.mimetype
         }
       );
       // Getting the link for the user's image
@@ -94,8 +93,17 @@ router.post("/", upload.single("avatar"), async (req, res) => {
     }
   };
 
+  const hashPass = async () => {
+    let pass = await bcrypt.hash(req.body.password, 10).catch((e) => {
+      console.error(e);
+    });
+    return pass;
+  };
+
+  const password = await hashPass();
   const pictureUrl = await url();
   Account.pictureUrl = pictureUrl;
+  Account.password = password;
 
   await Account.save()
     .then(() => {

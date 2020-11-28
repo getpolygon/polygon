@@ -4,7 +4,7 @@ const {
   PORT,
   ACCKEY,
   SECKEY,
-  USESSL,
+  USESSL
 } = require("../../config/minio");
 // Instead of Firebase Storage, we are using MinIO
 const minio = require("minio");
@@ -13,7 +13,7 @@ const MinIOClient = new minio.Client({
   port: PORT,
   accessKey: ACCKEY,
   secretKey: SECKEY,
-  useSSL: USESSL,
+  useSSL: USESSL
 });
 const AccountSchema = require("../models/account");
 const emailValidator = require("email-validator");
@@ -31,7 +31,7 @@ router.put("/check", async (req, res) => {
     // If email validation fails
     if (validateEmail == false) {
       res.json({
-        emailValidity: false,
+        emailValidity: false
       });
     }
 
@@ -42,27 +42,27 @@ router.put("/check", async (req, res) => {
           if (doc == null) {
             res.json({
               result: false,
-              emailValidity: true,
+              emailValidity: true
             });
             return;
           }
           if (doc.email == inputEmail) {
             res.json({
               result: true,
-              emailValidity: true,
+              emailValidity: true
             });
             return;
           }
           if (!doc) {
             res.json({
               result: false,
-              emailValidity: true,
+              emailValidity: true
             });
             return;
           } else {
             res.json({
               result: false,
-              emailValidity: true,
+              emailValidity: true
             });
             return;
           }
@@ -74,7 +74,7 @@ router.put("/check", async (req, res) => {
   } else {
     AccountSchema.findOne({
       email: email,
-      password: password,
+      password: password
     })
       .then((doc) => {
         if (doc) {
@@ -94,14 +94,14 @@ router.put("/check", async (req, res) => {
 router.put("/update", async (req, res) => {
   let currentAccount = await AccountSchema.findOne({
     email: req.cookies.email,
-    password: req.cookies.password,
+    password: req.cookies.password
   });
   let { firstName, lastName, bio, email, password, privacy } = req.query;
 
   if (privacy) {
     await currentAccount
       .updateOne({
-        isPrivate: privacy,
+        isPrivate: privacy
       })
       .then((response) => {
         res.json(response.privacy);
@@ -113,7 +113,7 @@ router.put("/update", async (req, res) => {
   if (bio) {
     await currentAccount
       .updateOne({
-        bio: bio,
+        bio: bio
       })
       .then((response) => {
         res.json(response.bio);
@@ -123,21 +123,31 @@ router.put("/update", async (req, res) => {
       });
   }
 
-  // TODO: Implement some kind of a dynamic api that will update data everywhere it exists
-
   if (email && password) {
     const checkDupl = await AccountSchema.findOne({ email: email });
     if (checkDupl == null) {
+      password = await bcrypt.hash(password, 10).catch((e) => console.error(e));
+      // Updating the actual account
       await currentAccount.updateOne({
         email: email,
-        password: password,
+        password: password
       });
-      // TODO: Add a function that will update the emails in the posts
+
+      if (currentAccount.posts.length != 0) {
+        // Updating the email in each post
+        currentAccount.posts.forEach((obj) => {
+          obj.authorEmail = email;
+        });
+        await currentAccount.save();
+      }
+
+      // Finding the updated account and sending it to the client
       await AccountSchema.findOne({ email: email, password: password })
         .then((doc) => {
           res
-            .cookie("email", doc.email)
-            .cookie("password", doc.password)
+            // Setting updated cookies
+            .cookie("email", email)
+            .cookie("password", password)
             .json({ email: doc.email, password: doc.password, status: "OK" });
         })
         .catch((e) => res.json(e));
@@ -160,13 +170,13 @@ router.delete("/delete", async (req, res) => {
 
   await AccountSchema.findOneAndDelete({
     email: email,
-    password: password,
+    password: password
   })
     .then((result) => {
       res.clearCookie("email");
       res.clearCookie("password");
       res.json({
-        result: result,
+        result: result
       });
     })
     .catch((e) => {

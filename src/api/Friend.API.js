@@ -7,7 +7,7 @@ const AccountSchema = require("../models/account");
 router.put("/add", async (req, res) => {
   var currentAccount = await AccountSchema.findOne({
     email: req.cookies.email,
-    password: req.cookies.password,
+    password: req.cookies.password
   });
   /*
   TODO: Add duplicate friend request handling ( using axios )
@@ -23,9 +23,9 @@ router.put("/add", async (req, res) => {
         email: addedAccount.email,
         bio: addedAccount.bio,
         pictureUrl: addedAccount.pictureUrl,
-        isPrivate: addedAccount.isPrivate,
-      },
-    },
+        isPrivate: addedAccount.isPrivate
+      }
+    }
   });
 
   await addedAccount.updateOne({
@@ -37,15 +37,15 @@ router.put("/add", async (req, res) => {
         email: currentAccount.email,
         bio: currentAccount.bio,
         pictureUrl: currentAccount.pictureUrl,
-        isPrivate: currentAccount.isPrivate,
-      },
-    },
+        isPrivate: currentAccount.isPrivate
+      }
+    }
   });
 
   await currentAccount.save();
   await addedAccount.save();
   res.json({
-    result: "OK",
+    result: "OK"
   });
 });
 
@@ -53,7 +53,7 @@ router.get("/check", async (req, res) => {
   var accountToCheck = req.query.accountId;
   var currentAccount = await AccountSchema.findOne({
     email: req.cookies.email,
-    password: req.cookies.password,
+    password: req.cookies.password
   });
 
   function get_requested() {
@@ -92,7 +92,7 @@ router.get("/check", async (req, res) => {
     approved: get_approved(),
     requested: get_requested(),
     pending: get_pending(),
-    is_current_account: get_current_account(),
+    is_current_account: get_current_account()
   });
 });
 

@@ -1,24 +1,49 @@
-<nav class="navbar navbar-light bg-white sticky-top shadow-sm mb-5">
+<nav class="navbar navbar-light d-flex bg-white sticky-top shadow-sm mb-5">
   <!-- Logo -->
-  <a class="navbar-brand ml-3" href="/">
-    <img src="/favicon.ico" width="30" height="30" class="d-inline-block align-top rounded-lg">
+  <a class="navbar-brand ml-2" href="/">
+    <img
+      src="/favicon.ico"
+      width="30"
+      height="30"
+      class="d-inline-block align-top rounded-lg"
+    />
     Armenia Social
   </a>
   <!-- Search box -->
-  <div style="width: 50%;" class="container">
-    <input id="search" class="form-control" type="search" placeholder="Search" aria-label="Search" />
-  </div>
+  <input
+    style="width: 45%; width: 45vw"
+    id="search"
+    class="form-control ml-2 mr-2"
+    type="search"
+    placeholder="Search"
+    aria-label="Search"
+  />
   <!-- Dropdown -->
-  <div class="btn-group mr-3">
-    <button type="button" id="profileContainer" class="btn dropdown-toggle" data-toggle="dropdown" aria-haspopup="true"
-      aria-expanded="false">
-      <img src="<%= currentAccount.pictureUrl %>" class="rounded-circle" height="32" width="32"
-        alt="<%= currentAccount.pictureUrl %>">
-      <span><%= currentAccount.fullName %></span>
+  <div class="btn-group mr-2">
+    <button
+      type="button"
+      id="profileContainer"
+      class="btn dropdown-toggle"
+      data-toggle="dropdown"
+      aria-haspopup="true"
+      aria-expanded="false"
+    >
+      <img
+        src="<%= currentAccount.pictureUrl %>"
+        class="rounded-circle shadow-sm"
+        height="34"
+        width="34"
+        alt="<%= currentAccount.pictureUrl %>"
+      />
+      <span class="ml-1"><%= currentAccount.fullName %></span>
     </button>
     <div class="dropdown-menu dropdown-menu-right">
       <!-- My Account -->
-      <a href="/user/<%= currentAccount._id %>" class="dropdown-item" type="button">
+      <a
+        href="/user/<%= currentAccount._id %>"
+        class="dropdown-item"
+        type="button"
+      >
         <i class="fas fa-user"></i>
         My account
       </a>
@@ -26,13 +51,13 @@
       <a href="/notifications" class="dropdown-item">
         <% if (currentAccount.friends.pending.length > 0) { %>
         <i class="fas fa-bell">
-          <span class="badge badge-danger"><%= currentAccount.friends.pending.length %></span>
+          <span class="badge badge-danger"
+            ><%= currentAccount.friends.pending.length %></span
+          >
         </i>
-        <%}%>
-              <% if (currentAccount.friends.pending.length == 0){%>
+        <%}%> <% if (currentAccount.friends.pending.length == 0){%>
         <i class="fas fa-bell"></i>
-        <%}%>
-              Notifications
+        <%}%> Notifications
       </a>
       <!-- Settings -->
       <a href="/settings" class="dropdown-item" type="button">
@@ -40,18 +65,28 @@
         User Settings
       </a>
       <!-- Logout -->
-      <hr class="solid">
-      <a class="dropdown-item text-dark" type="button" href="#!" id="submitLogout">
+      <hr class="solid" />
+      <a
+        class="dropdown-item text-dark"
+        type="button"
+        href="#!"
+        id="submitLogout"
+      >
         <i class="fas fa-sign-out-alt">
-          <form id="logout" method="POST" class="bg-transparent" action="/logout" %>"></form>
+          <form
+            id="logout"
+            method="POST"
+            class="bg-transparent"
+            action="/logout"
+            %
+          ></form>
         </i>
         Logout
       </a>
     </div>
   </div>
 
-  <div role="listbox" class="container list-group" id="foundItems">
-  </div>
+  <div role="listbox" class="container list-group" id="foundItems"></div>
 </nav>
 
 <script src="/dist/js/nav.min.js"></script>

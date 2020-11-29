@@ -42,6 +42,7 @@ label {
 .post {
   .submitDeleteForm {
     visibility: hidden;
+    color: red;
   }
 }
 .post:hover {
@@ -825,4 +826,17 @@ video {
 
 button {
   outline: none;
+}
+
+// The text and image of the user displayed on the top of the card
+.post-account-component-container {
+  align-items: center;
+}
+
+.profile-photo {
+  transition: 150ms;
+}
+
+.profile-photo:hover {
+  filter: brightness(50%)
 }

@@ -6,7 +6,7 @@ const AccountSchema = require("../models/account");
 router.get("/fetch", async (req, res) => {
   const currentAccount = await AccountSchema.findOne({
     email: req.cookies.email,
-    password: req.cookies.password,
+    password: req.cookies.password
   });
   const { dismiss } = req.query;
   if (dismiss) {

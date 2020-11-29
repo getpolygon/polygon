@@ -1,3 +1,7 @@
+const BW = require("bad-words");
+const BadWordsFilter = new BW({ placeHolder: "*" });
+const sanitizeHtml = require("sanitize-html");
+const linkifyUrls = require("linkify-urls");
 // For deleting files
 const { unlink } = require("fs");
 // For displaying dates
@@ -8,7 +12,7 @@ const {
   PORT,
   ACCKEY,
   SECKEY,
-  USESSL,
+  USESSL
 } = require("../../config/minio");
 const mongoose = require("mongoose");
 const minio = require("minio");
@@ -17,7 +21,7 @@ const MinIOClient = new minio.Client({
   port: PORT,
   accessKey: ACCKEY,
   secretKey: SECKEY,
-  useSSL: USESSL,
+  useSSL: USESSL
 });
 const multer = require("multer");
 const storage = multer.diskStorage({
@@ -25,10 +29,10 @@ const storage = multer.diskStorage({
   filename: (err, file, cb) => {
     cb(null, `${file.originalname.toString()}`);
     if (err) console.error(err);
-  },
+  }
 });
 const upload = multer({
-  storage: storage,
+  storage: storage
 });
 const router = require("express").Router();
 const AccountSchema = require("../models/account");
@@ -37,13 +41,13 @@ const AccountSchema = require("../models/account");
 router.get("/fetch", async (req, res) => {
   const currentAccount = await AccountSchema.findOne({
     email: req.cookies.email,
-    password: req.cookies.password,
+    password: req.cookies.password
   });
-  let { accountId } = req.query;
+  let { accountId, postId, heart } = req.query;
 
   if (!accountId) {
     await AccountSchema.find({
-      isPrivate: false,
+      isPrivate: false
     }) // Getting posts from all the public accounts
       .where("_id") // These lines exclude current account from the query
       .ne(currentAccount._id) // These lines exclude current account from the query
@@ -89,6 +93,24 @@ router.get("/fetch", async (req, res) => {
       })
       .catch((e) => console.error(e));
   }
+
+  // TODO: Improve liking algorithm
+  if (postId && heart) {
+    let docs = await AccountSchema.find().catch((e) => console.error(e));
+    for (var i = 0; i < docs.length; i++) {
+      for (var v = 0; v < docs[i].posts.length; v++) {
+        let post = docs[v].posts[v];
+        post.hearts++;
+        await docs[v].save();
+        // TODO: ERROR: ( UnhandledPromiseRejectionWarning: Error [ERR_HTTP_HEADERS_SENT]: Cannot set headers after they are sent to the client )
+        // MINOR BUG
+        return res.json(post);
+      }
+    }
+  }
+
+  // if (postId && !heart) {
+  // }
 });
 
 // CREATE A POST
@@ -98,23 +120,38 @@ router.put(
   async (req, res) => {
     let authorAccount = await AccountSchema.findOne({
       email: req.cookies.email,
-      password: req.cookies.password,
+      password: req.cookies.password
     });
     let author = authorAccount.fullName;
     let authorImage = authorAccount.pictureUrl;
     let authorId = authorAccount._id;
     let { q } = req.query;
 
+    let text =
+      // Sanitizing HTML to dodge XSS attacks
+      sanitizeHtml(
+        // Creating an HTML link for every URL
+        linkifyUrls(
+          // Filtering out bad words
+          BadWordsFilter.clean(req.body.text),
+          // Setting some attributes for our newly created HTML
+          {
+            attributes: { target: "_blank" }
+          }
+        )
+      );
+
     if (q == "txt") {
       const Post = {
         _id: new mongoose.Types.ObjectId(),
-        text: req.body.text,
+        text: text,
         author: author,
         authorEmail: req.cookies.email,
         authorId: authorId,
         authorImage: authorImage,
+        hearts: 0,
         hasAttachments: false,
-        datefield: Date.now(),
+        datefield: Date.now()
       };
       authorAccount.posts.push(Post);
       await authorAccount
@@ -135,7 +172,7 @@ router.put(
         `${authorAccount.email}/media/${req.files.video[0].originalname}`,
         req.files.video[0].path,
         {
-          "Content-Type": req.files.video[0].mimetype,
+          "Content-Type": req.files.video[0].mimetype
         }
       );
       const presignedUrl = await MinIOClient.presignedGetObject(
@@ -145,21 +182,22 @@ router.put(
 
       const Post = {
         _id: new mongoose.Types.ObjectId(),
-        text: req.body.text,
+        text: text,
         author: author,
         authorEmail: req.cookies.email,
         authorId: authorId,
         authorImage: authorImage,
         hasAttachments: true,
+        hearts: 0,
         attachments: {
           hasAttachedImage: false,
           hasAttachedVideo: true,
           video: {
             attachedVideo: presignedUrl,
-            attachedVideoFileName: req.files.video[0].originalname.toString(),
-          },
+            attachedVideoFileName: req.files.video[0].originalname.toString()
+          }
         },
-        datefield: Date.now(),
+        datefield: Date.now()
       };
 
       authorAccount.posts.push(Post);
@@ -184,7 +222,7 @@ router.put(
         `${authorAccount.email}/media/${req.files.image[0].originalname}`,
         req.files.image[0].path,
         {
-          "Content-Type": req.files.image[0].mimetype,
+          "Content-Type": req.files.image[0].mimetype
         }
       );
       const presignedUrl = await MinIOClient.presignedGetObject(
@@ -194,21 +232,22 @@ router.put(
 
       const Post = {
         _id: new mongoose.Types.ObjectId(),
-        text: req.body.text,
+        text: text,
         author: author,
         authorEmail: req.cookies.email,
         authorId: authorId,
         authorImage: authorImage,
         hasAttachments: true,
+        hearts: 0,
         attachments: {
           hasAttachedImage: true,
           hasAttachedVideo: false,
           image: {
             attachedImage: presignedUrl,
-            attachedImageFileName: req.files.image[0].originalname.toString(),
-          },
+            attachedImageFileName: req.files.image[0].originalname.toString()
+          }
         },
-        datefield: Date.now(),
+        datefield: Date.now()
       };
 
       authorAccount.posts.push(Post);
@@ -232,7 +271,7 @@ router.put(
         `${authorAccount.email}/media/${req.files.video[0].originalname}`,
         req.files.video[0].path,
         {
-          "Content-Type": req.files.video[0].mimetype,
+          "Content-Type": req.files.video[0].mimetype
         }
       );
       await MinIOClient.fPutObject(
@@ -240,7 +279,7 @@ router.put(
         `${authorAccount.email}/media/${req.files.image[0].originalname}`,
         req.files.image[0].path,
         {
-          "Content-Type": req.files.image[0].mimetype,
+          "Content-Type": req.files.image[0].mimetype
         }
       );
       const presignedUrlImage = await MinIOClient.presignedGetObject(
@@ -254,25 +293,26 @@ router.put(
 
       const Post = {
         _id: new mongoose.Types.ObjectId(),
-        text: req.body.text,
+        text: text,
         author: author,
         authorEmail: req.cookies.email,
         authorId: authorId,
         authorImage: authorImage,
+        hearts: 0,
         hasAttachments: true,
         attachments: {
           hasAttachedImage: true,
           hasAttachedVideo: true,
           video: {
             attachedVideo: presignedUrlVideo,
-            attachedVideoFileName: req.files.video[0].originalname.toString(),
+            attachedVideoFileName: req.files.video[0].originalname.toString()
           },
           image: {
             attachedImage: presignedUrlImage,
-            attachedImageFileName: req.files.image[0].originalname.toString(),
-          },
+            attachedImageFileName: req.files.image[0].originalname.toString()
+          }
         },
-        datefield: Date.now(),
+        datefield: Date.now()
       };
 
       authorAccount.posts.push(Post);
@@ -304,7 +344,7 @@ router.delete("/delete", async (req, res) => {
 
   await AccountSchema.findOne({
     email: currentEmail,
-    password: currentPassword,
+    password: currentPassword
   })
     .then(async (doc) => {
       let foundPost = doc.posts.id(post);
@@ -360,7 +400,7 @@ router.delete("/delete", async (req, res) => {
           .save()
           .then(
             res.json({
-              result: "Removed",
+              result: "Removed"
             })
           )
           .catch((e) => console.error(e));
@@ -370,7 +410,7 @@ router.delete("/delete", async (req, res) => {
           .save()
           .then(
             res.json({
-              result: "Removed",
+              result: "Removed"
             })
           )
           .catch((e) => console.error(e));

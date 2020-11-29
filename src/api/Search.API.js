@@ -3,12 +3,12 @@ const AccountSchema = require("../models/account");
 router.get("/", async (req, res) => {
   const currentAccount = await AccountSchema.findOne({
     email: req.cookies.email,
-    password: req.cookies.password,
+    password: req.cookies.password
   });
   const { query } = req.query;
   const regex = new RegExp(query, "gu");
   await AccountSchema.find({
-    fullName: regex,
+    fullName: regex
   })
     .where("_id")
     .ne(currentAccount._id)

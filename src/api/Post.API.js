@@ -156,7 +156,7 @@ router.put(
     if (q == "vid") {
       await MinIOClient.fPutObject(
         "local",
-        `${authorAccount.email}/media/${req.files.video[0].originalname}`,
+        `${authorAccount._id}/media/${req.files.video[0].originalname}`,
         req.files.video[0].path,
         {
           "Content-Type": req.files.video[0].mimetype
@@ -164,7 +164,7 @@ router.put(
       );
       const presignedUrl = await MinIOClient.presignedGetObject(
         "local",
-        `${authorAccount.email}/media/${req.files.video[0].originalname}`
+        `${authorAccount._id}/media/${req.files.video[0].originalname}`
       );
 
       const Post = {
@@ -205,7 +205,7 @@ router.put(
     if (q == "img") {
       await MinIOClient.fPutObject(
         "local",
-        `${authorAccount.email}/media/${req.files.image[0].originalname}`,
+        `${authorAccount._id}/media/${req.files.image[0].originalname}`,
         req.files.image[0].path,
         {
           "Content-Type": req.files.image[0].mimetype
@@ -213,7 +213,7 @@ router.put(
       );
       const presignedUrl = await MinIOClient.presignedGetObject(
         "local",
-        `${authorAccount.email}/media/${req.files.image[0].originalname}`
+        `${authorAccount._id}/media/${req.files.image[0].originalname}`
       );
 
       const Post = {
@@ -253,7 +253,7 @@ router.put(
     if (q == "imgvid") {
       await MinIOClient.fPutObject(
         "local",
-        `${authorAccount.email}/media/${req.files.video[0].originalname}`,
+        `${authorAccount._id}/media/${req.files.video[0].originalname}`,
         req.files.video[0].path,
         {
           "Content-Type": req.files.video[0].mimetype
@@ -261,7 +261,7 @@ router.put(
       );
       await MinIOClient.fPutObject(
         "local",
-        `${authorAccount.email}/media/${req.files.image[0].originalname}`,
+        `${authorAccount._id}/media/${req.files.image[0].originalname}`,
         req.files.image[0].path,
         {
           "Content-Type": req.files.image[0].mimetype
@@ -269,11 +269,11 @@ router.put(
       );
       const presignedUrlImage = await MinIOClient.presignedGetObject(
         "local",
-        `${authorAccount.email}/media/${req.files.image[0].originalname}`
+        `${authorAccount._id}/media/${req.files.image[0].originalname}`
       );
       const presignedUrlVideo = await MinIOClient.presignedGetObject(
         "local",
-        `${authorAccount.email}/media/${req.files.video[0].originalname}`
+        `${authorAccount._id}/media/${req.files.video[0].originalname}`
       );
 
       const Post = {

@@ -164,7 +164,7 @@ router.delete("/delete", async (req, res) => {
 
   MinIOClient.removeObject("local", `${email}.png`, function (err) {
     if (err) {
-      return console.log("Unable to remove object", err);
+      return err;
     }
   });
 

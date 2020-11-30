@@ -94,23 +94,11 @@ router.get("/fetch", async (req, res) => {
       .catch((e) => console.error(e));
   }
 
-  // TODO: Improve liking algorithm
   if (postId && heart) {
-    let docs = await AccountSchema.find().catch((e) => console.error(e));
-    for (var i = 0; i < docs.length; i++) {
-      for (var v = 0; v < docs[i].posts.length; v++) {
-        let post = docs[v].posts[v];
-        post.hearts++;
-        await docs[v].save();
-        // TODO: ERROR: ( UnhandledPromiseRejectionWarning: Error [ERR_HTTP_HEADERS_SENT]: Cannot set headers after they are sent to the client )
-        // MINOR BUG
-        return res.json(post);
-      }
-    }
+    // TODO: Implement a post finding algorithm, and also find the user from the post with accountId
+    // TODO: Add a post hearting algorithm
+    res.json("");
   }
-
-  // if (postId && !heart) {
-  // }
 });
 
 // CREATE A POST
@@ -149,7 +137,6 @@ router.put(
         authorEmail: req.cookies.email,
         authorId: authorId,
         authorImage: authorImage,
-        hearts: 0,
         hasAttachments: false,
         datefield: Date.now()
       };
@@ -188,7 +175,6 @@ router.put(
         authorId: authorId,
         authorImage: authorImage,
         hasAttachments: true,
-        hearts: 0,
         attachments: {
           hasAttachedImage: false,
           hasAttachedVideo: true,
@@ -238,7 +224,6 @@ router.put(
         authorId: authorId,
         authorImage: authorImage,
         hasAttachments: true,
-        hearts: 0,
         attachments: {
           hasAttachedImage: true,
           hasAttachedVideo: false,
@@ -298,7 +283,6 @@ router.put(
         authorEmail: req.cookies.email,
         authorId: authorId,
         authorImage: authorImage,
-        hearts: 0,
         hasAttachments: true,
         attachments: {
           hasAttachedImage: true,

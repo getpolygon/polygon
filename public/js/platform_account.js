@@ -233,7 +233,7 @@ function createPost() {
     // q is to specify the type of post that we want
     fetch("/api/posts/create?q=txt", {
       method: "PUT",
-      body: formData,
+      body: formData
     })
       .then((data) => data.json())
       .then((data) => {
@@ -284,7 +284,7 @@ function createPost() {
 
     fetch("/api/posts/create?q=vid", {
       method: "PUT",
-      body: formData,
+      body: formData
     })
       .then((data) => data.json())
       .then((data) => {
@@ -338,7 +338,7 @@ function createPost() {
 
     fetch("/api/posts/create?q=imgvid", {
       method: "PUT",
-      body: formData,
+      body: formData
     })
       .then((data) => data.json())
       .then((data) => {
@@ -392,7 +392,7 @@ function createPost() {
 
     fetch("/api/posts/create?q=img", {
       method: "PUT",
-      body: formData,
+      body: formData
     })
       .then((data) => data.json())
       .then((data) => {
@@ -434,6 +434,7 @@ function createPost() {
 }
 
 function addFriend() {
+  const buttonContainer = document.querySelector(".buttons");
   let accountToAdd = document.getElementById("accountId").textContent;
   fetch(`/api/friends/add/?account=${accountToAdd}`, { method: "PUT" })
     .then((data) => data.json())
@@ -443,11 +444,13 @@ function addFriend() {
         <i class="fas fa-user-clock"></i>
         `;
       addFriendButton.setAttribute("disabled", "true");
-      buttonContainer.innerHTML += `
+      if (buttonContainer) {
+        buttonContainer.innerHTML += `
         <br />
         <br />
         <button class="btn btn-danger" id="cancel-friend-request">Cancel friend request <i class="fas fa-times"></i></button>
       `;
+      }
       addFriendButton.setAttribute("disabled", "true");
     })
     .catch((e) => console.error(e));
@@ -463,12 +466,14 @@ function checkFriendship() {
         addFriendButton.innerHTML += `
             <i class="fas fa-user-clock"></i>
             `;
-        buttonContainer.innerHTML += `
+        if (buttonContainer) {
+          buttonContainer.innerHTML += `
           <br />
           <br />
           <button class="btn btn-info">Accept friend request <i class="fas fa-check"></i></button>
           <button class="btn btn-danger">Decline friend request <i class="fas fa-times"></i></button>
         `;
+        }
       }
       if (data.approved) {
         addFriendButton.innerText = "Friends";
@@ -482,18 +487,43 @@ function checkFriendship() {
           <i class="fas fa-user-clock"></i>
           `;
         addFriendButton.setAttribute("disabled", "true");
-        buttonContainer.innerHTML += `
+        if (buttonContainer) {
+          buttonContainer.innerHTML += `
           <br />
           <br />
-          <button class="btn btn-danger">Cancel friend request <i class="fas fa-times"></i></button>
+          <button class="btn btn-danger cancel-friend-request">Cancel friend request <i class="fas fa-times"></i></button>
         `;
+        }
       }
       if (data.is_current_account === true) {
         addFriendButton.setAttribute("disabled", "true");
       } else {
         addFriendButton = addFriendButton;
       }
-    });
+
+      let cancelFriendRequestButton = document.querySelector(
+        ".cancel-friend-request"
+      );
+      if (cancelFriendRequestButton) {
+        cancelFriendRequestButton.addEventListener("click", () => {
+          fetch(`/api/friends/update/?accountId=${accountId}&cancel=true`, {
+            method: "PUT"
+          })
+            .then((res) => res.json())
+            .then((res) => {
+              if (buttonContainer) {
+                buttonContainer.innerHTML = `
+                  <button class="btn btn-success">Add Friend</button>
+                `;
+              }
+
+              console.log(res);
+            })
+            .catch((e) => console.error(e));
+        });
+      }
+    })
+    .catch((e) => console.error(e));
 }
 
 window.addEventListener("load", () => {

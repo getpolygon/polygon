@@ -1,6 +1,5 @@
 const router = require("express").Router();
 const mongoose = require("mongoose");
-const axios = require("axios").default;
 
 const AccountSchema = require("../models/account");
 
@@ -9,11 +8,9 @@ router.put("/add", async (req, res) => {
     email: req.cookies.email,
     password: req.cookies.password
   });
-  /*
-  TODO: Add duplicate friend request handling ( using axios )
-  ISSUE: I think there was an issue with cookies
-  */
+
   var addedAccount = await AccountSchema.findById(req.query.account);
+
   await currentAccount.updateOne({
     $push: {
       "friends.requested": {
@@ -25,6 +22,13 @@ router.put("/add", async (req, res) => {
         pictureUrl: addedAccount.pictureUrl,
         isPrivate: addedAccount.isPrivate
       }
+    }
+  });
+
+  addedAccount.friends.pending.forEach(async (obj) => {
+    if (obj.accountId === currentAccount._id) {
+      await addedAccount.friends.pending.pull(obj);
+      await addedAccount.save();
     }
   });
 
@@ -43,10 +47,45 @@ router.put("/add", async (req, res) => {
   });
 
   await currentAccount.save();
-  await addedAccount.save();
   res.json({
     result: "OK"
   });
+});
+
+router.put("/update", async (req, res) => {
+  var accountToCheckDoc = await AccountSchema.findById(req.query.accountId);
+  var currentAccount = await AccountSchema.findOne({
+    email: req.cookies.email,
+    password: req.cookies.password
+  });
+
+  var { accept, decline, cancel } = req.query;
+
+  if (cancel) {
+    for (var i = 0; i < currentAccount.friends.requested.length; i++) {
+      if (
+        currentAccount.friends.requested[i].accountId == accountToCheckDoc._id
+      ) {
+        var accountToFind = await AccountSchema.findById(
+          currentAccount.friends.requested[i].accountId
+        );
+        for (var z = 0; z < accountToFind.friends.pending.length; z++) {
+          if (
+            accountToFind.friends.pending[z].accountId == currentAccount._id
+          ) {
+            await accountToFind.friends.pending.pull(
+              accountToFind.friends.pending[z]
+            );
+            await accountToFind.save();
+          }
+        }
+        await currentAccount.friends.requested.pull(
+          currentAccount.friends.requested[i]
+        );
+        await currentAccount.save().then((doc) => res.json(doc));
+      }
+    }
+  }
 });
 
 router.get("/check", async (req, res) => {

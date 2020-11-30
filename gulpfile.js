@@ -9,9 +9,9 @@ function compressSharedJS() {
     .pipe(
       minify({
         ext: {
-          min: ".min.js",
+          min: ".min.js"
         },
-        noSource: true,
+        noSource: true
       })
     )
     .pipe(gulp.dest("public/dist/shared/js"));
@@ -44,9 +44,9 @@ function compressJS() {
     .pipe(
       minify({
         ext: {
-          min: ".min.js",
+          min: ".min.js"
         },
-        noSource: true,
+        noSource: true
       })
     )
     .pipe(gulp.dest("public/dist/js"));

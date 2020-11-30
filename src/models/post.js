@@ -7,7 +7,10 @@ const PostSchema = new mongoose.Schema({
   authorId: { type: String, required: true },
   authorImage: { type: String, required: true },
   comments: [CommentSchema],
-  hearts: { type: Number, required: true },
+  hearts: {
+    usersHearted: { type: Array, default: [] },
+    numberOfHearts: { type: Number, default: 0 }
+  },
   hasAttachments: Boolean,
   attachments: {
     hasAttachedImage: Boolean,

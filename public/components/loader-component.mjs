@@ -1,6 +1,6 @@
 class Loader {
   constructor({ fullScreen }) {
-    if (fullScreen == true) {
+    if (fullScreen === true) {
       let loader = document.createElement("div");
       loader.classList.add("full-loader-default");
       loader.classList.add("full-loader");

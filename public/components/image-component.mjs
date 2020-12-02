@@ -1,3 +1,5 @@
+import Footer from "/components/partials/Footer.mjs";
+
 class ImageComponent {
   create(
     postId,
@@ -30,6 +32,7 @@ class ImageComponent {
           <img class="post-image" src="${image}" width="500" alt="image" />
         </div>
         <h6 class="text-secondary">${postDate}</h6>
+        ${new Footer().build(postId)}
       </div>       
       `;
     } else {
@@ -52,6 +55,7 @@ class ImageComponent {
           <img class="post-image" src="${image}" width="500" alt="image" />
         </div>
         <h6 class="text-secondary">${postDate}</h6>
+        ${new Footer().build(postId)}
       </div>       
       `;
     }

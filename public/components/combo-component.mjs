@@ -1,3 +1,5 @@
+import Footer from "/components/partials/Footer.mjs";
+
 class ComboComponent {
   create(
     postId,
@@ -62,6 +64,7 @@ class ComboComponent {
           </div>
         </div>
         <h6 class="text-secondary">${postDate}</h6>
+        ${new Footer().build(postId)}
       </div>
       `;
     } else {
@@ -115,6 +118,7 @@ class ComboComponent {
           </div>
         </div>
         <h6 class="text-secondary">${postDate}</h6>
+        ${new Footer().build(postId)}
       </div>
       `;
     }

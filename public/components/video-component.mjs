@@ -1,3 +1,5 @@
+import Footer from "/components/partials/Footer.mjs";
+
 class VideoComponent {
   create(
     postId,
@@ -45,6 +47,7 @@ class VideoComponent {
         </video>
         </div>
         <h6 class="text-secondary">${postDate}</h6>
+        ${new Footer().build(postId)}
       </div>
       `;
     } else {
@@ -83,6 +86,7 @@ class VideoComponent {
         </video>
         </div>
         <h6 class="text-secondary">${postDate}</h6>
+        ${new Footer().build(postId)}
       </div>
       `;
     }

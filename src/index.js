@@ -1,4 +1,4 @@
-const { MONGO_DB } = require("../config/mongo");
+const { MONGO_DB, USER, PASS } = require("../config/mongo");
 const { SECRET } = require("../config/globals");
 
 // Dependencies
@@ -50,7 +50,9 @@ mongoose
   .connect(MONGO_DB, {
     useNewUrlParser: true,
     useUnifiedTopology: true,
-    useFindAndModify: false
+    useFindAndModify: false,
+    user: USER,
+    pass: PASS
   })
   .then(console.log("MongoDB: OK"))
   .catch((e) => console.error(e));

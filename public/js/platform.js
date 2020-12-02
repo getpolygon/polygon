@@ -75,7 +75,7 @@ function fetchPosts() {
             { method: "PUT" }
           )
             .then((response) => response.json())
-            .then((response) => {
+            .then(async (response) => {
               // Account matches
               if (obj.authorId == response._id) {
                 // Post has attachments
@@ -199,38 +199,48 @@ function fetchPosts() {
                 }
               }
 
-              postsContainer.appendChild(cardContainer);
-              checkForDeleteButtons();
-
               // Filling up the comment section
-              let commentContainer = document.querySelector(
+              const commentContainer = cardContainer.querySelector(
                 `.comment-section-${postId}`
               );
               if (comments.length === 0) {
-                commentContainer.innerHTML =
+                // commentContainer.style.textAlign = "center";
+                commentContainer.innerText =
                   "Be the first person to comment on this post";
               } else {
                 comments.forEach((comment) => {
-                  let el = document.createElement("div");
+                  const el = document.createElement("div");
                   el.innerHTML = `
                   <div class="d-flex post-account-component-container mb-2">
-                  <img
-                  src="${authorImage}"
-                  alt="profile-photo"
-                  class="rounded-circle shadow-sm profile-photo"
-                  width= "50"
-                  height="50"
-                  >
-                  </img>
-                  <a class="ml-2" href="/user/${authorId}">${author}</a>
-                 </div>
-                 <span>${comment.comment}</span>
+                    <img
+                    src="${authorImage}"
+                    alt="profile-photo"
+                    class="rounded-circle shadow-sm profile-photo"
+                    width= "50"
+                    height="50"/>
+                    <a class="ml-2" href="/user/${authorId}">${author}</a>
+                  </div>
+                  <span>${comment.comment}</span>
                   `;
                   commentContainer.appendChild(el);
                 });
               }
+
+              postsContainer.appendChild(cardContainer);
+              checkForDeleteButtons();
             })
-            .then(fetchHearts)
+            .then(() => {
+              let loveButtons = document.querySelectorAll(".love-post");
+              loveButtons.forEach((button) => {
+                button.addEventListener("click", async () => {
+                  let incrementHearts = await fetch(
+                    `/api/posts/fetch/?postId=${button.parentElement.parentElement.id}&heart=true`
+                  );
+                  let response = await incrementHearts.json();
+                  console.log(response);
+                });
+              });
+            })
             .catch((e) => {
               console.log(e);
             });
@@ -239,31 +249,6 @@ function fetchPosts() {
       postsContainer.removeChild(loader);
     })
     .catch((e) => console.log(e));
-}
-
-function fetchHearts() {
-  let hearts = document.querySelectorAll(".love-post");
-  hearts.forEach((obj) => {
-    obj.addEventListener("click", async () => {
-      let req = await fetch(
-        `/api/posts/fetch/?postId=${obj.getAttribute("postId")}&heart=true`
-      );
-      await req.json();
-      obj.children[1].innerHTML++;
-      obj.setAttribute("disabled", "true");
-    });
-    fetch(`/api/posts/fetch`)
-      .then((response) => response.json())
-      .then((response) => {
-        console.log(response);
-        let hearts = document.createElement("span");
-        hearts.classList.add("badge");
-        hearts.classList.add("badge-pill");
-        hearts.classList.add("badge-danger");
-        hearts.innerText = response[0].hearts;
-        obj.appendChild(hearts);
-      });
-  });
 }
 
 function createPost() {
@@ -414,7 +399,6 @@ function createPost() {
           video,
           { readOnly: false }
         );
-
         postText.value = "";
         imageInput.value = "";
         videoInput.value = "";

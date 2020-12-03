@@ -20,8 +20,7 @@ function search() {
             let el = document.createElement("a");
             // This is to add 3 dots if the full name has 10+ characters
             var trimmed_full_name = (str, speclength) => {
-              if (str.length > speclength)
-                return `${str.slice(0, speclength)}...`;
+              if (str.length > speclength) return `${str.slice(0, speclength)}...`;
               else return str;
             };
             el.classList.add("p-3");

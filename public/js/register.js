@@ -14,7 +14,7 @@ function checkEmail() {
   fetch("/api/accounts/check/?q=email", {
     method: "PUT",
     headers: { "Content-Type": "application/x-www-form-urlencoded" },
-    body: `email=${email.value}`,
+    body: `email=${email.value}`
   })
     .then((response) => response.json())
     .then((response) => {

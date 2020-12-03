@@ -501,9 +501,7 @@ function checkFriendship() {
         addFriendButton = addFriendButton;
       }
 
-      let cancelFriendRequestButton = document.querySelector(
-        ".cancel-friend-request"
-      );
+      let cancelFriendRequestButton = document.querySelector(".cancel-friend-request");
       if (cancelFriendRequestButton) {
         cancelFriendRequestButton.addEventListener("click", () => {
           fetch(`/api/friends/update/?accountId=${accountId}&cancel=true`, {

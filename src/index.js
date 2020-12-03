@@ -58,6 +58,4 @@ mongoose
   .catch((e) => console.error(e));
 
 // Start the server
-app.listen(port, "0.0.0.0", () =>
-  console.log(`Server listening at port http://localhost:${port}`)
-);
+app.listen(port, "0.0.0.0", () => console.log(`Server listening at port http://localhost:${port}`));

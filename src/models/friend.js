@@ -5,6 +5,6 @@ const FriendSchema = new mongoose.Schema({
   email: { type: String },
   bio: { type: String },
   pictureUrl: { type: String },
-  isPrivate: { type: Boolean },
+  isPrivate: { type: Boolean }
 });
 module.exports = FriendSchema;

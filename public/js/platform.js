@@ -200,13 +200,10 @@ function fetchPosts() {
               }
 
               // Filling up the comment section
-              const commentContainer = cardContainer.querySelector(
-                `.comment-section-${postId}`
-              );
+              const commentContainer = cardContainer.querySelector(`.comment-section-${postId}`);
               if (comments.length === 0) {
                 // commentContainer.style.textAlign = "center";
-                commentContainer.innerText =
-                  "Be the first person to comment on this post";
+                commentContainer.innerText = "Be the first person to comment on this post";
               } else {
                 comments.forEach((comment) => {
                   const el = document.createElement("div");
@@ -230,6 +227,7 @@ function fetchPosts() {
               checkForDeleteButtons();
             })
             .then(() => {
+              // Adding an event listener on all heart buttons
               let loveButtons = document.querySelectorAll(".love-post");
               loveButtons.forEach((button) => {
                 button.addEventListener("click", async () => {
@@ -239,6 +237,24 @@ function fetchPosts() {
                   let response = await incrementHearts.json();
                   console.log(response);
                 });
+              });
+            })
+            .then(() => {
+              // Getting the hearts
+              let loveButtons = document.querySelectorAll(".love-post");
+              loveButtons.forEach(async (button) => {
+                let request = await fetch(
+                  `/api/posts/fetch/?postId=${button.parentElement.parentElement.id}&getHearts=true`
+                );
+                let response = await request.json();
+                console.log(response);
+                if (response.info) {
+                  if (response.info === "ERR_POST_LIKED") {
+                    button.innerText = "Unlove";
+                  }
+                } else {
+                  button = button;
+                }
               });
             })
             .catch((e) => {

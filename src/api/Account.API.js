@@ -1,11 +1,5 @@
 const router = require("express").Router();
-const {
-  ENDPOINT,
-  PORT,
-  ACCKEY,
-  SECKEY,
-  USESSL
-} = require("../../config/minio");
+const { ENDPOINT, PORT, ACCKEY, SECKEY, USESSL } = require("../../config/minio");
 // Instead of Firebase Storage, we are using MinIO
 const minio = require("minio");
 const MinIOClient = new minio.Client({

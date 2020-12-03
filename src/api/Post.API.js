@@ -7,13 +7,7 @@ const { unlink } = require("fs");
 // For displaying dates
 const { fromUnixTime, format } = require("date-fns");
 // MinIO Configuration
-const {
-  ENDPOINT,
-  PORT,
-  ACCKEY,
-  SECKEY,
-  USESSL
-} = require("../../config/minio");
+const { ENDPOINT, PORT, ACCKEY, SECKEY, USESSL } = require("../../config/minio");
 const mongoose = require("mongoose");
 const minio = require("minio");
 const MinIOClient = new minio.Client({
@@ -43,9 +37,43 @@ router.get("/fetch", async (req, res) => {
     email: req.cookies.email,
     password: req.cookies.password
   });
-  let { accountId, postId, heart } = req.query;
+  let { accountId, postId, heart, getHearts } = req.query;
 
-  if (!accountId) {
+  if (accountId) {
+    await AccountSchema.findById(accountId)
+      .then((doc) => {
+        let foundPosts = [];
+        doc.posts.forEach((post) => {
+          post.datefield = format(fromUnixTime(post.datefield / 1000), "MMM d/y h:mm b");
+          foundPosts.push(post);
+        });
+        res.json(foundPosts);
+      })
+      .catch((e) => console.error(e));
+  }
+
+  if (postId && heart) {
+    const postAuthor = await AccountSchema.findOne({ "posts._id": postId });
+
+    for (let v = 0; v < postAuthor.posts.length; v++) {
+      if (postAuthor.posts[v]._id != postId) {
+        continue;
+      } else {
+        // Getting the post
+        var post = postAuthor.posts[v];
+        post.hearts.usersHearted.push({ accountId: currentAccount._id });
+        post.hearts.numberOfHearts++;
+        await postAuthor.save();
+        res.json(post);
+      }
+    }
+  }
+  if (postId && getHearts) {
+    const postAuthor = await AccountSchema.findOne({ "posts._id": postId });
+    // TODO: There was a bug when requesting for post hearts the request sent 3 JSON responses instead of 2
+  }
+  // Send all the posts
+  else {
     await AccountSchema.find({
       isPrivate: false
     }) // Getting posts from all the public accounts
@@ -55,10 +83,7 @@ router.get("/fetch", async (req, res) => {
         let foundPosts = [];
         doc.forEach((account) => {
           account.posts.forEach((post) => {
-            post.datefield = format(
-              fromUnixTime(post.datefield / 1000),
-              "MMM d/y h:mm b"
-            );
+            post.datefield = format(fromUnixTime(post.datefield / 1000), "MMM d/y h:mm b");
             foundPosts.push(post);
           });
         });
@@ -68,257 +93,217 @@ router.get("/fetch", async (req, res) => {
          * By doing this they'll be able to see their posts
          */
         currentAccount.posts.forEach((post) => {
-          post.datefield = format(
-            fromUnixTime(post.datefield / 1000),
-            "MMM d/y h:mm b"
-          );
+          post.datefield = format(fromUnixTime(post.datefield / 1000), "MMM d/y h:mm b");
           foundPosts.push(post);
         });
         res.json(foundPosts);
       })
       .catch((e) => console.log(e));
   }
-  if (accountId) {
-    await AccountSchema.findById(accountId)
-      .then((doc) => {
-        let foundPosts = [];
-        doc.posts.forEach((post) => {
-          post.datefield = format(
-            fromUnixTime(post.datefield / 1000),
-            "MMM d/y h:mm b"
-          );
-          foundPosts.push(post);
-        });
-        res.json(foundPosts);
+});
+
+// CREATE A POST
+router.put("/create", upload.fields([{ name: "image" }, { name: "video" }]), async (req, res) => {
+  let authorAccount = await AccountSchema.findOne({
+    email: req.cookies.email,
+    password: req.cookies.password
+  });
+  let author = authorAccount.fullName;
+  let authorImage = authorAccount.pictureUrl;
+  let authorId = authorAccount._id;
+  let { q } = req.query;
+
+  let text =
+    // Sanitizing HTML to dodge XSS attacks
+    sanitizeHtml(
+      // Creating an HTML link for every URL
+      linkifyUrls(
+        // Filtering out bad words
+        BadWordsFilter.clean(req.body.text),
+        // Setting some attributes for our newly created HTML
+        {
+          attributes: { target: "_blank" }
+        }
+      )
+    );
+
+  if (q == "txt") {
+    const Post = {
+      _id: new mongoose.Types.ObjectId(),
+      text: text,
+      author: author,
+      authorEmail: req.cookies.email,
+      authorId: authorId,
+      authorImage: authorImage,
+      hasAttachments: false,
+      datefield: Date.now()
+    };
+    authorAccount.posts.push(Post);
+    await authorAccount
+      .save()
+      .then(() => {
+        Post.datefield = format(fromUnixTime(Post.datefield / 1000), "MMM d/y h:mm b");
+        res.json(Post);
       })
       .catch((e) => console.error(e));
   }
 
-  if (postId && heart) {
-    // TODO: Implement a post finding algorithm, and also find the user from the post with accountId
-    // TODO: Add a post hearting algorithm
-    res.json("");
+  if (q == "vid") {
+    await MinIOClient.fPutObject(
+      "local",
+      `${authorAccount._id}/media/${req.files.video[0].originalname}`,
+      req.files.video[0].path,
+      {
+        "Content-Type": req.files.video[0].mimetype
+      }
+    );
+    const presignedUrl = await MinIOClient.presignedGetObject(
+      "local",
+      `${authorAccount._id}/media/${req.files.video[0].originalname}`
+    );
+
+    const Post = {
+      _id: new mongoose.Types.ObjectId(),
+      text: text,
+      author: author,
+      authorEmail: req.cookies.email,
+      authorId: authorId,
+      authorImage: authorImage,
+      hasAttachments: true,
+      attachments: {
+        hasAttachedImage: false,
+        hasAttachedVideo: true,
+        video: {
+          attachedVideo: presignedUrl,
+          attachedVideoFileName: req.files.video[0].originalname.toString()
+        }
+      },
+      datefield: Date.now()
+    };
+
+    authorAccount.posts.push(Post);
+    await authorAccount
+      .save()
+      .then(() => {
+        Post.datefield = format(fromUnixTime(Post.datefield / 1000), "MMM d/y h:mm b");
+        res.json(Post);
+      })
+      .catch((e) => console.error(e));
+    unlink(`tmp/${req.files.video[0].originalname}`, (err) => {
+      if (err) console.error(err);
+    });
+  }
+
+  if (q == "img") {
+    await MinIOClient.fPutObject(
+      "local",
+      `${authorAccount._id}/media/${req.files.image[0].originalname}`,
+      req.files.image[0].path,
+      {
+        "Content-Type": req.files.image[0].mimetype
+      }
+    );
+    const presignedUrl = await MinIOClient.presignedGetObject(
+      "local",
+      `${authorAccount._id}/media/${req.files.image[0].originalname}`
+    );
+
+    const Post = {
+      _id: new mongoose.Types.ObjectId(),
+      text: text,
+      author: author,
+      authorEmail: req.cookies.email,
+      authorId: authorId,
+      authorImage: authorImage,
+      hasAttachments: true,
+      attachments: {
+        hasAttachedImage: true,
+        hasAttachedVideo: false,
+        image: {
+          attachedImage: presignedUrl,
+          attachedImageFileName: req.files.image[0].originalname.toString()
+        }
+      },
+      datefield: Date.now()
+    };
+
+    authorAccount.posts.push(Post);
+    await authorAccount
+      .save()
+      .then(() => {
+        Post.datefield = format(fromUnixTime(Post.datefield / 1000), "MMM d/y h:mm b");
+        res.json(Post);
+      })
+      .catch((e) => console.error(e));
+    unlink(`tmp/${req.files.image[0].originalname}`, (err) => {
+      if (err) console.error(err);
+    });
+  }
+  if (q == "imgvid") {
+    await MinIOClient.fPutObject(
+      "local",
+      `${authorAccount._id}/media/${req.files.video[0].originalname}`,
+      req.files.video[0].path,
+      {
+        "Content-Type": req.files.video[0].mimetype
+      }
+    );
+    await MinIOClient.fPutObject(
+      "local",
+      `${authorAccount._id}/media/${req.files.image[0].originalname}`,
+      req.files.image[0].path,
+      {
+        "Content-Type": req.files.image[0].mimetype
+      }
+    );
+    const presignedUrlImage = await MinIOClient.presignedGetObject(
+      "local",
+      `${authorAccount._id}/media/${req.files.image[0].originalname}`
+    );
+    const presignedUrlVideo = await MinIOClient.presignedGetObject(
+      "local",
+      `${authorAccount._id}/media/${req.files.video[0].originalname}`
+    );
+
+    const Post = {
+      _id: new mongoose.Types.ObjectId(),
+      text: text,
+      author: author,
+      authorEmail: req.cookies.email,
+      authorId: authorId,
+      authorImage: authorImage,
+      hasAttachments: true,
+      attachments: {
+        hasAttachedImage: true,
+        hasAttachedVideo: true,
+        video: {
+          attachedVideo: presignedUrlVideo,
+          attachedVideoFileName: req.files.video[0].originalname.toString()
+        },
+        image: {
+          attachedImage: presignedUrlImage,
+          attachedImageFileName: req.files.image[0].originalname.toString()
+        }
+      },
+      datefield: Date.now()
+    };
+
+    authorAccount.posts.push(Post);
+    await authorAccount
+      .save()
+      .then(() => {
+        Post.datefield = format(fromUnixTime(Post.datefield / 1000), "MMM d/y h:mm b");
+        res.json(Post);
+      })
+      .catch((e) => console.error(e));
+    unlink(`tmp/${req.files.video[0].originalname}`, (err) => {
+      if (err) console.error(err);
+    });
+    unlink(`tmp/${req.files.image[0].originalname}`, (err) => {
+      if (err) console.error(err);
+    });
   }
 });
-
-// CREATE A POST
-router.put(
-  "/create",
-  upload.fields([{ name: "image" }, { name: "video" }]),
-  async (req, res) => {
-    let authorAccount = await AccountSchema.findOne({
-      email: req.cookies.email,
-      password: req.cookies.password
-    });
-    let author = authorAccount.fullName;
-    let authorImage = authorAccount.pictureUrl;
-    let authorId = authorAccount._id;
-    let { q } = req.query;
-
-    let text =
-      // Sanitizing HTML to dodge XSS attacks
-      sanitizeHtml(
-        // Creating an HTML link for every URL
-        linkifyUrls(
-          // Filtering out bad words
-          BadWordsFilter.clean(req.body.text),
-          // Setting some attributes for our newly created HTML
-          {
-            attributes: { target: "_blank" }
-          }
-        )
-      );
-
-    if (q == "txt") {
-      const Post = {
-        _id: new mongoose.Types.ObjectId(),
-        text: text,
-        author: author,
-        authorEmail: req.cookies.email,
-        authorId: authorId,
-        authorImage: authorImage,
-        hasAttachments: false,
-        datefield: Date.now()
-      };
-      authorAccount.posts.push(Post);
-      await authorAccount
-        .save()
-        .then(() => {
-          Post.datefield = format(
-            fromUnixTime(Post.datefield / 1000),
-            "MMM d/y h:mm b"
-          );
-          res.json(Post);
-        })
-        .catch((e) => console.error(e));
-    }
-
-    if (q == "vid") {
-      await MinIOClient.fPutObject(
-        "local",
-        `${authorAccount._id}/media/${req.files.video[0].originalname}`,
-        req.files.video[0].path,
-        {
-          "Content-Type": req.files.video[0].mimetype
-        }
-      );
-      const presignedUrl = await MinIOClient.presignedGetObject(
-        "local",
-        `${authorAccount._id}/media/${req.files.video[0].originalname}`
-      );
-
-      const Post = {
-        _id: new mongoose.Types.ObjectId(),
-        text: text,
-        author: author,
-        authorEmail: req.cookies.email,
-        authorId: authorId,
-        authorImage: authorImage,
-        hasAttachments: true,
-        attachments: {
-          hasAttachedImage: false,
-          hasAttachedVideo: true,
-          video: {
-            attachedVideo: presignedUrl,
-            attachedVideoFileName: req.files.video[0].originalname.toString()
-          }
-        },
-        datefield: Date.now()
-      };
-
-      authorAccount.posts.push(Post);
-      await authorAccount
-        .save()
-        .then(() => {
-          Post.datefield = format(
-            fromUnixTime(Post.datefield / 1000),
-            "MMM d/y h:mm b"
-          );
-          res.json(Post);
-        })
-        .catch((e) => console.error(e));
-      unlink(`tmp/${req.files.video[0].originalname}`, (err) => {
-        if (err) console.error(err);
-      });
-    }
-
-    if (q == "img") {
-      await MinIOClient.fPutObject(
-        "local",
-        `${authorAccount._id}/media/${req.files.image[0].originalname}`,
-        req.files.image[0].path,
-        {
-          "Content-Type": req.files.image[0].mimetype
-        }
-      );
-      const presignedUrl = await MinIOClient.presignedGetObject(
-        "local",
-        `${authorAccount._id}/media/${req.files.image[0].originalname}`
-      );
-
-      const Post = {
-        _id: new mongoose.Types.ObjectId(),
-        text: text,
-        author: author,
-        authorEmail: req.cookies.email,
-        authorId: authorId,
-        authorImage: authorImage,
-        hasAttachments: true,
-        attachments: {
-          hasAttachedImage: true,
-          hasAttachedVideo: false,
-          image: {
-            attachedImage: presignedUrl,
-            attachedImageFileName: req.files.image[0].originalname.toString()
-          }
-        },
-        datefield: Date.now()
-      };
-
-      authorAccount.posts.push(Post);
-      await authorAccount
-        .save()
-        .then(() => {
-          Post.datefield = format(
-            fromUnixTime(Post.datefield / 1000),
-            "MMM d/y h:mm b"
-          );
-          res.json(Post);
-        })
-        .catch((e) => console.error(e));
-      unlink(`tmp/${req.files.image[0].originalname}`, (err) => {
-        if (err) console.error(err);
-      });
-    }
-    if (q == "imgvid") {
-      await MinIOClient.fPutObject(
-        "local",
-        `${authorAccount._id}/media/${req.files.video[0].originalname}`,
-        req.files.video[0].path,
-        {
-          "Content-Type": req.files.video[0].mimetype
-        }
-      );
-      await MinIOClient.fPutObject(
-        "local",
-        `${authorAccount._id}/media/${req.files.image[0].originalname}`,
-        req.files.image[0].path,
-        {
-          "Content-Type": req.files.image[0].mimetype
-        }
-      );
-      const presignedUrlImage = await MinIOClient.presignedGetObject(
-        "local",
-        `${authorAccount._id}/media/${req.files.image[0].originalname}`
-      );
-      const presignedUrlVideo = await MinIOClient.presignedGetObject(
-        "local",
-        `${authorAccount._id}/media/${req.files.video[0].originalname}`
-      );
-
-      const Post = {
-        _id: new mongoose.Types.ObjectId(),
-        text: text,
-        author: author,
-        authorEmail: req.cookies.email,
-        authorId: authorId,
-        authorImage: authorImage,
-        hasAttachments: true,
-        attachments: {
-          hasAttachedImage: true,
-          hasAttachedVideo: true,
-          video: {
-            attachedVideo: presignedUrlVideo,
-            attachedVideoFileName: req.files.video[0].originalname.toString()
-          },
-          image: {
-            attachedImage: presignedUrlImage,
-            attachedImageFileName: req.files.image[0].originalname.toString()
-          }
-        },
-        datefield: Date.now()
-      };
-
-      authorAccount.posts.push(Post);
-      await authorAccount
-        .save()
-        .then(() => {
-          Post.datefield = format(
-            fromUnixTime(Post.datefield / 1000),
-            "MMM d/y h:mm b"
-          );
-          res.json(Post);
-        })
-        .catch((e) => console.error(e));
-      unlink(`tmp/${req.files.video[0].originalname}`, (err) => {
-        if (err) console.error(err);
-      });
-      unlink(`tmp/${req.files.image[0].originalname}`, (err) => {
-        if (err) console.error(err);
-      });
-    }
-  }
-);
 
 // DELETE A POST
 router.delete("/delete", async (req, res) => {

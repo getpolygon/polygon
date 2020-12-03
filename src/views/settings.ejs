@@ -1,5 +1,4 @@
-<%- include ("./partials/header") %>
-<%- include ("./partials/nav") %>
+<%- include ("./partials/header") %> <%- include ("./partials/nav") %>
 
 <div class="container mt-5">
   <h2>
@@ -8,21 +7,37 @@
   </h2>
 
   <div id="accountTab" class="mt-5">
-    <h6>
-      Account
-    </h6>
-    <hr class="solid">
+    <h6>Account</h6>
+    <hr class="solid" />
 
     <div>
       <h4>Basic Info</h4>
       <form>
         <label for="firstName" class="mt-2">First name<span class="text-danger">*</span></label>
-        <input type="text" required placeholder="<%= currentAccount.firstName %>" class="form-control w-50"
-          name="firstName" id="firstName" />
+        <input
+          type="text"
+          required
+          placeholder="<%= currentAccount.firstName %>"
+          class="form-control w-50"
+          name="firstName"
+          id="firstName"
+        />
         <label class="mt-2" for="lastName">Last name<span class="text-danger">*</span></label>
-        <input type="text" required placeholder="<%= currentAccount.lastName %>" class="form-control mt w-50"
-          name="lastName" id="lastName" />
-        <button class="btn btn-outline-primary btn-block mt-2 w-50" type="button" id="accountSaveBasic">UPDATE</button>
+        <input
+          type="text"
+          required
+          placeholder="<%= currentAccount.lastName %>"
+          class="form-control mt w-50"
+          name="lastName"
+          id="lastName"
+        />
+        <button
+          class="btn btn-outline-primary btn-block mt-2 w-50"
+          type="button"
+          id="accountSaveBasic"
+        >
+          UPDATE
+        </button>
       </form>
       <br />
       <br />
@@ -32,44 +47,55 @@
       <h4>Credentials</h4>
       <form class="mt-2">
         <label class="mt-2" for="email">Email<span class="text-danger">*</span></label>
-        <input required placeholder="<%= currentAccount.email %>" class="form-control w-50" type="email" name="email"
-          id="email" />
+        <input
+          required
+          placeholder="<%= currentAccount.email %>"
+          class="form-control w-50"
+          type="email"
+          name="email"
+          id="email"
+        />
         <label class="mt-2" for="password">Password<span class="text-danger">*</span></label>
-        <input required placeholder="********" class="form-control w-50" type="password" name="password"
-          id="password" />
-        <button class="btn btn-outline-primary btn-block mt-2 w-50" type="button" id="accountSave">UPDATE</button>
+        <input
+          required
+          placeholder="********"
+          class="form-control w-50"
+          type="password"
+          name="password"
+          id="password"
+        />
+        <button class="btn btn-outline-primary btn-block mt-2 w-50" type="button" id="accountSave">
+          UPDATE
+        </button>
       </form>
     </div>
-
-
   </div>
 
   <div id="privacyTab" class="mt-5">
-    <h6>
-      Privacy
-    </h6>
-    <hr class="solid">
+    <h6>Privacy</h6>
+    <hr class="solid" />
     <% if(currentAccount.isPrivate == true) {%>
     <div class="custom-control custom-switch checked">
       <input checked id="isPrivate" type="checkbox" name="privacy" class="custom-control-input" />
-      <label class="custom-control-label" for="isPrivate"><span id="currentStatus">Private Account</span></label>
+      <label class="custom-control-label" for="isPrivate"
+        ><span id="currentStatus">Private Account</span></label
+      >
     </div>
-    <% } %>
-    <%if(currentAccount.isPrivate == false) {%>
+    <% } %> <%if(currentAccount.isPrivate == false) {%>
     <div class="custom-control custom-switch">
       <input id="isPrivate" type="checkbox" name="privacy" class="custom-control-input" />
-      <label class="custom-control-label" for="isPrivate"><span id="currentStatus">Public Account</span></label>
+      <label class="custom-control-label" for="isPrivate"
+        ><span id="currentStatus">Public Account</span></label
+      >
     </div>
     <% } %>
     <p id="acUpdateStatus"></p>
   </div>
 
   <div class="mt-5 pb-5">
-    <h6>
-      Get Started deleting your account
-    </h6>
-    <hr class="solid">
-    <div style="text-align: right;">
+    <h6>Get Started deleting your account</h6>
+    <hr class="solid" />
+    <div style="text-align: right">
       <button class="btn btn-outline-danger" id="deleteAccount">
         <i class="fas fa-trash-alt"></i>
         Delete Your Account

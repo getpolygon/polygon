@@ -13,7 +13,7 @@ const lastNameField = document.getElementById("lastName");
 function deleteAccount() {
   const msg = document.getElementById("message");
   fetch("/api/accounts/delete", {
-    method: "DELETE",
+    method: "DELETE"
   })
     .then((res) => res.json())
     .then((res) => {
@@ -30,7 +30,7 @@ function updatePrivacy() {
   if (privacyCheckbox.checked) {
     privacyCheckbox.setAttribute("value", true);
     fetch("/api/accounts/update/?privacy=true", {
-      method: "PUT",
+      method: "PUT"
     })
       .then((res) => {
         res.json();
@@ -47,7 +47,7 @@ function updatePrivacy() {
   } else {
     privacyCheckbox.setAttribute("value", false);
     fetch("/api/accounts/update/?privacy=false", {
-      method: "PUT",
+      method: "PUT"
     })
       .then((res) => {
         res.json();
@@ -69,18 +69,17 @@ function updateCredentials() {
   const password = passwordField.value;
   const msg = document.createElement("div");
   fetch(`/api/accounts/update/?email=${email}&password=${password}`, {
-    method: "PUT",
+    method: "PUT"
   })
     .then((data) => data.json())
     .then((data) => {
       if (data.status === "ERR_ACC_EXISTS") {
-        msg.innerHTML = new Alert().create(
-          "There is an account using that email.",
-          { type: "danger" }
-        );
+        msg.innerHTML = new Alert().create("There is an account using that email.", {
+          type: "danger"
+        });
       } else {
         msg.innerHTML = new Alert().create("Your account has been updated", {
-          type: "success",
+          type: "success"
         });
       }
     })
@@ -96,18 +95,16 @@ function updateCredentials() {
 
 function updateBasicInfo() {
   const container = document.createElement("div");
-  fetch(
-    `/api/accounts/update/?firstName=${firstNameField.value}&lastName=${lastNameField.value}`,
-    { method: "PUT" }
-  )
+  fetch(`/api/accounts/update/?firstName=${firstNameField.value}&lastName=${lastNameField.value}`, {
+    method: "PUT"
+  })
     .then((res) => res.json())
     .then((res) => {
       if (res.status === "OK") {
         console.log(res);
-        container.innerHTML = new Alert().create(
-          "Your account has been updated",
-          { type: "success" }
-        );
+        container.innerHTML = new Alert().create("Your account has been updated", {
+          type: "success"
+        });
       }
     })
     .catch((e) => {

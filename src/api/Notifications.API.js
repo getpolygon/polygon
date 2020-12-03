@@ -17,13 +17,9 @@ router.get("/fetch", async (req, res) => {
   if (dismiss) {
     const { notification } = req.query;
     // Finding the notification with the id which we get from our query
-    const foundNotification = await currentAccount.friends.pending.id(
-      notification
-    );
+    const foundNotification = await currentAccount.friends.pending.id(notification);
     // Finding the account with accountId parameter linked to the notification
-    const foundAccount = await AccountSchema.findById(
-      foundNotification.accountId
-    );
+    const foundAccount = await AccountSchema.findById(foundNotification.accountId);
 
     // Finding the notification that has the dismissing user's ID in it
     for (var i = 0; i < foundAccount.friends.requested.length; i++) {
@@ -32,9 +28,7 @@ router.get("/fetch", async (req, res) => {
         continue;
       } else {
         // Remove the notification from the other user
-        await foundAccount.friends.requested.pull(
-          foundAccount.friends.requested[i]
-        );
+        await foundAccount.friends.requested.pull(foundAccount.friends.requested[i]);
         // Save the updated account
         await foundAccount.save();
       }

@@ -22,10 +22,7 @@ router.get("/", async (req, res) => {
       })
         .then((currentAccount) => {
           if (currentAccount == null) {
-            res
-              .clearCookie("email")
-              .clearCookie("password")
-              .redirect("/auth/login");
+            res.clearCookie("email").clearCookie("password").redirect("/auth/login");
           } else {
             res.render("platform", {
               currentAccount: currentAccount,
@@ -34,10 +31,7 @@ router.get("/", async (req, res) => {
           }
         })
         .catch((err) => {
-          res
-            .clearCookie("email")
-            .clearCookie("password")
-            .redirect("/auth/login");
+          res.clearCookie("email").clearCookie("password").redirect("/auth/login");
           console.log(err);
         });
     }
@@ -59,10 +53,7 @@ router.get("/user/:accountId", async (req, res) => {
       });
       const platformAccount = await AccountSchema.findById(accountId);
       if (currentAccount == null) {
-        res
-          .clearCookie("email")
-          .clearCookie("password")
-          .redirect("/auth/login");
+        res.clearCookie("email").clearCookie("password").redirect("/auth/login");
       }
       if (!platformAccount) {
         res.redirect("/static/no-account.html");
@@ -113,10 +104,7 @@ router.get("/settings", async (req, res) => {
         password: password
       });
       if (currentAccount == null) {
-        res
-          .clearCookie("email")
-          .clearCookie("password")
-          .redirect("/auth/login");
+        res.clearCookie("email").clearCookie("password").redirect("/auth/login");
       } else
         res.render("settings", {
           currentAccount: currentAccount,

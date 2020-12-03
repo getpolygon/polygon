@@ -63,25 +63,17 @@ router.put("/update", async (req, res) => {
 
   if (cancel) {
     for (var i = 0; i < currentAccount.friends.requested.length; i++) {
-      if (
-        currentAccount.friends.requested[i].accountId == accountToCheckDoc._id
-      ) {
+      if (currentAccount.friends.requested[i].accountId == accountToCheckDoc._id) {
         var accountToFind = await AccountSchema.findById(
           currentAccount.friends.requested[i].accountId
         );
         for (var z = 0; z < accountToFind.friends.pending.length; z++) {
-          if (
-            accountToFind.friends.pending[z].accountId == currentAccount._id
-          ) {
-            await accountToFind.friends.pending.pull(
-              accountToFind.friends.pending[z]
-            );
+          if (accountToFind.friends.pending[z].accountId == currentAccount._id) {
+            await accountToFind.friends.pending.pull(accountToFind.friends.pending[z]);
             await accountToFind.save();
           }
         }
-        await currentAccount.friends.requested.pull(
-          currentAccount.friends.requested[i]
-        );
+        await currentAccount.friends.requested.pull(currentAccount.friends.requested[i]);
         await currentAccount.save().then((doc) => res.json(doc));
       }
     }

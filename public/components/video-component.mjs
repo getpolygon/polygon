@@ -1,16 +1,7 @@
 import Footer from "/components/partials/Footer.mjs";
 
 class VideoComponent {
-  create(
-    postId,
-    authorImage,
-    authorId,
-    author,
-    text,
-    video,
-    postDate,
-    { readOnly }
-  ) {
+  create(postId, authorImage, authorId, author, text, video, postDate, { readOnly }) {
     if (readOnly == false) {
       return `
       <div id="${postId}" class="post container shadow-sm rounded-lg mt-1 mb-4 pr-4 pl-4 pb-3 pt-3 bg-white">
@@ -30,7 +21,7 @@ class VideoComponent {
         </h6>
         <div class="container p-2">
         <video
-        class="video-js vjs-theme-forest"
+        class="video-js vjs-theme-forest post-video"
         controls
         preload="auto"
         data-setup="{}"
@@ -69,7 +60,7 @@ class VideoComponent {
         </h6>
         <div class="container p-2">
         <video
-        class="video-js vjs-theme-forest"
+        class="video-js vjs-theme-forest post-video"
         controls
         preload="auto"
 

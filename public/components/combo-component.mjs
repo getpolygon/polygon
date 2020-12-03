@@ -1,17 +1,7 @@
 import Footer from "/components/partials/Footer.mjs";
 
 class ComboComponent {
-  create(
-    postId,
-    authorImage,
-    authorId,
-    author,
-    postDate,
-    text,
-    image,
-    video,
-    { readOnly }
-  ) {
+  create(postId, authorImage, authorId, author, postDate, text, image, video, { readOnly }) {
     if (readOnly == false) {
       return `
       <div id="${postId}" class="post container shadow-sm rounded-lg mt-1 mb-4 pr-4 pl-4 pb-3 pt-3 bg-white">
@@ -34,7 +24,7 @@ class ComboComponent {
             <div class="carousel-inner">
               <div class="carousel-item active">
               <video
-              class="video-js vjs-theme-city"
+              class="video-js vjs-theme-city post-video"
               style="margin: 0 auto"
               controls
               preload="auto"
@@ -51,7 +41,7 @@ class ComboComponent {
             </video>
               </div>
               <div class="carousel-item">
-                <img src="${image}" class="d-block w-100" alt="...">
+                <img src="${image}" class="d-block w-100 post-image" alt="...">
               </div>
             <a class="carousel-control-prev" href="#carousel" role="button" data-slide="prev">
               <span class="carousel-control-prev-icon" aria-hidden="true"></span>
@@ -88,7 +78,7 @@ class ComboComponent {
             <div class="carousel-inner">
               <div class="carousel-item active">
               <video
-              class="video-js vjs-theme-city"
+              class="video-js vjs-theme-city post-video"
               style="margin: 0 auto"
               controls
               preload="auto"
@@ -105,7 +95,7 @@ class ComboComponent {
             </video>
               </div>
               <div class="carousel-item">
-                <img src="${image}" class="d-block w-100" alt="...">
+                <img src="${image}" class="d-block w-100 post-image" alt="...">
               </div>
             <a class="carousel-control-prev" href="#carousel" role="button" data-slide="prev">
               <span class="carousel-control-prev-icon" aria-hidden="true"></span>

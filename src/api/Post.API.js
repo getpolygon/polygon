@@ -70,6 +70,7 @@ router.get("/fetch", async (req, res) => {
   }
   if (postId && getHearts) {
     const postAuthor = await AccountSchema.findOne({ "posts._id": postId });
+    res.json(null);
     // TODO: There was a bug when requesting for post hearts the request sent 3 JSON responses instead of 2
   }
   // Send all the posts

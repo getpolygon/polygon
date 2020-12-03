@@ -17,3 +17,5 @@ function getCookie(name) {
   // Return null if not found
   return null;
 }
+
+export default getCookie;

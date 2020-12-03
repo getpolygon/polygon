@@ -1,5 +1,5 @@
 const { MONGO_DB, USER, PASS } = require("../config/mongo");
-const { SECRET } = require("../config/globals");
+const { SECRET, PORT } = require("../config/globals");
 
 // Dependencies
 const cors = require("cors");
@@ -10,7 +10,7 @@ const bodyParser = require("body-parser");
 const compression = require("compression");
 const session = require("express-session");
 const cookieParser = require("cookie-parser");
-const port = 3000 || process.env.PORT;
+const port = 3000 || PORT;
 const app = express();
 
 // Routes

@@ -1,4 +1,3 @@
-let body = document.body;
 let themeButton = document.getElementById("theme");
 let themeIcon = document.getElementById("themeIcon");
 let background = document.querySelectorAll(".bg-white");

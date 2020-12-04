@@ -53,10 +53,27 @@ router.get("/fetch", async (req, res) => {
   }
   // Update the hearts of the post
   if (postId && heart) {
-    // const postAuthor = await AccountSchema.findOne({ "posts._id": postId });
-    // const post = postAuthor.posts.id(postId);
-
-    // TODO: Fix hearting function
+    const postAuthor = await AccountSchema.findOne({ "posts._id": postId });
+    const post = postAuthor.posts.id(postId);
+    var currentAccountHeartedThePost;
+    post.hearts.usersHearted.forEach((user) => {
+      if (user.accountId == currentAccount._id) {
+        currentAccountHeartedThePost = true;
+      } else {
+        currentAccountHeartedThePost = false;
+      }
+    });
+    if (currentAccountHeartedThePost) {
+      post.hearts.usersHearted.pull({ accountId: currentAccount._id });
+      post.hearts.numberOfHearts--;
+      await postAuthor.save();
+      res.json({ info: "ERR_POST_LIKED", data: post.hearts });
+    } else {
+      post.hearts.usersHearted.push({ accountId: currentAccount._id });
+      post.hearts.numberOfHearts++;
+      await postAuthor.save();
+      res.json({ info: "OK", data: post.hearts });
+    }
   }
   // Getting the hearts from the post
   if (postId && getHearts) {

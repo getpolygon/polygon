@@ -1,13 +1,11 @@
 class HeartButtonContent {
   build(label, heartCount, active) {
+    function checkActive() {
+      if (active) return `<i class="fas fa-heart text-danger"></i>`;
+      else return `<i class="far fa-heart text-danger"></i>`;
+    }
     return `
-          ${
-            // TODO: this doesn't work
-            active
-              ? `<i class="far fa-heart text-danger"></i>`
-              : `<i class="far fa-heart text-danger"></i>`
-          }
-          
+          ${checkActive()}
           ${label}
           <span class="badge badge-pill badge-danger love-count">${heartCount}</span>
         `;

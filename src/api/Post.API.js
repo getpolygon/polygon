@@ -71,8 +71,28 @@ router.get("/fetch", async (req, res) => {
   if (postId && getHearts) {
     const postAuthor = await AccountSchema.findOne({ "posts._id": postId });
     const post = postAuthor.posts.id(postId);
-    // TODO: Improve heart algorithm
-    res.json(post.hearts);
+
+    var arrayIsNull;
+
+    if (post.hearts.usersHearted.length === 0) arrayIsNull = true;
+    else arrayIsNull = false;
+
+    if (arrayIsNull) {
+      res.json(post.hearts);
+    } else {
+      var hasCurrentAccount;
+
+      post.hearts.usersHearted.forEach((user) => {
+        if (user.accountId == currentAccount._id) {
+          hasCurrentAccount = true;
+        } else {
+          hasCurrentAccount = false;
+        }
+      });
+
+      if (hasCurrentAccount === true) res.json({ info: "ERR_POST_LIKED" });
+      else res.json(post.hearts);
+    }
   }
   // Send all the posts
   else {

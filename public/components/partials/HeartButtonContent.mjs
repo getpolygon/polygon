@@ -2,6 +2,7 @@ class HeartButtonContent {
   build(label, heartCount, active) {
     return `
           ${
+            // TODO: this doesn't work
             active
               ? `<i class="far fa-heart text-danger"></i>`
               : `<i class="far fa-heart text-danger"></i>`

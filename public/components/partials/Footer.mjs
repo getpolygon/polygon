@@ -1,13 +1,9 @@
 class Footer {
-  build(postId, heartCount) {
+  build(postId) {
     return `
       <hr class="solid" />
       <div class="d-flex">
-        <button type="button" class="btn btn-light btn-block border m-1 love-post">
-          <i class="fas fa-heart"></i>
-          Love
-          <span class="badge badge-pill badge-danger love-count"><!--TODO-->${null}</span>
-        </button>
+        <button type="button" class="btn btn-light btn-block border m-1 love-post"></button>
 
           <button type="button" class="btn btn-light btn-block border m-1" data-toggle="modal" data-target="#comments-${postId}">
             <i class="fas fa-comment-alt"></i>

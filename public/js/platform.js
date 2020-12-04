@@ -4,6 +4,7 @@ import ComboComponent from "/components/combo-component.mjs";
 import TextComponent from "/components/text-component.mjs";
 import Loader from "/components/loader-component.mjs";
 import getCookie from "/dist/shared/js/getCookie.min.js";
+import HeartButtonContent from "/components/partials/HeartButtonContent.mjs";
 
 const postButton = document.getElementById("postButton");
 const postText = document.getElementById("postTextarea");
@@ -235,6 +236,11 @@ function fetchPosts() {
                   );
                   const response = await incrementHearts.json();
                   console.log(response);
+                  button.innerHTML = new HeartButtonContent().build(
+                    "Unheart",
+                    response.data.numberOfHearts,
+                    true
+                  );
                 });
 
                 const heartRequest = await fetch(
@@ -242,10 +248,18 @@ function fetchPosts() {
                 );
                 const heartResponse = await heartRequest.json();
                 console.log(heartResponse);
-                if (heartResponse.info) {
-                  if (heartResponse.info === "ERR_POST_LIKED") {
-                    button.innerText = "Unlove";
-                  }
+                if (heartResponse.info === "ERR_POST_LIKED") {
+                  button.innerHTML = new HeartButtonContent().build(
+                    "Unheart",
+                    heartResponse.data.numberOfHearts,
+                    true
+                  );
+                } else {
+                  button.innerHTML = new HeartButtonContent().build(
+                    "Heart",
+                    heartResponse.data.numberOfHearts,
+                    false
+                  );
                 }
               });
 
@@ -263,32 +277,6 @@ function fetchPosts() {
     })
     .catch((e) => console.log(e));
 }
-
-// function heartCore() {
-//   // Adding an event listener on all heart buttons
-//   let loveButtons = cardContainer.querySelectorAll(".love-post");
-//   console.log(loveButtons);
-//   loveButtons.forEach(async (button) => {
-//     button.addEventListener("click", async () => {
-//       const incrementHearts = await fetch(
-//         `/api/posts/fetch/?postId=${button.parentElement.parentElement.id}&heart=true`
-//       );
-//       const response = await incrementHearts.json();
-//       console.log(response);
-//     });
-
-//     const heartRequest = await fetch(
-//       `/api/posts/fetch/?postId=${button.parentElement.parentElement.id}&getHearts=true`
-//     );
-//     const heartResponse = await heartRequest.json();
-//     console.log(heartResponse);
-//     if (heartResponse.info) {
-//       if (heartResponse.info === "ERR_POST_LIKED") {
-//         button.innerText = "Unlove";
-//       }
-//     }
-//   });
-// }
 
 function createPost() {
   const imageInput = document.getElementById("imageUpload");

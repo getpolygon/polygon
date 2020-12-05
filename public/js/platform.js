@@ -228,36 +228,42 @@ function fetchPosts() {
 
               // Adding an event listener on all heart buttons
               let loveButtons = cardContainer.querySelectorAll(".love-post");
-              console.log(loveButtons);
               loveButtons.forEach(async (button) => {
                 button.addEventListener("click", async () => {
-                  const incrementHearts = await fetch(
+                  const request = await fetch(
                     `/api/posts/fetch/?postId=${button.parentElement.parentElement.id}&heart=true`
                   );
-                  const response = await incrementHearts.json();
-                  console.log(response);
-                  button.innerHTML = new HeartButtonContent().build(
-                    "Unheart",
-                    response.data.numberOfHearts,
-                    true
-                  );
+                  const response = await request.json();
+                  if (response.info === "HEARTED") {
+                    button.innerHTML = new HeartButtonContent().build(
+                      "Unheart",
+                      response.data.numberOfHearts,
+                      true
+                    );
+                  } else {
+                    button.innerHTML = new HeartButtonContent().build(
+                      "Heart",
+                      response.data.numberOfHearts,
+                      false
+                    );
+                  }
                 });
 
-                const heartRequest = await fetch(
+                const request_1 = await fetch(
                   `/api/posts/fetch/?postId=${button.parentElement.parentElement.id}&getHearts=true`
                 );
-                const heartResponse = await heartRequest.json();
-                console.log(heartResponse);
-                if (heartResponse.info === "ERR_POST_LIKED") {
+                const response_1 = await request_1.json();
+                if (response_1.info === "ALREADY_HEARTED") {
                   button.innerHTML = new HeartButtonContent().build(
                     "Unheart",
-                    heartResponse.data.numberOfHearts,
+                    response_1.data.numberOfHearts,
                     true
                   );
-                } else {
+                }
+                if (response_1.info === "OK") {
                   button.innerHTML = new HeartButtonContent().build(
                     "Heart",
-                    heartResponse.data.numberOfHearts,
+                    response_1.data.numberOfHearts,
                     false
                   );
                 }

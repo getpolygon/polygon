@@ -1,3 +1,4 @@
+const _ = require("lodash");
 const BW = require("bad-words");
 const BadWordsFilter = new BW({ placeHolder: "*" });
 const sanitizeHtml = require("sanitize-html");
@@ -31,103 +32,106 @@ const upload = multer({
 const router = require("express").Router();
 const AccountSchema = require("../models/account");
 
-// FETCH POSTS
+// Fetch posts and their data
 router.get("/fetch", async (req, res) => {
   const currentAccount = await AccountSchema.findOne({
     email: req.cookies.email,
     password: req.cookies.password
   });
-  let { accountId, postId, heart, getHearts } = req.query;
 
+  const { accountId, postId, heart, getHearts } = req.query;
+
+  // Getting the posts from the specified account ID
   if (accountId) {
-    await AccountSchema.findById(accountId)
-      .then((doc) => {
-        let foundPosts = [];
-        doc.posts.forEach((post) => {
-          post.datefield = format(fromUnixTime(post.datefield / 1000), "MMM d/y h:mm b");
-          foundPosts.push(post);
-        });
-        res.json(foundPosts);
-      })
-      .catch((e) => console.error(e));
+    const account = await AccountSchema.findById(accountId);
+    var posts = await account.posts;
+    posts.forEach(async (post) => {
+      post.datefield = format(fromUnixTime((await post.datefield) / 1000), "MMM d/y h:mm b");
+    });
+    _.sortBy(posts, (post) => {
+      return post.datefield;
+    });
+    res.json(posts);
   }
+
   // Update the hearts of the post
   if (postId && heart) {
+    // Author document of the post
     const postAuthor = await AccountSchema.findOne({ "posts._id": postId });
+    // The post
     const post = postAuthor.posts.id(postId);
-    var currentAccountHeartedThePost;
-    post.hearts.usersHearted.forEach((user) => {
-      if (user.accountId == currentAccount._id) {
-        currentAccountHeartedThePost = true;
-      } else {
-        currentAccountHeartedThePost = false;
-      }
+    // Checking if current account hearted the post
+    var currentAccountHeartedThePost = post.hearts.usersHearted.forEach((i) => {
+      if (i.accountId == currentAccount._id) return true;
+      else return false;
     });
-    if (currentAccountHeartedThePost) {
-      post.hearts.usersHearted.pull({ accountId: currentAccount._id });
-      post.hearts.numberOfHearts--;
-      await postAuthor.save();
-      res.json({ info: "ERR_POST_LIKED", data: post.hearts });
-    } else {
+
+    // If current account liked the post
+    if (currentAccountHeartedThePost === true) {
+      post.hearts.usersHearted.forEach((u) => {
+        if (u.accountId == currentAccount._id) {
+          post.hearts.usersHearted.pull(u);
+          post.hearts.numberOfHearts++;
+          postAuthor.save().then(res.json({ info: "UNHEARTED", data: post.hearts }));
+        }
+      });
+    }
+    // If didn't
+    else {
       post.hearts.usersHearted.push({ accountId: currentAccount._id });
       post.hearts.numberOfHearts++;
-      await postAuthor.save();
-      res.json({ info: "OK", data: post.hearts });
+      postAuthor.save().then(res.json({ info: "HEARTED", data: post.hearts }));
     }
   }
   // Getting the hearts from the post
   if (postId && getHearts) {
     const postAuthor = await AccountSchema.findOne({ "posts._id": postId });
     const post = postAuthor.posts.id(postId);
-    var arrayIsNull;
+    var hasCurrentAccount;
 
-    if (post.hearts.usersHearted.length === 0) arrayIsNull = true;
-    else arrayIsNull = false;
+    post.hearts.usersHearted.forEach((user) => {
+      if (user.accountId == currentAccount._id) {
+        hasCurrentAccount = true;
+      } else {
+        hasCurrentAccount = false;
+      }
+    });
 
-    if (arrayIsNull) {
-      res.json({ info: "OK", data: post.hearts });
-    } else {
-      var hasCurrentAccount;
-
-      post.hearts.usersHearted.forEach((user) => {
-        if (user.accountId == currentAccount._id) {
-          hasCurrentAccount = true;
-        } else {
-          hasCurrentAccount = false;
-        }
-      });
-
-      if (hasCurrentAccount === true) res.json({ info: "ERR_POST_LIKED", data: post.hearts });
-      else res.json({ info: "OK", data: post.hearts });
-    }
+    if (hasCurrentAccount === true) res.json({ info: "ALREADY_HEARTED", data: post.hearts });
+    else res.json({ info: "OK", data: post.hearts });
   }
   // Send all the posts
   else {
-    await AccountSchema.find({
+    var foundPosts = [];
+    const accounts = await AccountSchema.find({
       isPrivate: false
     }) // Getting posts from all the public accounts
       .where("_id") // These lines exclude current account from the query
       .ne(currentAccount._id) // These lines exclude current account from the query
-      .then((doc) => {
-        let foundPosts = [];
-        doc.forEach((account) => {
-          account.posts.forEach((post) => {
-            post.datefield = format(fromUnixTime(post.datefield / 1000), "MMM d/y h:mm b");
-            foundPosts.push(post);
-          });
-        });
-        /*
-         * Instead finding users' posts here
-         * Doing this because users' account could be private
-         * By doing this they'll be able to see their posts
-         */
-        currentAccount.posts.forEach((post) => {
-          post.datefield = format(fromUnixTime(post.datefield / 1000), "MMM d/y h:mm b");
-          foundPosts.push(post);
-        });
-        res.json(foundPosts);
-      })
       .catch((e) => console.log(e));
+
+    accounts.forEach((account) => {
+      account.posts.map().forEach((post) => {
+        post.datefield = format(fromUnixTime(post.datefield / 1000), "MMM d/y h:mm b");
+        foundPosts.push(post);
+      });
+    });
+    /*
+     * Instead finding users' posts here
+     * Doing this because users' account could be private
+     * By doing this they'll be able to see their posts
+     */
+    currentAccount.posts.forEach((post) => {
+      post.datefield = format(fromUnixTime(post.datefield / 1000), "MMM d/y h:mm b");
+      foundPosts.push(post);
+    });
+
+    // Sorting the posts with their datefields
+    _.sortBy(foundPosts, (post) => {
+      return post.datefield;
+    });
+
+    res.json(foundPosts);
   }
 });
 

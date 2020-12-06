@@ -1,10 +1,5 @@
-const {
-  ENDPOINT,
-  PORT,
-  ACCKEY,
-  SECKEY,
-  USESSL
-} = require("../../config/minio");
+const { ENDPOINT, PORT, ACCKEY, SECKEY, USESSL } = require("../../config/minio");
+// const mailer = require("../helpers/mailer");
 const bcrypt = require("bcrypt");
 const router = require("express").Router();
 const mongoose = require("mongoose");
@@ -72,14 +67,9 @@ router.post("/", upload.single("avatar"), async (req, res) => {
     // If the user has selected a file
     if (req.file /*&& req.file.originalname !== undefined*/) {
       // Upload user image to the database
-      await MinIOClient.fPutObject(
-        "local",
-        `${Account._id}/${Account._id}.png`,
-        req.file.path,
-        {
-          "Content-Type": req.file.mimetype
-        }
-      );
+      await MinIOClient.fPutObject("local", `${Account._id}/${Account._id}.png`, req.file.path, {
+        "Content-Type": req.file.mimetype
+      });
       // Getting the link for the user's image
       const presignedUrl = await MinIOClient.presignedGetObject(
         "local",
@@ -105,8 +95,15 @@ router.post("/", upload.single("avatar"), async (req, res) => {
   Account.pictureUrl = pictureUrl;
   Account.password = password;
 
+  // TODO: change to async
+
   await Account.save()
     .then(() => {
+      // await mailer(
+      //   email,
+      //   "Your ArmSocial Account Verification",
+      //   "Your ArmSocial Account Verification"
+      // );
       res.cookie("email", Account.email, { maxAge: 24 * 60 * 60 * 1000 });
       res.cookie("password", Account.password, { maxAge: 24 * 60 * 60 * 1000 });
       res.redirect(`/user/${Account._id}`);

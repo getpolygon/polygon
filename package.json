@@ -6,8 +6,7 @@
   "scripts": {
     "start": "node  src/index",
     "dev": "nodemon src/index",
-    "build": "gulp build",
-    "bundle": "rollup public/index.js --file bundle.js --format iife"
+    "build": "gulp build"
   },
   "author": "Michael Grigoryan",
   "license": "Custom",
@@ -29,6 +28,7 @@
     "mongoose": "^5.11.4",
     "morgan": "^1.10.0",
     "multer": "^1.4.2",
+    "node-pin": "^0.1.5",
     "nodemailer": "^6.4.16",
     "sanitize-html": "^2.2.0"
   },

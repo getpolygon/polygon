@@ -111,7 +111,7 @@ router.get("/fetch", async (req, res) => {
       .catch((e) => console.log(e));
 
     accounts.forEach((account) => {
-      account.posts.map().forEach((post) => {
+      account.posts.forEach((post) => {
         post.datefield = format(fromUnixTime(post.datefield / 1000), "MMM d/y h:mm b");
         foundPosts.push(post);
       });

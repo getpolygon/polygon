@@ -3,6 +3,7 @@ import VideoComponent from "/components/video-component.mjs";
 import ComboComponent from "/components/combo-component.mjs";
 import TextComponent from "/components/text-component.mjs";
 import Loader from "/components/loader-component.mjs";
+import getCookie from "/dist/shared/js/getCookie.min.js";
 
 var postsContainer = document.getElementById("posts");
 var postButton = document.getElementById("postButton");
@@ -40,7 +41,7 @@ function deletePost() {
 
   fetch(`/api/posts/delete/?post=${postId}`, { method: "DELETE" })
     .then((response) => response.json())
-    .then((response) => {
+    .then(() => {
       post.parentNode.removeChild(post);
       checkForDeleteButtons();
     })
@@ -438,7 +439,7 @@ function addFriend() {
   let accountToAdd = document.getElementById("accountId").textContent;
   fetch(`/api/friends/add/?account=${accountToAdd}`, { method: "PUT" })
     .then((data) => data.json())
-    .then((_data) => {
+    .then(() => {
       addFriendButton.innerText = "Pending";
       addFriendButton.innerHTML += `
         <i class="fas fa-user-clock"></i>
@@ -497,8 +498,6 @@ function checkFriendship() {
       }
       if (data.is_current_account === true) {
         addFriendButton.setAttribute("disabled", "true");
-      } else {
-        addFriendButton = addFriendButton;
       }
 
       let cancelFriendRequestButton = document.querySelector(".cancel-friend-request");

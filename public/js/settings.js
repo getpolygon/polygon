@@ -16,7 +16,7 @@ function deleteAccount() {
     method: "DELETE"
   })
     .then((res) => res.json())
-    .then((res) => {
+    .then(() => {
       msg.innerHTML =
         "<p class='mt-3'>Your account has been deleted. <a href='/'>Go back to the main page</a></p>";
     })
@@ -36,7 +36,7 @@ function updatePrivacy() {
         res.json();
         msg.innerText = "";
       })
-      .then((_res) => {
+      .then(() => {
         msg.innerText = "OK. UPDATED";
         currentStatus.innerText = "Private Account";
         setTimeout(() => (msg.innerText = ""), 3000);
@@ -53,7 +53,7 @@ function updatePrivacy() {
         res.json();
         msg.innerText = "";
       })
-      .then((_res) => {
+      .then(() => {
         msg.innerText = "OK. UPDATED";
         currentStatus.innerText = "Public Account";
         setTimeout(() => (msg.innerText = ""), 3000);

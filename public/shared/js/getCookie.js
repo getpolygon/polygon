@@ -1,4 +1,4 @@
-function getCookie(name) {
+export default function getCookie(name) {
   // Split cookie string and get all individual name=value pairs in an array
   var cookieArr = document.cookie.split(";");
 
@@ -17,5 +17,3 @@ function getCookie(name) {
   // Return null if not found
   return null;
 }
-
-export default getCookie;

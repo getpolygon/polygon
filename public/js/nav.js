@@ -14,9 +14,7 @@ function search() {
         doc.forEach((result) => {
           let dupl = document.getElementById(result._id);
 
-          if (dupl) {
-            dupl = dupl;
-          } else {
+          if (!dupl) {
             let el = document.createElement("a");
             // This is to add 3 dots if the full name has 10+ characters
             var trimmed_full_name = (str, speclength) => {

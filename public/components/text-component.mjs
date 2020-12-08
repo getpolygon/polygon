@@ -18,7 +18,7 @@ class TextComponent {
                  width= "50"
                  height="50"
                  />
-                 <a class="ml-2" href="/user/${authorId}">${author}</a>
+                 <a class="ms-2" href="/user/${authorId}">${author}</a>
                 </div>
                 <h6 class="pt-2 text-dark align-baseline">
                 ${text}

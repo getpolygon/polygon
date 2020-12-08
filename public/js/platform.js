@@ -216,7 +216,7 @@ function fetchPosts() {
                     class="rounded-circle shadow-sm profile-photo"
                     width= "50"
                     height="50"/>
-                    <a class="ml-2" href="/user/${authorId}">${author}</a>
+                    <a class="ms-2" href="/user/${authorId}">${author}</a>
                   </div>
                   <span>${comment.comment}</span>
                   `;

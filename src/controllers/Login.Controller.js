@@ -21,7 +21,6 @@ router.post("/", async (req, res) => {
       if (doc <= 0) {
         return [];
       } else {
-        console.log(doc);
         return doc;
       }
     })

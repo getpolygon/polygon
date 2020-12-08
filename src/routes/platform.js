@@ -66,6 +66,8 @@ router.get("/user/:accountId", async (req, res) => {
       }
     }
   } catch (err) {
+    // TODO: Fix a bug with HTTP Headers
+    console.error(err);
     res.clearCookie("email").clearCookie("password").redirect("/auth/login");
   }
 });

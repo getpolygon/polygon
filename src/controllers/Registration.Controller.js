@@ -1,6 +1,7 @@
 const { ENDPOINT, PORT, ACCKEY, SECKEY, USESSL } = require("../../config/minio");
 // const mailer = require("../helpers/mailer");
 const bcrypt = require("bcrypt");
+const emailValidator = require("email-validator");
 const router = require("express").Router();
 const mongoose = require("mongoose");
 const multer = require("multer");
@@ -9,6 +10,7 @@ const storage = multer.diskStorage({
   destination: "tmp/",
   filename: (err, file, cb) => {
     cb(null, `${file.originalname}`);
+    if (err) return;
   }
 });
 const upload = multer({ storage: storage });
@@ -44,78 +46,91 @@ router.get("/", (req, res) => {
 // To register the account
 router.post("/", upload.single("avatar"), async (req, res) => {
   let email = req.body.email.toLowerCase();
-  let Account = new AccountSchema({
-    _id: new mongoose.Types.ObjectId(),
-    firstName: req.body.firstName,
-    lastName: req.body.lastName,
-    fullName: `${req.body.firstName} ${req.body.lastName}`,
-    email: email,
-    bio: req.body.bio,
-    // pictureUrl: pictureUrl,
-    isPrivate: req.body.privateCheck ? true : false,
-    friends: {
-      pending: [],
-      approved: [],
-      dismissed: [],
-      requested: []
-    },
-    date: Date.now()
-  });
 
-  // If a custom image was selected by the client set the picture URL to Firebase's  CDN
-  const url = async () => {
-    // If the user has selected a file
-    if (req.file /*&& req.file.originalname !== undefined*/) {
-      // Upload user image to the database
-      await MinIOClient.fPutObject("local", `${Account._id}/${Account._id}.png`, req.file.path, {
-        "Content-Type": req.file.mimetype
-      });
-      // Getting the link for the user's image
-      const presignedUrl = await MinIOClient.presignedGetObject(
-        "local",
-        `${Account._id}/${Account._id}.png`
-      );
-      return presignedUrl;
-    }
-    // If the user didn't select an image return a random image link(string) that will be used to serve default avatars from the server
-    else {
-      return avatarLinks[Math.floor(Math.random() * avatarLinks.length)];
-    }
-  };
+  // Checking if the email is valid
+  async function checkEmailValidity() {
+    if (emailValidator.validate(email)) return email;
+    else return false;
+  }
 
-  const hashPass = async () => {
-    let pass = await bcrypt.hash(req.body.password, 10).catch((e) => {
-      console.error(e);
+  async function checkForDuplicates() {
+    const doc = await AccountSchema.findOne({ email: email });
+    if (!doc) return false;
+    else return true;
+  }
+
+  var emailIsValid = await checkEmailValidity();
+  var duplicates = await checkForDuplicates();
+
+  if (emailIsValid && !duplicates) {
+    let Account = new AccountSchema({
+      _id: new mongoose.Types.ObjectId(),
+      firstName: req.body.firstName,
+      lastName: req.body.lastName,
+      fullName: `${req.body.firstName} ${req.body.lastName}`,
+      email: email,
+      bio: req.body.bio,
+      // pictureUrl: pictureUrl,
+      isPrivate: req.body.privateCheck ? true : false,
+      friends: {
+        pending: [],
+        approved: [],
+        dismissed: [],
+        requested: []
+      },
+      date: Date.now()
     });
-    return pass;
-  };
 
-  const password = await hashPass();
-  const pictureUrl = await url();
-  Account.pictureUrl = pictureUrl;
-  Account.password = password;
+    // If a custom image was selected by the client set the picture URL to Firebase's  CDN
+    const url = async () => {
+      // If the user has selected a file
+      if (req.file /*&& req.file.originalname !== undefined*/) {
+        // Upload user image to the database
+        await MinIOClient.fPutObject("local", `${Account._id}/${Account._id}.png`, req.file.path, {
+          "Content-Type": req.file.mimetype
+        });
+        // Getting the link for the user's image
+        const presignedUrl = await MinIOClient.presignedGetObject(
+          "local",
+          `${Account._id}/${Account._id}.png`
+        );
+        return presignedUrl;
+      }
+      // If the user didn't select an image return a random image link(string) that will be used to serve default avatars from the server
+      else {
+        return avatarLinks[Math.floor(Math.random() * avatarLinks.length)];
+      }
+    };
 
-  // TODO: change to async
-
-  await Account.save()
-    .then(() => {
-      // await mailer(
-      //   email,
-      //   "Your ArmSocial Account Verification",
-      //   "Your ArmSocial Account Verification"
-      // );
-      res.cookie("email", Account.email, { maxAge: 24 * 60 * 60 * 1000 });
-      res.cookie("password", Account.password, { maxAge: 24 * 60 * 60 * 1000 });
-      res.redirect(`/user/${Account._id}`);
-      // Delete the created file to save space
-      fs.unlink(`tmp/${req.file.originalname}`, (err) => {
-        if (err) console.error(err);
+    const hashPass = async () => {
+      let pass = await bcrypt.hash(req.body.password, 10).catch((e) => {
+        console.error(e);
       });
-    })
-    .catch((e) => {
-      res.redirect("/");
-      console.log(e);
-    });
+      return pass;
+    };
+
+    const password = await hashPass();
+    const pictureUrl = await url();
+    Account.pictureUrl = pictureUrl;
+    Account.password = password;
+
+    await Account.save()
+      .then(() => {
+        res.cookie("email", Account.email, { maxAge: 24 * 60 * 60 * 1000 });
+        res.cookie("password", Account.password, { maxAge: 24 * 60 * 60 * 1000 });
+        res.redirect(`/user/${Account._id}`);
+        // Delete the created file to save space
+        fs.unlink(`tmp/${req.file.originalname}`, (err) => {
+          if (err) console.error(err);
+        });
+      })
+      .catch((e) => {
+        res.redirect("/");
+        console.log(e);
+      });
+  } else {
+    res.render("login", { title: "Login — ArmSocial", err: "The email you entered is invalid" });
+  }
 });
 
 module.exports = router;

@@ -1,6 +1,6 @@
 <nav class="navbar navbar-light d-flex bg-white sticky-top shadow-sm mb-5">
   <!-- Logo -->
-  <a class="navbar-brand ml-2" href="/">
+  <a class="navbar-brand ms-2" href="/">
     <img src="/favicon.ico" width="30" height="30" class="d-inline-block align-top rounded-lg" />
     Armenia Social
   </a>
@@ -8,13 +8,13 @@
   <input
     style="width: 45%; width: 45vw"
     id="search"
-    class="form-control ml-2 mr-2"
+    class="form-control ms-2 me-2"
     type="search"
     placeholder="Search"
     aria-label="Search"
   />
   <!-- Dropdown -->
-  <div class="btn-group mr-2">
+  <div class="btn-group me-2">
     <button
       type="button"
       id="profileContainer"
@@ -30,9 +30,9 @@
         width="34"
         alt="<%= currentAccount.pictureUrl %>"
       />
-      <span class="ml-1"><%= currentAccount.fullName %></span>
+      <span class="ms-1"><%= currentAccount.fullName %></span>
     </button>
-    <div class="dropdown-menu dropdown-menu-right">
+    <div class="dropdown-menu dropdown-menu-end">
       <!-- My Account -->
       <a href="/user/<%= currentAccount._id %>" class="dropdown-item" type="button">
         <i class="fas fa-user"></i>

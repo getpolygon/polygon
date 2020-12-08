@@ -4,7 +4,7 @@ const BadWordsFilter = new BW({ placeHolder: "*" });
 const sanitizeHtml = require("sanitize-html");
 const linkifyUrls = require("linkify-urls");
 // For deleting files
-const { unlink } = require("fs");
+const { unlinkSync } = require("fs");
 // For displaying dates
 const { fromUnixTime, format } = require("date-fns");
 // MinIO Configuration
@@ -39,19 +39,25 @@ router.get("/fetch", async (req, res) => {
     password: req.cookies.password
   });
 
+  // Query methods
   const { accountId, postId, heart, getHearts } = req.query;
 
   // Getting the posts from the specified account ID
   if (accountId) {
     const account = await AccountSchema.findById(accountId);
-    var posts = await account.posts;
+    var posts = account.posts;
     posts.forEach(async (post) => {
       post.datefield = format(fromUnixTime((await post.datefield) / 1000), "MMM d/y h:mm b");
     });
     _.sortBy(posts, (post) => {
       return post.datefield;
     });
-    res.json(posts);
+    try {
+      // Without return we get a HTTP header error
+      return res.json(posts);
+    } catch (err) {
+      console.error(err);
+    }
   }
 
   // Update the hearts of the post
@@ -131,7 +137,11 @@ router.get("/fetch", async (req, res) => {
       return post.datefield;
     });
 
-    res.json(foundPosts);
+    try {
+      res.json(foundPosts);
+    } catch (err) {
+      console.error(err);
+    }
   }
 });
 
@@ -171,14 +181,14 @@ router.put("/create", upload.fields([{ name: "image" }, { name: "video" }]), asy
       hasAttachments: false,
       datefield: Date.now()
     };
-    authorAccount.posts.push(Post);
-    await authorAccount
-      .save()
-      .then(() => {
-        Post.datefield = format(fromUnixTime(Post.datefield / 1000), "MMM d/y h:mm b");
-        res.json(Post);
-      })
-      .catch((e) => console.error(e));
+    try {
+      authorAccount.posts.push(Post);
+      await authorAccount.save();
+      Post.datefield = format(fromUnixTime(Post.datefield / 1000), "MMM d/y h:mm b");
+      res.json(Post);
+    } catch (err) {
+      console.error(err);
+    }
   }
 
   if (q == "vid") {
@@ -214,17 +224,15 @@ router.put("/create", upload.fields([{ name: "image" }, { name: "video" }]), asy
       datefield: Date.now()
     };
 
-    authorAccount.posts.push(Post);
-    await authorAccount
-      .save()
-      .then(() => {
-        Post.datefield = format(fromUnixTime(Post.datefield / 1000), "MMM d/y h:mm b");
-        res.json(Post);
-      })
-      .catch((e) => console.error(e));
-    unlink(`tmp/${req.files.video[0].originalname}`, (err) => {
-      if (err) console.error(err);
-    });
+    try {
+      authorAccount.posts.push(Post);
+      await authorAccount.save();
+      Post.datefield = format(fromUnixTime(Post.datefield / 1000), "MMM d/y h:mm b");
+      res.json(Post);
+      unlinkSync(`tmp/${req.files.video[0].originalname}`);
+    } catch (err) {
+      console.error(err);
+    }
   }
 
   if (q == "img") {
@@ -260,17 +268,15 @@ router.put("/create", upload.fields([{ name: "image" }, { name: "video" }]), asy
       datefield: Date.now()
     };
 
-    authorAccount.posts.push(Post);
-    await authorAccount
-      .save()
-      .then(() => {
-        Post.datefield = format(fromUnixTime(Post.datefield / 1000), "MMM d/y h:mm b");
-        res.json(Post);
-      })
-      .catch((e) => console.error(e));
-    unlink(`tmp/${req.files.image[0].originalname}`, (err) => {
-      if (err) console.error(err);
-    });
+    try {
+      authorAccount.posts.push(Post);
+      await authorAccount.save();
+      Post.datefield = format(fromUnixTime(Post.datefield / 1000), "MMM d/y h:mm b");
+      res.json(Post);
+      unlinkSync(`tmp/${req.files.image[0].originalname}`);
+    } catch (err) {
+      console.error(err);
+    }
   }
   if (q == "imgvid") {
     await MinIOClient.fPutObject(
@@ -321,104 +327,99 @@ router.put("/create", upload.fields([{ name: "image" }, { name: "video" }]), asy
       datefield: Date.now()
     };
 
-    authorAccount.posts.push(Post);
-    await authorAccount
-      .save()
-      .then(() => {
-        Post.datefield = format(fromUnixTime(Post.datefield / 1000), "MMM d/y h:mm b");
-        res.json(Post);
-      })
-      .catch((e) => console.error(e));
-    unlink(`tmp/${req.files.video[0].originalname}`, (err) => {
-      if (err) console.error(err);
-    });
-    unlink(`tmp/${req.files.image[0].originalname}`, (err) => {
-      if (err) console.error(err);
-    });
+    try {
+      authorAccount.posts.push(Post);
+      await authorAccount.save();
+      Post.datefield = format(fromUnixTime(Post.datefield / 1000), "MMM d/y h:mm b");
+      res.json(Post);
+      unlinkSync(`tmp/${req.files.video[0].originalname}`);
+      unlinkSync(`tmp/${req.files.image[0].originalname}`);
+    } catch (err) {
+      console.error(err);
+    }
   }
 });
 
 // DELETE A POST
 router.delete("/delete", async (req, res) => {
-  let currentEmail = req.cookies.email;
-  let currentPassword = req.cookies.password;
-  let { post } = req.query;
+  const { post } = req.query;
+  const currentAccount = await AccountSchema.findOne({
+    email: req.cookies.email,
+    password: req.cookies.password
+  });
 
-  await AccountSchema.findOne({
-    email: currentEmail,
-    password: currentPassword
-  })
-    .then(async (doc) => {
-      let foundPost = doc.posts.id(post);
-      if (foundPost.hasAttachments == true) {
-        if (foundPost.attachments.hasAttachedImage == true) {
-          MinIOClient.removeObject(
-            "local",
-            `${currentEmail}/media/${foundPost.attachments.image.attachedImageFileName}`,
-            function (err) {
-              if (err) {
-                return console.log("Unable to remove object", err);
-              }
+  try {
+    let foundPost = currentAccount.posts.id(post);
+    if (foundPost.hasAttachments == true) {
+      if (foundPost.attachments.hasAttachedImage == true) {
+        MinIOClient.removeObject(
+          "local",
+          `${currentAccount._id}/media/${foundPost.attachments.image.attachedImageFileName}`,
+          function (err) {
+            if (err) {
+              return console.log("Unable to remove object", err);
             }
-          );
-        }
-        if (foundPost.attachments.hasAttachedVideo == true) {
-          MinIOClient.removeObject(
-            "local",
-            `${currentEmail}/media/${foundPost.attachments.video.attachedVideoFileName}`,
-            function (err) {
-              if (err) {
-                return console.log("Unable to remove object", err);
-              }
-            }
-          );
-        }
-        if (
-          foundPost.attachments.hasAttachedVideo == true &&
-          foundPost.attachments.hasAttachedImage
-        ) {
-          MinIOClient.removeObject(
-            "local",
-            `${currentEmail}/media/${foundPost.attachments.image.attachedImageFileName}`,
-            function (err) {
-              if (err) {
-                return console.log("Unable to remove object", err);
-              }
-            }
-          );
-          MinIOClient.removeObject(
-            "local",
-            `${currentEmail}/media/${foundPost.attachments.image.attachedImageFileName}`,
-            function (err) {
-              if (err) {
-                return console.log("Unable to remove object", err);
-              }
-            }
-          );
-        }
-
-        doc.posts.pull(foundPost);
-        await doc
-          .save()
-          .then(
-            res.json({
-              result: "Removed"
-            })
-          )
-          .catch((e) => console.error(e));
-      } else {
-        doc.posts.pull(foundPost);
-        await doc
-          .save()
-          .then(
-            res.json({
-              result: "Removed"
-            })
-          )
-          .catch((e) => console.error(e));
+          }
+        );
       }
-    })
-    .catch((e) => console.error(e));
+      if (foundPost.attachments.hasAttachedVideo == true) {
+        MinIOClient.removeObject(
+          "local",
+          `${currentAccount._id}/media/${foundPost.attachments.video.attachedVideoFileName}`,
+          function (err) {
+            if (err) {
+              return console.log("Unable to remove object", err);
+            }
+          }
+        );
+      }
+      if (
+        foundPost.attachments.hasAttachedVideo == true &&
+        foundPost.attachments.hasAttachedImage
+      ) {
+        MinIOClient.removeObject(
+          "local",
+          `${currentAccount._id}/media/${foundPost.attachments.image.attachedImageFileName}`,
+          function (err) {
+            if (err) {
+              return console.log("Unable to remove object", err);
+            }
+          }
+        );
+        MinIOClient.removeObject(
+          "local",
+          `${currentAccount._id}/media/${foundPost.attachments.image.attachedImageFileName}`,
+          function (err) {
+            if (err) {
+              return console.log("Unable to remove object", err);
+            }
+          }
+        );
+      }
+
+      try {
+        currentAccount.posts.pull(foundPost);
+        await currentAccount.save();
+        res.json({
+          result: "Removed"
+        });
+      } catch (err) {
+        console.error(err);
+      }
+    } else {
+      try {
+        currentAccount.posts.pull(foundPost);
+        await currentAccount.save();
+        res.json({
+          result: "Removed"
+        });
+      } catch (err) {
+        console.error(err);
+      }
+    }
+  } catch (err) {
+    console.error(err);
+  }
 });
 
 module.exports = router;

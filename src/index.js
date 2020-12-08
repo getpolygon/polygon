@@ -10,6 +10,7 @@ const bodyParser = require("body-parser");
 const compression = require("compression");
 const session = require("express-session");
 const cookieParser = require("cookie-parser");
+// const rateLimit = require("express-rate-limit");
 const port = 3000 || PORT;
 const app = express();
 
@@ -20,6 +21,12 @@ const platformRoute = require("./routes/platform");
 
 // Middleware
 app.use(cors());
+// app.use(
+//   rateLimit({
+//     windowMs: 15 * 60 * 1000, // 15 minutes
+//     max: 100
+//   })
+// );
 app.use(morgan("dev"));
 app.use(compression());
 app.use(cookieParser());
@@ -28,6 +35,10 @@ app.use(express.static("public/"));
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(
   session({
+    cookie: {
+      secure: false,
+      httpOnly: false
+    },
     secret: SECRET,
     resave: false,
     saveUninitialized: true
@@ -37,13 +48,19 @@ app.use(
 app.set("views", "src/views/");
 app.set("view engine", "ejs");
 
+// Enable/Disable Headers
+app.enable("trust proxy");
+app.disable("x-powered-by");
+app.enable("x-frame-options");
+app.enable("x-content-type-options");
+
 // Use the routes
 app.use("/", platformRoute);
 app.use("/api", apiRoute);
 app.use("/auth", authRoute);
 
 // Error page
-app.get("*", (req, res) => res.redirect("/static/error.html"));
+app.get("*", (_req, res) => res.redirect("/static/error.html"));
 
 // Connect to MongoDB
 mongoose

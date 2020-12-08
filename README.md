@@ -1,47 +1,73 @@
 # ArmSocial — Social Network Made By an Armenian
+
 <br>
 
 ## Cloning the repository
+
 ```bash
 git clone https://github.com/MichaelGrigoryan25/ArmSocial
 ```
 
 ## After cloning the repository
+
 ### Reproduce these steps
-* Open the terminal and run `npm install`
-* Create a `.env` file at the project's root folder
-* In the `.env` file paste this line `mongo=YOUR_MONGODB_URI`
-* Open up the terminal and run `npm start` or `npm run dev` in a development environment
+
+- Open the terminal and run `npm install`
+- Create a `.env` file at the project's root folder
+- In the `.env` file paste this line `mongo=YOUR_MONGODB_URI`
+- Open up the terminal and run `npm start` or `npm run dev` in a development environment
 
 After you've done these steps you can open `localhost:3000` in your browser.
 
 ## Configuring MinIO
+
 ### Steps to reproduce
-* Move to the project root
-* Create a file and name it `minio.config.js`
-* Update your settings respectively
+
+- Move to the project root
+- Create a file and name it `minio.config.js`
+- Update your settings respectively
 
 ```js
 module.exports = {
-    "MINIO_HOST":   "The MinIO host endpoint",
-    "MINIO_PORT":   9000, // Change it to the port of the MinIO host (9000 in the most cases)
-    "MINIO_ACCKEY": "12345678", // Change these to your keys
-    "MINIO_SECKEY": "12345678", // Change these to your keys
-    "MINIO_USESSL": false // false by default
-}
+  MINIO_HOST: "The MinIO host endpoint",
+  MINIO_PORT: 9000, // Change it to the port of the MinIO host (9000 in the most cases)
+  MINIO_ACCKEY: "12345678", // Change these to your keys
+  MINIO_SECKEY: "12345678", // Change these to your keys
+  MINIO_USESSL: false // false by default
+};
+```
+
+## Configuring Mailer
+
+### Steps to reproduce
+
+- Create a `email.js` file in `config/`
+
+```js
+module.exports = {
+  email: "<EMAIL_THAT_YOU_WANT_TO_USE>",
+  password: "<YOUR_APP/ACCOUNT_PASSWORD>", // https://myaccount.google.com/apppasswords
+  port: 465,
+  secure: true, //
+  host: "YOUR_SMTP_HOST"
+};
 ```
 
 ## CSS Framework(s) Used
-* Bootstrap
+
+- Bootstrap
 
 ## Templating engine(s) Used
-* EJS
+
+- EJS
 
 ## Database(s) Used
-* MongoDB ( For Documents )
-* MinIO ( Object Storage )
+
+- MongoDB ( For Documents )
+- MinIO ( Object Storage )
 
 ## NPM dependencies Used
+
 ```json
 "dependencies": {
     "body-parser": "^1.19.0",
@@ -67,6 +93,7 @@ module.exports = {
 ```
 
 # Mongoose models
+
 We have 1 main model and 2 subdocuments.
 <br />
 
@@ -85,4 +112,5 @@ We have 1 main model and 2 subdocuments.
 <hr>
 
 ## Links
+
 [LICENSE](./LICENSE)

@@ -1,8 +1,8 @@
 <nav class="navbar navbar-light d-flex bg-white sticky-top shadow-sm mb-5">
   <!-- Logo -->
-  <a class="navbar-brand ms-2" href="/">
-    <img src="/favicon.ico" width="30" height="30" class="d-inline-block align-top rounded-lg" />
-    Armenia Social
+  <a class="navbar-brand ms-3" href="/">
+    <img src="/favicon.ico" width="30" height="30" class="d-inline-block align-top rounded-3" />
+    <span class="logo-text">Armenia Social</span>
   </a>
   <!-- Search box -->
   <input
@@ -14,12 +14,12 @@
     aria-label="Search"
   />
   <!-- Dropdown -->
-  <div class="btn-group me-2">
+  <div class="btn-group me-3">
     <button
       type="button"
       id="profileContainer"
       class="btn dropdown-toggle"
-      data-toggle="dropdown"
+      data-bs-toggle="dropdown"
       aria-haspopup="true"
       aria-expanded="false"
     >
@@ -30,7 +30,7 @@
         width="34"
         alt="<%= currentAccount.pictureUrl %>"
       />
-      <span class="ms-1"><%= currentAccount.fullName %></span>
+      <span class="nav-account-name ms-1"><%= currentAccount.fullName %></span>
     </button>
     <div class="dropdown-menu dropdown-menu-end">
       <!-- My Account -->
@@ -42,7 +42,7 @@
       <a href="/notifications" class="dropdown-item">
         <% if (currentAccount.friends.pending.length > 0) { %>
         <i class="fas fa-bell">
-          <span class="badge badge-danger"><%= currentAccount.friends.pending.length %></span>
+          <span class="badge rounded-pill bg-danger"><%= currentAccount.friends.pending.length %></span>
         </i>
         <%}%> <% if (currentAccount.friends.pending.length == 0){%>
         <i class="fas fa-bell"></i>

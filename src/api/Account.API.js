@@ -1,3 +1,4 @@
+const _ = require("lodash");
 const router = require("express").Router();
 const { ENDPOINT, PORT, ACCKEY, SECKEY, USESSL } = require("../../config/minio");
 // Instead of Firebase Storage, we are using MinIO
@@ -11,6 +12,7 @@ const MinIOClient = new minio.Client({
 });
 const AccountSchema = require("../models/account");
 const emailValidator = require("email-validator");
+const bcrypt = require("bcrypt");
 // For checking the account
 router.put("/check", async (req, res) => {
   let email = req.query.email;
@@ -90,7 +92,7 @@ router.put("/update", async (req, res) => {
     email: req.cookies.email,
     password: req.cookies.password
   });
-  let { firstName, lastName, bio, email, password, privacy } = req.query;
+  let { bio, email, password, privacy } = req.query;
 
   if (privacy) {
     await currentAccount
@@ -129,8 +131,8 @@ router.put("/update", async (req, res) => {
 
       if (currentAccount.posts.length != 0) {
         // Updating the email in each post
-        currentAccount.posts.forEach((obj) => {
-          obj.authorEmail = email;
+        _.each(currentAccount.posts, (post) => {
+          post.authorEmail = email;
         });
         await currentAccount.save();
       }

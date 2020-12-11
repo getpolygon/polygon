@@ -26,11 +26,11 @@
     "linkify-urls": "^3.1.1",
     "lodash": "^4.17.20",
     "minio": "^7.0.17",
-    "mongoose": "^5.11.4",
+    "mongoose": "^5.11.7",
     "morgan": "^1.10.0",
     "multer": "^1.4.2",
     "node-pin": "^0.1.5",
-    "nodemailer": "^6.4.16",
+    "nodemailer": "^6.4.17",
     "sanitize-html": "^2.2.0"
   },
   "devDependencies": {

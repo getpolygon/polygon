@@ -1,3 +1,4 @@
+const _ = require("lodash");
 const router = require("express").Router();
 const mongoose = require("mongoose");
 
@@ -25,9 +26,9 @@ router.put("/add", async (req, res) => {
     }
   });
 
-  addedAccount.friends.pending.forEach(async (obj) => {
-    if (obj.accountId === currentAccount._id) {
-      await addedAccount.friends.pending.pull(obj);
+  _.each(addedAccount.friends.pending, async (account) => {
+    if (account.accountId == currentAccount.id) {
+      addedAccount.friends.pending.pull(account);
       await addedAccount.save();
     }
   });
@@ -59,24 +60,23 @@ router.put("/update", async (req, res) => {
     password: req.cookies.password
   });
 
-  var { accept, decline, cancel } = req.query;
+  var { cancel } = req.query;
 
   if (cancel) {
-    for (var i = 0; i < currentAccount.friends.requested.length; i++) {
-      if (currentAccount.friends.requested[i].accountId == accountToCheckDoc._id) {
-        var accountToFind = await AccountSchema.findById(
-          currentAccount.friends.requested[i].accountId
-        );
-        for (var z = 0; z < accountToFind.friends.pending.length; z++) {
-          if (accountToFind.friends.pending[z].accountId == currentAccount._id) {
-            await accountToFind.friends.pending.pull(accountToFind.friends.pending[z]);
-            await accountToFind.save();
+    _.each(currentAccount.friends.requested, async (account) => {
+      if (account.accountId == accountToCheckDoc.id) {
+        var foundAccount = await AccountSchema.findById(account.accountId);
+        _.each(foundAccount.friends.pending, async (account) => {
+          if (account.accountId == currentAccount.id) {
+            foundAccount.friends.pending.pull(account);
+            await foundAccount.save();
           }
-        }
-        await currentAccount.friends.requested.pull(currentAccount.friends.requested[i]);
-        await currentAccount.save().then((doc) => res.json(doc));
+        });
+        currentAccount.friends.requested.pull(account);
+        res.json(currentAccount);
+        await currentAccount.save();
       }
-    }
+    });
   }
 });
 

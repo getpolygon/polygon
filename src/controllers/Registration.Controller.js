@@ -1,4 +1,4 @@
-const { ENDPOINT, PORT, ACCKEY, SECKEY, USESSL } = require("../../config/minio");
+const { ENDPOINT, BUCKET, PORT, ACCKEY, SECKEY, USESSL } = require("../../config/minio");
 // const mailer = require("../helpers/mailer");
 const _ = require("lodash");
 const bcrypt = require("bcrypt");
@@ -85,14 +85,14 @@ router.post("/", upload.single("avatar"), async (req, res) => {
     // If a custom image was selected by the client set the picture URL to Firebase's  CDN
     const url = async () => {
       // If the user has selected a file
-      if (req.file /*&& req.file.originalname !== undefined*/) {
+      if (req.file) {
         // Upload user image to the database
-        await MinIOClient.fPutObject("local", `${Account._id}/${Account._id}.png`, req.file.path, {
+        MinIOClient.fPutObject(BUCKET, `${Account._id}/${Account._id}.png`, req.file.path, {
           "Content-Type": req.file.mimetype
         });
         // Getting the link for the user's image
         const presignedUrl = await MinIOClient.presignedGetObject(
-          "local",
+          BUCKET,
           `${Account._id}/${Account._id}.png`
         );
         return presignedUrl;

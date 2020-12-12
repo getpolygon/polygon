@@ -8,7 +8,7 @@ const { unlinkSync } = require("fs");
 // For displaying dates
 const { fromUnixTime, format } = require("date-fns");
 // MinIO Configuration
-const { ENDPOINT, PORT, ACCKEY, SECKEY, USESSL } = require("../../config/minio");
+const { ENDPOINT, BUCKET, PORT, ACCKEY, SECKEY, USESSL } = require("../../config/minio");
 const minio = require("minio");
 const MinIOClient = new minio.Client({
   endPoint: ENDPOINT,
@@ -184,7 +184,7 @@ router.put("/create", upload.fields([{ name: "image" }, { name: "video" }]), asy
 
   if (type == "vid") {
     await MinIOClient.fPutObject(
-      "local",
+      BUCKET,
       `${authorAccount._id}/media/${req.files.video[0].originalname}`,
       req.files.video[0].path,
       {
@@ -192,7 +192,7 @@ router.put("/create", upload.fields([{ name: "image" }, { name: "video" }]), asy
       }
     );
     const presignedUrl = await MinIOClient.presignedGetObject(
-      "local",
+      BUCKET,
       `${authorAccount._id}/media/${req.files.video[0].originalname}`
     );
 
@@ -223,7 +223,7 @@ router.put("/create", upload.fields([{ name: "image" }, { name: "video" }]), asy
 
   if (type == "img") {
     await MinIOClient.fPutObject(
-      "local",
+      BUCKET,
       `${authorAccount._id}/media/${req.files.image[0].originalname}`,
       req.files.image[0].path,
       {
@@ -231,7 +231,7 @@ router.put("/create", upload.fields([{ name: "image" }, { name: "video" }]), asy
       }
     );
     const presignedUrl = await MinIOClient.presignedGetObject(
-      "local",
+      BUCKET,
       `${authorAccount._id}/media/${req.files.image[0].originalname}`
     );
 
@@ -261,7 +261,7 @@ router.put("/create", upload.fields([{ name: "image" }, { name: "video" }]), asy
   }
   if (type == "imgvid") {
     await MinIOClient.fPutObject(
-      "local",
+      BUCKET,
       `${authorAccount._id}/media/${req.files.video[0].originalname}`,
       req.files.video[0].path,
       {
@@ -269,7 +269,7 @@ router.put("/create", upload.fields([{ name: "image" }, { name: "video" }]), asy
       }
     );
     await MinIOClient.fPutObject(
-      "local",
+      BUCKET,
       `${authorAccount._id}/media/${req.files.image[0].originalname}`,
       req.files.image[0].path,
       {
@@ -277,11 +277,11 @@ router.put("/create", upload.fields([{ name: "image" }, { name: "video" }]), asy
       }
     );
     const presignedUrlImage = await MinIOClient.presignedGetObject(
-      "local",
+      BUCKET,
       `${authorAccount._id}/media/${req.files.image[0].originalname}`
     );
     const presignedUrlVideo = await MinIOClient.presignedGetObject(
-      "local",
+      BUCKET,
       `${authorAccount._id}/media/${req.files.video[0].originalname}`
     );
 
@@ -328,7 +328,7 @@ router.delete("/delete", async (req, res) => {
   if (foundPost.hasAttachments == true) {
     if (foundPost.attachments.hasAttachedImage == true) {
       MinIOClient.removeObject(
-        "local",
+        BUCKET,
         `${currentAccount._id}/media/${foundPost.attachments.image.attachedImageFileName}`,
         function (err) {
           if (err) {
@@ -339,7 +339,7 @@ router.delete("/delete", async (req, res) => {
     }
     if (foundPost.attachments.hasAttachedVideo == true) {
       MinIOClient.removeObject(
-        "local",
+        BUCKET,
         `${currentAccount._id}/media/${foundPost.attachments.video.attachedVideoFileName}`,
         function (err) {
           if (err) {
@@ -350,7 +350,7 @@ router.delete("/delete", async (req, res) => {
     }
     if (foundPost.attachments.hasAttachedVideo == true && foundPost.attachments.hasAttachedImage) {
       MinIOClient.removeObject(
-        "local",
+        BUCKET,
         `${currentAccount._id}/media/${foundPost.attachments.image.attachedImageFileName}`,
         function (err) {
           if (err) {
@@ -359,7 +359,7 @@ router.delete("/delete", async (req, res) => {
         }
       );
       MinIOClient.removeObject(
-        "local",
+        BUCKET,
         `${currentAccount._id}/media/${foundPost.attachments.image.attachedImageFileName}`,
         function (err) {
           if (err) {

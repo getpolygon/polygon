@@ -1,7 +1,6 @@
 const _ = require("lodash");
 const router = require("express").Router();
-const { ENDPOINT, PORT, ACCKEY, SECKEY, USESSL } = require("../../config/minio");
-// Instead of Firebase Storage, we are using MinIO
+const { ENDPOINT, BUCKET, PORT, ACCKEY, SECKEY, USESSL } = require("../../config/minio");
 const minio = require("minio");
 const MinIOClient = new minio.Client({
   endPoint: ENDPOINT,
@@ -22,7 +21,7 @@ router.put("/check", async (req, res) => {
   if (q == "email") {
     const inputEmail = await req.body.email;
     // Validating user's email
-    const validateEmail = await emailValidator.validate(inputEmail);
+    const validateEmail = emailValidator.validate(inputEmail);
 
     // If email validation fails
     if (validateEmail == false) {
@@ -158,11 +157,7 @@ router.delete("/delete", async (req, res) => {
   const email = req.cookies.email;
   const password = req.cookies.password;
 
-  MinIOClient.removeObject("local", `${email}.png`, function (err) {
-    if (err) {
-      return err;
-    }
-  });
+  await MinIOClient.removeObject(BUCKET, `${email}.png`);
 
   await AccountSchema.findOneAndDelete({
     email: email,

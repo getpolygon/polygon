@@ -29,11 +29,12 @@ After you've done these steps you can open `localhost:3000` in your browser.
 
 ```js
 module.exports = {
-  MINIO_HOST: "The MinIO host endpoint",
-  MINIO_PORT: 9000, // Change it to the port of the MinIO host (9000 in the most cases)
-  MINIO_ACCKEY: "12345678", // Change these to your keys
-  MINIO_SECKEY: "12345678", // Change these to your keys
-  MINIO_USESSL: false // false by default
+  HOST: "The MinIO host endpoint",
+  PORT: 9000, // Change it to the port of the MinIO host (9000 in the most cases)
+  ACCKEY: "12345678", // Change these to your keys
+  SECKEY: "12345678", // Change these to your keys
+  USESSL: false, // false by default
+  BUCKET: "YOUR_BUCKET_NAME"
 };
 ```
 

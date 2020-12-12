@@ -119,7 +119,7 @@ router.get("/settings", async (req, res) => {
 // Logout
 router.post("/logout", (req, res) => {
   res.clearCookie("email").clearCookie("password").redirect("/");
-  req.session.destroy;
+  req.session.destroy();
 });
 
 module.exports = router;

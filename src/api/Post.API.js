@@ -9,7 +9,6 @@ const { unlinkSync } = require("fs");
 const { fromUnixTime, format } = require("date-fns");
 // MinIO Configuration
 const { ENDPOINT, PORT, ACCKEY, SECKEY, USESSL } = require("../../config/minio");
-const mongoose = require("mongoose");
 const minio = require("minio");
 const MinIOClient = new minio.Client({
   endPoint: ENDPOINT,
@@ -135,8 +134,8 @@ router.get("/fetch", async (req, res) => {
       posts.push(post);
     });
 
-    _.sortBy(posts, ["datefield"]);
-
+    // Sorting posts by datefield ( from latest to oldest )
+    posts = _.sortBy(posts, ["datefield"]).reverse();
     res.json(posts);
   }
 });
@@ -150,7 +149,7 @@ router.put("/create", upload.fields([{ name: "image" }, { name: "video" }]), asy
   let author = authorAccount.fullName;
   let authorImage = authorAccount.pictureUrl;
   let authorId = authorAccount._id;
-  let { q } = req.query;
+  let { type } = req.query;
 
   let text =
     // Sanitizing HTML to dodge XSS attacks
@@ -166,9 +165,8 @@ router.put("/create", upload.fields([{ name: "image" }, { name: "video" }]), asy
       )
     );
 
-  if (q == "txt") {
-    const Post = {
-      _id: new mongoose.Types.ObjectId(),
+  if (type == "txt") {
+    const Post = authorAccount.posts.create({
       text: text,
       author: author,
       authorEmail: req.cookies.email,
@@ -176,7 +174,7 @@ router.put("/create", upload.fields([{ name: "image" }, { name: "video" }]), asy
       authorImage: authorImage,
       hasAttachments: false,
       datefield: Date.now()
-    };
+    });
 
     authorAccount.posts.push(Post);
     await authorAccount.save();
@@ -184,7 +182,7 @@ router.put("/create", upload.fields([{ name: "image" }, { name: "video" }]), asy
     res.json(Post);
   }
 
-  if (q == "vid") {
+  if (type == "vid") {
     await MinIOClient.fPutObject(
       "local",
       `${authorAccount._id}/media/${req.files.video[0].originalname}`,
@@ -198,8 +196,7 @@ router.put("/create", upload.fields([{ name: "image" }, { name: "video" }]), asy
       `${authorAccount._id}/media/${req.files.video[0].originalname}`
     );
 
-    const Post = {
-      _id: new mongoose.Types.ObjectId(),
+    const Post = authorAccount.posts.create({
       text: text,
       author: author,
       authorEmail: req.cookies.email,
@@ -215,7 +212,7 @@ router.put("/create", upload.fields([{ name: "image" }, { name: "video" }]), asy
         }
       },
       datefield: Date.now()
-    };
+    });
 
     authorAccount.posts.push(Post);
     await authorAccount.save();
@@ -224,7 +221,7 @@ router.put("/create", upload.fields([{ name: "image" }, { name: "video" }]), asy
     unlinkSync(`tmp/${req.files.video[0].originalname}`);
   }
 
-  if (q == "img") {
+  if (type == "img") {
     await MinIOClient.fPutObject(
       "local",
       `${authorAccount._id}/media/${req.files.image[0].originalname}`,
@@ -238,8 +235,7 @@ router.put("/create", upload.fields([{ name: "image" }, { name: "video" }]), asy
       `${authorAccount._id}/media/${req.files.image[0].originalname}`
     );
 
-    const Post = {
-      _id: new mongoose.Types.ObjectId(),
+    const Post = authorAccount.posts.create({
       text: text,
       author: author,
       authorEmail: req.cookies.email,
@@ -255,7 +251,7 @@ router.put("/create", upload.fields([{ name: "image" }, { name: "video" }]), asy
         }
       },
       datefield: Date.now()
-    };
+    });
 
     authorAccount.posts.push(Post);
     await authorAccount.save();
@@ -263,7 +259,7 @@ router.put("/create", upload.fields([{ name: "image" }, { name: "video" }]), asy
     unlinkSync(`tmp/${req.files.image[0].originalname}`);
     res.json(Post);
   }
-  if (q == "imgvid") {
+  if (type == "imgvid") {
     await MinIOClient.fPutObject(
       "local",
       `${authorAccount._id}/media/${req.files.video[0].originalname}`,
@@ -289,8 +285,7 @@ router.put("/create", upload.fields([{ name: "image" }, { name: "video" }]), asy
       `${authorAccount._id}/media/${req.files.video[0].originalname}`
     );
 
-    const Post = {
-      _id: new mongoose.Types.ObjectId(),
+    const Post = authorAccount.posts.create({
       text: text,
       author: author,
       authorEmail: req.cookies.email,
@@ -310,7 +305,7 @@ router.put("/create", upload.fields([{ name: "image" }, { name: "video" }]), asy
         }
       },
       datefield: Date.now()
-    };
+    });
 
     authorAccount.posts.push(Post);
     await authorAccount.save();

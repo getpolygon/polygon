@@ -7,7 +7,7 @@ class HeartButtonContent {
     return `
           ${checkActive()}
           ${label}
-          <span class="badge badge-pill badge-danger love-count">${heartCount}</span>
+          <span class="badge rounded-pill bg-danger love-count">${heartCount}</span>
         `;
   }
 }

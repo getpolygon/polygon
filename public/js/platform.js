@@ -300,8 +300,8 @@ function createPost() {
     let loader = new Loader({ fullScreen: true });
     document.body.appendChild(loader);
 
-    // q is to specify the type of post that we want
-    fetch("/api/posts/create?q=txt", {
+    // "type" is to specify the type of post that we want
+    fetch("/api/posts/create?type=txt", {
       method: "PUT",
       body: formData
     })
@@ -331,6 +331,12 @@ function createPost() {
         postText.value = "";
         imageInput.value = "";
         videoInput.value = "";
+        const loveButton = cardContainer.querySelector(".love-post");
+        loveButton.innerHTML = new HeartButtonContent().build(
+          "Heart",
+          data.hearts.numberOfHearts || 0,
+          false
+        );
         document.body.removeChild(loader);
         postsContainer.prepend(cardContainer);
         checkForDeleteButtons();
@@ -350,7 +356,7 @@ function createPost() {
     let loader = new Loader({ fullScreen: true });
     document.body.appendChild(loader);
 
-    fetch("/api/posts/create?q=vid", {
+    fetch("/api/posts/create?type=vid", {
       method: "PUT",
       body: formData
     })
@@ -382,6 +388,12 @@ function createPost() {
         postText.value = "";
         imageInput.value = "";
         videoInput.value = "";
+        const loveButton = cardContainer.querySelector(".love-post");
+        loveButton.innerHTML = new HeartButtonContent().build(
+          "Heart",
+          data.hearts.numberOfHearts,
+          false
+        );
         document.body.removeChild(loader);
         postsContainer.prepend(cardContainer);
         checkForDeleteButtons();
@@ -402,7 +414,7 @@ function createPost() {
     let loader = new Loader({ fullScreen: true });
     document.body.appendChild(loader);
 
-    fetch("/api/posts/create?q=imgvid", {
+    fetch("/api/posts/create?type=imgvid", {
       method: "PUT",
       body: formData
     })
@@ -435,6 +447,12 @@ function createPost() {
         postText.value = "";
         imageInput.value = "";
         videoInput.value = "";
+        const loveButton = cardContainer.querySelector(".love-post");
+        loveButton.innerHTML = new HeartButtonContent().build(
+          "Heart",
+          data.hearts.numberOfHearts,
+          false
+        );
         document.body.removeChild(loader);
         postsContainer.prepend(cardContainer);
         checkForDeleteButtons();
@@ -453,7 +471,7 @@ function createPost() {
     const loader = new Loader({ fullScreen: true });
     document.body.appendChild(loader);
 
-    fetch("/api/posts/create?q=img", {
+    fetch("/api/posts/create?type=img", {
       method: "PUT",
       body: formData
     })
@@ -486,6 +504,12 @@ function createPost() {
         postText.value = "";
         imageInput.value = "";
         videoInput.value = "";
+        const loveButton = cardContainer.querySelector(".love-post");
+        loveButton.innerHTML = new HeartButtonContent().build(
+          "Heart",
+          data.hearts.numberOfHearts,
+          false
+        );
         document.body.removeChild(loader);
         postsContainer.prepend(cardContainer);
         checkForDeleteButtons();

@@ -4,7 +4,7 @@ const NavAccountName = document.querySelector(".nav-account-name");
 // Removing account name and logo text on resize if width is less than 425
 const Responsive = () => {
   if (LogoText) {
-    if (window.innerWidth <= 425) {
+    if (window.innerWidth <= 768) {
       LogoText.style.display = "none";
       NavAccountName.style.display = "none";
     } else {

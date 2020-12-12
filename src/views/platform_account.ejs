@@ -5,22 +5,20 @@
 
 <div class="container justify-content-center">
   <div class="container" style="align-items: center; justify-content: center;text-align: center;">
-    <img data-toggle="modal" data-target="#exampleModalCenter" role="button" class="rounded-circle" height="128"
+    <img data-bs-toggle="modal" data-bs-target="#user_image_modal" role="button" class="rounded-circle" height="128"
       width="128" src="<%= platformAccount.pictureUrl %>" alt="profile_picture" />
     <br>
     <!-- Modal -->
-    <div class="modal fade" id="exampleModalCenter" tabindex="-1" role="dialog" aria-labelledby="imageModal"
+    <div class="modal fade" id="user_image_modal" tabindex="-1" role="dialog" aria-labelledby="imageModal"
       aria-hidden="true">
       <div class="modal-dialog modal-dialog-centered" role="document">
         <div class="modal-content">
           <div class="modal-header">
             <h5 class="modal-title" id="imageModal"><%= platformAccount.fullName %></h5>
-            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-              <span aria-hidden="true">&times;</span>
-            </button>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
           </div>
           <div class="modal-body">
-            <img src="<%= platformAccount.pictureUrl %>" style="height: 15em;" alt="profile_picture">
+            <img src="<%= platformAccount.pictureUrl %>" height="150" alt="profile_picture">
           </div>
         </div>
       </div>

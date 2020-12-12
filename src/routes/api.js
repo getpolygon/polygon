@@ -6,7 +6,6 @@ const FriendAPI = require("../api/Friend.API");
 const AccountAPI = require("../api/Account.API");
 const NotificationAPI = require("../api/Notifications.API");
 
-router.get("/", (_req, res) => res.send("API Endpoint"));
 router.use("/posts", PostAPI);
 router.use("/friends", FriendAPI);
 router.use("/search", SearchAPI);

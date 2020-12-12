@@ -26,8 +26,8 @@
       <button
         type="button"
         class="btn btn-light border w-100 me-2"
-        data-toggle="modal"
-        data-target="#photoModal"
+        data-bs-toggle="modal"
+        data-bs-target="#photoModal"
       >
         <i class="fas fa-camera"></i>
         Photo
@@ -45,9 +45,12 @@
           <div class="modal-content">
             <div class="modal-header">
               <h5 class="modal-title" id="photoModalLabel">Upload a photo</h5>
-              <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                <span aria-hidden="true">&times;</span>
-              </button>
+              <button
+                type="button"
+                class="btn-close"
+                data-bs-dismiss="modal"
+                aria-label="Close"
+              ></button>
             </div>
             <div class="modal-body">
               <input
@@ -55,9 +58,7 @@
                 accept="image/gif, image/jpeg, image/png"
                 type="file"
                 name="image"
-                onchange="readURL(this)"
               />
-              <img class="container" id="imagePreview" />
             </div>
           </div>
         </div>
@@ -68,8 +69,8 @@
       <button
         type="button"
         class="btn btn-light border w-100 me-2"
-        data-toggle="modal"
-        data-target="#videoModal"
+        data-bs-toggle="modal"
+        data-bs-target="#videoModal"
       >
         <i class="fas fa-video"></i>
         Video
@@ -87,9 +88,12 @@
           <div class="modal-content">
             <div class="modal-header">
               <h5 class="modal-title" id="videoModalLabel">Upload a video</h5>
-              <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                <span aria-hidden="true">&times;</span>
-              </button>
+              <button
+                type="button"
+                class="btn-close"
+                data-bs-dismiss="modal"
+                aria-label="Close"
+              ></button>
             </div>
             <div class="modal-body">
               <input
@@ -103,7 +107,7 @@
         </div>
       </div>
 
-      <button type="button" class="btn btn-light border w-100 me-2">
+      <button type="button" class="btn btn-light border w-100 me-2 disabled" disabled>
         <i class="fas fa-link"></i>
         Link
       </button>
@@ -121,25 +125,11 @@
       postButton.removeAttribute("disabled");
     }
   }
-
   postText.onkeyup = checkPostButtonState;
   postButton.onclick = checkPostButtonState;
   document.body.onclick = checkPostButtonState;
-
   // To prevent user from creating a post using the key 13
   form.addEventListener("submit", (evt) => {
     evt.preventDefault();
   });
-
-  function readURL(input) {
-    if (input.files && input.files[0]) {
-      var reader = new FileReader();
-
-      reader.onload = function (e) {
-        $("#imagePreview").attr("src", e.target.result);
-      };
-
-      reader.readAsDataURL(input.files[0]);
-    }
-  }
 </script>

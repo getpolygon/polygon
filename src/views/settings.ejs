@@ -71,36 +71,43 @@
     </div>
   </div>
 
-  <div id="privacyTab" class="mt-5">
+  <div class="mt-5">
     <h6>Privacy</h6>
     <hr class="solid" />
-    <% if(currentAccount.isPrivate == true) {%>
-    <div class="custom-control custom-switch checked">
-      <input checked id="isPrivate" type="checkbox" name="privacy" class="custom-control-input" />
-      <label class="custom-control-label" for="isPrivate"
-        ><span id="currentStatus">Private Account</span></label
-      >
+    <div id="privacy">
+      <% if(currentAccount.isPrivate) {%>
+      <div class="form-check">
+        <input class="form-check-input" type="radio" id="prv_acc" name="privacy" checked />
+        <label class="form-check-label" for="prv_acc"> Private Account </label>
+      </div>
+      <div class="form-check">
+        <input class="form-check-input" type="radio" name="privacy" id="opn_acc" />
+        <label class="form-check-label" for="opn_acc"> Public Account </label>
+      </div>
+      <% } %> <%if(currentAccount.isPrivate == false) {%>
+      <div class="form-check">
+        <input class="form-check-input" type="radio" name="privacy" id="prv_acc" />
+        <label class="form-check-label" for="prv_acc"> Private Account </label>
+      </div>
+      <div class="form-check">
+        <input class="form-check-input" type="radio" name="privacy" id="opn_acc" checked />
+        <label class="form-check-label" for="opn_acc"> Public Account </label>
+      </div>
+      <% } %>
     </div>
-    <% } %> <%if(currentAccount.isPrivate == false) {%>
-    <div class="custom-control custom-switch">
-      <input id="isPrivate" type="checkbox" name="privacy" class="custom-control-input" />
-      <label class="custom-control-label" for="isPrivate"
-        ><span id="currentStatus">Public Account</span></label
-      >
-    </div>
-    <% } %>
-    <p id="acUpdateStatus"></p>
   </div>
 
   <div class="mt-5 pb-5">
-    <h6>Get Started deleting your account</h6>
+    <h6>Section <span class="text-danger">CODE RED</span></h6>
     <hr class="solid" />
-    <div style="text-align: right">
-      <button class="btn btn-outline-danger" id="deleteAccount">
-        <i class="fas fa-trash-alt"></i>
-        Delete Your Account
-      </button>
-      <div id="message" class="message"></div>
+    <div id="delete_account_section">
+      <div style="text-align: right">
+        <button class="btn btn-outline-danger" id="deleteAccount">
+          <i class="fas fa-trash-alt"></i>
+          Delete Your Account
+        </button>
+        <div id="message" class="message"></div>
+      </div>
     </div>
   </div>
 </div>

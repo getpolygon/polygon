@@ -1,7 +1,12 @@
 import Alert from "/components/alert-component.mjs";
 
-const deleteButton = document.getElementById("deleteAccount");
-const privacyCheckbox = document.getElementById("isPrivate");
+const PrivacySection = document.getElementById("privacy");
+const PublicAccountButton = document.getElementById("opn_acc");
+const PrivateAccountButton = document.getElementById("prv_acc");
+
+const DeleteAccountSection = document.getElementById("delete_account_section");
+const DeleteAccountButton = document.getElementById("deleteAccount");
+
 const SaveAccountButton = document.getElementById("accountSave");
 const SaveBasicInfoButton = document.getElementById("accountSaveBasic");
 
@@ -17,52 +22,55 @@ function deleteAccount() {
   })
     .then((res) => res.json())
     .then(() => {
-      msg.innerHTML =
-        "<p class='mt-3'>Your account has been deleted. <a href='/'>Go back to the main page</a></p>";
+      const alert = new Alert().create(
+        "Your account has been deleted. <a href='/'>Go back to the main page</a>",
+        {
+          type: "success"
+        }
+      );
+      const div = document.createElement("div");
+      div.innerHTML = alert;
+      DeleteAccountSection.firstChild.remove(self);
+      DeleteAccountSection.prepend(div);
+      DeleteAccountButton.setAttribute("disabled", true);
     })
     .catch((e) => (msg.innerText = e.toString()));
 }
 
-function updatePrivacy() {
-  const msg = document.getElementById("acUpdateStatus");
-  const currentStatus = document.getElementById("currentStatus");
-
-  if (privacyCheckbox.checked) {
-    privacyCheckbox.setAttribute("value", true);
-    fetch("/api/accounts/update/?privacy=true", {
-      method: "PUT"
-    })
-      .then((res) => {
-        res.json();
-        msg.innerText = "";
-      })
-      .then(() => {
-        msg.innerText = "OK. UPDATED";
-        currentStatus.innerText = "Private Account";
-        setTimeout(() => (msg.innerText = ""), 3000);
-      })
-      .catch((e) => {
-        msg.innerText = e.toString();
-      });
-  } else {
-    privacyCheckbox.setAttribute("value", false);
-    fetch("/api/accounts/update/?privacy=false", {
-      method: "PUT"
-    })
-      .then((res) => {
-        res.json();
-        msg.innerText = "";
-      })
-      .then(() => {
-        msg.innerText = "OK. UPDATED";
-        currentStatus.innerText = "Public Account";
-        setTimeout(() => (msg.innerText = ""), 3000);
-      })
-      .catch((e) => {
-        msg.innerText = e.toString();
-      });
+const MakePublic = async () => {
+  try {
+    const req = await fetch("/api/accounts/update/?privacy=false", { method: "PUT" });
+    console.log(await req.json());
+    const alert = new Alert().create("Successfuly updated privacy settings", { type: "success" });
+    const div = document.createElement("div");
+    div.innerHTML = alert;
+    PrivacySection.firstChild.remove(self);
+    PrivacySection.prepend(div);
+  } catch (err) {
+    const alert = new Alert().create(`There was an error. ${err}`, { type: "danger" });
+    const div = document.createElement("div");
+    div.innerHTML = alert;
+    PrivacySection.firstChild.remove(self);
+    PrivacySection.prepend(div);
   }
-}
+};
+const MakePrivate = async () => {
+  try {
+    const req = await fetch("/api/accounts/update/?privacy=true", { method: "PUT" });
+    console.log(await req.json());
+    const alert = new Alert().create("Successfuly updated privacy settings", { type: "success" });
+    const div = document.createElement("div");
+    div.innerHTML = alert;
+    PrivacySection.firstChild.remove(self);
+    PrivacySection.prepend(div);
+  } catch (err) {
+    const alert = new Alert().create(`There was an error. ${err}`, { type: "danger" });
+    const div = document.createElement("div");
+    div.innerHTML = alert;
+    PrivacySection.firstChild.remove(self);
+    PrivacySection.prepend(div);
+  }
+};
 
 function updateCredentials() {
   const email = emailField.value;
@@ -116,7 +124,12 @@ function updateBasicInfo() {
     });
 }
 
-deleteButton.addEventListener("click", deleteAccount);
-privacyCheckbox.addEventListener("change", updatePrivacy);
+DeleteAccountButton.addEventListener("click", deleteAccount);
+PrivateAccountButton.addEventListener("click", async () => {
+  await MakePrivate();
+});
+PublicAccountButton.addEventListener("click", async () => {
+  await MakePublic();
+});
 SaveAccountButton.addEventListener("click", updateCredentials);
 SaveBasicInfoButton.addEventListener("click", updateBasicInfo);

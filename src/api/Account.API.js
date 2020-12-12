@@ -99,8 +99,8 @@ router.put("/update", async (req, res) => {
       .updateOne({
         isPrivate: privacy
       })
-      .then((response) => {
-        res.json(response.privacy);
+      .then(() => {
+        res.json({ info: "OK" });
       })
       .catch((e) => {
         res.json(e);

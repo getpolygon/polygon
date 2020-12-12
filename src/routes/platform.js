@@ -14,7 +14,7 @@ router.get("/", async (req, res) => {
 
   try {
     if (!emailCookie && !passwordCookie) {
-      res.clearCookie("email").clearCookie("password").redirect("/auth/login");
+      return res.clearCookie("email").clearCookie("password").redirect("/auth/login");
     } else {
       await AccountSchema.findOne({
         email: req.cookies.email,

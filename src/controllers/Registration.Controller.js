@@ -35,7 +35,7 @@ const avatarLinks = [
 
 // Registration Page
 router.get("/", (req, res) => {
-  if (!req.cookies.email & !req.cookies.password) {
+  if (!req.cookies.email && !req.cookies.password) {
     res.clearCookie("email");
     res.clearCookie("password");
     res.render("register", { title: "Register | ArmSocial" });
@@ -46,7 +46,7 @@ router.get("/", (req, res) => {
 
 // To register the account
 router.post("/", upload.single("avatar"), async (req, res) => {
-  let email = _.lowerCase(req.body.email);
+  let email = _.toLower(req.body.email);
 
   // Checking if the email is valid
   async function checkEmailValidity() {
@@ -117,7 +117,7 @@ router.post("/", upload.single("avatar"), async (req, res) => {
 
     try {
       await Account.save();
-      unlinkSync(`tmp/${req.file.originalname}`);
+      if (req.file) unlinkSync(`tmp/${req.file.originalname}`);
       return res
         .cookie("email", Account.email, { maxAge: 24 * 60 * 60 * 1000 })
         .cookie("password", Account.password, { maxAge: 24 * 60 * 60 * 1000 })

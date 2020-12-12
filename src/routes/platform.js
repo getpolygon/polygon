@@ -44,7 +44,7 @@ router.get("/", async (req, res) => {
 router.get("/user/:accountId", async (req, res) => {
   try {
     if (!req.cookies.email || !req.cookies.password) {
-      res.redirect("/");
+      return res.redirect("/");
     } else {
       const accountId = req.params.accountId;
       const currentAccount = await AccountSchema.findOne({
@@ -53,12 +53,12 @@ router.get("/user/:accountId", async (req, res) => {
       });
       const platformAccount = await AccountSchema.findById(accountId);
       if (currentAccount == null) {
-        res.clearCookie("email").clearCookie("password").redirect("/auth/login");
+        return res.clearCookie("email").clearCookie("password").redirect("/auth/login");
       }
       if (!platformAccount) {
-        res.redirect("/static/no-account.html");
+        return res.redirect("/static/no-account.html");
       } else {
-        res.render("platform_account", {
+        return res.render("platform_account", {
           currentAccount: currentAccount,
           platformAccount: platformAccount,
           title: `${platformAccount.fullName} | ArmSocial`
@@ -66,9 +66,7 @@ router.get("/user/:accountId", async (req, res) => {
       }
     }
   } catch (err) {
-    // TODO: Fix a bug with HTTP Headers
-    console.error(err);
-    res.clearCookie("email").clearCookie("password").redirect("/auth/login");
+    return res.clearCookie("email").clearCookie("password").redirect("/auth/login");
   }
 });
 

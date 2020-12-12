@@ -1,11 +1,12 @@
 const { ENDPOINT, PORT, ACCKEY, SECKEY, USESSL } = require("../../config/minio");
 // const mailer = require("../helpers/mailer");
+const _ = require("lodash");
 const bcrypt = require("bcrypt");
 const emailValidator = require("email-validator");
 const router = require("express").Router();
 const mongoose = require("mongoose");
 const multer = require("multer");
-const fs = require("fs");
+const { unlinkSync } = require("fs");
 const storage = multer.diskStorage({
   destination: "tmp/",
   filename: (err, file, cb) => {
@@ -45,7 +46,7 @@ router.get("/", (req, res) => {
 
 // To register the account
 router.post("/", upload.single("avatar"), async (req, res) => {
-  let email = req.body.email.toLowerCase();
+  let email = _.lowerCase(req.body.email);
 
   // Checking if the email is valid
   async function checkEmailValidity() {
@@ -114,22 +115,22 @@ router.post("/", upload.single("avatar"), async (req, res) => {
     Account.pictureUrl = pictureUrl;
     Account.password = password;
 
-    await Account.save()
-      .then(() => {
-        res.cookie("email", Account.email, { maxAge: 24 * 60 * 60 * 1000 });
-        res.cookie("password", Account.password, { maxAge: 24 * 60 * 60 * 1000 });
-        res.redirect(`/user/${Account._id}`);
-        // Delete the created file to save space
-        fs.unlink(`tmp/${req.file.originalname}`, (err) => {
-          if (err) console.error(err);
-        });
-      })
-      .catch((e) => {
-        res.redirect("/");
-        console.log(e);
-      });
+    try {
+      await Account.save();
+      unlinkSync(`tmp/${req.file.originalname}`);
+      return res
+        .cookie("email", Account.email, { maxAge: 24 * 60 * 60 * 1000 })
+        .cookie("password", Account.password, { maxAge: 24 * 60 * 60 * 1000 })
+        .redirect(`/user/${Account._id}`);
+    } catch (err) {
+      res.redirect("/");
+      console.log(err);
+    }
   } else {
-    res.render("login", { title: "Login — ArmSocial", err: "The email you entered is invalid" });
+    return res.render("login", {
+      title: "Login — ArmSocial",
+      err: "The email you entered is invalid"
+    });
   }
 });
 

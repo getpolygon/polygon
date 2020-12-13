@@ -3,9 +3,9 @@ import Footer from "/components/partials/Footer.mjs";
 class VideoComponent {
   create(postId, authorImage, authorId, author, text, video, postDate, { readOnly }) {
     function checkReadOnly() {
-      if (readOnly) return;
-      else
+      if (!readOnly)
         return `<i style="float: right" postId="${postId}" class="submitDeleteForm fas fa-trash-alt p-2" role="button"></i>`;
+      else return "";
     }
     return `
       <div id="${postId}" class="post container shadow-sm rounded-lg mt-1 mb-4 pr-4 pl-4 pb-3 pt-3 bg-white">

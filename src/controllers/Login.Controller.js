@@ -43,8 +43,7 @@ router.post("/", async (req, res) => {
       title: "Login | ArmSocial"
     });
   } else {
-    res.cookie("email", Account.email);
-    res.cookie("password", Account.password);
+    res.cookie("email", Account.email).cookie("password", Account.password);
     res.redirect("/");
   }
 });

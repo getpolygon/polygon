@@ -24,7 +24,6 @@
     "express-rate-limit": "^5.2.3",
     "express-session": "^1.17.1",
     "linkify-urls": "^3.1.1",
-    "local-storage": "^2.0.0",
     "lodash": "^4.17.20",
     "minio": "^7.0.17",
     "mongoose": "^5.11.7",

@@ -3,9 +3,9 @@ class Footer {
     return `
       <hr class="solid" />
       <div class="d-flex">
-        <button type="button" class="btn btn-light btn-block border m-1 love-post"></button>
+        <button type="button" class="btn btn-light btn-block border m-1 love-post w-100"></button>
 
-        <button type="button" class="btn btn-light btn-block border m-1" data-bs-toggle="modal" data-bs-target="#comments-${postId}">
+        <button type="button" class="btn btn-light btn-block border m-1 w-100" data-bs-toggle="modal" data-bs-target="#comments-${postId}">
           <i class="fas fa-comment-alt"></i>
           Comment
         </button>

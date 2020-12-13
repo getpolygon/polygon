@@ -10,6 +10,55 @@ const postButton = document.getElementById("postButton");
 const postText = document.getElementById("postTextarea");
 const postsContainer = document.getElementById("posts");
 
+// Funcion for fetching and setting heart count
+const FetchHearts = (cardContainer) => {
+  /* ______________FETCH HEARTS_________________________________ */
+  // Adding an event listener on all heart buttons
+  let loveButtons = cardContainer.querySelectorAll(".love-post");
+  loveButtons.forEach(async (button) => {
+    button.addEventListener("click", async () => {
+      let request_heart = await fetch(
+        `/api/posts/fetch/?postId=${button.parentElement.parentElement.id}&heart=true`
+      );
+      let response_heart = await request_heart.json();
+      if (response_heart.info === "HEARTED") {
+        button.innerHTML = new HeartButtonContent().build(
+          "Unheart",
+          response_heart.data.numberOfHearts,
+          true
+        );
+      } else {
+        button.innerHTML = new HeartButtonContent().build(
+          "Heart",
+          response_heart.data.numberOfHearts,
+          false
+        );
+      }
+    });
+
+    let request_get_hearts = await fetch(
+      `/api/posts/fetch/?postId=${button.parentElement.parentElement.id}&getHearts=true`
+    );
+    let response_get_hearts = await request_get_hearts.json();
+    if (response_get_hearts.info === "ALREADY_HEARTED") {
+      button.innerHTML = new HeartButtonContent().build(
+        "Unheart",
+        response_get_hearts.data.numberOfHearts,
+        true
+      );
+    }
+    if (response_get_hearts.info === "OK") {
+      button.innerHTML = new HeartButtonContent().build(
+        "Heart",
+        response_get_hearts.data.numberOfHearts,
+        false
+      );
+    }
+  });
+
+  /* ______________FETCH HEARTS END_________________________________ */
+};
+
 function checkForDeleteButtons() {
   const deletePostButtons = document.querySelectorAll(".submitDeleteForm");
   deletePostButtons.forEach((element) => {
@@ -224,53 +273,7 @@ function fetchPosts() {
                 });
               }
 
-              /* ______________FETCH HEARTS_________________________________ */
-
-              // Adding an event listener on all heart buttons
-              let loveButtons = cardContainer.querySelectorAll(".love-post");
-              loveButtons.forEach(async (button) => {
-                button.addEventListener("click", async () => {
-                  const request = await fetch(
-                    `/api/posts/fetch/?postId=${button.parentElement.parentElement.id}&heart=true`
-                  );
-                  const response = await request.json();
-                  if (response.info === "HEARTED") {
-                    button.innerHTML = new HeartButtonContent().build(
-                      "Unheart",
-                      response.data.numberOfHearts,
-                      true
-                    );
-                  } else {
-                    button.innerHTML = new HeartButtonContent().build(
-                      "Heart",
-                      response.data.numberOfHearts,
-                      false
-                    );
-                  }
-                });
-
-                const request_1 = await fetch(
-                  `/api/posts/fetch/?postId=${button.parentElement.parentElement.id}&getHearts=true`
-                );
-                const response_1 = await request_1.json();
-                if (response_1.info === "ALREADY_HEARTED") {
-                  button.innerHTML = new HeartButtonContent().build(
-                    "Unheart",
-                    response_1.data.numberOfHearts,
-                    true
-                  );
-                }
-                if (response_1.info === "OK") {
-                  button.innerHTML = new HeartButtonContent().build(
-                    "Heart",
-                    response_1.data.numberOfHearts,
-                    false
-                  );
-                }
-              });
-
-              /* ______________FETCH HEARTS END_________________________________ */
-
+              FetchHearts(cardContainer);
               postsContainer.appendChild(cardContainer);
               checkForDeleteButtons();
             })
@@ -337,6 +340,7 @@ function createPost() {
           data.hearts.numberOfHearts || 0,
           false
         );
+        FetchHearts(cardContainer);
         document.body.removeChild(loader);
         postsContainer.prepend(cardContainer);
         checkForDeleteButtons();
@@ -394,6 +398,7 @@ function createPost() {
           data.hearts.numberOfHearts,
           false
         );
+        FetchHearts(cardContainer);
         document.body.removeChild(loader);
         postsContainer.prepend(cardContainer);
         checkForDeleteButtons();
@@ -453,6 +458,7 @@ function createPost() {
           data.hearts.numberOfHearts,
           false
         );
+        FetchHearts(cardContainer);
         document.body.removeChild(loader);
         postsContainer.prepend(cardContainer);
         checkForDeleteButtons();
@@ -510,18 +516,20 @@ function createPost() {
           data.hearts.numberOfHearts,
           false
         );
+        FetchHearts(cardContainer);
         document.body.removeChild(loader);
         postsContainer.prepend(cardContainer);
         checkForDeleteButtons();
+      })
+      .then(() => {
+        postText.value = null;
+        postText.nodeValue = null;
+        postText.textContent = null;
       })
       .catch((e) => {
         console.log(e);
       });
   }
-
-  postText.value = null;
-  postText.nodeValue = null;
-  postText.textContent = null;
 }
 
 window.addEventListener("load", () => {

@@ -42,13 +42,12 @@ router.get("/fetch", async (req, res) => {
   let { accountId, postId, heart, getHearts } = req.query;
 
   // For checking if the post has any data or is empty
-  // TODO: Check the 2nd todo in this file
   function SpecialChecks(post) {
     if (post.hearts.usersHearted.length === 0) {
       return false;
     } else {
-      post.hearts.usersHearted.forEach((user) => {
-        if (user.accountId == currentAccount.id) return true;
+      return _.each(post.hearts.usersHearted, (user) => {
+        if (user.accountId == currentAccount._id) return true;
         else return false;
       });
     }
@@ -75,14 +74,12 @@ router.get("/fetch", async (req, res) => {
     // Checking if current account hearted the post
     let currentAccountHeartedThePost = SpecialChecks(post);
 
-    // console.log(currentAccountHeartedThePost); TODO: This returns undefined after the 2nd click
-
     // If current account liked the post
     if (currentAccountHeartedThePost) {
-      _.each(post.hearts.usersHearted, async (user) => {
+      return _.each(post.hearts.usersHearted, async (user) => {
         if (user.accountId == currentAccount.id) {
           post.hearts.numberOfHearts--;
-          await post.hearts.usersHearted.pull(self);
+          post.hearts.usersHearted.pull(user);
           await postAuthor.save();
           return res.json({ info: "UNHEARTED", data: post.hearts });
         }

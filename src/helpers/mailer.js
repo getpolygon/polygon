@@ -1,8 +1,8 @@
 const nodemailer = require("nodemailer");
-const nodePin = require("node-pin");
+// const nodePin = require("node-pin"); // For generating a random PIN
 const { host, email, password, secure, port } = require("../../config/email");
 
-module.exports = async function main(receiver, subject, title) {
+module.exports = async function main(receiver, subject, title, html) {
   try {
     // create reusable transporter object using the default SMTP transport
     let transporter = nodemailer.createTransport({
@@ -20,7 +20,7 @@ module.exports = async function main(receiver, subject, title) {
       to: `${receiver}`, // list of receivers
       subject: `${subject}`, // Subject line
       text: `${title}`, // plain text body
-      html: nodePin.generateRandPin(4) // html body
+      html: html // html body
     });
 
     return info;

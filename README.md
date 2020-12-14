@@ -93,25 +93,6 @@ module.exports = {
 }
 ```
 
-# Mongoose models
-
-We have 1 main model and 2 subdocuments.
-<br />
-
-## Main model
-
-[Account Model](./models/account.js)
-
-<br />
-
-## Subdocuments
-
-[Post Model](./models/post.js)
-
-[Friend Model](./model/friend.js)
-
-<hr>
-
 ## Links
 
 [LICENSE](./LICENSE)

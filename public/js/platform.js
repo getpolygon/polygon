@@ -11,7 +11,7 @@ const postText = document.getElementById("postTextarea");
 const postsContainer = document.getElementById("posts");
 
 // Funcion for fetching and setting heart count
-const FetchHearts = (cardContainer) => {
+function FetchHearts(cardContainer) {
   /* ______________FETCH HEARTS_________________________________ */
   // Adding an event listener on all heart buttons
   let loveButtons = cardContainer.querySelectorAll(".love-post");
@@ -57,7 +57,7 @@ const FetchHearts = (cardContainer) => {
   });
 
   /* ______________FETCH HEARTS END_________________________________ */
-};
+}
 
 function checkForDeleteButtons() {
   const deletePostButtons = document.querySelectorAll(".submitDeleteForm");

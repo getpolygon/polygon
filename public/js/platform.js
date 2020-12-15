@@ -287,249 +287,197 @@ function fetchPosts() {
     .catch((e) => console.log(e));
 }
 
-function createPost() {
+async function createPost() {
   const imageInput = document.getElementById("imageUpload");
   const videoInput = document.getElementById("videoUpload");
-  const image = imageInput.files;
-  const video = videoInput.files;
+  const cardContainer = document.createElement("div");
+  const imageFiles = imageInput.files;
+  const videoFiles = videoInput.files;
 
   // TEXT POST
-  if (image.length === 0 && video.length === 0) {
-    // Form
-    let formData = new FormData();
-    formData.append("text", postText.value);
-
-    // Loader
-    let loader = new Loader({ fullScreen: true });
-    document.body.appendChild(loader);
-
+  if (imageFiles.length === 0 && videoFiles.length === 0) {
+    let form = new FormData();
+    form.append("text", postText.value);
     // "type" is to specify the type of post that we want
-    fetch("/api/posts/create?type=txt", {
+    let req = await fetch("/api/posts/create?type=txt", {
       method: "PUT",
-      body: formData
-    })
-      .then((data) => data.json())
-      .then((data) => {
-        const msg = document.getElementById("msg");
-        const text = data.text;
-        const author = data.author;
-        const postId = data._id;
-        const authorId = data.authorId;
-        const authorImage = data.authorImage;
-        const postDate = data.datefield;
-        const postsContainer = document.getElementById("posts");
-        const cardContainer = document.createElement("div");
-        if (msg) msg.innerHTML = "";
+      body: form
+    });
+    let data = await req.json();
 
-        cardContainer.innerHTML = new TextComponent().create(
-          postId,
-          authorImage,
-          authorId,
-          author,
-          postDate,
-          text,
-          { readOnly: false }
-        );
+    let msg = document.getElementById("msg");
+    let text = data.text;
+    let author = data.author;
+    let postId = data._id;
+    let authorId = data.authorId;
+    let authorImage = data.authorImage;
+    let postDate = data.datefield;
 
-        postText.value = "";
-        imageInput.value = "";
-        videoInput.value = "";
-        const loveButton = cardContainer.querySelector(".love-post");
-        loveButton.innerHTML = new HeartButtonContent().build(
-          "Heart",
-          data.hearts.numberOfHearts || 0,
-          false
-        );
-        FetchHearts(cardContainer);
-        document.body.removeChild(loader);
-        postsContainer.prepend(cardContainer);
-        checkForDeleteButtons();
-      })
-      .catch((e) => {
-        console.log(e);
-      });
+    // Removing the message on the feed
+    if (msg) msg.innerHTML = "";
+
+    // Setting the HTML of the Card
+    cardContainer.innerHTML = new TextComponent().create(
+      postId,
+      authorImage,
+      authorId,
+      author,
+      postDate,
+      text,
+      { readOnly: false }
+    );
+
+    // Creating a heart button for the post
+    let loveButton = cardContainer.querySelector(".love-post");
+    loveButton.innerHTML = new HeartButtonContent().build(
+      "Heart",
+      data.hearts.numberOfHearts || 0,
+      false
+    );
   }
 
   // VIDEO, TEXT POST
-  if (video[0] && !image[0]) {
-    let formData = new FormData();
-    formData.append("text", postText.value);
-    formData.append("video", video[0]);
+  if (videoFiles[0] && !imageFiles[0]) {
+    let form = new FormData();
+    form.append("text", postText.value);
+    form.append("video", videoFiles[0]);
 
-    // Loader
-    let loader = new Loader({ fullScreen: true });
-    document.body.appendChild(loader);
-
-    fetch("/api/posts/create?type=vid", {
+    let req = await fetch("/api/posts/create?type=vid", {
       method: "PUT",
-      body: formData
-    })
-      .then((data) => data.json())
-      .then((data) => {
-        const msg = document.getElementById("msg");
-        const text = data.text;
-        const author = data.author;
-        const postId = data._id;
-        const authorId = data.authorId;
-        const authorImage = data.authorImage;
-        const postDate = data.datefield;
-        const video = data.attachments.video.attachedVideo;
-        const postsContainer = document.getElementById("posts");
-        const cardContainer = document.createElement("div");
-        if (msg) msg.innerHTML = "";
+      body: form
+    });
+    let data = await req.json();
 
-        cardContainer.innerHTML = new VideoComponent().create(
-          postId,
-          authorImage,
-          authorId,
-          author,
-          text,
-          video,
-          postDate,
-          { readOnly: false }
-        );
+    let msg = document.getElementById("msg");
+    let text = data.text;
+    let author = data.author;
+    let postId = data._id;
+    let authorId = data.authorId;
+    let authorImage = data.authorImage;
+    let postDate = data.datefield;
+    let video = data.attachments.video.attachedVideo;
 
-        postText.value = "";
-        imageInput.value = "";
-        videoInput.value = "";
-        const loveButton = cardContainer.querySelector(".love-post");
-        loveButton.innerHTML = new HeartButtonContent().build(
-          "Heart",
-          data.hearts.numberOfHearts,
-          false
-        );
-        FetchHearts(cardContainer);
-        document.body.removeChild(loader);
-        postsContainer.prepend(cardContainer);
-        checkForDeleteButtons();
-      })
-      .catch((e) => {
-        console.log(e);
-      });
+    if (msg) msg.innerHTML = "";
+
+    cardContainer.innerHTML = new VideoComponent().create(
+      postId,
+      authorImage,
+      authorId,
+      author,
+      text,
+      video,
+      postDate,
+      { readOnly: false }
+    );
+
+    let loveButton = cardContainer.querySelector(".love-post");
+    loveButton.innerHTML = new HeartButtonContent().build(
+      "Heart",
+      data.hearts.numberOfHearts,
+      false
+    );
   }
 
   // IMAGE,VIDEO,TEXT POST
-  if (image[0] && video[0]) {
-    let formData = new FormData();
-    formData.append("text", postText.value);
-    formData.append("video", video[0]);
-    formData.append("image", image[0]);
+  if (imageFiles[0] && videoFiles[0]) {
+    let form = new FormData();
+    form.append("text", postText.value);
+    form.append("video", videoFiles[0]);
+    form.append("image", imageFiles[0]);
 
-    // Loader
-    let loader = new Loader({ fullScreen: true });
-    document.body.appendChild(loader);
-
-    fetch("/api/posts/create?type=imgvid", {
+    let req = await fetch("/api/posts/create?type=imgvid", {
       method: "PUT",
-      body: formData
-    })
-      .then((data) => data.json())
-      .then((data) => {
-        const msg = document.getElementById("msg");
-        const text = data.text;
-        const author = data.author;
-        const postId = data._id;
-        const authorId = data.authorId;
-        const authorImage = data.authorImage;
-        const postDate = data.datefield;
-        const video = data.attachments.video.attachedVideo;
-        const image = data.attachments.image.attachedImage;
-        const postsContainer = document.getElementById("posts");
-        const cardContainer = document.createElement("div");
-        if (msg) msg.innerHTML = "";
+      body: form
+    });
+    let data = await req.json();
 
-        cardContainer.innerHTML = new ComboComponent().create(
-          postId,
-          authorImage,
-          authorId,
-          author,
-          postDate,
-          text,
-          image,
-          video,
-          { readOnly: false }
-        );
-        postText.value = "";
-        imageInput.value = "";
-        videoInput.value = "";
-        const loveButton = cardContainer.querySelector(".love-post");
-        loveButton.innerHTML = new HeartButtonContent().build(
-          "Heart",
-          data.hearts.numberOfHearts,
-          false
-        );
-        FetchHearts(cardContainer);
-        document.body.removeChild(loader);
-        postsContainer.prepend(cardContainer);
-        checkForDeleteButtons();
-      })
-      .catch((e) => {
-        console.log(e);
-      });
+    let msg = document.getElementById("msg");
+    let text = data.text;
+    let author = data.author;
+    let postId = data._id;
+    let authorId = data.authorId;
+    let authorImage = data.authorImage;
+    let postDate = data.datefield;
+    let video = data.attachments.video.attachedVideo;
+    let image = data.attachments.image.attachedImage;
+
+    if (msg) msg.innerHTML = "";
+
+    cardContainer.innerHTML = new ComboComponent().create(
+      postId,
+      authorImage,
+      authorId,
+      author,
+      postDate,
+      text,
+      image,
+      video,
+      { readOnly: false }
+    );
+
+    let loveButton = cardContainer.querySelector(".love-post");
+    loveButton.innerHTML = new HeartButtonContent().build(
+      "Heart",
+      data.hearts.numberOfHearts,
+      false
+    );
   }
   // IMAGE,TEXT POST
-  if (image[0] && !video[0]) {
-    const formData = new FormData();
-    formData.append("text", postText.value);
-    formData.append("image", image[0]);
+  if (imageFiles[0] && !videoFiles[0]) {
+    let form = new FormData();
+    form.append("text", postText.value);
+    form.append("image", imageFiles[0]);
 
-    // Loader
-    const loader = new Loader({ fullScreen: true });
-    document.body.appendChild(loader);
-
-    fetch("/api/posts/create?type=img", {
+    let req = await fetch("/api/posts/create?type=img", {
       method: "PUT",
-      body: formData
-    })
-      .then((data) => data.json())
-      .then((data) => {
-        const msg = document.getElementById("msg");
-        const text = data.text;
-        const author = data.author;
-        const postId = data._id;
-        const authorId = data.authorId;
-        const authorImage = data.authorImage;
-        const postDate = data.datefield;
-        const image = data.attachments.image.attachedImage;
-        const postsContainer = document.getElementById("posts");
-        const cardContainer = document.createElement("div");
+      body: form
+    });
+    let data = await req.json();
 
-        if (msg) msg.innerHTML = "";
+    let msg = document.getElementById("msg");
+    let text = data.text;
+    let author = data.author;
+    let postId = data._id;
+    let authorId = data.authorId;
+    let authorImage = data.authorImage;
+    let postDate = data.datefield;
+    let image = data.attachments.image.attachedImage;
 
-        cardContainer.innerHTML = new ImageComponent().create(
-          postId,
-          authorImage,
-          authorId,
-          author,
-          text,
-          image,
-          postDate,
-          { readOnly: false }
-        );
+    if (msg) msg.innerHTML = "";
 
-        postText.value = "";
-        imageInput.value = "";
-        videoInput.value = "";
-        const loveButton = cardContainer.querySelector(".love-post");
-        loveButton.innerHTML = new HeartButtonContent().build(
-          "Heart",
-          data.hearts.numberOfHearts,
-          false
-        );
-        FetchHearts(cardContainer);
-        document.body.removeChild(loader);
-        postsContainer.prepend(cardContainer);
-        checkForDeleteButtons();
-      })
-      .then(() => {
-        postText.value = null;
-        postText.nodeValue = null;
-        postText.textContent = null;
-      })
-      .catch((e) => {
-        console.log(e);
-      });
+    cardContainer.innerHTML = new ImageComponent().create(
+      postId,
+      authorImage,
+      authorId,
+      author,
+      text,
+      image,
+      postDate,
+      { readOnly: false }
+    );
+
+    postText.value = "";
+    imageInput.value = "";
+    videoInput.value = "";
+    let loveButton = cardContainer.querySelector(".love-post");
+    loveButton.innerHTML = new HeartButtonContent().build(
+      "Heart",
+      data.hearts.numberOfHearts,
+      false
+    );
   }
+
+  // Default
+  postText.value = "";
+  imageInput.value = "";
+  videoInput.value = "";
+
+  // Fetching Hearts
+  FetchHearts(cardContainer);
+  // Adding the post to user's feed
+  postsContainer.prepend(cardContainer);
+  // Checking for delete buttons
+  checkForDeleteButtons();
 }
 
 window.addEventListener("load", () => {
@@ -537,4 +485,6 @@ window.addEventListener("load", () => {
   postsContainer.prepend(loader);
   fetchPosts();
 });
-postButton.addEventListener("click", createPost);
+postButton.addEventListener("click", async () => {
+  await createPost();
+});

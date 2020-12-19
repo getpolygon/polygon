@@ -10,7 +10,7 @@ const bodyParser = require("body-parser");
 const compression = require("compression");
 const session = require("express-session");
 const cookieParser = require("cookie-parser");
-// const rateLimit = require("express-rate-limit");
+const rateLimit = require("express-rate-limit");
 const port = 3000 || PORT;
 const app = express();
 
@@ -21,12 +21,12 @@ const platformRoute = require("./routes/platform");
 
 // Middleware
 app.use(cors());
-// app.use(
-//   rateLimit({
-//     windowMs: 15 * 60 * 1000, // 15 minutes
-//     max: 100
-//   })
-// );
+app.use(
+  rateLimit({
+    windowMs: 15 * 60 * 1000, // 15 minutes
+    max: 1000
+  })
+);
 app.use(morgan("dev"));
 app.use(compression());
 app.use(cookieParser());
@@ -61,12 +61,6 @@ app.use("/auth", authRoute);
 
 // Error page
 app.get("*", (_req, res) => res.redirect("/static/error.html"));
-// Maybe will use the global method instead of the one-by-one
-app.get("/*", (req, res) => {
-  if (!req.session.email || req.session.password) {
-    return res.redirect("/");
-  }
-});
 
 // Connect to MongoDB
 mongoose

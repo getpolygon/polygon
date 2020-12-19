@@ -5,9 +5,9 @@ const AccountSchema = require("../models/account");
 router.get("/", (req, res) => {
   if (!req.session.email || !req.session.password) {
     req.session.destroy();
-    res.render("login", { title: "Login | ArmSocial" });
+    return res.render("login", { title: "Login | ArmSocial" });
   } else {
-    res.redirect("/");
+    return res.redirect("/");
   }
 });
 
@@ -37,14 +37,14 @@ router.post("/", async (req, res) => {
     });
 
   if (email != Account.email || password === false) {
-    res.status(404).render("login", {
+    return res.status(404).render("login", {
       err: "Please check your credentials or create an account",
       title: "Login | ArmSocial"
     });
   } else {
     req.session.email = Account.email;
     req.session.password = Account.password;
-    res.redirect("/");
+    return res.redirect("/");
   }
 });
 

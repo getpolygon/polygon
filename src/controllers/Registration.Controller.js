@@ -24,6 +24,7 @@ const MinIOClient = new minio.Client({
   useSSL: USESSL
 });
 const AccountSchema = require("../models/account");
+
 const avatarLinks = [
   "/static/img/1.png",
   "/static/img/2.png",
@@ -37,9 +38,9 @@ const avatarLinks = [
 router.get("/", (req, res) => {
   if (!req.session.email || !req.session.password) {
     req.session.destroy();
-    res.render("register", { title: "Register | ArmSocial" });
+    return res.render("register", { title: "Register | ArmSocial" });
   } else {
-    res.redirect("/auth/register");
+    return res.redirect("/auth/register");
   }
 });
 
@@ -111,23 +112,22 @@ router.post("/", upload.single("avatar"), async (req, res) => {
 
     const password = await hashPass();
     const pictureUrl = await url();
-    
+
     Account.pictureUrl = pictureUrl;
     Account.password = password;
 
     try {
       await Account.save();
-      if (req.file) unlinkSync(`tmp/${req.file.originalname}`);
-
+      if (req.file) return unlinkSync(`tmp/${req.file.originalname}`);
       req.session.email = Account.email;
       req.session.password = Account.password;
-
       return res.redirect(`/user/${Account._id}`);
     } catch (err) {
-      res.redirect("/");
       console.log(err);
+      return res.redirect("/");
     }
   } else {
+    req.session.destroy();
     return res.render("login", {
       title: "Login — ArmSocial",
       err: "The email you entered is invalid"

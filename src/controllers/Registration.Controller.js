@@ -35,9 +35,8 @@ const avatarLinks = [
 
 // Registration Page
 router.get("/", (req, res) => {
-  if (!req.cookies.email && !req.cookies.password) {
-    res.clearCookie("email");
-    res.clearCookie("password");
+  if (!req.session.email || !req.session.password) {
+    req.session.destroy();
     res.render("register", { title: "Register | ArmSocial" });
   } else {
     res.redirect("/auth/register");
@@ -112,16 +111,18 @@ router.post("/", upload.single("avatar"), async (req, res) => {
 
     const password = await hashPass();
     const pictureUrl = await url();
+    
     Account.pictureUrl = pictureUrl;
     Account.password = password;
 
     try {
       await Account.save();
       if (req.file) unlinkSync(`tmp/${req.file.originalname}`);
-      return res
-        .cookie("email", Account.email, { maxAge: 24 * 60 * 60 * 1000 })
-        .cookie("password", Account.password, { maxAge: 24 * 60 * 60 * 1000 })
-        .redirect(`/user/${Account._id}`);
+
+      req.session.email = Account.email;
+      req.session.password = Account.password;
+
+      return res.redirect(`/user/${Account._id}`);
     } catch (err) {
       res.redirect("/");
       console.log(err);

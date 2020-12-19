@@ -30,6 +30,7 @@ const PostSchema = new mongoose.Schema({
       attachedVideoFileName: { type: String }
     }
   },
+  isCurrentAccount: { type: Boolean, required: false },
   datefield: { type: String, required: true }
 });
 module.exports = PostSchema;

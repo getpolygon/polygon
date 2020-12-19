@@ -6,8 +6,8 @@ const AccountSchema = require("../models/account");
 
 router.put("/add", async (req, res) => {
   var currentAccount = await AccountSchema.findOne({
-    email: req.cookies.email,
-    password: req.cookies.password
+    email: req.session.email,
+    password: req.session.password
   });
 
   var addedAccount = await AccountSchema.findById(req.query.account);
@@ -56,8 +56,8 @@ router.put("/add", async (req, res) => {
 router.put("/update", async (req, res) => {
   var accountToCheckDoc = await AccountSchema.findById(req.query.accountId);
   var currentAccount = await AccountSchema.findOne({
-    email: req.cookies.email,
-    password: req.cookies.password
+    email: req.session.email,
+    password: req.session.password
   });
 
   var { cancel } = req.query;
@@ -83,8 +83,8 @@ router.put("/update", async (req, res) => {
 router.get("/check", async (req, res) => {
   var accountToCheck = req.query.accountId;
   var currentAccount = await AccountSchema.findOne({
-    email: req.cookies.email,
-    password: req.cookies.password
+    email: req.session.email,
+    password: req.session.password
   });
 
   function get_requested() {

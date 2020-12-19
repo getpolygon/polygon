@@ -14,8 +14,6 @@ const emailValidator = require("email-validator");
 const bcrypt = require("bcrypt");
 // For checking the account
 router.put("/check", async (req, res) => {
-  let email = req.query.email;
-  let password = req.query.password;
   let { q } = req.query;
 
   if (q == "email") {
@@ -66,30 +64,14 @@ router.put("/check", async (req, res) => {
           console.log(e);
         });
     }
-  } else {
-    AccountSchema.findOne({
-      email: email,
-      password: password
-    })
-      .then((doc) => {
-        if (doc) {
-          res.json(doc);
-        } else {
-          res.json([]);
-        }
-      })
-      .catch((e) => {
-        res.json(e);
-        console.log(e);
-      });
   }
 });
 
 // For updating the account
 router.put("/update", async (req, res) => {
   let currentAccount = await AccountSchema.findOne({
-    email: req.cookies.email,
-    password: req.cookies.password
+    email: req.session.email,
+    password: req.session.password
   });
   let { bio, email, password, privacy } = req.query;
 
@@ -139,11 +121,9 @@ router.put("/update", async (req, res) => {
       // Finding the updated account and sending it to the client
       await AccountSchema.findOne({ email: email, password: password })
         .then((doc) => {
-          res
-            // Setting updated cookies
-            .cookie("email", email)
-            .cookie("password", password)
-            .json({ email: doc.email, password: doc.password, status: "OK" });
+          req.session.email = email;
+          req.session.password = password;
+          res.json({ email: doc.email, password: doc.password, status: "OK" });
         })
         .catch((e) => res.json(e));
     } else {
@@ -154,8 +134,8 @@ router.put("/update", async (req, res) => {
 
 // For deleting the account
 router.delete("/delete", async (req, res) => {
-  const email = req.cookies.email;
-  const password = req.cookies.password;
+  const email = req.session.email;
+  const password = req.session.password;
 
   await MinIOClient.removeObject(BUCKET, `${email}.png`);
 

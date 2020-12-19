@@ -3,9 +3,8 @@ const bcrypt = require("bcrypt");
 const AccountSchema = require("../models/account");
 
 router.get("/", (req, res) => {
-  if (!req.cookies.email && !req.cookies.password) {
-    res.clearCookie("email");
-    res.clearCookie("password");
+  if (!req.session.email || !req.session.password) {
+    req.session.destroy();
     res.render("login", { title: "Login | ArmSocial" });
   } else {
     res.redirect("/");
@@ -43,7 +42,8 @@ router.post("/", async (req, res) => {
       title: "Login | ArmSocial"
     });
   } else {
-    res.cookie("email", Account.email).cookie("password", Account.password);
+    req.session.email = Account.email;
+    req.session.password = Account.password;
     res.redirect("/");
   }
 });

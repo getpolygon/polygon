@@ -42,7 +42,9 @@
       <a href="/notifications" class="dropdown-item">
         <% if (currentAccount.friends.pending.length > 0) { %>
         <i class="fas fa-bell">
-          <span class="badge rounded-pill bg-danger"><%= currentAccount.friends.pending.length %></span>
+          <span class="badge rounded-pill bg-danger"
+            ><%= currentAccount.friends.pending.length %></span
+          >
         </i>
         <%}%> <% if (currentAccount.friends.pending.length == 0){%>
         <i class="fas fa-bell"></i>

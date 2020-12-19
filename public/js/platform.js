@@ -3,7 +3,6 @@ import VideoComponent from "/components/video-component.mjs";
 import ComboComponent from "/components/combo-component.mjs";
 import TextComponent from "/components/text-component.mjs";
 import Loader from "/components/loader-component.mjs";
-import getCookie from "/dist/shared/js/getCookie.min.js";
 import HeartButtonContent from "/components/partials/HeartButtonContent.mjs";
 
 const postButton = document.getElementById("postButton");
@@ -17,42 +16,42 @@ function FetchHearts(cardContainer) {
   let loveButtons = cardContainer.querySelectorAll(".love-post");
   loveButtons.forEach(async (button) => {
     button.addEventListener("click", async () => {
-      let request_heart = await fetch(
+      let request = await fetch(
         `/api/posts/fetch/?postId=${button.parentElement.parentElement.id}&heart=true`
       );
-      let response_heart = await request_heart.json();
-      if (response_heart.info === "HEARTED") {
-        button.innerHTML = new HeartButtonContent().build(
+      let response = await request.json();
+      if (response.info === "HEARTED") {
+        return (button.innerHTML = new HeartButtonContent().build(
           "Unheart",
-          response_heart.data.numberOfHearts,
+          response.data.numberOfHearts,
           true
-        );
+        ));
       } else {
-        button.innerHTML = new HeartButtonContent().build(
+        return (button.innerHTML = new HeartButtonContent().build(
           "Heart",
-          response_heart.data.numberOfHearts,
+          response.data.numberOfHearts,
           false
-        );
+        ));
       }
     });
 
-    let request_get_hearts = await fetch(
+    let request = await fetch(
       `/api/posts/fetch/?postId=${button.parentElement.parentElement.id}&getHearts=true`
     );
-    let response_get_hearts = await request_get_hearts.json();
-    if (response_get_hearts.info === "ALREADY_HEARTED") {
-      button.innerHTML = new HeartButtonContent().build(
+    let response = await request.json();
+    if (response.info === "ALREADY_HEARTED") {
+      return (button.innerHTML = new HeartButtonContent().build(
         "Unheart",
-        response_get_hearts.data.numberOfHearts,
+        response.data.numberOfHearts,
         true
-      );
+      ));
     }
-    if (response_get_hearts.info === "OK") {
-      button.innerHTML = new HeartButtonContent().build(
+    if (response.info === "OK") {
+      return (button.innerHTML = new HeartButtonContent().build(
         "Heart",
-        response_get_hearts.data.numberOfHearts,
+        response.data.numberOfHearts,
         false
-      );
+      ));
     }
   });
 
@@ -97,194 +96,174 @@ function deletePost() {
     });
 }
 
-function fetchPosts() {
-  const loader = document.getElementById("loader");
-  fetch("/api/posts/fetch")
-    .then((res) => res.json())
-    .then((data) => {
-      if (data.length == 0) {
-        const msg = document.createElement("div");
-        msg.innerHTML = `<h5 id="msg" align="center">We couldn't find any posts</h5>`;
-        postsContainer.prepend(msg);
+async function fetchPosts() {
+  const request = await fetch("/api/posts/fetch");
+  const data = await request.json();
+
+  if (data.length == 0) {
+    const msg = document.createElement("div");
+    msg.innerHTML = `<h5 id="msg" align="center">We couldn't find any posts</h5>`;
+    postsContainer.prepend(msg);
+  } else {
+    data.forEach((obj) => {
+      const text = obj.text;
+      const author = obj.author;
+      const authorId = obj.authorId;
+      const authorImage = obj.authorImage;
+      const postDate = obj.datefield;
+      const postId = obj._id;
+      const comments = obj.comments;
+      const isCurrentAccount = obj.isCurrentAccount;
+      const postsContainer = document.getElementById("posts");
+      const cardContainer = document.createElement("div");
+
+      if (isCurrentAccount) {
+        // Post has attachments
+        if (obj.hasAttachments == true) {
+          // Post has attached image
+          if (obj.attachments.hasAttachedImage == true) {
+            cardContainer.innerHTML = new ImageComponent().create(
+              postId,
+              authorImage,
+              authorId,
+              author,
+              text,
+              obj.attachments.image.attachedImage,
+              postDate,
+              { readOnly: false }
+            );
+          }
+          // Post has attached video
+          if (obj.attachments.hasAttachedVideo == true) {
+            cardContainer.innerHTML = new VideoComponent().create(
+              postId,
+              authorImage,
+              authorId,
+              author,
+              text,
+              obj.attachments.video.attachedVideo,
+              postDate,
+              { readOnly: false }
+            );
+          }
+          // Post has attached video and image
+          if (
+            obj.attachments.hasAttachedVideo == true &&
+            obj.attachments.hasAttachedImage == true
+          ) {
+            cardContainer.innerHTML = new ComboComponent().create(
+              postId,
+              authorImage,
+              authorId,
+              author,
+              postDate,
+              text,
+              obj.attachments.image.attachedImage,
+              obj.attachments.video.attachedVideo,
+              { readOnly: false }
+            );
+          }
+        }
+        // Post doesn't have attachments
+        else {
+          cardContainer.innerHTML = new TextComponent().create(
+            postId,
+            authorImage,
+            authorId,
+            author,
+            postDate,
+            text,
+            { readOnly: false }
+          );
+        }
       } else {
-        data.forEach((obj) => {
-          const text = obj.text;
-          const author = obj.author;
-          const authorId = obj.authorId;
-          const authorImage = obj.authorImage;
-          const postDate = obj.datefield;
-          const postId = obj._id;
-          const comments = obj.comments;
-          const postsContainer = document.getElementById("posts");
-          const cardContainer = document.createElement("div");
-          const currentAccountEmail = getCookie("email").toString();
-          const currentAccountPassword = getCookie("password").toString();
+        // Post has attachments
+        if (obj.hasAttachments == true) {
+          // Post has attached image
+          if (obj.attachments.hasAttachedImage == true) {
+            cardContainer.innerHTML = new ImageComponent().create(
+              postId,
+              authorImage,
+              authorId,
+              author,
+              text,
+              obj.attachments.image.attachedImage,
+              postDate,
+              { readOnly: true }
+            );
+          }
+          // Post has attached video
+          if (obj.attachments.hasAttachedVideo == true) {
+            cardContainer.innerHTML = new VideoComponent().create(
+              postId,
+              authorImage,
+              authorId,
+              author,
+              text,
+              obj.attachments.video.attachedVideo,
+              postDate,
+              { readOnly: true }
+            );
+          }
+          // Post has attached video and image
+          if (
+            obj.attachments.hasAttachedVideo == true &&
+            obj.attachments.hasAttachedImage == true
+          ) {
+            cardContainer.innerHTML = new ComboComponent().create(
+              postId,
+              authorImage,
+              authorId,
+              author,
+              postDate,
+              text,
+              obj.attachments.image.attachedImage,
+              obj.attachments.video.attachedVideo,
+              { readOnly: true }
+            );
+          }
+        }
+        // Post doesn't have attachments
+        else {
+          cardContainer.innerHTML = new TextComponent().create(
+            postId,
+            authorImage,
+            authorId,
+            author,
+            postDate,
+            text,
+            { readOnly: true }
+          );
+        }
+      }
 
-          // Checking if the email and password in the cookies match db records
-          fetch(
-            `/api/accounts/check/?email=${currentAccountEmail}&password=${currentAccountPassword}`,
-            { method: "PUT" }
-          )
-            .then((response) => response.json())
-            .then(async (response) => {
-              // Account matches
-              if (obj.authorId == response._id) {
-                // Post has attachments
-                if (obj.hasAttachments == true) {
-                  // Post has attached image
-                  if (obj.attachments.hasAttachedImage == true) {
-                    cardContainer.innerHTML = new ImageComponent().create(
-                      postId,
-                      authorImage,
-                      authorId,
-                      author,
-                      text,
-                      obj.attachments.image.attachedImage,
-                      postDate,
-                      { readOnly: false }
-                    );
-                  }
-                  // Post has attached video
-                  if (obj.attachments.hasAttachedVideo == true) {
-                    cardContainer.innerHTML = new VideoComponent().create(
-                      postId,
-                      authorImage,
-                      authorId,
-                      author,
-                      text,
-                      obj.attachments.video.attachedVideo,
-                      postDate,
-                      { readOnly: false }
-                    );
-                  }
-                  // Post has attached video and image
-                  if (
-                    obj.attachments.hasAttachedVideo == true &&
-                    obj.attachments.hasAttachedImage == true
-                  ) {
-                    cardContainer.innerHTML = new ComboComponent().create(
-                      postId,
-                      authorImage,
-                      authorId,
-                      author,
-                      postDate,
-                      text,
-                      obj.attachments.image.attachedImage,
-                      obj.attachments.video.attachedVideo,
-                      { readOnly: false }
-                    );
-                  }
-                }
-                // Post doesn't have attachments
-                else {
-                  cardContainer.innerHTML = new TextComponent().create(
-                    postId,
-                    authorImage,
-                    authorId,
-                    author,
-                    postDate,
-                    text,
-                    { readOnly: false }
-                  );
-                }
-              }
-              // Account doesn't match
-              else {
-                // Post has attachments
-                if (obj.hasAttachments == true) {
-                  // Post has attached image
-                  if (obj.attachments.hasAttachedImage == true) {
-                    cardContainer.innerHTML = new ImageComponent().create(
-                      postId,
-                      authorImage,
-                      authorId,
-                      author,
-                      text,
-                      obj.attachments.image.attachedImage,
-                      postDate,
-                      { readOnly: true }
-                    );
-                  }
-                  // Post has attached video
-                  if (obj.attachments.hasAttachedVideo == true) {
-                    cardContainer.innerHTML = new VideoComponent().create(
-                      postId,
-                      authorImage,
-                      authorId,
-                      author,
-                      text,
-                      obj.attachments.video.attachedVideo,
-                      postDate,
-                      { readOnly: true }
-                    );
-                  }
-                  // Post has attached video and image
-                  if (
-                    obj.attachments.hasAttachedImage == true &&
-                    obj.attachments.hasAttachedVideo == true
-                  ) {
-                    cardContainer.innerHTML = new ComboComponent().create(
-                      postId,
-                      authorImage,
-                      authorId,
-                      author,
-                      postDate,
-                      text,
-                      obj.attachments.image.attachedImage,
-                      obj.attachments.video.attachedVideo,
-                      { readOnly: true }
-                    );
-                  }
-                }
-                // Post doesn't have attachments
-                else {
-                  cardContainer.innerHTML = new TextComponent().create(
-                    postId,
-                    authorImage,
-                    authorId,
-                    author,
-                    postDate,
-                    text,
-                    { readOnly: true }
-                  );
-                }
-              }
-
-              // Filling up the comment section
-              const commentContainer = cardContainer.querySelector(`.comment-section-${postId}`);
-              if (comments.length === 0) {
-                commentContainer.innerText = "Be the first person to comment on this post";
-              } else {
-                comments.forEach((comment) => {
-                  const el = document.createElement("div");
-                  el.innerHTML = `
-                  <div class="d-flex post-account-component-container mb-2">
-                    <img
-                    src="${authorImage}"
-                    alt="profile-photo"
-                    class="rounded-circle shadow-sm profile-photo"
-                    width= "50"
-                    height="50"/>
-                    <a class="ms-2" href="/user/${authorId}">${author}</a>
-                  </div>
-                  <span>${comment.comment}</span>
-                  `;
-                  commentContainer.appendChild(el);
-                });
-              }
-
-              FetchHearts(cardContainer);
-              postsContainer.appendChild(cardContainer);
-              checkForDeleteButtons();
-            })
-            .catch((e) => {
-              console.log(e);
-            });
+      // Filling up the comment section
+      const commentContainer = cardContainer.querySelector(`.comment-section-${postId}`);
+      if (comments.length === 0) {
+        commentContainer.innerText = "Be the first person to comment on this post";
+      } else {
+        comments.forEach((comment) => {
+          const el = document.createElement("div");
+          el.innerHTML = `
+            <div class="d-flex post-account-component-container mb-2">
+              <img
+              src="${authorImage}"
+              alt="profile-photo"
+              class="rounded-circle shadow-sm profile-photo"
+              width= "50"
+              height="50"/>
+              <a class="ms-2" href="/user/${authorId}">${author}</a>
+            </div>
+            <span>${comment.comment}</span>
+            `;
+          commentContainer.appendChild(el);
         });
       }
-      postsContainer.removeChild(loader);
-    })
-    .catch((e) => console.log(e));
+      postsContainer.appendChild(cardContainer);
+      FetchHearts(cardContainer);
+      checkForDeleteButtons();
+    });
+  }
 }
 
 async function createPost() {
@@ -484,11 +463,5 @@ async function createPost() {
   checkForDeleteButtons();
 }
 
-window.addEventListener("load", () => {
-  let loader = new Loader({ fullScreen: false });
-  postsContainer.prepend(loader);
-  fetchPosts();
-});
-postButton.addEventListener("click", () => {
-  createPost();
-});
+window.addEventListener("load", fetchPosts);
+postButton.addEventListener("click", createPost);

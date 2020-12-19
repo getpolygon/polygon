@@ -6,8 +6,8 @@ const AccountSchema = require("../models/account");
 router.get("/fetch", async (req, res) => {
   // Getting current account
   const currentAccount = await AccountSchema.findOne({
-    email: req.cookies.email,
-    password: req.cookies.password
+    email: req.session.email,
+    password: req.session.password
   });
 
   // Dismiss for dismissing a notification

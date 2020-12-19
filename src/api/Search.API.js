@@ -2,8 +2,8 @@ const router = require("express").Router();
 const AccountSchema = require("../models/account");
 router.get("/", async (req, res) => {
   const currentAccount = await AccountSchema.findOne({
-    email: req.cookies.email,
-    password: req.cookies.password
+    email: req.session.email,
+    password: req.session.password
   });
   const { query } = req.query;
   const regex = new RegExp(query, "gu");

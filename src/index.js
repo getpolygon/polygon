@@ -62,11 +62,11 @@ app.use("/auth", authRoute);
 // Error page
 app.get("*", (_req, res) => res.redirect("/static/error.html"));
 // Maybe will use the global method instead of the one-by-one
-// app.get("/*", (req, res) => {
-//   if (!req.cookies.email || req.cookies.password) {
-//     return res.redirect("/");
-//   }
-// });
+app.get("/*", (req, res) => {
+  if (!req.session.email || req.session.password) {
+    return res.redirect("/");
+  }
+});
 
 // Connect to MongoDB
 mongoose

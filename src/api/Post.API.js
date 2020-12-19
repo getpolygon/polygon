@@ -34,24 +34,12 @@ const AccountSchema = require("../models/account");
 // Fetch posts and their data
 router.get("/fetch", async (req, res) => {
   let currentAccount = await AccountSchema.findOne({
-    email: req.cookies.email,
-    password: req.cookies.password
+    email: req.session.email,
+    password: req.session.password
   });
 
   // Query methods
   let { accountId, postId, heart, getHearts } = req.query;
-
-  // For checking if the post has any data or is empty
-  function SpecialChecks(post) {
-    if (post.hearts.usersHearted.length === 0) {
-      return false;
-    } else {
-      return _.each(post.hearts.usersHearted, (user) => {
-        if (user.accountId == currentAccount._id) return true;
-        else return false;
-      });
-    }
-  }
 
   // Getting the posts from the specified account ID
   if (accountId) {
@@ -72,7 +60,18 @@ router.get("/fetch", async (req, res) => {
     // The post
     let post = postAuthor.posts.id(postId);
     // Checking if current account hearted the post
-    let currentAccountHeartedThePost = SpecialChecks(post);
+    let currentAccountHeartedThePost;
+
+    // For checking if the post has any data or is empty
+    if (post.hearts.usersHearted.length === 0) {
+      currentAccountHeartedThePost = false;
+    } else {
+      _.each(post.hearts.usersHearted, (user) => {
+        console.log(currentAccount);
+        if (user.accountId == currentAccount._id) currentAccountHeartedThePost = true;
+        else currentAccountHeartedThePost = false;
+      });
+    }
 
     // If current account liked the post
     if (currentAccountHeartedThePost) {
@@ -131,6 +130,14 @@ router.get("/fetch", async (req, res) => {
       posts.push(post);
     });
 
+    _.each(posts, (post) => {
+      if (post.authorId == currentAccount._id) {
+        post.isCurrentAccount = true;
+      } else {
+        post.isCurrentAccount = false;
+      }
+    });
+
     // Sorting posts by datefield ( from latest to oldest )
     posts = _.sortBy(posts, ["datefield"]).reverse();
     res.json(posts);
@@ -140,8 +147,8 @@ router.get("/fetch", async (req, res) => {
 // CREATE A POST
 router.put("/create", upload.fields([{ name: "image" }, { name: "video" }]), async (req, res) => {
   let authorAccount = await AccountSchema.findOne({
-    email: req.cookies.email,
-    password: req.cookies.password
+    email: req.session.email,
+    password: req.session.password
   });
   let author = authorAccount.fullName;
   let authorImage = authorAccount.pictureUrl;
@@ -166,7 +173,7 @@ router.put("/create", upload.fields([{ name: "image" }, { name: "video" }]), asy
     const Post = authorAccount.posts.create({
       text: text,
       author: author,
-      authorEmail: req.cookies.email,
+      authorEmail: req.session.email,
       authorId: authorId,
       authorImage: authorImage,
       hasAttachments: false,
@@ -196,7 +203,7 @@ router.put("/create", upload.fields([{ name: "image" }, { name: "video" }]), asy
     const Post = authorAccount.posts.create({
       text: text,
       author: author,
-      authorEmail: req.cookies.email,
+      authorEmail: req.session.email,
       authorId: authorId,
       authorImage: authorImage,
       hasAttachments: true,
@@ -235,7 +242,7 @@ router.put("/create", upload.fields([{ name: "image" }, { name: "video" }]), asy
     const Post = authorAccount.posts.create({
       text: text,
       author: author,
-      authorEmail: req.cookies.email,
+      authorEmail: req.session.email,
       authorId: authorId,
       authorImage: authorImage,
       hasAttachments: true,
@@ -285,7 +292,7 @@ router.put("/create", upload.fields([{ name: "image" }, { name: "video" }]), asy
     const Post = authorAccount.posts.create({
       text: text,
       author: author,
-      authorEmail: req.cookies.email,
+      authorEmail: req.session.email,
       authorId: authorId,
       authorImage: authorImage,
       hasAttachments: true,
@@ -317,8 +324,8 @@ router.put("/create", upload.fields([{ name: "image" }, { name: "video" }]), asy
 router.delete("/delete", async (req, res) => {
   const { post } = req.query;
   const currentAccount = await AccountSchema.findOne({
-    email: req.cookies.email,
-    password: req.cookies.password
+    email: req.session.email,
+    password: req.session.password
   });
 
   let foundPost = currentAccount.posts.id(post);

@@ -1,3 +1,5 @@
+// TODO: ( Add a secure way to fetch one user's posts )
+
 const _ = require("lodash");
 const BW = require("bad-words");
 const BadWordsFilter = new BW({ placeHolder: "*" });
@@ -67,7 +69,6 @@ router.get("/fetch", async (req, res) => {
       currentAccountHeartedThePost = false;
     } else {
       _.each(post.hearts.usersHearted, (user) => {
-        console.log(currentAccount);
         if (user.accountId == currentAccount._id) currentAccountHeartedThePost = true;
         else currentAccountHeartedThePost = false;
       });

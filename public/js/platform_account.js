@@ -4,96 +4,137 @@ import ComboComponent from "/components/combo-component.mjs";
 import TextComponent from "/components/text-component.mjs";
 import Loader from "/components/loader-component.mjs";
 import getCookie from "/dist/shared/js/getCookie.min.js";
+import HeartButtonContent from "/components/partials/HeartButtonContent.mjs";
 
-var postsContainer = document.getElementById("posts");
-var postButton = document.getElementById("postButton");
-var postText = document.getElementById("postTextarea");
-var addFriendButton = document.getElementById("add_friend");
-var accountId = document.getElementById("accountId").textContent;
+const postsContainer = document.getElementById("posts");
+const postButton = document.getElementById("postButton");
+const postText = document.getElementById("postTextarea");
+const addFriendButton = document.getElementById("add_friend");
+const accountId = document.getElementById("accountId").textContent;
 
-// For checking for delete buttons in the document
+// Funcion for fetching and setting heart count
+function FetchHearts(cardContainer) {
+  /* ______________FETCH HEARTS_________________________________ */
+  // Adding an event listener on all heart buttons
+  let loveButtons = cardContainer.querySelectorAll(".love-post");
+  loveButtons.forEach(async (button) => {
+    button.addEventListener("click", async () => {
+      let request_heart = await fetch(
+        `/api/posts/fetch/?postId=${button.parentElement.parentElement.id}&heart=true`
+      );
+      let response_heart = await request_heart.json();
+      if (response_heart.info === "HEARTED") {
+        button.innerHTML = new HeartButtonContent().build(
+          "Unheart",
+          response_heart.data.numberOfHearts,
+          true
+        );
+      } else {
+        button.innerHTML = new HeartButtonContent().build(
+          "Heart",
+          response_heart.data.numberOfHearts,
+          false
+        );
+      }
+    });
+
+    let request_get_hearts = await fetch(
+      `/api/posts/fetch/?postId=${button.parentElement.parentElement.id}&getHearts=true`
+    );
+    let response_get_hearts = await request_get_hearts.json();
+    if (response_get_hearts.info === "ALREADY_HEARTED") {
+      button.innerHTML = new HeartButtonContent().build(
+        "Unheart",
+        response_get_hearts.data.numberOfHearts,
+        true
+      );
+    }
+    if (response_get_hearts.info === "OK") {
+      button.innerHTML = new HeartButtonContent().build(
+        "Heart",
+        response_get_hearts.data.numberOfHearts,
+        false
+      );
+    }
+  });
+
+  /* ______________FETCH HEARTS END_________________________________ */
+}
+
 function checkForDeleteButtons() {
-  // Getting all the buttons with class name
-  let deletePostButtons = document.querySelectorAll(".submitDeleteForm");
+  const deletePostButtons = document.querySelectorAll(".submitDeleteForm");
   deletePostButtons.forEach((element) => {
-    // Delete the post when the button is clicked
     element.addEventListener("click", deletePost);
   });
-  // Return deleteButtons
   return deletePostButtons;
 }
 
-// For deleting posts
 function deletePost() {
-  // Getting the postId attribute
-  let postId = this.getAttribute("postId");
-  // Getting the whole post div by the Id of postId attribute
-  let post = document.getElementById(postId);
-  // Progress bar at the top of the card
-  let deletionIndicator = document.createElement("div");
-
-  deletionIndicator.innerHTML = `
-<div id="progress" class="progress" style="position: relative;">
-  <div class="progress-bar progress-bar-striped indeterminate  progress-bar-animated bg-danger" style="width: 100%">
-</div>
-`;
-  post.prepend(deletionIndicator);
+  const postId = this.getAttribute("postId");
+  const post = document.getElementById(postId);
 
   fetch(`/api/posts/delete/?post=${postId}`, { method: "DELETE" })
     .then((response) => response.json())
     .then(() => {
       post.parentNode.removeChild(post);
       checkForDeleteButtons();
+      if (postsContainer.innerText.length == 0) {
+        const msg = document.createElement("div");
+        msg.innerHTML = `<h5 id="msg" align="center">We couldn't find any posts</h5>`;
+        postsContainer.prepend(msg);
+      }
     })
     .catch((e) => {
-      let el = document.createElement("div");
+      const el = document.createElement("div");
       el.innerHTML = `
-      <div class="alert alert-danger alert-dismissible fade show" role="alert">
-        <strong>There was an error!</strong> Try refreshing your page.
-        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-          <span aria-hidden="true">&times;</span>
-        </button>
-      </div>
-    `;
+        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+          <strong>There was an error!</strong> Try refreshing your page.
+          <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+      `;
       document.body.prepend(el);
       console.log(e);
     });
-  checkForDeleteButtons();
 }
 
 function fetchPosts() {
+  const loader = new Loader({ fullScreen: false });
+  postsContainer.appendChild(loader);
   fetch(`/api/posts/fetch/?accountId=${accountId}`)
     .then((res) => res.json())
     .then((data) => {
-      if (data.length < 1 || data.length == 0) {
-        let msg = document.createElement("div");
-        msg.innerHTML = `
-      <h5 id="msg" align="center">We couldn't find any posts <br /><br /></h5>
-      `;
-        let postsContainer = document.getElementById("posts");
+      if (data.length === 0) {
+        const msg = document.createElement("div");
+        msg.innerHTML = `<h5 id="msg" align="center">We couldn't find any posts</h5>`;
         postsContainer.prepend(msg);
-        postsContainer.removeChild(document.getElementById("loader"));
       } else {
         data.forEach((obj) => {
-          let text = obj.text;
-          let author = obj.author;
-          let authorId = obj.authorId;
-          let authorImage = obj.authorImage;
-          let postDate = obj.datefield;
-          let postId = obj._id;
-          let postsContainer = document.getElementById("posts");
-          let cardContainer = document.createElement("div");
-          let currentAccountEmail = getCookie("email").toString();
-          let currentAccountPassword = getCookie("password").toString();
+          const text = obj.text;
+          const author = obj.author;
+          const authorId = obj.authorId;
+          const authorImage = obj.authorImage;
+          const postDate = obj.datefield;
+          const postId = obj._id;
+          const comments = obj.comments;
+          const postsContainer = document.getElementById("posts");
+          const cardContainer = document.createElement("div");
+          const currentAccountEmail = getCookie("email").toString();
+          const currentAccountPassword = getCookie("password").toString();
 
+          // Checking if the email and password in the cookies match db records
           fetch(
             `/api/accounts/check/?email=${currentAccountEmail}&password=${currentAccountPassword}`,
             { method: "PUT" }
           )
             .then((response) => response.json())
-            .then((response) => {
+            .then(async (response) => {
+              // Account matches
               if (obj.authorId == response._id) {
+                // Post has attachments
                 if (obj.hasAttachments == true) {
+                  // Post has attached image
                   if (obj.attachments.hasAttachedImage == true) {
                     cardContainer.innerHTML = new ImageComponent().create(
                       postId,
@@ -106,6 +147,7 @@ function fetchPosts() {
                       { readOnly: false }
                     );
                   }
+                  // Post has attached video
                   if (obj.attachments.hasAttachedVideo == true) {
                     cardContainer.innerHTML = new VideoComponent().create(
                       postId,
@@ -118,6 +160,7 @@ function fetchPosts() {
                       { readOnly: false }
                     );
                   }
+                  // Post has attached video and image
                   if (
                     obj.attachments.hasAttachedVideo == true &&
                     obj.attachments.hasAttachedImage == true
@@ -134,7 +177,9 @@ function fetchPosts() {
                       { readOnly: false }
                     );
                   }
-                } else {
+                }
+                // Post doesn't have attachments
+                else {
                   cardContainer.innerHTML = new TextComponent().create(
                     postId,
                     authorImage,
@@ -145,8 +190,12 @@ function fetchPosts() {
                     { readOnly: false }
                   );
                 }
-              } else {
+              }
+              // Account doesn't match
+              else {
+                // Post has attachments
                 if (obj.hasAttachments == true) {
+                  // Post has attached image
                   if (obj.attachments.hasAttachedImage == true) {
                     cardContainer.innerHTML = new ImageComponent().create(
                       postId,
@@ -159,6 +208,7 @@ function fetchPosts() {
                       { readOnly: true }
                     );
                   }
+                  // Post has attached video
                   if (obj.attachments.hasAttachedVideo == true) {
                     cardContainer.innerHTML = new VideoComponent().create(
                       postId,
@@ -171,6 +221,7 @@ function fetchPosts() {
                       { readOnly: true }
                     );
                   }
+                  // Post has attached video and image
                   if (
                     obj.attachments.hasAttachedImage == true &&
                     obj.attachments.hasAttachedVideo == true
@@ -187,7 +238,9 @@ function fetchPosts() {
                       { readOnly: true }
                     );
                   }
-                } else {
+                }
+                // Post doesn't have attachments
+                else {
                   cardContainer.innerHTML = new TextComponent().create(
                     postId,
                     authorImage,
@@ -199,8 +252,32 @@ function fetchPosts() {
                   );
                 }
               }
+
+              // Filling up the comment section
+              const commentContainer = cardContainer.querySelector(`.comment-section-${postId}`);
+              if (comments.length === 0) {
+                commentContainer.innerText = "Be the first person to comment on this post";
+              } else {
+                comments.forEach((comment) => {
+                  const el = document.createElement("div");
+                  el.innerHTML = `
+                  <div class="d-flex post-account-component-container mb-2">
+                    <img
+                    src="${authorImage}"
+                    alt="profile-photo"
+                    class="rounded-circle shadow-sm profile-photo"
+                    width= "50"
+                    height="50"/>
+                    <a class="ms-2" href="/user/${authorId}">${author}</a>
+                  </div>
+                  <span>${comment.comment}</span>
+                  `;
+                  commentContainer.appendChild(el);
+                });
+              }
+
+              FetchHearts(cardContainer);
               postsContainer.appendChild(cardContainer);
-              document.getElementById("loader").innerHTML = "";
               checkForDeleteButtons();
             })
             .catch((e) => {
@@ -208,230 +285,206 @@ function fetchPosts() {
             });
         });
       }
+      postsContainer.removeChild(loader);
     })
     .catch((e) => console.log(e));
 }
 
-function createPost() {
-  let imageInput = document.getElementById("imageUpload");
-  let videoInput = document.getElementById("videoUpload");
-  let image = imageInput.files;
-  let video = videoInput.files;
+async function createPost() {
+  const imageInput = document.getElementById("imageUpload");
+  const videoInput = document.getElementById("videoUpload");
+  const cardContainer = document.createElement("div");
+  const imageFiles = imageInput.files;
+  const videoFiles = videoInput.files;
+  const loader = new Loader({ fullScreen: true });
+
+  document.body.appendChild(loader);
 
   // TEXT POST
-  if (image.length == 0 && video.length == 0) {
-    // Form
-    let formData = new FormData();
-    formData.append("text", postText.value);
-
-    // Loader
-    let loader = document.createElement("div");
-    loader.classList.add("full-loader");
-    loader.classList.add("full-loader-default");
-    loader.classList.add("is-active");
-    document.body.appendChild(loader);
-
-    // q is to specify the type of post that we want
-    fetch("/api/posts/create?q=txt", {
+  if (imageFiles.length === 0 && videoFiles.length === 0) {
+    let form = new FormData();
+    form.append("text", postText.value);
+    // "type" is to specify the type of post that we want
+    let req = await fetch("/api/posts/create?type=txt", {
       method: "PUT",
-      body: formData
-    })
-      .then((data) => data.json())
-      .then((data) => {
-        let msg = document.getElementById("msg");
-        let text = data.text;
-        let author = data.author;
-        let postId = data._id;
-        let authorId = data.authorId;
-        let authorImage = data.authorImage;
-        let postDate = data.datefield;
-        let postsContainer = document.getElementById("posts");
-        let cardContainer = document.createElement("div");
-        if (msg) msg.innerHTML = "";
+      body: form
+    });
+    let data = await req.json();
 
-        cardContainer.innerHTML = new TextComponent().create(
-          postId,
-          authorImage,
-          authorId,
-          author,
-          postDate,
-          text,
-          { readOnly: false }
-        );
+    let msg = document.getElementById("msg");
+    let text = data.text;
+    let author = data.author;
+    let postId = data._id;
+    let authorId = data.authorId;
+    let authorImage = data.authorImage;
+    let postDate = data.datefield;
 
-        postText.value = "";
-        imageInput.value = "";
-        videoInput.value = "";
-        document.body.removeChild(loader);
-        postsContainer.prepend(cardContainer);
-      })
-      .catch((e) => {
-        console.log(e);
-      });
-    checkForDeleteButtons();
+    // Removing the message on the feed
+    if (msg) msg.innerHTML = "";
+
+    // Setting the HTML of the Card
+    cardContainer.innerHTML = new TextComponent().create(
+      postId,
+      authorImage,
+      authorId,
+      author,
+      postDate,
+      text,
+      { readOnly: false }
+    );
+
+    // Creating a heart button for the post
+    let loveButton = cardContainer.querySelector(".love-post");
+    loveButton.innerHTML = new HeartButtonContent().build(
+      "Heart",
+      data.hearts.numberOfHearts || 0,
+      false
+    );
   }
 
   // VIDEO, TEXT POST
-  if (video[0] && !image[0]) {
-    let formData = new FormData();
-    formData.append("text", postText.value);
-    formData.append("video", video[0]);
+  if (videoFiles[0] && !imageFiles[0]) {
+    let form = new FormData();
+    form.append("text", postText.value);
+    form.append("video", videoFiles[0]);
 
-    let loader = document.createElement("div");
-    loader.classList.add("full-loader");
-    loader.classList.add("full-loader-default");
-    loader.classList.add("is-active");
-    document.body.appendChild(loader);
-
-    fetch("/api/posts/create?q=vid", {
+    let req = await fetch("/api/posts/create?type=vid", {
       method: "PUT",
-      body: formData
-    })
-      .then((data) => data.json())
-      .then((data) => {
-        let msg = document.getElementById("msg");
-        let text = data.text;
-        let author = data.author;
-        let postId = data._id;
-        let authorId = data.authorId;
-        let authorImage = data.authorImage;
-        let postDate = data.datefield;
-        let video = data.attachments.video.attachedVideo;
-        let postsContainer = document.getElementById("posts");
-        let cardContainer = document.createElement("div");
-        if (msg) msg.innerHTML = "";
+      body: form
+    });
+    let data = await req.json();
 
-        cardContainer.innerHTML = new VideoComponent().create(
-          postId,
-          authorImage,
-          authorId,
-          author,
-          text,
-          video,
-          postDate,
-          { readOnly: false }
-        );
+    let msg = document.getElementById("msg");
+    let text = data.text;
+    let author = data.author;
+    let postId = data._id;
+    let authorId = data.authorId;
+    let authorImage = data.authorImage;
+    let postDate = data.datefield;
+    let video = data.attachments.video.attachedVideo;
 
-        postText.value = "";
-        imageInput.value = "";
-        videoInput.value = "";
-        document.body.removeChild(loader);
-        postsContainer.prepend(cardContainer);
-      })
-      .catch((e) => {
-        console.log(e);
-      });
-    checkForDeleteButtons();
+    if (msg) msg.innerHTML = "";
+
+    cardContainer.innerHTML = new VideoComponent().create(
+      postId,
+      authorImage,
+      authorId,
+      author,
+      text,
+      video,
+      postDate,
+      { readOnly: false }
+    );
+
+    let loveButton = cardContainer.querySelector(".love-post");
+    loveButton.innerHTML = new HeartButtonContent().build(
+      "Heart",
+      data.hearts.numberOfHearts,
+      false
+    );
   }
 
   // IMAGE,VIDEO,TEXT POST
-  if (image[0] && video[0]) {
-    let formData = new FormData();
-    formData.append("text", postText.value);
-    formData.append("video", video[0]);
-    formData.append("image", image[0]);
+  if (imageFiles[0] && videoFiles[0]) {
+    let form = new FormData();
+    form.append("text", postText.value);
+    form.append("video", videoFiles[0]);
+    form.append("image", imageFiles[0]);
 
-    let loader = document.createElement("div");
-    loader.classList.add("full-loader");
-    loader.classList.add("full-loader-default");
-    loader.classList.add("is-active");
-    document.body.appendChild(loader);
-
-    fetch("/api/posts/create?q=imgvid", {
+    let req = await fetch("/api/posts/create?type=imgvid", {
       method: "PUT",
-      body: formData
-    })
-      .then((data) => data.json())
-      .then((data) => {
-        let msg = document.getElementById("msg");
-        let text = data.text;
-        let author = data.author;
-        let postId = data._id;
-        let authorId = data.authorId;
-        let authorImage = data.authorImage;
-        let postDate = data.datefield;
-        let video = data.attachments.video.attachedVideo;
-        let image = data.attachments.image.attachedImage;
-        let postsContainer = document.getElementById("posts");
-        let cardContainer = document.createElement("div");
-        if (msg) msg.innerHTML = "";
+      body: form
+    });
+    let data = await req.json();
 
-        cardContainer.innerHTML = new ComboComponent().create(
-          postId,
-          authorImage,
-          authorId,
-          author,
-          postDate,
-          text,
-          image,
-          video,
-          { readOnly: false }
-        );
+    let msg = document.getElementById("msg");
+    let text = data.text;
+    let author = data.author;
+    let postId = data._id;
+    let authorId = data.authorId;
+    let authorImage = data.authorImage;
+    let postDate = data.datefield;
+    let video = data.attachments.video.attachedVideo;
+    let image = data.attachments.image.attachedImage;
 
-        postText.value = "";
-        imageInput.value = "";
-        videoInput.value = "";
-        document.body.removeChild(loader);
-        postsContainer.prepend(cardContainer);
-      })
-      .catch((e) => {
-        console.log(e);
-      });
-    checkForDeleteButtons();
+    if (msg) msg.innerHTML = "";
+
+    cardContainer.innerHTML = new ComboComponent().create(
+      postId,
+      authorImage,
+      authorId,
+      author,
+      postDate,
+      text,
+      image,
+      video,
+      { readOnly: false }
+    );
+
+    let loveButton = cardContainer.querySelector(".love-post");
+    loveButton.innerHTML = new HeartButtonContent().build(
+      "Heart",
+      data.hearts.numberOfHearts,
+      false
+    );
   }
   // IMAGE,TEXT POST
-  if (image[0] && !video[0]) {
-    let formData = new FormData();
-    formData.append("text", postText.value);
-    formData.append("image", image[0]);
+  if (imageFiles[0] && !videoFiles[0]) {
+    let form = new FormData();
+    form.append("text", postText.value);
+    form.append("image", imageFiles[0]);
 
-    let loader = document.createElement("div");
-    loader.classList.add("full-loader");
-    loader.classList.add("full-loader-default");
-    loader.classList.add("is-active");
-    document.body.appendChild(loader);
-
-    fetch("/api/posts/create?q=img", {
+    let req = await fetch("/api/posts/create?type=img", {
       method: "PUT",
-      body: formData
-    })
-      .then((data) => data.json())
-      .then((data) => {
-        let msg = document.getElementById("msg");
-        let text = data.text;
-        let author = data.author;
-        let postId = data._id;
-        let authorId = data.authorId;
-        let authorImage = data.authorImage;
-        let postDate = data.datefield;
-        let image = data.attachments.image.attachedImage;
-        let postsContainer = document.getElementById("posts");
-        let cardContainer = document.createElement("div");
+      body: form
+    });
+    let data = await req.json();
 
-        if (msg) msg.innerHTML = "";
+    let msg = document.getElementById("msg");
+    let text = data.text;
+    let author = data.author;
+    let postId = data._id;
+    let authorId = data.authorId;
+    let authorImage = data.authorImage;
+    let postDate = data.datefield;
+    let image = data.attachments.image.attachedImage;
 
-        cardContainer.innerHTML = new ImageComponent().create(
-          postId,
-          authorImage,
-          authorId,
-          author,
-          text,
-          image,
-          postDate,
-          { readOnly: false }
-        );
+    if (msg) msg.innerHTML = "";
 
-        postText.value = "";
-        imageInput.value = "";
-        videoInput.value = "";
-        document.body.removeChild(loader);
-        postsContainer.prepend(cardContainer);
-      })
-      .catch((e) => {
-        console.log(e);
-      });
-    checkForDeleteButtons();
+    cardContainer.innerHTML = new ImageComponent().create(
+      postId,
+      authorImage,
+      authorId,
+      author,
+      text,
+      image,
+      postDate,
+      { readOnly: false }
+    );
+
+    postText.value = "";
+    imageInput.value = "";
+    videoInput.value = "";
+    let loveButton = cardContainer.querySelector(".love-post");
+    loveButton.innerHTML = new HeartButtonContent().build(
+      "Heart",
+      data.hearts.numberOfHearts,
+      false
+    );
   }
+
+  // Default
+  postText.value = "";
+  imageInput.value = "";
+  videoInput.value = "";
+  document.body.removeChild(loader);
+
+  // Fetching Hearts
+  FetchHearts(cardContainer);
+  // Adding the post to user's feed
+  postsContainer.prepend(cardContainer);
+  // Checking for delete buttons
+  checkForDeleteButtons();
 }
 
 function addFriend() {
@@ -526,8 +579,6 @@ function checkFriendship() {
 window.addEventListener("load", () => {
   checkFriendship();
   fetchPosts();
-  let loader = new Loader({ fullScreen: false });
-  postsContainer.prepend(loader);
   checkForDeleteButtons();
   if (postButton == null) {
     return null;

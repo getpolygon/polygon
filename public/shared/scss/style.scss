@@ -5,19 +5,15 @@
 
 body {
   scroll-behavior: smooth;
+  transition: all 250ms;
+  font-family: "Helvetica Now";
 }
 
-a,
-p,
-h1,
-h2,
-h3,
-h4,
-h5,
-h6,
-label {
-  font-family: "Helvetica Now" !important;
+img {
+  object-fit: contain;
+  border-radius: 5px;
 }
+
 /* width */
 ::-webkit-scrollbar {
   width: 10px;

@@ -293,6 +293,9 @@ async function createPost() {
   const cardContainer = document.createElement("div");
   const imageFiles = imageInput.files;
   const videoFiles = videoInput.files;
+  const loader = new Loader({ fullScreen: true });
+
+  document.body.appendChild(loader);
 
   // TEXT POST
   if (imageFiles.length === 0 && videoFiles.length === 0) {
@@ -471,6 +474,7 @@ async function createPost() {
   postText.value = "";
   imageInput.value = "";
   videoInput.value = "";
+  document.body.removeChild(loader);
 
   // Fetching Hearts
   FetchHearts(cardContainer);
@@ -485,6 +489,6 @@ window.addEventListener("load", () => {
   postsContainer.prepend(loader);
   fetchPosts();
 });
-postButton.addEventListener("click", async () => {
-  await createPost();
+postButton.addEventListener("click", () => {
+  createPost();
 });

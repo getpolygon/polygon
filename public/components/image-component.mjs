@@ -25,6 +25,7 @@ class ImageComponent {
         </h6>
         <div class="container p-2">
           <img class="post-image" src="${image}" width="500" alt="image" />
+          <div class="post-image--fade"></div>
         </div>
         <h6 class="text-secondary">${postDate}</h6>
         ${new Footer().build(postId)}

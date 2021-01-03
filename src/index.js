@@ -63,16 +63,17 @@ app.use("/auth", authRoute);
 app.get("*", (_req, res) => res.redirect("/static/error.html"));
 
 // Connect to MongoDB
-mongoose
-  .connect(MONGO_DB, {
-    useNewUrlParser: true,
-    useUnifiedTopology: true,
-    useFindAndModify: false,
-    user: USER,
-    pass: PASS
-  })
-  .then(console.log("MongoDB: OK"))
-  .catch((e) => console.error(e));
+mongoose.connect(MONGO_DB, {
+  useNewUrlParser: true,
+  useUnifiedTopology: true,
+  useFindAndModify: false,
+  user: USER,
+  pass: PASS
+});
+
+mongoose.connection.once("connected", () => {
+  console.log("MongoDB Connected");
+});
 
 // Start the server
-app.listen(port, "0.0.0.0", () => console.log(`Server listening at port http://localhost:${port}`));
+app.listen(port, "0.0.0.0", () => console.log(`Server started at port ${port}`));

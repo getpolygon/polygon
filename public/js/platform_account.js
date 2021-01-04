@@ -9,7 +9,7 @@ const postsContainer = document.getElementById("posts");
 const postButton = document.getElementById("postButton");
 const postText = document.getElementById("postTextarea");
 const addFriendButton = document.getElementById("add_friend");
-const accountId = document.getElementById("accountId").textContent;
+const accountId = document.getElementById("accountId").textContent; // TODO:
 
 // Funcion for fetching and setting heart count
 function FetchHearts(cardContainer) {
@@ -99,7 +99,7 @@ function deletePost() {
 }
 
 async function fetchPosts() {
-  const request = await fetch("/api/posts/fetch");
+  const request = await fetch(`/api/posts/fetch/?accountId=${accountId}`);
   const data = await request.json();
 
   if (data.length == 0) {

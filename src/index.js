@@ -11,7 +11,7 @@ const compression = require("compression");
 const session = require("express-session");
 const cookieParser = require("cookie-parser");
 const rateLimit = require("express-rate-limit");
-const port = 3333 || process.env.PORT;
+const port = process.env.PORT;
 const app = express();
 
 // Routes

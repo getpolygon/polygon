@@ -26,7 +26,7 @@
     "linkify-urls": "^3.1.1",
     "lodash": "^4.17.20",
     "minio": "^7.0.18",
-    "mongoose": "^5.11.8",
+    "mongoose": "^5.11.9",
     "morgan": "^1.10.0",
     "multer": "^1.4.2",
     "node-pin": "^0.1.5",
@@ -34,7 +34,7 @@
     "sanitize-html": "^2.3.0"
   },
   "devDependencies": {
-    "eslint": "^7.16.0",
+    "eslint": "^7.17.0",
     "gulp": "^4.0.2",
     "gulp-clean-css": "^4.3.0",
     "gulp-minify": "^3.1.0",

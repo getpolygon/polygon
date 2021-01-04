@@ -1,13 +1,20 @@
 const _ = require("lodash");
 const router = require("express").Router();
-const { ENDPOINT, BUCKET, PORT, ACCKEY, SECKEY, USESSL } = require("../../config/minio");
+const {
+  MINIO_ENDPOINT,
+  MINIO_BUCKET,
+  MINIO_PORT,
+  MINIO_ACCKEY,
+  MINIO_SECKEY,
+  MINIO_USESSL
+} = process.env;
 const minio = require("minio");
 const MinIOClient = new minio.Client({
-  endPoint: ENDPOINT,
-  port: PORT,
-  accessKey: ACCKEY,
-  secretKey: SECKEY,
-  useSSL: USESSL
+  endPoint: MINIO_ENDPOINT,
+  port: parseInt(MINIO_PORT),
+  accessKey: MINIO_ACCKEY,
+  secretKey: MINIO_SECKEY,
+  useSSL: JSON.parse(MINIO_USESSL.toLowerCase())
 });
 const AccountSchema = require("../models/account");
 const emailValidator = require("email-validator");
@@ -137,7 +144,7 @@ router.delete("/delete", async (req, res) => {
   const email = req.session.email;
   const password = req.session.password;
 
-  await MinIOClient.removeObject(BUCKET, `${email}.png`);
+  await MinIOClient.removeObject(MINIO_BUCKET, `${email}.png`);
 
   await AccountSchema.findOneAndDelete({
     email: email,

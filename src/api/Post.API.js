@@ -10,14 +10,21 @@ const { unlinkSync } = require("fs");
 // For displaying dates
 const { fromUnixTime, format } = require("date-fns");
 // MinIO Configuration
-const { ENDPOINT, BUCKET, PORT, ACCKEY, SECKEY, USESSL } = require("../../config/minio");
+const {
+  MINIO_ENDPOINT,
+  MINIO_BUCKET,
+  MINIO_PORT,
+  MINIO_ACCKEY,
+  MINIO_SECKEY,
+  MINIO_USESSL
+} = process.env;
 const minio = require("minio");
 const MinIOClient = new minio.Client({
-  endPoint: ENDPOINT,
-  port: PORT,
-  accessKey: ACCKEY,
-  secretKey: SECKEY,
-  useSSL: USESSL
+  endPoint: MINIO_ENDPOINT,
+  port: parseInt(MINIO_PORT),
+  accessKey: MINIO_ACCKEY,
+  secretKey: MINIO_SECKEY,
+  useSSL: JSON.parse(MINIO_USESSL.toLowerCase())
 });
 const multer = require("multer");
 const storage = multer.diskStorage({
@@ -189,7 +196,7 @@ router.put("/create", upload.fields([{ name: "image" }, { name: "video" }]), asy
 
   if (type == "vid") {
     await MinIOClient.fPutObject(
-      BUCKET,
+      MINIO_BUCKET,
       `${authorAccount._id}/media/${req.files.video[0].originalname}`,
       req.files.video[0].path,
       {
@@ -197,7 +204,7 @@ router.put("/create", upload.fields([{ name: "image" }, { name: "video" }]), asy
       }
     );
     const presignedUrl = await MinIOClient.presignedGetObject(
-      BUCKET,
+      MINIO_BUCKET,
       `${authorAccount._id}/media/${req.files.video[0].originalname}`
     );
 
@@ -228,7 +235,7 @@ router.put("/create", upload.fields([{ name: "image" }, { name: "video" }]), asy
 
   if (type == "img") {
     await MinIOClient.fPutObject(
-      BUCKET,
+      MINIO_BUCKET,
       `${authorAccount._id}/media/${req.files.image[0].originalname}`,
       req.files.image[0].path,
       {
@@ -236,7 +243,7 @@ router.put("/create", upload.fields([{ name: "image" }, { name: "video" }]), asy
       }
     );
     const presignedUrl = await MinIOClient.presignedGetObject(
-      BUCKET,
+      MINIO_BUCKET,
       `${authorAccount._id}/media/${req.files.image[0].originalname}`
     );
 
@@ -266,7 +273,7 @@ router.put("/create", upload.fields([{ name: "image" }, { name: "video" }]), asy
   }
   if (type == "imgvid") {
     await MinIOClient.fPutObject(
-      BUCKET,
+      MINIO_BUCKET,
       `${authorAccount._id}/media/${req.files.video[0].originalname}`,
       req.files.video[0].path,
       {
@@ -274,7 +281,7 @@ router.put("/create", upload.fields([{ name: "image" }, { name: "video" }]), asy
       }
     );
     await MinIOClient.fPutObject(
-      BUCKET,
+      MINIO_BUCKET,
       `${authorAccount._id}/media/${req.files.image[0].originalname}`,
       req.files.image[0].path,
       {
@@ -282,11 +289,11 @@ router.put("/create", upload.fields([{ name: "image" }, { name: "video" }]), asy
       }
     );
     const presignedUrlImage = await MinIOClient.presignedGetObject(
-      BUCKET,
+      MINIO_BUCKET,
       `${authorAccount._id}/media/${req.files.image[0].originalname}`
     );
     const presignedUrlVideo = await MinIOClient.presignedGetObject(
-      BUCKET,
+      MINIO_BUCKET,
       `${authorAccount._id}/media/${req.files.video[0].originalname}`
     );
 
@@ -333,7 +340,7 @@ router.delete("/delete", async (req, res) => {
   if (foundPost.hasAttachments == true) {
     if (foundPost.attachments.hasAttachedImage == true) {
       MinIOClient.removeObject(
-        BUCKET,
+        MINIO_BUCKET,
         `${currentAccount._id}/media/${foundPost.attachments.image.attachedImageFileName}`,
         function (err) {
           if (err) {
@@ -344,7 +351,7 @@ router.delete("/delete", async (req, res) => {
     }
     if (foundPost.attachments.hasAttachedVideo == true) {
       MinIOClient.removeObject(
-        BUCKET,
+        MINIO_BUCKET,
         `${currentAccount._id}/media/${foundPost.attachments.video.attachedVideoFileName}`,
         function (err) {
           if (err) {
@@ -355,7 +362,7 @@ router.delete("/delete", async (req, res) => {
     }
     if (foundPost.attachments.hasAttachedVideo == true && foundPost.attachments.hasAttachedImage) {
       MinIOClient.removeObject(
-        BUCKET,
+        MINIO_BUCKET,
         `${currentAccount._id}/media/${foundPost.attachments.image.attachedImageFileName}`,
         function (err) {
           if (err) {
@@ -364,7 +371,7 @@ router.delete("/delete", async (req, res) => {
         }
       );
       MinIOClient.removeObject(
-        BUCKET,
+        MINIO_BUCKET,
         `${currentAccount._id}/media/${foundPost.attachments.image.attachedImageFileName}`,
         function (err) {
           if (err) {

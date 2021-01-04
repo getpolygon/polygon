@@ -1,4 +1,11 @@
-const { ENDPOINT, BUCKET, PORT, ACCKEY, SECKEY, USESSL } = require("../../config/minio");
+const {
+  MINIO_ENDPOINT,
+  MINIO_BUCKET,
+  MINIO_PORT,
+  MINIO_ACCKEY,
+  MINIO_SECKEY,
+  MINIO_USESSL
+} = process.env;
 // const mailer = require("../helpers/mailer");
 const _ = require("lodash");
 const bcrypt = require("bcrypt");
@@ -14,14 +21,15 @@ const storage = multer.diskStorage({
     if (err) return;
   }
 });
+
 const upload = multer({ storage: storage });
 const minio = require("minio");
 const MinIOClient = new minio.Client({
-  endPoint: ENDPOINT,
-  port: PORT,
-  accessKey: ACCKEY,
-  secretKey: SECKEY,
-  useSSL: USESSL
+  endPoint: MINIO_ENDPOINT,
+  port: parseInt(MINIO_PORT),
+  accessKey: MINIO_ACCKEY,
+  secretKey: MINIO_SECKEY,
+  useSSL: JSON.parse(MINIO_USESSL.toLowerCase())
 });
 const AccountSchema = require("../models/account");
 
@@ -87,12 +95,12 @@ router.post("/", upload.single("avatar"), async (req, res) => {
       // If the user has selected a file
       if (req.file) {
         // Upload user image to the database
-        MinIOClient.fPutObject(BUCKET, `${Account._id}/${Account._id}.png`, req.file.path, {
+        MinIOClient.fPutObject(MINIO_BUCKET, `${Account._id}/${Account._id}.png`, req.file.path, {
           "Content-Type": req.file.mimetype
         });
         // Getting the link for the user's image
         const presignedUrl = await MinIOClient.presignedGetObject(
-          BUCKET,
+          MINIO_BUCKET,
           `${Account._id}/${Account._id}.png`
         );
         return presignedUrl;

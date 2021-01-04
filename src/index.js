@@ -1,5 +1,5 @@
-const { MONGO_DB, USER, PASS } = require("../config/mongo");
-const { SECRET, PORT } = require("../config/globals");
+require("dotenv").config();
+const { MONGO_URI, MONGO_USER, MONGO_PASS, MONGO_CLUSTER, EXPRESS_SECRET } = process.env;
 
 // Dependencies
 const cors = require("cors");
@@ -11,7 +11,7 @@ const compression = require("compression");
 const session = require("express-session");
 const cookieParser = require("cookie-parser");
 const rateLimit = require("express-rate-limit");
-const port = 3000 || PORT;
+const port = 3333 || process.env.PORT;
 const app = express();
 
 // Routes
@@ -39,7 +39,7 @@ app.use(
       secure: false,
       httpOnly: false
     },
-    secret: SECRET,
+    secret: EXPRESS_SECRET,
     resave: false,
     saveUninitialized: true
   })
@@ -63,16 +63,17 @@ app.use("/auth", authRoute);
 app.get("*", (_req, res) => res.redirect("/static/error.html"));
 
 // Connect to MongoDB
-mongoose.connect(MONGO_DB, {
+mongoose.connect(MONGO_URI, {
   useNewUrlParser: true,
   useUnifiedTopology: true,
   useFindAndModify: false,
-  user: USER,
-  pass: PASS
+  dbName: MONGO_CLUSTER,
+  user: MONGO_USER,
+  pass: MONGO_PASS
 });
 
 mongoose.connection.once("connected", () => {
-  console.log("MongoDB Connected");
+  console.log("MongoDB connection established successfully");
 });
 
 // Start the server

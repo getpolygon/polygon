@@ -54,9 +54,11 @@ router.post("/", async (req, res) => {
       process.env.JWT_TOKEN
     );
 
-    return res.json({
-      token: token
-    });
+    return res
+      .json({
+        token: token
+      })
+      .redirect("/"); // TODO: THIS IS TEMPORARY
   }
 });
 

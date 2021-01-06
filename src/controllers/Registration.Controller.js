@@ -6,7 +6,6 @@ const {
   MINIO_SECKEY,
   MINIO_USESSL
 } = process.env;
-// const mailer = require("../helpers/mailer");
 const _ = require("lodash");
 const bcrypt = require("bcrypt");
 const emailValidator = require("email-validator");
@@ -21,7 +20,7 @@ const storage = multer.diskStorage({
     if (err) return;
   }
 });
-
+const randomColorPair = require("random-color-pair");
 const upload = multer({ storage: storage });
 const minio = require("minio");
 const MinIOClient = new minio.Client({
@@ -32,15 +31,6 @@ const MinIOClient = new minio.Client({
   useSSL: JSON.parse(MINIO_USESSL.toLowerCase())
 });
 const AccountSchema = require("../models/account");
-
-const avatarLinks = [
-  "/static/img/1.png",
-  "/static/img/2.png",
-  "/static/img/3.png",
-  "/static/img/4.png",
-  "/static/img/5.png",
-  "/static/img/6.png"
-];
 
 // Registration Page
 router.get("/", (req, res) => {
@@ -107,7 +97,10 @@ router.post("/", upload.single("avatar"), async (req, res) => {
       }
       // If the user didn't select an image return a random image link(string) that will be used to serve default avatars from the server
       else {
-        return avatarLinks[Math.floor(Math.random() * avatarLinks.length)];
+        const [foreground, background] = randomColorPair();
+        return `https://ui-avatars.com/api/?name=${
+          Account.fullName
+        }&background=${background.replace("#", "")}&color=${foreground.replace("#", "")}`;
       }
     };
 

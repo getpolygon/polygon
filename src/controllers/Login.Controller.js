@@ -1,5 +1,6 @@
 const router = require("express").Router();
 const bcrypt = require("bcrypt");
+const jwt = require("jsonwebtoken");
 const AccountSchema = require("../models/account");
 
 router.get("/", (req, res) => {
@@ -37,14 +38,25 @@ router.post("/", async (req, res) => {
     });
 
   if (email != Account.email || password === false) {
-    return res.status(404).render("login", {
+    return res.status(302).render("login", {
       err: "Please check your credentials or create an account",
       title: "Login | ArmSocial"
     });
   } else {
     req.session.email = Account.email;
     req.session.password = Account.password;
-    return res.redirect("/");
+
+    const token = jwt.sign(
+      {
+        email: Account.email,
+        password: Account.password
+      },
+      process.env.JWT_TOKEN
+    );
+
+    return res.json({
+      token: token
+    });
   }
 });
 

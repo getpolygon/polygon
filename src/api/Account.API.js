@@ -16,9 +16,39 @@ const MinIOClient = new minio.Client({
   secretKey: MINIO_SECKEY,
   useSSL: JSON.parse(MINIO_USESSL.toLowerCase())
 });
+const jwt = require("jsonwebtoken");
 const AccountSchema = require("../models/account");
 const emailValidator = require("email-validator");
 const bcrypt = require("bcrypt");
+
+router.get("/fetch", async (req, res) => {
+  const { accountId, token } = req.query;
+  var foundAccount = {};
+
+  if (accountId) {
+    foundAccount = await AccountSchema.findById(accountId);
+  }
+
+  if (token) {
+    const decodedData = jwt.verify(token, process.env.JWT_Token);
+    foundAccount = await AccountSchema.findOne({ email: decodedData.email });
+  }
+
+  const payload = {
+    _id: foundAccount._id,
+    email: foundAccount.email,
+    pictureUrl: foundAccount.pictureUrl,
+    friends: foundAccount.friends,
+    isPrivate: foundAccount.isPrivate,
+    posts: foundAccount.posts,
+    bio: foundAccount.bio,
+    fullName: foundAccount.fullName,
+    firstName: foundAccount.firstName,
+    lastName: foundAccount.lastName
+  };
+  res.json(payload);
+});
+
 // For checking the account
 router.put("/check", async (req, res) => {
   let { q } = req.query;

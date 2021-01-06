@@ -10,7 +10,6 @@ const bodyParser = require("body-parser");
 const compression = require("compression");
 const session = require("express-session");
 const cookieParser = require("cookie-parser");
-const rateLimit = require("express-rate-limit");
 const port = process.env.PORT || 3001;
 const app = express();
 
@@ -21,13 +20,10 @@ const platformRoute = require("./routes/platform");
 
 // Middleware
 app.use(cors());
-app.use(
-  rateLimit({
-    windowMs: 15 * 60 * 1000, // 15 minutes
-    max: 1000
-  })
-);
-app.use(morgan("dev"));
+if (process.env.NODE_ENV === "development") {
+  app.use(morgan());
+}
+
 app.use(compression());
 app.use(cookieParser());
 app.use(bodyParser.json());

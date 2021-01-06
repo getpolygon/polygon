@@ -55,9 +55,9 @@ router.post("/", async (req, res) => {
     );
 
     return res
-      .json({
-        token: token
-      })
+      // .json({
+      //   token: token
+      // })
       .redirect("/"); // TODO: THIS IS TEMPORARY
   }
 });

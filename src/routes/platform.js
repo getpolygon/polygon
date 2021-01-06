@@ -114,7 +114,7 @@ router.get("/settings", async (req, res) => {
 // Logout
 router.post("/logout", (req, res) => {
   req.session.destroy();
-  return res.redirect("/auth/login");
+  return res.clearCookie("connect.sid").redirect("/auth/login");
 });
 
 module.exports = router;

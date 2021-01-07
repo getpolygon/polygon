@@ -1,3 +1,4 @@
+import Notification from "/components/notification-component.mjs";
 const notificationContainer = document.getElementById("notifications");
 
 function fetchNotifications() {
@@ -7,49 +8,54 @@ function fetchNotifications() {
     .then((data) => {
       if (data.length == 0) {
         msg.innerHTML = `
-                    <h5>You don't have any notifications.</h5>
-                `;
+<h5>You don't have any notifications.</h5>
+`;
         notificationContainer.prepend(msg);
       } else {
         data.forEach((notification) => {
           let notificationCreated = document.createElement("div");
-          notificationCreated.innerHTML = `
-                    <li id=${notification._id} class="list-group-item shadow-sm rounded-lg mb-2">
-                        <i style="float:right" type="button" class="btn-close" aria-label="Close" role="button"></i>
-                        <h3 align="left"><b>${notification.fullName}</b> sent you a friend request</h3>
-                        <p align="right">
-                            <a href="/user/${notification.accountId}" class="btn btn-primary">
-                                Go to profile
-                            </a>
-                            <button class="accept btn btn-success">
-                                Accept Request
-                            </button>
-                            <button class="accept btn btn-danger">
-                                Decline Request
-                            </button>
-                        </div>
-                    </li>
-                    `;
+          notificationCreated.innerHTML = Notification(
+            notification._id,
+            notification.fullName,
+            notification.accountId
+          );
           notificationContainer.prepend(notificationCreated);
-          const closeButtons = document.querySelectorAll(".btn-close");
-          closeButtons.forEach((button) => {
-            button.addEventListener("click", closeNotificationContainer);
-          });
+          const closeButton = notificationCreated.querySelector(".btn-close");
+          const acceptFriendRequestButton = notificationCreated.querySelector(".accept");
+          const declineFriendRequestButton = notificationCreated.querySelector(".decline");
+
+          acceptFriendRequestButton.addEventListener("click", () =>
+            acceptFriendRequest(notification._id, notificationCreated)
+          );
+          closeButton.addEventListener("click", () =>
+            declineFriendRequest(notification._id, notificationCreated)
+          );
+          declineFriendRequestButton.addEventListener("click", () =>
+            declineFriendRequest(notification._id, notificationCreated)
+          );
         });
       }
     })
     .catch((e) => console.error(e));
 }
 
-function closeNotificationContainer() {
-  let el = this.parentNode;
-  fetch(`/api/notifications/fetch/?dismiss=true&notification=${el.id}`)
+const declineFriendRequest = (notificationId, element) => {
+  fetch(`/api/notifications/fetch/?decline=true&notification=${notificationId}`)
+    .then((data) => data.json())
+    .then(() => {
+      element.innerHTML = "";
+    })
+    .catch((e) => console.error(e));
+};
+
+const acceptFriendRequest = (notificationId, element) => {
+  fetch(`/api/notifications/fetch/?accept=true&notification=${notificationId}`)
     .then((data) => data.json())
     .then((data) => {
       console.log(data);
-      el.innerHTML = "";
+      element.innerHTML = "";
     })
-    .catch((e) => console.error(e));
-}
+    .catch((err) => console.error(err));
+};
 
 window.addEventListener("load", fetchNotifications);

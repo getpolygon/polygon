@@ -1,10 +1,10 @@
 const router = require("express").Router();
 const bcrypt = require("bcrypt");
-const jwt = require("jsonwebtoken");
+// const jwt = require("jsonwebtoken");
 const AccountSchema = require("../models/account");
 
 router.get("/", (req, res) => {
-  if (!req.session.email || !req.session.password) {
+  if (!req.cookies.email || !req.cookies.password) {
     req.session.destroy();
     return res.render("login", { title: "Login | ArmSocial" });
   } else {
@@ -43,22 +43,26 @@ router.post("/", async (req, res) => {
       title: "Login | ArmSocial"
     });
   } else {
-    req.session.email = Account.email;
-    req.session.password = Account.password;
+    // req.cookies.email = Account.email;
+    // req.cookies.password = Account.password;
 
-    const token = jwt.sign(
-      {
-        email: Account.email,
-        password: Account.password
-      },
-      process.env.JWT_TOKEN
-    );
+    // const token = jwt.sign(
+    //   {
+    //     email: Account.email,
+    //     password: Account.password
+    //   },
+    //   process.env.JWT_TOKEN
+    // );
 
-    return res
-      // .json({
-      //   token: token
-      // })
-      .redirect("/"); // TODO: THIS IS TEMPORARY
+    return (
+      res
+        .cookie("email", Account.email)
+        .cookie("password", Account.password)
+        // .json({
+        //   token: token
+        // })
+        .redirect("/")
+    ); // TODO: THIS IS TEMPORARY
   }
 });
 

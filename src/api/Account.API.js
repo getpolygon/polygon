@@ -107,8 +107,8 @@ router.put("/check", async (req, res) => {
 // For updating the account
 router.put("/update", async (req, res) => {
   let currentAccount = await AccountSchema.findOne({
-    email: req.session.email,
-    password: req.session.password
+    email: req.cookies.email,
+    password: req.cookies.password
   });
   let { bio, email, password, privacy } = req.query;
 
@@ -158,8 +158,8 @@ router.put("/update", async (req, res) => {
       // Finding the updated account and sending it to the client
       await AccountSchema.findOne({ email: email, password: password })
         .then((doc) => {
-          req.session.email = email;
-          req.session.password = password;
+          req.cookies.email = email;
+          req.cookies.password = password;
           res.json({ email: doc.email, password: doc.password, status: "OK" });
         })
         .catch((e) => res.json(e));
@@ -171,8 +171,8 @@ router.put("/update", async (req, res) => {
 
 // For deleting the account
 router.delete("/delete", async (req, res) => {
-  const email = req.session.email;
-  const password = req.session.password;
+  const email = req.cookies.email;
+  const password = req.cookies.password;
 
   await MinIOClient.removeObject(MINIO_BUCKET, `${email}.png`);
 

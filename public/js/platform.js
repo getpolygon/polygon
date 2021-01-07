@@ -20,6 +20,7 @@ function FetchHearts(cardContainer) {
         `/api/posts/fetch/?postId=${button.parentElement.parentElement.id}&heart=true`
       );
       let response = await request.json();
+      console.log(response);
       if (response.info === "HEARTED") {
         return (button.innerHTML = new HeartButtonContent().build(
           "Unheart",
@@ -39,6 +40,7 @@ function FetchHearts(cardContainer) {
       `/api/posts/fetch/?postId=${button.parentElement.parentElement.id}&getHearts=true`
     );
     let response = await request.json();
+    console.log(response);
     if (response.info === "ALREADY_HEARTED") {
       return (button.innerHTML = new HeartButtonContent().build(
         "Unheart",

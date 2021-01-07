@@ -3,8 +3,8 @@ const AccountSchema = require("../models/account");
 
 // Platform
 router.get("/", async (req, res) => {
-  // var emailCookie = req.session.email;
-  // var passwordCookie = req.session.password;
+  // var emailCookie = req.cookies.email;
+  // var passwordCookie = req.cookies.password;
 
   /*
    * Check for cookies before rendering the index
@@ -14,8 +14,8 @@ router.get("/", async (req, res) => {
 
   try {
     await AccountSchema.findOne({
-      email: req.session.email,
-      password: req.session.password
+      email: req.cookies.email,
+      password: req.cookies.password
     })
       .then((currentAccount) => {
         if (currentAccount == null) {
@@ -42,8 +42,8 @@ router.get("/user/:accountId", async (req, res) => {
   try {
     const accountId = req.params.accountId;
     const currentAccount = await AccountSchema.findOne({
-      email: req.session.email,
-      password: req.session.password
+      email: req.cookies.email,
+      password: req.cookies.password
     });
     const platformAccount = await AccountSchema.findById(accountId);
     if (currentAccount == null) {
@@ -69,8 +69,8 @@ router.get("/user/:accountId", async (req, res) => {
 router.get("/notifications", async (req, res) => {
   try {
     const currentAccount = await AccountSchema.findOne({
-      email: req.session.email,
-      password: req.session.password
+      email: req.cookies.email,
+      password: req.cookies.password
     });
     if (currentAccount == null) {
       req.session.destroy();
@@ -89,8 +89,8 @@ router.get("/notifications", async (req, res) => {
 
 // Settings
 router.get("/settings", async (req, res) => {
-  let email = req.session.email;
-  let password = req.session.password;
+  let email = req.cookies.email;
+  let password = req.cookies.password;
 
   try {
     const currentAccount = await AccountSchema.findOne({
@@ -114,7 +114,7 @@ router.get("/settings", async (req, res) => {
 // Logout
 router.post("/logout", (req, res) => {
   req.session.destroy();
-  return res.clearCookie("connect.sid").redirect("/auth/login");
+  return res.clearCookie("email").clearCookie("password").redirect("/auth/login");
 });
 
 module.exports = router;

@@ -9,7 +9,7 @@ const postsContainer = document.getElementById("posts");
 const postButton = document.getElementById("postButton");
 const postText = document.getElementById("postTextarea");
 const addFriendButton = document.getElementById("add_friend");
-const accountId = document.getElementById("accountId").textContent; // TODO:
+const accountId = document.getElementById("accountId").textContent;
 
 // Funcion for fetching and setting heart count
 function FetchHearts(cardContainer) {
@@ -467,8 +467,7 @@ async function createPost() {
 
 function addFriend() {
   const buttonContainer = document.querySelector(".buttons");
-  let accountToAdd = document.getElementById("accountId").textContent;
-  fetch(`/api/friends/add/?account=${accountToAdd}`, { method: "PUT" })
+  fetch(`/api/friends/add/?account=${accountId}`, { method: "PUT" })
     .then((data) => data.json())
     .then(() => {
       addFriendButton.innerText = "Pending";
@@ -488,6 +487,16 @@ function addFriend() {
     .catch((e) => console.error(e));
 }
 
+const removeFriend = async (accountId) => {
+  const request = await fetch(`/api/friends/unfriend/?accountId=${accountId}`, {
+    method: "DELETE"
+  });
+  const response = await request.json();
+  if (response.status === "OK") {
+    window.location.reload();
+  }
+};
+
 function checkFriendship() {
   var buttonContainer = document.querySelector(".buttons");
   fetch(`/api/friends/check/?accountId=${accountId}`)
@@ -502,16 +511,46 @@ function checkFriendship() {
           buttonContainer.innerHTML += `
           <br />
           <br />
-          <button class="btn btn-info">Accept friend request <i class="fas fa-check"></i></button>
-          <button class="btn btn-danger">Decline friend request <i class="fas fa-times"></i></button>
+          <button class="btn btn-info button-accept">Accept friend request <i class="fas fa-check"></i></button>
+          <button class="btn btn-danger button-decline">Decline friend request <i class="fas fa-times"></i></button>
         `;
+          const acceptFriendRequestButton = buttonContainer.querySelector(".button-accept");
+          const declineFriendRequest = buttonContainer.querySelector(".button-decline");
+
+          acceptFriendRequestButton.addEventListener("click", () => {
+            fetch(`/api/friends/update/?accountId=${accountId}&accept=true`, {
+              method: "PUT"
+            })
+              .then((res) => res.json())
+              .then((res) => {
+                if (res.status === "OK") {
+                  window.location.reload();
+                }
+              });
+          });
+          declineFriendRequest.addEventListener("click", () => {
+            fetch(`/api/friends/update/?accountId=${accountId}&decline=true`, {
+              method: "PUT"
+            })
+              .then((res) => res.json())
+              .then((res) => {
+                if (res.status === "OK") {
+                  window.location.reload();
+                }
+              });
+          });
         }
       }
+      // TODO
       if (data.approved) {
-        addFriendButton.innerText = "Friends";
-        addFriendButton.innerHTML += `
-          <i class="fas fa-user-check"></i>
-          `;
+        buttonContainer.innerHTML = `
+        <button class="btn btn-primary">Friends <i class="fas fa-user-check"></i></button>
+        <button class="btn btn-warning button-unfriend">Unfriend <i class="fas fa-user-times"></i></button>
+        `;
+        const unfriendButton = buttonContainer.querySelector(".button-unfriend");
+        unfriendButton.addEventListener("click", async () => {
+          await removeFriend(accountId);
+        });
       }
       if (data.requested) {
         addFriendButton.innerText = "Pending";

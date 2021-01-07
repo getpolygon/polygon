@@ -34,7 +34,7 @@ const AccountSchema = require("../models/account");
 
 // Registration Page
 router.get("/", (req, res) => {
-  if (!req.session.email || !req.session.password) {
+  if (!req.cookies.email || !req.cookies.password) {
     req.session.destroy();
     return res.render("register", { title: "Register | ArmSocial" });
   } else {
@@ -69,7 +69,6 @@ router.post("/", upload.single("avatar"), async (req, res) => {
       fullName: `${req.body.firstName} ${req.body.lastName}`,
       email: email,
       bio: req.body.bio,
-      // pictureUrl: pictureUrl,
       isPrivate: req.body.privateCheck ? true : false,
       friends: {
         pending: [],
@@ -120,9 +119,10 @@ router.post("/", upload.single("avatar"), async (req, res) => {
     try {
       await Account.save();
       if (req.file) return unlinkSync(`tmp/${req.file.originalname}`);
-      req.session.email = Account.email;
-      req.session.password = Account.password;
-      return res.redirect(`/user/${Account._id}`);
+      return res
+        .cookie("email", Account.email)
+        .cookie("password", Account.password)
+        .redirect(`/user/${Account._id}`);
     } catch (err) {
       console.log(err);
       return res.redirect("/");

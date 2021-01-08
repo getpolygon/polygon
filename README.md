@@ -14,45 +14,44 @@ git clone https://github.com/MichaelGrigoryan25/ArmSocial
 
 - Open the terminal and run `npm install`
 - Create a `.env` file at the project's root folder
-- In the `.env` file paste this line `mongo=YOUR_MONGODB_URI`
+- Create the following environment variables
+
+```
+  # Mailer Helper
+  MAILER_host=SMTP_HOST # Your SMTP host
+  MAILER_email=SENDER_EMAIL # The email of sender
+  MAILER_password=SMTP_PASSWORD # The password of the app (when using Google apps(Like Gmail))
+  MAILER_secure=SMTP_SECURE # SMTP is secure
+  MAILER_port=SMTP_PORT # The SMTP port
+
+  # Global vars
+  EXPRESS_SECRET=EXPRESS_SECRET # Express.js session secret
+
+  # MinIO
+  MINIO_ENDPOINT=MINIO_ENDPOINT # The MinIO endpoint (most of the time localhost:9000)
+  MINIO_PORT=MINIO_PORT # The port of MinIO instance
+  MINIO_ACCKEY=MINIO_ACCESS_KEY # The access key of MinIO
+  MINIO_SECKEY=MINIO_SECRET_KEY # The secret key of MinIO
+  MINIO_USESSL=MINIO_USE_SSL # If MinIO has a HTTP Certificate set to true else set to false
+  MINIO_BUCKET=MINIO_BUCKET # The bucket that'll be used by MinIO
+
+  # MongoDB
+  MONGO_URI=MONGO_DB_URI # Your MongoDB endpoint
+  MONGO_CLUSTER=DATABASE_NAME # Your MongoDB database name
+  MONGO_USER=MONGO_USER # The user of the database
+  MONGO_PASS=MONGO_PASS # The password of the database
+
+  # JWT TOKEN
+  JWT_TOKEN=RANDOM_HEXADEMICAL_STRING # Your JWT token that'll need to be generated manually by you
+  JWT_REFRESH_TOKEN=RANDOM_HEXADEMICAL_STRING # Your JWT refresh token that'll need to be generated manually by you
+
+  # Node.js
+  NODE_ENV=production # Your Node.js environment
+```
+
 - Open up the terminal and run `npm start` or `npm run dev` in a development environment
 
 After you've done these steps you can open `localhost:3000` in your browser.
-
-## Configuring MinIO
-
-### Steps to reproduce
-
-- Move to the project root
-- Create a file and name it `minio.config.js`
-- Update your settings respectively
-
-```js
-module.exports = {
-  HOST: "The MinIO host endpoint",
-  PORT: 9000, // Change it to the port of the MinIO host (9000 in the most cases)
-  ACCKEY: "12345678", // Change these to your keys
-  SECKEY: "12345678", // Change these to your keys
-  USESSL: false, // false by default
-  BUCKET: "YOUR_BUCKET_NAME"
-};
-```
-
-## Configuring Mailer
-
-### Steps to reproduce
-
-- Create a `email.js` file in `config/`
-
-```js
-module.exports = {
-  email: "<EMAIL_THAT_YOU_WANT_TO_USE>",
-  password: "<YOUR_APP/ACCOUNT_PASSWORD>", // https://myaccount.google.com/apppasswords
-  port: 465,
-  secure: true, //
-  host: "YOUR_SMTP_HOST"
-};
-```
 
 ## CSS Framework(s) Used
 

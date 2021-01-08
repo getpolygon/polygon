@@ -25,13 +25,13 @@ function fetchNotifications() {
           const declineFriendRequestButton = notificationCreated.querySelector(".decline");
 
           acceptFriendRequestButton.addEventListener("click", () =>
-            acceptFriendRequest(notification._id, notificationCreated)
+            acceptFriendRequest(notification.accountId, notificationCreated)
           );
           closeButton.addEventListener("click", () =>
-            declineFriendRequest(notification._id, notificationCreated)
+            declineFriendRequest(notification.accountId, notificationCreated)
           );
           declineFriendRequestButton.addEventListener("click", () =>
-            declineFriendRequest(notification._id, notificationCreated)
+            declineFriendRequest(notification.accountId, notificationCreated)
           );
         });
       }
@@ -39,21 +39,28 @@ function fetchNotifications() {
     .catch((e) => console.error(e));
 }
 
-const declineFriendRequest = (notificationId, element) => {
-  fetch(`/api/notifications/fetch/?decline=true&notification=${notificationId}`)
+const declineFriendRequest = (accountId, element) => {
+  fetch(`/api/friends/update/?accountId=${accountId}&decline=true`, {
+    method: "PUT"
+  })
     .then((data) => data.json())
-    .then(() => {
-      element.innerHTML = "";
+    .then((data) => {
+      if (data.status === "OK") {
+        element.innerHTML = "";
+      }
     })
     .catch((e) => console.error(e));
 };
 
-const acceptFriendRequest = (notificationId, element) => {
-  fetch(`/api/notifications/fetch/?accept=true&notification=${notificationId}`)
+const acceptFriendRequest = (accountId, element) => {
+  fetch(`/api/friends/update/?accountId=${accountId}&accept=true`, {
+    method: "PUT"
+  })
     .then((data) => data.json())
     .then((data) => {
-      console.log(data);
-      element.innerHTML = "";
+      if (data.status === "OK") {
+        element.innerHTML = "";
+      }
     })
     .catch((err) => console.error(err));
 };

@@ -1,12 +1,13 @@
 const router = require("express").Router();
 
 // Controllers
-const RegistrationController = require("../controllers/Registration.Controller");
-const LoginController = require("../controllers/Login.Controller");
-const VerifyRoute = require("../auth/verify");
+const LoginHandler = require("../auth/Login");
+const RegistrationHandler = require("../auth/Register");
+const TokenVerificationHandler = require("../auth/VerifyToken");
 
-router.use("/register", RegistrationController);
-router.use("/login", LoginController);
-router.use("/verify", VerifyRoute);
+router.get("/*", (_req, res) => res.send());
+router.use("/login", LoginHandler);
+router.use("/register", RegistrationHandler);
+router.use("/verify", TokenVerificationHandler);
 
 module.exports = router;

@@ -1,4 +1,7 @@
 const _ = require("lodash");
+const minio = require("minio");
+const bcrypt = require("bcrypt");
+const jwt = require("jsonwebtoken");
 const router = require("express").Router();
 const {
   MINIO_ENDPOINT,
@@ -8,7 +11,6 @@ const {
   MINIO_SECKEY,
   MINIO_USESSL
 } = process.env;
-const minio = require("minio");
 const MinIOClient = new minio.Client({
   endPoint: MINIO_ENDPOINT,
   port: parseInt(MINIO_PORT),
@@ -16,10 +18,8 @@ const MinIOClient = new minio.Client({
   secretKey: MINIO_SECKEY,
   useSSL: JSON.parse(MINIO_USESSL.toLowerCase())
 });
-const jwt = require("jsonwebtoken");
+
 const AccountSchema = require("../models/account");
-const emailValidator = require("email-validator");
-const bcrypt = require("bcrypt");
 
 router.get("/fetch", async (req, res) => {
   const { accountId, token } = req.query;

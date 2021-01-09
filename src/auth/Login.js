@@ -3,11 +3,11 @@ const jwt = require("jsonwebtoken");
 const router = require("express").Router();
 
 const AccountSchema = require("../models/account");
-const _emailValidator = require("../helpers/emailValidator");
+const emailValidator = require("email-validator");
 
 router.post("/", async (req, res) => {
   const { email, password } = req.body;
-  if (_emailValidator(email)) {
+  if (emailValidator.validate(email)) {
     AccountSchema.findOne({
       email: email
     })

@@ -1,7 +1,6 @@
-// TODO: ( Add a secure way to fetch one user's posts )
-
 const _ = require("lodash");
 const BW = require("bad-words");
+const jwt = require("jsonwebtoken");
 const BadWordsFilter = new BW({ placeHolder: "*" });
 const sanitizeHtml = require("sanitize-html");
 const linkifyUrls = require("linkify-urls");
@@ -42,114 +41,118 @@ const AccountSchema = require("../models/account");
 
 // Fetch posts and their data
 router.get("/fetch", async (req, res) => {
-  let currentAccount = await AccountSchema.findOne({
-    email: req.session.email,
-    password: req.session.password
-  });
-
-  // Query methods
-  let { accountId, postId, heart, getHearts } = req.query;
-
-  // Getting the posts from the specified account ID
-  if (accountId) {
-    let account = await AccountSchema.findById(accountId);
-    let posts = account.posts;
-
-    _.each(posts, async (post) => {
-      post.datefield = format(fromUnixTime((await post.datefield) / 1000), "MMM d/y h:mm b");
-    });
-
-    return res.json(posts);
-  }
-
-  // Update the hearts of the post
-  if (postId && heart) {
-    // Author document of the post
-    let postAuthor = await AccountSchema.findOne({ "posts._id": postId });
-    // The post
-    let post = postAuthor.posts.id(postId);
-    // Checking if current account hearted the post
-    let currentAccountHeartedThePost;
-
-    // For checking if the post has any data or is empty
-    if (post.hearts.usersHearted.length === 0) {
-      currentAccountHeartedThePost = false;
-    } else {
-      _.each(post.hearts.usersHearted, (user) => {
-        if (user.accountId == currentAccount._id) currentAccountHeartedThePost = true;
-        else currentAccountHeartedThePost = false;
+  const token = req.headers.authorization.split(" ")[1]; // Bearer ....token....
+  const { accountId, postId, heart, getHearts } = req.query;
+  jwt.verify(token, process.env.JWT_TOKEN, async (err, data) => {
+    if (err)
+      return res.status(403).json({
+        error: "Forbidden"
       });
+    const currentAccount = await AccountSchema.findOne({
+      email: data.email,
+      password: data.password
+    });
+    // Getting the posts from the specified account ID
+    if (accountId) {
+      let account = await AccountSchema.findById(accountId);
+      let posts = account.posts;
+
+      _.each(posts, async (post) => {
+        post.datefield = format(fromUnixTime((await post.datefield) / 1000), "MMM d/y h:mm b");
+      });
+
+      return res.json(posts);
     }
 
-    // If current account liked the post
-    if (currentAccountHeartedThePost) {
-      return _.each(post.hearts.usersHearted, async (user) => {
+    // Update the hearts of the post
+    if (postId && heart) {
+      // Author document of the post
+      let postAuthor = await AccountSchema.findOne({ "posts._id": postId });
+      // The post
+      let post = postAuthor.posts.id(postId);
+      // Checking if current account hearted the post
+      let currentAccountHeartedThePost;
+
+      // For checking if the post has any data or is empty
+      if (post.hearts.usersHearted.length === 0) {
+        currentAccountHeartedThePost = false;
+      } else {
+        _.each(post.hearts.usersHearted, (user) => {
+          if (user.accountId == currentAccount._id) currentAccountHeartedThePost = true;
+          else currentAccountHeartedThePost = false;
+        });
+      }
+
+      // If current account liked the post
+      if (currentAccountHeartedThePost) {
+        return _.each(post.hearts.usersHearted, async (user) => {
+          if (user.accountId == currentAccount.id) {
+            post.hearts.numberOfHearts--;
+            post.hearts.usersHearted.pull(user);
+            await postAuthor.save();
+            return res.json({ info: "UNHEARTED", data: post.hearts });
+          }
+        });
+      } else {
+        post.hearts.numberOfHearts++;
+        post.hearts.usersHearted.push({ accountId: currentAccount._id });
+        await postAuthor.save();
+        return res.json({ info: "HEARTED", data: post.hearts });
+      }
+    }
+    // Getting the hearts from the post
+    if (postId && getHearts) {
+      let postAuthor = await AccountSchema.findOne({ "posts._id": postId });
+      let post = postAuthor.posts.id(postId);
+      let hasCurrentAccount;
+
+      _.each(post.hearts.usersHearted, (user) => {
         if (user.accountId == currentAccount.id) {
-          post.hearts.numberOfHearts--;
-          post.hearts.usersHearted.pull(user);
-          await postAuthor.save();
-          return res.json({ info: "UNHEARTED", data: post.hearts });
+          hasCurrentAccount = true;
+        } else {
+          hasCurrentAccount = false;
         }
       });
-    } else {
-      post.hearts.numberOfHearts++;
-      post.hearts.usersHearted.push({ accountId: currentAccount._id });
-      await postAuthor.save();
-      return res.json({ info: "HEARTED", data: post.hearts });
-    }
-  }
-  // Getting the hearts from the post
-  if (postId && getHearts) {
-    let postAuthor = await AccountSchema.findOne({ "posts._id": postId });
-    let post = postAuthor.posts.id(postId);
-    let hasCurrentAccount;
 
-    _.each(post.hearts.usersHearted, (user) => {
-      if (user.accountId == currentAccount.id) {
-        hasCurrentAccount = true;
+      if (hasCurrentAccount === true) {
+        res.json({ info: "ALREADY_HEARTED", data: post.hearts });
       } else {
-        hasCurrentAccount = false;
+        res.json({ info: "OK", data: post.hearts });
       }
-    });
-
-    if (hasCurrentAccount === true) {
-      res.json({ info: "ALREADY_HEARTED", data: post.hearts });
     } else {
-      res.json({ info: "OK", data: post.hearts });
-    }
-  } else {
-    let posts = [];
-    let datefieldUpdate = (datefield) => {
-      return format(fromUnixTime(datefield / 1000), "MMM d/y h:mm b");
-    };
-    let otherAccounts = await AccountSchema.find({ isPrivate: false })
-      .where("_id")
-      .ne(currentAccount.id);
+      let posts = [];
+      let datefieldUpdate = (datefield) => {
+        return format(fromUnixTime(datefield / 1000), "MMM d/y h:mm b");
+      };
+      let otherAccounts = await AccountSchema.find({ isPrivate: false })
+        .where("_id")
+        .ne(currentAccount.id);
 
-    _.each(otherAccounts, (account) => {
-      _.each(account.posts, (post) => {
+      _.each(otherAccounts, (account) => {
+        _.each(account.posts, (post) => {
+          post.datefield = datefieldUpdate(post.datefield);
+          posts.push(post);
+        });
+      });
+
+      _.each(currentAccount.posts, (post) => {
         post.datefield = datefieldUpdate(post.datefield);
         posts.push(post);
       });
-    });
 
-    _.each(currentAccount.posts, (post) => {
-      post.datefield = datefieldUpdate(post.datefield);
-      posts.push(post);
-    });
+      _.each(posts, (post) => {
+        if (post.authorId == currentAccount._id) {
+          post.isCurrentAccount = true;
+        } else {
+          post.isCurrentAccount = false;
+        }
+      });
 
-    _.each(posts, (post) => {
-      if (post.authorId == currentAccount._id) {
-        post.isCurrentAccount = true;
-      } else {
-        post.isCurrentAccount = false;
-      }
-    });
-
-    // Sorting posts by datefield ( from latest to oldest )
-    posts = _.sortBy(posts, ["datefield"]).reverse();
-    res.json(posts);
-  }
+      // Sorting posts by datefield ( from latest to oldest )
+      posts = _.sortBy(posts, ["datefield"]).reverse();
+      res.json(posts);
+    }
+  });
 });
 
 // CREATE A POST

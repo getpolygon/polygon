@@ -6,7 +6,6 @@ const jwt = require("jsonwebtoken");
 const mongoose = require("mongoose");
 const { unlinkSync } = require("fs");
 const router = require("express").Router();
-const randomColorPair = require("random-color-pair");
 const {
   MINIO_ENDPOINT,
   MINIO_BUCKET,
@@ -32,13 +31,13 @@ const storage = multer.diskStorage({
 const upload = multer({ storage: storage });
 
 const AccountSchema = require("../models/account");
-const _emailValidator = require("../helpers/emailValidator");
+const emailValidator = require("email-validator");
 const _checkForDuplicates = require("../helpers/checkForDuplicates");
 
 // To register the account
 router.post("/", upload.single("avatar"), async (req, res) => {
   const email = _.toLower(req.body.email);
-  const hasValidEmail = await _emailValidator(email);
+  const hasValidEmail = await emailValidator(email);
   const hasDuplicates = await _checkForDuplicates({ email: email }, AccountSchema);
 
   if (hasValidEmail && !hasDuplicates) {
@@ -70,10 +69,7 @@ router.post("/", upload.single("avatar"), async (req, res) => {
         );
         return presignedUrl;
       } else {
-        const [foreground, background] = randomColorPair();
-        return `https://ui-avatars.com/api/?name=${
-          Account.fullName
-        }&background=${background.replace("#", "")}&color=${foreground.replace("#", "")}`;
+        return `https://avatar.oxro.io/avatar.svg?name=${Account.fullName}&background=008080&color=000`;
       }
     };
 

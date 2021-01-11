@@ -5,11 +5,10 @@
   "main": "index.js",
   "scripts": {
     "start": "node  src/index",
-    "dev": "nodemon src/index",
-    "build": "gulp build"
+    "dev": "nodemon src/index"
   },
   "author": "Michael Grigoryan",
-  "license": "Custom",
+  "license": "",
   "dependencies": {
     "bad-words": "^3.0.4",
     "bcrypt": "^5.0.0",
@@ -19,7 +18,6 @@
     "cors": "^2.8.5",
     "date-fns": "^2.16.1",
     "dotenv": "^8.2.0",
-    "ejs": "^3.1.5",
     "email-validator": "^2.0.4",
     "express": "^4.17.1",
     "express-rate-limit": "^5.2.3",
@@ -32,15 +30,10 @@
     "morgan": "^1.10.0",
     "multer": "^1.4.2",
     "node-pin": "^0.1.5",
-    "nodemailer": "^6.4.17",
-    "sanitize-html": "^2.3.0"
+    "nodemailer": "^6.4.17"
   },
   "devDependencies": {
     "eslint": "^7.17.0",
-    "gulp": "^4.0.2",
-    "gulp-clean-css": "^4.3.0",
-    "gulp-minify": "^3.1.0",
-    "gulp-sass": "^4.1.0",
     "nodemon": "^2.0.6"
   }
 }

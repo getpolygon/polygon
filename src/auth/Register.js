@@ -1,4 +1,5 @@
 const _ = require("lodash");
+const path = require("path");
 const minio = require("minio");
 const bcrypt = require("bcrypt");
 const multer = require("multer");
@@ -22,10 +23,10 @@ const MinIOClient = new minio.Client({
   useSSL: JSON.parse(MINIO_USESSL.toLowerCase())
 });
 const storage = multer.diskStorage({
-  destination: "tmp/",
+  destination: path.resolve("tmp"),
   filename: (err, file, cb) => {
     cb(null, `${file.originalname}`);
-    if (err) return;
+    if (err) return console.log(err);
   }
 });
 const upload = multer({ storage: storage });
@@ -34,7 +35,6 @@ const AccountSchema = require("../models/account");
 const emailValidator = require("email-validator");
 const _checkForDuplicates = require("../helpers/checkForDuplicates");
 
-// To register the account
 router.post("/", upload.single("avatar"), async (req, res) => {
   const email = _.toLower(req.body.email);
   const hasValidEmail = await emailValidator(email);
@@ -58,33 +58,31 @@ router.post("/", upload.single("avatar"), async (req, res) => {
       date: Date.now()
     });
 
-    const url = async () => {
-      if (req.file) {
-        MinIOClient.fPutObject(MINIO_BUCKET, `${Account._id}/${Account._id}.png`, req.file.path, {
-          "Content-Type": req.file.mimetype
-        });
-        const presignedUrl = await MinIOClient.presignedGetObject(
-          MINIO_BUCKET,
-          `${Account._id}/${Account._id}.png`
-        );
-        return presignedUrl;
-      } else {
-        return `https://avatar.oxro.io/avatar.svg?name=${Account.fullName}&background=008080&color=000`;
-      }
-    };
-
     bcrypt.hash(req.body.password, 10, (err, hash) => {
       if (err) console.error(err);
       Account.password = hash;
     });
-    const pictureUrl = await url();
 
-    Account.pictureUrl = pictureUrl;
+    if (req.file) {
+      MinIOClient.fPutObject(MINIO_BUCKET, `${Account._id}/${Account._id}.png`, req.file.path, {
+        "Content-Type": req.file.mimetype
+      });
+      const presignedUrl = await MinIOClient.presignedGetObject(
+        MINIO_BUCKET,
+        `${Account._id}/${Account._id}.png`
+      );
+      Account.pictureUrl = presignedUrl;
+      unlinkSync(path.resolve("tmp", req.file.originalname));
+    } else {
+      Account.pictureUrl = `https://avatar.oxro.io/avatar.svg?name=${Account.fullName}&background=008080&color=000`;
+    }
 
     await Account.save();
-    if (req.file) return unlinkSync(`tmp/${req.file.originalname}`);
 
-    // TODO: return a token
+    return res.status(200).json({
+      ...Account,
+      token: jwt.sign({ email: Account.email, password: Account.password }, process.env.JWT_TOKEN)
+    });
   } else {
     return res.status(403).json({
       error: "Forbidden"

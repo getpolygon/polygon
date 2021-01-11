@@ -1,6 +1,6 @@
+# Folders
 node_modules/
-config/
-dist/
 tmp/
 
+# Files
 .env

@@ -16,7 +16,6 @@ const app = express();
 // Routes
 const apiRoute = require("./routes/api");
 const authRoute = require("./routes/auth");
-const platformRoute = require("./routes/platform");
 
 // Middleware
 app.use(cors());
@@ -42,7 +41,6 @@ app.use(
 );
 
 app.set("views", "src/views/");
-app.set("view engine", "ejs");
 
 // Enable/Disable Headers
 app.enable("trust proxy");
@@ -51,12 +49,15 @@ app.enable("x-frame-options");
 app.enable("x-content-type-options");
 
 // Use the routes
-app.use("/", platformRoute);
 app.use("/api", apiRoute);
 app.use("/auth", authRoute);
 
 // Error page
-app.get("*", (_req, res) => res.redirect("/static/error.html"));
+app.get("*", (_req, res) =>
+  res.status(404).json({
+    error: "Page Not Found"
+  })
+);
 
 // Connect to MongoDB
 mongoose.connect(MONGO_URI, {

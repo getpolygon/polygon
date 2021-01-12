@@ -18,6 +18,7 @@ const MinIOClient = new minio.Client({
   secretKey: MINIO_SECKEY,
   useSSL: JSON.parse(MINIO_USESSL.toLowerCase())
 });
+const emailValidator = require("email-validator");
 
 const AccountSchema = require("../models/account");
 
@@ -51,145 +52,51 @@ router.get("/fetch", async (req, res) => {
 
 // For checking the account
 router.put("/check", async (req, res) => {
-  let { q } = req.query;
+  const { q } = req.query;
 
   if (q == "email") {
-    const inputEmail = await req.body.email;
+    const inputEmail = req.body.email;
     // Validating user's email
     const validateEmail = emailValidator.validate(inputEmail);
 
     // If email validation fails
     if (validateEmail == false) {
-      res.json({
+      return res.json({
         emailValidity: false
       });
     }
-
     // If email validation succeeds
     else {
-      await AccountSchema.findOne({ email: inputEmail })
-        .then((doc) => {
-          if (doc == null) {
-            res.json({
-              result: false,
-              emailValidity: true
-            });
-            return;
-          }
-          if (doc.email == inputEmail) {
-            res.json({
-              result: true,
-              emailValidity: true
-            });
-            return;
-          }
-          if (!doc) {
-            res.json({
-              result: false,
-              emailValidity: true
-            });
-            return;
-          } else {
-            res.json({
-              result: false,
-              emailValidity: true
-            });
-            return;
-          }
-        })
-        .catch((e) => {
-          console.log(e);
+      try {
+        const Account = await AccountSchema.findOne({ email: inputEmail });
+        // Checking if there is an account with that email
+        if (Account === null) {
+          return res.status(200).json({
+            permitted: false
+          });
+        }
+        if (Account.email === inputEmail) {
+          return res.status(200).json({
+            permitted: true
+          });
+        }
+      } catch (error) {
+        return res.status(500).json({
+          error: error
         });
+      }
     }
   }
 });
 
 // For updating the account
 router.put("/update", async (req, res) => {
-  let currentAccount = await AccountSchema.findOne({
-    email: req.session.email,
-    password: req.session.password
-  });
-  let { bio, email, password, privacy } = req.query;
-
-  if (privacy) {
-    await currentAccount
-      .updateOne({
-        isPrivate: privacy
-      })
-      .then(() => {
-        res.json({ info: "OK" });
-      })
-      .catch((e) => {
-        res.json(e);
-      });
-  }
-  if (bio) {
-    await currentAccount
-      .updateOne({
-        bio: bio
-      })
-      .then((response) => {
-        res.json(response.bio);
-      })
-      .catch((e) => {
-        res.json(e);
-      });
-  }
-
-  if (email && password) {
-    const checkDupl = await AccountSchema.findOne({ email: email });
-    if (checkDupl == null) {
-      password = await bcrypt.hash(password, 10).catch((e) => console.error(e));
-      // Updating the actual account
-      await currentAccount.updateOne({
-        email: email,
-        password: password
-      });
-
-      if (currentAccount.posts.length != 0) {
-        // Updating the email in each post
-        _.each(currentAccount.posts, (post) => {
-          post.authorEmail = email;
-        });
-        await currentAccount.save();
-      }
-
-      // Finding the updated account and sending it to the client
-      await AccountSchema.findOne({ email: email, password: password })
-        .then((doc) => {
-          req.session.email = email;
-          req.session.password = password;
-          res.json({ email: doc.email, password: doc.password, status: "OK" });
-        })
-        .catch((e) => res.json(e));
-    } else {
-      res.json({ status: "ERR_ACC_EXISTS" });
-    }
-  }
+  // TODO: Needs new implementation
 });
 
 // For deleting the account
 router.delete("/delete", async (req, res) => {
-  const email = req.session.email;
-  const password = req.session.password;
-
-  await MinIOClient.removeObject(MINIO_BUCKET, `${email}.png`);
-
-  await AccountSchema.findOneAndDelete({
-    email: email,
-    password: password
-  })
-    .then((result) => {
-      res.clearCookie("email");
-      res.clearCookie("password");
-      res.json({
-        result: result
-      });
-    })
-    .catch((e) => {
-      console.log(e);
-    });
+  // TODO: Needs new implementation
 });
 
 module.exports = router;

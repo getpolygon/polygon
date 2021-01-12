@@ -80,8 +80,7 @@ router.post("/", upload.single("avatar"), async (req, res) => {
     await Account.save();
 
     return res.status(200).json({
-      ...Account,
-      token: jwt.sign({ email: Account.email, password: Account.password }, process.env.JWT_TOKEN)
+      token: jwt.sign({ _id: Account._id }, process.env.JWT_TOKEN)
     });
   } else {
     return res.status(403).json({

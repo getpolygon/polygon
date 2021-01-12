@@ -41,17 +41,15 @@ const AccountSchema = require("../models/account");
 
 // Fetch posts and their data
 router.get("/fetch", async (req, res) => {
-  const token = req.headers.authorization.split(" ")[1]; // Bearer ....token....
+  const token = req.cookies.jwt;
   const { accountId, postId, heart, getHearts } = req.query;
+
   jwt.verify(token, process.env.JWT_TOKEN, async (err, data) => {
     if (err)
       return res.status(403).json({
         error: "Forbidden"
       });
-    const currentAccount = await AccountSchema.findOne({
-      email: data.email,
-      password: data.password
-    });
+    const currentAccount = await AccountSchema.findById(data.id);
     // Getting the posts from the specified account ID
     if (accountId) {
       let account = await AccountSchema.findById(accountId);

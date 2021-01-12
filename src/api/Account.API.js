@@ -23,31 +23,19 @@ const emailValidator = require("email-validator");
 const AccountSchema = require("../models/account");
 
 router.get("/fetch", async (req, res) => {
-  const { accountId, token } = req.query;
-  var foundAccount = {};
-
-  if (accountId) {
-    foundAccount = await AccountSchema.findById(accountId);
-  }
+  const token = req.cookies.jwt;
+  const { accountId } = req.query;
 
   if (token) {
     const decodedData = jwt.verify(token, process.env.JWT_Token);
-    foundAccount = await AccountSchema.findOne({ email: decodedData.email });
+    const foundAccount = await AccountSchema.findById(decodedData.id);
+    const payload = _.omit(foundAccount.toObject(), ["email", "password", "_v"]);
+    return res.status(200).json(payload);
+  } else if (accountId) {
+    const foundAccount = await AccountSchema.findById(accountId);
+    const payload = _.omit(foundAccount.toObject(), ["email", "password", "_v"]);
+    return res.status(200).json(payload);
   }
-
-  const payload = {
-    _id: foundAccount._id,
-    email: foundAccount.email,
-    pictureUrl: foundAccount.pictureUrl,
-    friends: foundAccount.friends,
-    isPrivate: foundAccount.isPrivate,
-    posts: foundAccount.posts,
-    bio: foundAccount.bio,
-    fullName: foundAccount.fullName,
-    firstName: foundAccount.firstName,
-    lastName: foundAccount.lastName
-  };
-  res.json(payload);
 });
 
 // For checking the account

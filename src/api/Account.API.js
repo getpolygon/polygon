@@ -25,7 +25,6 @@ const AccountSchema = require("../models/account");
 router.get("/fetch", async (req, res) => {
   const token = req.cookies.jwt;
   const { accountId } = req.query;
-
   const filter = [
     "fullName",
     "firstName",
@@ -40,10 +39,18 @@ router.get("/fetch", async (req, res) => {
   ];
 
   if (token) {
-    const decodedData = jwt.verify(token, process.env.JWT_Token);
-    const foundAccount = await AccountSchema.findById(decodedData.id);
-    const payload = _.pick(foundAccount, filter);
-    return res.status(200).json(payload);
+    return jwt.verify(token, process.env.JWT_Token, async (err, data) => {
+      if (err) {
+        console.error(err);
+        return res.json(403).json({
+          message: "Forbidden"
+        });
+      } else if (data) {
+        const foundAccount = await AccountSchema.findById(data.id);
+        const payload = _.pick(foundAccount, filter);
+        return res.status(200).json(payload);
+      }
+    });
   } else if (accountId) {
     const foundAccount = await AccountSchema.findById(accountId);
     const payload = _.pick(foundAccount, filter);

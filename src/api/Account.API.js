@@ -26,14 +26,27 @@ router.get("/fetch", async (req, res) => {
   const token = req.cookies.jwt;
   const { accountId } = req.query;
 
+  const filter = [
+    "fullName",
+    "firstName",
+    "lastName",
+    "bio",
+    "_id",
+    "pictureUrl",
+    "posts",
+    "friends",
+    "isPrivate",
+    "date"
+  ];
+
   if (token) {
     const decodedData = jwt.verify(token, process.env.JWT_Token);
     const foundAccount = await AccountSchema.findById(decodedData.id);
-    const payload = _.omit(foundAccount.toObject(), ["email", "password", "_v"]);
+    const payload = _.pick(foundAccount, filter);
     return res.status(200).json(payload);
   } else if (accountId) {
     const foundAccount = await AccountSchema.findById(accountId);
-    const payload = _.omit(foundAccount.toObject(), ["email", "password", "_v"]);
+    const payload = _.pick(foundAccount, filter);
     return res.status(200).json(payload);
   }
 });

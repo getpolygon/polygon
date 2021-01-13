@@ -54,13 +54,13 @@ router.put("/add", async (req, res) => {
 });
 
 router.put("/update", async (req, res) => {
-  var accountToCheckDoc = await AccountSchema.findById(req.query.accountId);
-  var currentAccount = await AccountSchema.findOne({
+  const accountToCheckDoc = await AccountSchema.findById(req.query.accountId);
+  const currentAccount = await AccountSchema.findOne({
     email: req.session.email,
     password: req.session.password
   });
 
-  var { cancel } = req.query;
+  const { cancel } = req.query;
 
   if (cancel) {
     _.each(currentAccount.friends.requested, async (account) => {

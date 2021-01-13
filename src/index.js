@@ -14,6 +14,7 @@ const session = require("express-session");
 const MongoStore = require("connect-mongo")(session);
 const cookieParser = require("cookie-parser");
 const app = express();
+require("express-ws")(app); // Enable express websocket
 
 // Routes
 const apiRoute = require("./routes/api");
@@ -30,6 +31,7 @@ app.use(
     credentials: true
   })
 );
+
 app.use(helmet());
 app.use(compression());
 app.use(cookieParser());

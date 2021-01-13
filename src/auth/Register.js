@@ -74,7 +74,7 @@ router.post("/", upload.single("avatar"), async (req, res) => {
       Account.pictureUrl = presignedUrl;
       unlinkSync(path.resolve("tmp", req.file.originalname));
     } else {
-      Account.pictureUrl = `https://avatar.oxro.io/avatar.svg?name=${Account.fullName}&background=008080&color=000`;
+      Account.pictureUrl = `https://avatars.dicebear.com/api/initials/${Account.fullName}.svg`;
     }
 
     await Account.save();

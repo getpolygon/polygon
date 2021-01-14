@@ -26,7 +26,8 @@ app.use(
     origin: [
       `https://${process.env.HOST_NAME}`,
       `http://${process.env.HOST_NAME}`,
-      `${process.env.HOST_NAME}`
+      `${process.env.HOST_NAME}`,
+      "*"
     ],
     credentials: true
   })
@@ -79,4 +80,3 @@ mongoose.connection.once("connected", () => {
 
 // Start the server
 app.listen(port, "0.0.0.0", () => console.log(`Server started at port ${port}`));
-console.log("Hostname: " + process.env.HOST_NAME);

@@ -2,7 +2,6 @@ require("dotenv").config();
 const { MONGO_URI, MONGO_USER, MONGO_PASS, MONGO_CLUSTER, EXPRESS_SECRET } = process.env;
 
 // Dependencies
-const cors = require("cors");
 const helmet = require("helmet");
 const morgan = require("morgan");
 const express = require("express");
@@ -21,22 +20,15 @@ const apiRoute = require("./routes/api");
 const authRoute = require("./routes/auth");
 
 // Middleware
-app.use(
-  cors({
-    origin: [
-      `https://${process.env.HOST_NAME}`,
-      `http://${process.env.HOST_NAME}`,
-      `${process.env.HOST_NAME}`
-    ],
-    credentials: true
-  })
-);
-
+app.all("/*", (req, res, next) => {
+  res.header("Access-Control-Allow-Origin", req.headers.origin);
+  res.header("Access-Control-Allow-Credentials", true);
+  next();
+});
 app.use(helmet());
 app.use(compression());
 app.use(cookieParser());
 app.use(bodyParser.json());
-app.use(express.static("public/"));
 app.use(bodyParser.urlencoded({ extended: false }));
 process.env.NODE_ENV === "development" && app.use(morgan("dev"));
 app.use(

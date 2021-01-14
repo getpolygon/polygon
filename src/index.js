@@ -24,9 +24,10 @@ const authRoute = require("./routes/auth");
 app.use(
   cors({
     origin: [
-      `https://${process.env.HOST_NAME}`,
-      `http://${process.env.HOST_NAME}`,
-      `${process.env.HOST_NAME}`,
+      process.env.NODE_ENV === "production" && "*",
+      process.env.NODE_ENV === "development" && `https://${process.env.HOST_NAME}`,
+      process.env.NODE_ENV === "development" && `http://${process.env.HOST_NAME}`,
+      process.env.NODE_ENV === "development" && `${process.env.HOST_NAME}`
     ],
     credentials: true
   })

@@ -1,4 +1,5 @@
 const _ = require("lodash");
+const minio = require("minio");
 const BW = require("bad-words");
 const jwt = require("jsonwebtoken");
 const BadWordsFilter = new BW({ placeHolder: "*" });
@@ -17,7 +18,6 @@ const {
   MINIO_SECKEY,
   MINIO_USESSL
 } = process.env;
-const minio = require("minio");
 const MinIOClient = new minio.Client({
   endPoint: MINIO_ENDPOINT,
   port: parseInt(MINIO_PORT),

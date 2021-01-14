@@ -30,9 +30,8 @@ const storage = multer.diskStorage({
   }
 });
 const upload = multer({ storage: storage });
-
-const AccountSchema = require("../models/account");
 const emailValidator = require("email-validator");
+const AccountSchema = require("../models/account");
 const _checkForDuplicates = require("../helpers/checkForDuplicates");
 
 router.post("/", upload.single("avatar"), async (req, res) => {
@@ -76,9 +75,7 @@ router.post("/", upload.single("avatar"), async (req, res) => {
     } else {
       Account.pictureUrl = `https://avatars.dicebear.com/api/initials/${Account.fullName}.svg`;
     }
-
     await Account.save();
-
     return res.status(200).json({
       token: jwt.sign({ _id: Account._id }, process.env.JWT_TOKEN)
     });

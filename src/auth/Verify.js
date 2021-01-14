@@ -17,8 +17,7 @@ router.get("/", (req, res) => {
             error: "Forbidden"
           })
           .status(403);
-      }
-      if (data) {
+      } else if (data) {
         return res.status(200).json(data);
       }
     });

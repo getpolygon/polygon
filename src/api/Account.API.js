@@ -43,7 +43,7 @@ router.get("/fetch", async (req, res) => {
       if (err) {
         console.error(err);
         return res.json(403).json({
-          message: "Forbidden"
+          error: "Forbidden"
         });
       } else if (data) {
         const foundAccount = await AccountSchema.findById(data.id);

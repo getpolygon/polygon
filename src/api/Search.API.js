@@ -1,18 +1,26 @@
+const jwt = require("jsonwebtoken");
 const router = require("express").Router();
 const AccountSchema = require("../models/account");
 router.get("/", async (req, res) => {
-  const currentAccount = await AccountSchema.findOne({
-    email: req.session.email,
-    password: req.session.password
-  });
   const { query } = req.query;
-  const regex = new RegExp(query, "gu");
-  await AccountSchema.find({
-    fullName: regex
-  })
-    .where("_id")
-    .ne(currentAccount._id)
-    .then((doc) => res.json(doc))
-    .catch((e) => console.error(e));
+  const token = req.cookies.jwt;
+
+  jwt.verify(token, process.env.JWT_TOKEN, async (err, data) => {
+    if (err) {
+      return res.status(403).json({
+        error: "Forbidden"
+      });
+    } else if (data) {
+      const currentAccount = await AccountSchema.findById(data.id);
+      const regex = new RegExp(query, "gu");
+      const results = await AccountSchema.find({
+        fullName: regex
+      })
+        .where("_id")
+        .ne(currentAccount._id);
+
+      return res.status(200).json(results);
+    }
+  });
 });
 module.exports = router;

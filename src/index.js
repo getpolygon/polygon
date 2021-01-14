@@ -26,7 +26,8 @@ app.use(
     origin: [
       `https://${process.env.HOST_NAME}`,
       `http://${process.env.HOST_NAME}`,
-      `${process.env.HOST_NAME}`
+      `${process.env.HOST_NAME}`,
+      "*"
     ],
     credentials: true
   })

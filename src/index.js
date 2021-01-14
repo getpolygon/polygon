@@ -79,3 +79,4 @@ mongoose.connection.once("connected", () => {
 
 // Start the server
 app.listen(port, "0.0.0.0", () => console.log(`Server started at port ${port}`));
+console.log("Hostname: " + process.env.HOST_NAME);

@@ -76,7 +76,7 @@ router.post("/", upload.single("avatar"), async (req, res) => {
       Account.pictureUrl = `https://avatars.dicebear.com/api/initials/${Account.fullName}.svg`;
     }
     await Account.save();
-    return res.status(200).json({
+    return res.status(201).json({
       token: jwt.sign({ _id: Account._id }, process.env.JWT_TOKEN)
     });
   } else {

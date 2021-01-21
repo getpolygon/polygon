@@ -6,6 +6,7 @@ const helmet = require("helmet");
 const morgan = require("morgan");
 const express = require("express");
 const mongoose = require("mongoose");
+const cors = require("./utils/cors");
 const port = process.env.PORT || 3001;
 const bodyParser = require("body-parser");
 const compression = require("compression");
@@ -13,24 +14,19 @@ const session = require("express-session");
 const MongoStore = require("connect-mongo")(session);
 const cookieParser = require("cookie-parser");
 const app = express();
-require("express-ws")(app); // Enable express websocket
+require("express-ws")(app);
 
 // Routes
 const apiRoute = require("./routes/api");
 const authRoute = require("./routes/auth");
 
 // Middleware
-app.all("/*", (req, res, next) => {
-  res.header("Access-Control-Allow-Origin", req.headers.origin);
-  res.header("Access-Control-Allow-Credentials", true);
-  next();
-});
+app.use(cors);
 app.use(helmet());
 app.use(compression());
 app.use(cookieParser());
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
-process.env.NODE_ENV === "development" && app.use(morgan("dev"));
 app.use(
   session({
     secret: EXPRESS_SECRET,
@@ -43,6 +39,7 @@ app.use(
     }
   })
 );
+process.env.NODE_ENV === "development" && app.use(morgan("dev"));
 
 // Use the routes
 app.use("/api", apiRoute);

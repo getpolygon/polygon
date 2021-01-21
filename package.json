@@ -23,12 +23,12 @@
     "express-rate-limit": "^5.2.3",
     "express-session": "^1.17.1",
     "express-ws": "^4.0.0",
-    "helmet": "^4.3.1",
+    "helmet": "^4.4.1",
     "jsonwebtoken": "^8.5.1",
     "linkify-urls": "^3.1.1",
     "lodash": "^4.17.20",
     "minio": "^7.0.18",
-    "mongoose": "^5.11.9",
+    "mongoose": "^5.11.13",
     "morgan": "^1.10.0",
     "multer": "^1.4.2",
     "node-pin": "^0.1.5",
@@ -36,7 +36,7 @@
     "sanitize-html": "^2.3.0"
   },
   "devDependencies": {
-    "eslint": "^7.17.0",
-    "nodemon": "^2.0.6"
+    "eslint": "^7.18.0",
+    "nodemon": "^2.0.7"
   }
 }

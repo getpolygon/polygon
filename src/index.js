@@ -2,23 +2,22 @@ require("dotenv").config();
 const { MONGO_URI, MONGO_USER, MONGO_PASS, MONGO_CLUSTER, EXPRESS_SECRET } = process.env;
 
 // Dependencies
-const helmet = require("helmet");
-const morgan = require("morgan");
-const express = require("express");
-const mongoose = require("mongoose");
-const cors = require("./utils/cors");
-const port = process.env.PORT || 3001;
-const bodyParser = require("body-parser");
-const compression = require("compression");
-const session = require("express-session");
-const MongoStore = require("connect-mongo")(session);
-const cookieParser = require("cookie-parser");
-const app = express();
-require("express-ws")(app);
+const app = require("express")(),
+  morgan = require("morgan"),
+  helmet = require("helmet"),
+  mongoose = require("mongoose"),
+  cors = require("./utils/cors"),
+  port = process.env.PORT || 3001,
+  bodyParser = require("body-parser"),
+  compression = require("compression"),
+  session = require("express-session"),
+  _websocket = require("express-ws")(app),
+  cookieParser = require("cookie-parser"),
+  MongoStore = require("connect-mongo")(session);
 
 // Routes
-const apiRoute = require("./routes/api");
-const authRoute = require("./routes/auth");
+const apiRoute = require("./routes/api"),
+  authRoute = require("./routes/auth");
 
 // Middleware
 app.use(cors);

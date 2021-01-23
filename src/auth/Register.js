@@ -102,7 +102,7 @@ router.post("/", upload.single("avatar"), async (req, res) => {
       }
     });
   } else {
-    return res.status(409).json({
+    return res.json({
       error: "Forbidden"
     });
   }

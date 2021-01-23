@@ -9,8 +9,6 @@ router.post("/", async (req, res) => {
   const email = _.toLower(req.body.email);
   const password = req.body.password;
 
-  console.log(req.body); // this returns {}
-
   if (email && password) {
     const Account = await AccountSchema.findOne({ email: email });
     if (Account) {

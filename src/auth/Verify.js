@@ -1,5 +1,6 @@
 const jwt = require("jsonwebtoken"),
-  router = require("express").Router();
+  router = require("express").Router(),
+  AccountSchema = require("../models/account");
 
 router.get("/", (req, res) => {
   const token = req.cookies.jwt,
@@ -10,7 +11,7 @@ router.get("/", (req, res) => {
       error: "No token"
     });
   } else {
-    jwt.verify(token, JWT_TOKEN, (err, data) => {
+    jwt.verify(token, JWT_TOKEN, async (err, data) => {
       if (err) {
         return res
           .json({
@@ -18,7 +19,14 @@ router.get("/", (req, res) => {
           })
           .status(403);
       } else if (data) {
-        return res.status(200).json(data);
+        const User = await AccountSchema.findById(data.id);
+        if (User) {
+          return res.status(200).json(data);
+        } else {
+          return res.status(200).clearCookie("jwt").json({
+            error: false
+          });
+        }
       }
     });
   }

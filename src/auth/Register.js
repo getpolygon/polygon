@@ -103,7 +103,7 @@ router.post("/", upload.single("avatar"), async (req, res) => {
     });
   } else {
     return res.json({
-      error: "Forbidden"
+      error: "Invalid email"
     });
   }
 });

@@ -13,11 +13,12 @@ router.post("/", async (req, res) => {
     const Account = await AccountSchema.findOne({ email: email });
     if (Account) {
       bcrypt.compare(password, Account.password, (err, same) => {
-        if (err)
+        if (err) {
           return res.json({
-            error: "Forbidden"
+            error: err
           });
-        else if (same) {
+        } else if (same) {
+          console.log("Same", same);
           jwt.sign({ id: Account._id }, process.env.JWT_TOKEN, (err, token) => {
             if (err) return res.json({ error: "Unexpected Error" });
             else if (token)
@@ -25,11 +26,15 @@ router.post("/", async (req, res) => {
                 token: token
               });
           });
+        } else {
+          return res.json({
+            error: "Forbidden"
+          });
         }
       });
     } else {
       return res.json({
-        error: "Forbidden"
+        error: "No Accounts"
       });
     }
   } else {

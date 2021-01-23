@@ -18,7 +18,6 @@ router.post("/", async (req, res) => {
             error: err
           });
         } else if (same) {
-          console.log("Same", same);
           jwt.sign({ id: Account._id }, process.env.JWT_TOKEN, (err, token) => {
             if (err) return res.json({ error: "Unexpected Error" });
             else if (token)

@@ -4,6 +4,7 @@ const router = require("express").Router();
 
 let active_users = [];
 
+// TODO: Fix WebSocket Error: WebSocket is not open: readyState 3 (CLOSED)
 router.ws("/", (ws, req) => {
   try {
     ws.on("message", () => {
@@ -29,7 +30,6 @@ router.ws("/", (ws, req) => {
     });
   } catch (error) {
     ws.close();
-    return ws.OPEN;
   }
 });
 

@@ -11,9 +11,11 @@ const app = require("express")(),
   bodyParser = require("body-parser"),
   compression = require("compression"),
   session = require("express-session"),
-  _websocket = require("express-ws")(app),
   cookieParser = require("cookie-parser"),
   MongoStore = require("connect-mongo")(session);
+
+// WebSocket Support
+require("express-ws")(app);
 
 // Routes
 const apiRoute = require("./routes/api"),

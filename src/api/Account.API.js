@@ -18,15 +18,15 @@ router.get("/fetch", async (req, res) => {
     "posts",
     "friends",
     "isPrivate",
-    "date"
+    "date",
+    "email"
   ];
 
   if (token) {
-    return jwt.verify(token, process.env.JWT_Token, async (err, data) => {
-      if (err) {
-        console.error(err);
+    return jwt.verify(token, process.env.JWT_Token, async (error, data) => {
+      if (error) {
         return res.json(403).json({
-          error: "Forbidden"
+          error: error
         });
       } else if (data) {
         const foundAccount = await AccountSchema.findById(data.id);
@@ -38,6 +38,10 @@ router.get("/fetch", async (req, res) => {
     const foundAccount = await AccountSchema.findById(accountId);
     const payload = _.pick(foundAccount, filter);
     return res.status(200).json(payload);
+  } else {
+    return res.status(403).json({
+      error: "Forbidden"
+    });
   }
 });
 

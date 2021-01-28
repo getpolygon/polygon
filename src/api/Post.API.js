@@ -90,7 +90,7 @@ router.get("/fetch", async (req, res) => {
   });
 
   // CREATE A POST
-  router.put("/create", upload.array([{ name: "image" }, { name: "video" }]), async (req, res) => {
+  router.put("/create", upload.array("attachments"), async (req, res) => {
     jwt.verify(req.cookies.jwt, process.env.JWT_TOKEN, async (err, data) => {
       if (err) return res.json({ error: err });
       else if (data) {

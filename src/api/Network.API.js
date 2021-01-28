@@ -1,18 +1,21 @@
+const ActiveUsers = [];
 const _ = require("lodash");
 const jwt = require("jsonwebtoken");
 const router = require("express").Router();
 
-let active_users = [];
-
 router.ws("/", (ws, req) => {
+  ws.on("open", () => {
+    return ws.send(JSON.stringify({ message: "Successfully connected to Usocial network" }));
+  });
+
   ws.on("message", (message) => {
     jwt.verify(req.cookies.jwt, process.env.JWT_TOKEN, (err, data) => {
       if (err) return ws.send({ message: "error" });
       else if (data) {
         if (JSON.parse(message).message === "ping") {
-          if (active_users.includes(data.id)) return ws.send(JSON.stringify({ message: "pong" }));
+          if (ActiveUsers.includes(data.id)) return ws.send(JSON.stringify({ message: "pong" }));
           else {
-            active_users.push(data.id);
+            ActiveUsers.push(data.id);
             return ws.send(JSON.stringify({ message: "pong" }));
           }
         }
@@ -24,7 +27,7 @@ router.ws("/", (ws, req) => {
     jwt.verify(req.cookies.jwt, process.env.JWT_TOKEN, (err, data) => {
       if (err) return ws.send("Error");
       else if (data) {
-        return _.remove(active_users, req.cookies.jwt);
+        return _.remove(ActiveUsers, req.cookies.jwt);
       }
     });
   });
@@ -32,7 +35,7 @@ router.ws("/", (ws, req) => {
 
 router.get("/active", async (req, res) => {
   const { accountId } = req.query;
-  if (_.includes(active_users, accountId.toString())) {
+  if (_.includes(ActiveUsers, accountId.toString())) {
     return res.status(200).json({
       message: true
     });

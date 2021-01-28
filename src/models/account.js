@@ -12,12 +12,12 @@ const AccountSchema = new mongoose.Schema({
   pictureUrl: { type: String, required: true },
   isPrivate: { type: Boolean, required: true },
   friends: {
-    pending: [FriendSchema],
-    approved: [FriendSchema],
-    requested: [FriendSchema]
+    pending: { type: [FriendSchema], default: [] },
+    approved: { type: [FriendSchema], default: [] },
+    requested: { type: [FriendSchema], default: [] }
   },
   posts: [PostSchema],
-  date: { type: String, required: true }
+  datefield: { type: String, required: true, default: Date() }
 });
 
 module.exports = mongoose.model("Account", AccountSchema);

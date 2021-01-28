@@ -7,7 +7,8 @@ const HeartsSchema = new mongoose.Schema({
 });
 
 const AttachmentSchema = new mongoose.Schema({
-  url: { type: String }
+  url: { type: String },
+  filename: { type: String }
 });
 
 const PostSchema = new mongoose.Schema({
@@ -15,7 +16,7 @@ const PostSchema = new mongoose.Schema({
   authorId: { type: String, required: true },
   comments: [CommentSchema],
   hearts: [HeartsSchema],
-  attachments: [AttachmentSchema],
-  datefield: { type: String, required: true }
+  attachments: { type: [AttachmentSchema], default: [] },
+  datefield: { type: String, required: true, default: Date() }
 });
 module.exports = PostSchema;

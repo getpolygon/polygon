@@ -1,12 +1,13 @@
 const _ = require("lodash");
+const path = require("path");
 const minio = require("minio");
 const BW = require("bad-words");
+const uniqid = require("uniqid");
 const jwt = require("jsonwebtoken");
 const { unlinkSync } = require("fs");
 const router = require("express").Router();
 const sanitizeHtml = require("sanitize-html");
 const BadWordsFilter = new BW({ placeHolder: "*" });
-const { fromUnixTime, format } = require("date-fns");
 // MinIO
 const {
   MINIO_ENDPOINT,
@@ -27,9 +28,8 @@ const MinIOClient = new minio.Client({
 const multer = require("multer");
 const storage = multer.diskStorage({
   destination: "tmp/",
-  filename: (err, file, cb) => {
+  filename: (_err, file, cb) => {
     cb(null, `${file.originalname.toString()}`);
-    if (err) console.error(err);
   }
 });
 const upload = multer({
@@ -100,236 +100,81 @@ router.get("/fetch", async (req, res) => {
         if (req.files.length === 0) {
           const Post = AuthorAccount.posts.create({
             text: PostText,
-            authorId: AuthorAccount._id,
-            datefield: Date()
+            authorId: AuthorAccount._id
           });
 
           AuthorAccount.posts.push(Post);
           await AuthorAccount.save();
+
           return res.json(Post);
         } else {
-          // TODO: Implement media uploads with multiple files
+          const Post = AuthorAccount.posts.create({
+            text: PostText,
+            authorId: AuthorAccount._id
+          });
+
+          req.files.map(async (file) => {
+            const _FILENAME = uniqid(); // Generating a unique filename
+            const _FILEPATH = `${AuthorAccount._id}/media/${_FILENAME}`;
+
+            await MinIOClient.fPutObject(MINIO_BUCKET, _FILEPATH, file.path, {
+              "Content-Type": file.mimetype
+            });
+            const PresignedURL = await MinIOClient.presignedGetObject(MINIO_BUCKET, _FILEPATH);
+
+            Post.attachments.push({
+              url: PresignedURL.toString(),
+              filename: _FILENAME.toString()
+            });
+
+            await AuthorAccount.save(); // Saving because the array state does not persist
+            unlinkSync(path.resolve(file.path));
+          });
+
+          AuthorAccount.posts.push(Post);
+
+          await AuthorAccount.save();
+          return res.json(Post);
         }
       }
     });
   });
-
-  // if (type == "txt") {
-  //   const Post = authorAccount.posts.create({
-  //     text: text,
-  //     author: author,
-  //     authorEmail: req.session.email,
-  //     authorId: authorId,
-  //     authorImage: authorImage,
-  //     hasAttachments: false,
-  //     datefield: Date()
-  //   });
-
-  //   authorAccount.posts.push(Post);
-  //   await authorAccount.save();
-  //   Post.datefield = format(fromUnixTime(Post.datefield / 1000), "MMM d/y h:mm b");
-  //   res.json(Post);
-  // }
-
-  // if (type == "vid") {
-  //   await MinIOClient.fPutObject(
-  //     MINIO_BUCKET,
-  //     `${authorAccount._id}/media/${req.files.video[0].originalname}`,
-  //     req.files.video[0].path,
-  //     {
-  //       "Content-Type": req.files.video[0].mimetype
-  //     }
-  //   );
-  //   const presignedUrl = await MinIOClient.presignedGetObject(
-  //     MINIO_BUCKET,
-  //     `${authorAccount._id}/media/${req.files.video[0].originalname}`
-  //   );
-
-  //   const Post = authorAccount.posts.create({
-  //     text: text,
-  //     author: author,
-  //     authorEmail: req.session.email,
-  //     authorId: authorId,
-  //     authorImage: authorImage,
-  //     hasAttachments: true,
-  //     attachments: {
-  //       hasAttachedImage: false,
-  //       hasAttachedVideo: true,
-  //       video: {
-  //         attachedVideo: presignedUrl,
-  //         attachedVideoFileName: req.files.video[0].originalname.toString()
-  //       }
-  //     },
-  //     datefield: Date.now()
-  //   });
-
-  //   authorAccount.posts.push(Post);
-  //   await authorAccount.save();
-  //   Post.datefield = format(fromUnixTime(Post.datefield / 1000), "MMM d/y h:mm b");
-  //   res.json(Post);
-  //   unlinkSync(`tmp/${req.files.video[0].originalname}`);
-  // }
-
-  // if (type == "img") {
-  //   await MinIOClient.fPutObject(
-  //     MINIO_BUCKET,
-  //     `${authorAccount._id}/media/${req.files.image[0].originalname}`,
-  //     req.files.image[0].path,
-  //     {
-  //       "Content-Type": req.files.image[0].mimetype
-  //     }
-  //   );
-  //   const presignedUrl = await MinIOClient.presignedGetObject(
-  //     MINIO_BUCKET,
-  //     `${authorAccount._id}/media/${req.files.image[0].originalname}`
-  //   );
-
-  //   const Post = authorAccount.posts.create({
-  //     text: text,
-  //     author: author,
-  //     authorEmail: req.session.email,
-  //     authorId: authorId,
-  //     authorImage: authorImage,
-  //     hasAttachments: true,
-  //     attachments: {
-  //       hasAttachedImage: true,
-  //       hasAttachedVideo: false,
-  //       image: {
-  //         attachedImage: presignedUrl,
-  //         attachedImageFileName: req.files.image[0].originalname.toString()
-  //       }
-  //     },
-  //     datefield: Date.now()
-  //   });
-
-  //   authorAccount.posts.push(Post);
-  //   await authorAccount.save();
-  //   Post.datefield = format(fromUnixTime(Post.datefield / 1000), "MMM d/y h:mm b");
-  //   unlinkSync(`tmp/${req.files.image[0].originalname}`);
-  //   res.json(Post);
-  // }
-  // if (type == "imgvid") {
-  //   await MinIOClient.fPutObject(
-  //     MINIO_BUCKET,
-  //     `${authorAccount._id}/media/${req.files.video[0].originalname}`,
-  //     req.files.video[0].path,
-  //     {
-  //       "Content-Type": req.files.video[0].mimetype
-  //     }
-  //   );
-  //   await MinIOClient.fPutObject(
-  //     MINIO_BUCKET,
-  //     `${authorAccount._id}/media/${req.files.image[0].originalname}`,
-  //     req.files.image[0].path,
-  //     {
-  //       "Content-Type": req.files.image[0].mimetype
-  //     }
-  //   );
-  //   const presignedUrlImage = await MinIOClient.presignedGetObject(
-  //     MINIO_BUCKET,
-  //     `${authorAccount._id}/media/${req.files.image[0].originalname}`
-  //   );
-  //   const presignedUrlVideo = await MinIOClient.presignedGetObject(
-  //     MINIO_BUCKET,
-  //     `${authorAccount._id}/media/${req.files.video[0].originalname}`
-  //   );
-
-  //   const Post = authorAccount.posts.create({
-  //     text: text,
-  //     author: author,
-  //     authorEmail: req.session.email,
-  //     authorId: authorId,
-  //     authorImage: authorImage,
-  //     hasAttachments: true,
-  //     attachments: {
-  //       hasAttachedImage: true,
-  //       hasAttachedVideo: true,
-  //       video: {
-  //         attachedVideo: presignedUrlVideo,
-  //         attachedVideoFileName: req.files.video[0].originalname.toString()
-  //       },
-  //       image: {
-  //         attachedImage: presignedUrlImage,
-  //         attachedImageFileName: req.files.image[0].originalname.toString()
-  //       }
-  //     },
-  //     datefield: Date.now()
-  //   });
-
-  //   authorAccount.posts.push(Post);
-  //   await authorAccount.save();
-  //   Post.datefield = format(fromUnixTime(Post.datefield / 1000), "MMM d/y h:mm b");
-  //   res.json(Post);
-  // unlinkSync(`tmp/${req.files.video[0].originalname}`);
-  // unlinkSync(`tmp/${req.files.image[0].originalname}`);
-  // }
 });
 
 // DELETE A POST
 router.delete("/delete", async (req, res) => {
-  const { post } = req.query;
-  const CurrentAccount = await AccountSchema.findOne({
-    email: req.session.email,
-    password: req.session.password
+  const { postId } = req.query;
+  const { jwt: token } = req.cookies;
+
+  jwt.verify(token, process.env.JWT_TOKEN, async (err, data) => {
+    if (err) {
+      return res.json({
+        error: err
+      });
+    } else if (data) {
+      const CurrentAccount = await AccountSchema.findById(data.id);
+      const FoundPost = CurrentAccount.posts.id(postId);
+
+      if (!FoundPost) {
+        return res.json({
+          message: "Does not exist"
+        });
+      } else {
+        if (FoundPost.attachments.length !== 0 && FoundPost.attachments !== null) {
+          _.forEach(FoundPost.attachments, async (obj) => {
+            const _FILENAME = CurrentAccount._id + "/media/" + obj.filename;
+            await MinIOClient.removeObject(MINIO_BUCKET, _FILENAME);
+          });
+        }
+
+        CurrentAccount.posts.pull(FoundPost);
+        await CurrentAccount.save();
+        return res.json({
+          result: "Removed"
+        });
+      }
+    }
   });
-
-  let foundPost = CurrentAccount.posts.id(post);
-  if (foundPost.hasAttachments == true) {
-    if (foundPost.attachments.hasAttachedImage == true) {
-      MinIOClient.removeObject(
-        MINIO_BUCKET,
-        `${CurrentAccount._id}/media/${foundPost.attachments.image.attachedImageFileName}`,
-        function (err) {
-          if (err) {
-            return console.log("Unable to remove object", err);
-          }
-        }
-      );
-    }
-    if (foundPost.attachments.hasAttachedVideo == true) {
-      MinIOClient.removeObject(
-        MINIO_BUCKET,
-        `${CurrentAccount._id}/media/${foundPost.attachments.video.attachedVideoFileName}`,
-        function (err) {
-          if (err) {
-            return console.log("Unable to remove object", err);
-          }
-        }
-      );
-    }
-    if (foundPost.attachments.hasAttachedVideo == true && foundPost.attachments.hasAttachedImage) {
-      MinIOClient.removeObject(
-        MINIO_BUCKET,
-        `${CurrentAccount._id}/media/${foundPost.attachments.image.attachedImageFileName}`,
-        function (err) {
-          if (err) {
-            return console.log("Unable to remove object", err);
-          }
-        }
-      );
-      MinIOClient.removeObject(
-        MINIO_BUCKET,
-        `${CurrentAccount._id}/media/${foundPost.attachments.image.attachedImageFileName}`,
-        function (err) {
-          if (err) {
-            return console.log("Unable to remove object", err);
-          }
-        }
-      );
-    }
-
-    CurrentAccount.posts.pull(foundPost);
-    res.json({
-      result: "Removed"
-    });
-    await CurrentAccount.save();
-  } else {
-    CurrentAccount.posts.pull(foundPost);
-    res.json({
-      result: "Removed"
-    });
-    await CurrentAccount.save();
-  }
 });
 
 module.exports = router;

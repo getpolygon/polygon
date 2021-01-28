@@ -25,9 +25,8 @@ const MinIOClient = new minio.Client({
 });
 const storage = multer.diskStorage({
   destination: path.resolve("tmp"),
-  filename: (err, file, cb) => {
+  filename: (_err, file, cb) => {
     cb(null, `${file.originalname}`);
-    if (err) return console.log(err);
   }
 });
 const upload = multer({ storage: storage });
@@ -56,13 +55,7 @@ router.post("/", upload.single("avatar"), async (req, res) => {
                 email: email,
                 bio: req.body.bio,
                 password: hash,
-                isPrivate: req.body.privateCheck ? true : false,
-                friends: {
-                  pending: [],
-                  approved: [],
-                  requested: []
-                },
-                date: Date.now()
+                isPrivate: req.body.privateCheck ? true : false
               });
 
               if (req.file) {

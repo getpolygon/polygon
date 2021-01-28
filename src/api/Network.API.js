@@ -1,18 +1,20 @@
-const jwt = require("jsonwebtoken");
 const _ = require("lodash");
+const jwt = require("jsonwebtoken");
 const router = require("express").Router();
 
 let active_users = [];
 
 router.ws("/", (ws, req) => {
-  ws.on("message", () => {
+  ws.on("message", (message) => {
     jwt.verify(req.cookies.jwt, process.env.JWT_TOKEN, (err, data) => {
-      if (err) return ws.send("Error");
+      if (err) return ws.send({ message: "error" });
       else if (data) {
-        if (active_users.includes(data.id)) {
-          return ws.send("");
-        } else {
-          return active_users.push(data.id);
+        if (JSON.parse(message).message === "ping") {
+          if (active_users.includes(data.id)) return ws.send(JSON.stringify({ message: "pong" }));
+          else {
+            active_users.push(data.id);
+            return ws.send(JSON.stringify({ message: "pong" }));
+          }
         }
       }
     });

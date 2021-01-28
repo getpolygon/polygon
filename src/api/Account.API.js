@@ -6,23 +6,21 @@ const emailValidator = require("email-validator");
 const AccountSchema = require("../models/account");
 
 router.get("/fetch", async (req, res) => {
-  const token = req.cookies.jwt;
   const { accountId } = req.query;
-  const filter = [
-    "fullName",
-    "firstName",
-    "lastName",
-    "bio",
-    "_id",
-    "pictureUrl",
-    "posts",
-    "friends",
-    "isPrivate",
-    "date",
-    "email"
-  ];
+  const { jwt: token } = req.cookies;
 
-  if (token) {
+  const Filter = {
+    fullName: null,
+    bio: null,
+    pictureUrl: null,
+    isPrivate: null,
+    posts: null,
+    date: null,
+    friends: null,
+    _id: null
+  };
+
+  if (token && !accountId) {
     return jwt.verify(token, process.env.JWT_Token, async (error, data) => {
       if (error) {
         return res.json(403).json({
@@ -30,13 +28,13 @@ router.get("/fetch", async (req, res) => {
         });
       } else if (data) {
         const foundAccount = await AccountSchema.findById(data.id);
-        const payload = _.pick(foundAccount, filter);
+        const payload = _.pick(foundAccount, _.keys(Filter));
         return res.status(200).json(payload);
       }
     });
   } else if (accountId) {
     const foundAccount = await AccountSchema.findById(accountId);
-    const payload = _.pick(foundAccount, filter);
+    const payload = _.pick(foundAccount, _.keys(Filter));
     return res.status(200).json(payload);
   } else {
     return res.status(403).json({

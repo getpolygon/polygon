@@ -4,13 +4,9 @@ const jwt = require("jsonwebtoken");
 const router = require("express").Router();
 
 router.ws("/", (ws, req) => {
-  ws.on("open", () => {
-    return ws.send(JSON.stringify({ message: "Successfully connected to Usocial network" }));
-  });
-
   ws.on("message", (message) => {
     jwt.verify(req.cookies.jwt, process.env.JWT_TOKEN, (err, data) => {
-      if (err) return ws.send({ message: "error" });
+      if (err) return ws.send({ message: err });
       else if (data) {
         if (JSON.parse(message).message === "ping") {
           if (ActiveUsers.includes(data.id)) return ws.send(JSON.stringify({ message: "pong" }));
@@ -24,12 +20,24 @@ router.ws("/", (ws, req) => {
   });
 
   ws.on("close", () => {
-    jwt.verify(req.cookies.jwt, process.env.JWT_TOKEN, (err, data) => {
-      if (err) return ws.send("Error");
-      else if (data) {
-        return _.remove(ActiveUsers, req.cookies.jwt);
-      }
-    });
+    const { jwt: token } = req.cookies;
+    // Close WebSocket connection safely
+    const CloseConnection = () => {
+      ws.send("Hi");
+      jwt.verify(token, process.env.JWT_TOKEN, (err, data) => {
+        if (err) return ws.send(JSON.stringify({ error: err }));
+        else if (data) {
+          return _.remove(ActiveUsers, data.id);
+        }
+      });
+    };
+
+    if (ws.readyState === 1) {
+      CloseConnection();
+    } else {
+      ws.readyState = 1;
+      CloseConnection();
+    }
   });
 });
 

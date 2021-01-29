@@ -9,18 +9,22 @@ router.get("/fetch", async (req, res) => {
   const { accountId } = req.query;
   const { jwt: token } = req.cookies;
 
-  const Filter = {
-    fullName: null,
-    bio: null,
-    pictureUrl: null,
-    isPrivate: null,
-    posts: null,
-    date: null,
-    friends: null,
-    _id: null
-  };
-
   if (token && !accountId) {
+    // Filter for current account
+    const Filter = {
+      fullName: null,
+      firstName: null,
+      lastName: null,
+      email: null,
+      bio: null,
+      pictureUrl: null,
+      isPrivate: null,
+      posts: null,
+      date: null,
+      friends: null,
+      _id: null
+    };
+
     return jwt.verify(token, process.env.JWT_Token, async (error, data) => {
       if (error) {
         return res.json(403).json({
@@ -33,6 +37,18 @@ router.get("/fetch", async (req, res) => {
       }
     });
   } else if (accountId) {
+    // Filter for other accounts
+    const Filter = {
+      fullName: null,
+      bio: null,
+      pictureUrl: null,
+      isPrivate: null,
+      posts: null,
+      date: null,
+      friends: null,
+      _id: null
+    };
+
     const foundAccount = await AccountSchema.findById(accountId);
     const payload = _.pick(foundAccount, _.keys(Filter));
     return res.status(200).json(payload);

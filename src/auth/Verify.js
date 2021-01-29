@@ -1,10 +1,10 @@
-const jwt = require("jsonwebtoken"),
-  router = require("express").Router(),
-  AccountSchema = require("../models/account");
+const jwt = require("jsonwebtoken");
+const router = require("express").Router();
+const AccountSchema = require("../models/account");
 
 router.get("/", (req, res) => {
-  const token = req.cookies.jwt,
-    { JWT_TOKEN } = process.env;
+  const { JWT_TOKEN } = process.env;
+  const { jwt: token } = req.cookies;
 
   if (!token) {
     return res.status(200).json({

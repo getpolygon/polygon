@@ -39,6 +39,12 @@ process.env.NODE_ENV === "development" && app.use(morgan("dev"));
 
 // Use the routes
 app.use("/", routes);
+app.get("*", (req, res) => {
+  return res.status(404).json({
+    error: "Something's not right",
+    requestPath: req.originalUrl
+  });
+});
 
 // Connect to MongoDB
 mongoose.connect(MONGO_URI, {

@@ -14,10 +14,6 @@ const NetworkAPI = require("../api/Network.API");
 const AccountAPI = require("../api/Account.API");
 const NotificationAPI = require("../api/Notification.API");
 
-// Misc
-const NotFoundHandler = require("../misc/NotFound");
-
-router.use("*", NotFoundHandler);
 // Authentication
 router.use("/auth/login", LoginHandler);
 router.use("/auth/logout", LogoutHandler);

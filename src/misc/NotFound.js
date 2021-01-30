@@ -1,6 +1,6 @@
 const router = require("express").Router();
 
-router.all("*", (req, res) => {
+router.get("*", (req, res) => {
   res.status(404).json({
     error: "Something's not right",
     requestPath: req.originalUrl

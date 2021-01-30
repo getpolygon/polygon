@@ -2,10 +2,10 @@ require("dotenv").config();
 const app = require("express")();
 // WebSocket Support
 require("express-ws")(app);
+const cors = require("cors");
 const morgan = require("morgan");
 const helmet = require("helmet");
 const mongoose = require("mongoose");
-const cors = require("./utils/cors");
 const port = process.env.PORT || 3001;
 const bodyParser = require("body-parser");
 const compression = require("compression");
@@ -17,7 +17,7 @@ const { MONGO_URI, MONGO_USER, MONGO_PASS, MONGO_CLUSTER, EXPRESS_SECRET } = pro
 const routes = require("./routes/routes");
 
 // Middleware
-app.use(cors);
+app.use(cors({ origin: true, credentials: true }));
 app.use(helmet());
 app.use(compression());
 app.use(cookieParser());

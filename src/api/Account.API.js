@@ -3,6 +3,7 @@ const jwt = require("jsonwebtoken");
 const router = require("express").Router();
 const emailValidator = require("email-validator");
 
+const MinIO = require("../utils/minio");
 const AccountSchema = require("../models/account");
 
 router.get("/fetch", async (req, res) => {
@@ -53,7 +54,7 @@ router.get("/fetch", async (req, res) => {
     const payload = _.pick(foundAccount, _.keys(Filter));
     return res.status(200).json(payload);
   } else {
-    return res.status(403).json({
+    return res.json({
       error: "Forbidden"
     });
   }
@@ -99,13 +100,49 @@ router.put("/check", async (req, res) => {
 });
 
 // For updating the account
-router.put("/update", async (req, res) => {
-  // TODO: Needs new implementation
-});
+// router.put("/update", async (req, res) => {
+// TODO: Needs new implementation
+// });
 
 // For deleting the account
 router.delete("/delete", async (req, res) => {
-  // TODO: Needs new implementation
+  const { jwt: token } = req.cookies;
+  const { JWT_TOKEN } = process.env;
+
+  jwt.verify(token, JWT_TOKEN, async (err, data) => {
+    if (err) {
+      return res.json({
+        error: "Forbidden"
+      });
+    } else if (data) {
+      try {
+        const ObjectStream = MinIO.client.listObjectsV2(MinIO.bucket, data.id + "/", true);
+        const _FILES_ = [];
+
+        try {
+          // Deleteing the account from MongoDB
+          await AccountSchema.findByIdAndDelete(data.id);
+
+          // Deleting all the uploads
+          ObjectStream.on("data", (obj) => _FILES_.push(obj.name));
+          ObjectStream.on("end", async () => {
+            await MinIO.client.removeObjects(MinIO.bucket, _FILES_);
+          });
+        } catch (error) {
+          console.error(error);
+        }
+
+        return res.clearCookie("jwt").json({
+          message: "Deleted"
+        });
+      } catch (error) {
+        console.error(error);
+        return res.json({
+          error: error
+        });
+      }
+    }
+  });
 });
 
 module.exports = router;

@@ -1,25 +1,20 @@
 require("dotenv").config();
-const { MONGO_URI, MONGO_USER, MONGO_PASS, MONGO_CLUSTER, EXPRESS_SECRET } = process.env;
-
-// Dependencies
-const app = require("express")(),
-  morgan = require("morgan"),
-  helmet = require("helmet"),
-  mongoose = require("mongoose"),
-  cors = require("./utils/cors"),
-  port = process.env.PORT || 3001,
-  bodyParser = require("body-parser"),
-  compression = require("compression"),
-  session = require("express-session"),
-  cookieParser = require("cookie-parser"),
-  MongoStore = require("connect-mongo")(session);
-
+const app = require("express")();
 // WebSocket Support
 require("express-ws")(app);
-
+const morgan = require("morgan");
+const helmet = require("helmet");
+const mongoose = require("mongoose");
+const cors = require("./utils/cors");
+const port = process.env.PORT || 3001;
+const bodyParser = require("body-parser");
+const compression = require("compression");
+const session = require("express-session");
+const cookieParser = require("cookie-parser");
+const MongoStore = require("connect-mongo")(session);
+const { MONGO_URI, MONGO_USER, MONGO_PASS, MONGO_CLUSTER, EXPRESS_SECRET } = process.env;
 // Routes
-const apiRoute = require("./routes/api"),
-  authRoute = require("./routes/auth");
+const routes = require("./routes/routes");
 
 // Middleware
 app.use(cors);
@@ -43,15 +38,7 @@ app.use(
 process.env.NODE_ENV === "development" && app.use(morgan("dev"));
 
 // Use the routes
-app.use("/api", apiRoute);
-app.use("/auth", authRoute);
-
-// Error page
-app.get("*", (_req, res) =>
-  res.status(404).json({
-    error: "Page Not Found"
-  })
-);
+app.use("/", routes);
 
 // Connect to MongoDB
 mongoose.connect(MONGO_URI, {

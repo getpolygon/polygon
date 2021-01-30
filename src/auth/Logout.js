@@ -1,10 +1,6 @@
 const router = require("express").Router();
+const LogoutController = require("../controllers/auth/Logout.controller");
 
-router.post("/", (req, res) => {
-  req.session.destroy();
-  return res.status(200).clearCookie("jwt").json({
-    message: "Logged out"
-  });
-});
+router.post("/", LogoutController.logout);
 
 module.exports = router;

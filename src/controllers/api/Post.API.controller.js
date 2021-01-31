@@ -7,6 +7,7 @@ const { unlinkSync } = require("fs");
 const sanitizeHtml = require("sanitize-html");
 const BadWordsFilter = new BW({ placeHolder: "*" });
 
+const { JWT_TOKEN } = process.env;
 const MinIO = require("../../utils/minio");
 const AccountSchema = require("../../models/account");
 
@@ -14,7 +15,7 @@ const AccountSchema = require("../../models/account");
 exports.getAllPosts = async (req, res) => {
   const { jwt: token } = req.cookies;
 
-  jwt.verify(token, process.env.JWT_TOKEN, async (err, data) => {
+  jwt.verify(token, JWT_TOKEN, async (err, data) => {
     if (err) {
       return res.status(403).json({
         error: err
@@ -63,7 +64,7 @@ exports.getAllPosts = async (req, res) => {
 
 // Create a post
 exports.createPost = async (req, res) => {
-  jwt.verify(req.cookies.jwt, process.env.JWT_TOKEN, async (err, data) => {
+  jwt.verify(req.cookies.jwt, JWT_TOKEN, async (err, data) => {
     if (err) return res.json({ error: err });
     else if (data) {
       const AuthorAccount = await AccountSchema.findById(data.id);
@@ -117,7 +118,7 @@ exports.deletePost = async (req, res) => {
   const { postId } = req.query;
   const { jwt: token } = req.cookies;
 
-  jwt.verify(token, process.env.JWT_TOKEN, async (err, data) => {
+  jwt.verify(token, JWT_TOKEN, async (err, data) => {
     if (err) {
       return res.json({
         error: err
@@ -146,4 +147,70 @@ exports.deletePost = async (req, res) => {
       }
     }
   });
+};
+
+exports.heartPost = async (req, res) => {
+  const { postId } = req.query;
+  const { jwt: token } = req.cookies;
+  const PostAuthor = await AccountSchema.findOne({ "posts._id": postId });
+  const Post = PostAuthor.posts.id(postId);
+
+  if (Post === null) {
+    return res.json({
+      error: "Post does not exist"
+    });
+  } else {
+    jwt.verify(token, JWT_TOKEN, async (err, data) => {
+      if (err) {
+        return res.status(403).json({
+          error: err
+        });
+      } else if (data) {
+        if (Post.hearts.includes(data.id)) {
+          return res.json({
+            message: "Already hearted"
+          });
+        } else {
+          Post.hearts.push(data.id);
+          await PostAuthor.save();
+          return res.json({
+            message: "Hearted"
+          });
+        }
+      }
+    });
+  }
+};
+
+exports.unheartPost = async (req, res) => {
+  const { postId } = req.query;
+  const { jwt: token } = req.cookies;
+  const PostAuthor = await AccountSchema.findOne({ "posts._id": postId });
+  const Post = PostAuthor.posts.id(postId);
+
+  if (Post === null) {
+    return res.json({
+      error: "Post does not exist"
+    });
+  } else {
+    jwt.verify(token, JWT_TOKEN, async (err, data) => {
+      if (err) {
+        res.status(403).json({
+          error: err
+        });
+      } else if (data) {
+        if (Post.hearts.includes(data.id)) {
+          Post.hearts.pull(data.id);
+          await PostAuthor.save();
+          return res.json({
+            message: "Unhearted"
+          });
+        } else {
+          return res.json({
+            message: "Already unhearted"
+          });
+        }
+      }
+    });
+  }
 };

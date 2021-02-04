@@ -17,7 +17,8 @@ const AccountSchema = new mongoose.Schema({
     requested: { type: [FriendSchema], default: [] }
   },
   posts: [PostSchema],
-  datefield: { type: String, required: true, default: Date() }
+  saved: { type: Array, required: true, default: [] },
+  datefield: { type: Date, required: true, default: Date() }
 });
 
 module.exports = mongoose.model("Account", AccountSchema);

@@ -4,6 +4,7 @@ const BW = require("bad-words");
 const uniqid = require("uniqid");
 const jwt = require("jsonwebtoken");
 const { unlinkSync } = require("fs");
+const omit = require("../../utils/omit");
 const sanitizeHtml = require("sanitize-html");
 const BadWordsFilter = new BW({ placeHolder: "*" });
 
@@ -16,6 +17,8 @@ exports.getAllPosts = async (req, res) => {
   const { jwt: token } = req.cookies;
 
   jwt.verify(token, JWT_TOKEN, async (err, data) => {
+    const Exclude = ["email", "password"];
+
     if (err) {
       return res.status(403).json({
         error: err
@@ -24,16 +27,6 @@ exports.getAllPosts = async (req, res) => {
       const { accountId } = req.query;
       const CurrentAccount = await AccountSchema.findById(data.id);
       const OtherAccounts = await AccountSchema.find().where("_id").ne(CurrentAccount._id);
-      const Filter = {
-        fullName: null,
-        bio: null,
-        pictureUrl: null,
-        isPrivate: null,
-        posts: null,
-        date: null,
-        friends: null,
-        _id: null
-      };
 
       if (accountId === undefined) {
         const Posts = [];
@@ -41,7 +34,7 @@ exports.getAllPosts = async (req, res) => {
         OtherAccounts.map((account) => {
           account.posts.map((post) => {
             Posts.push({
-              authorData: _.pick(account, _.keys(Filter)),
+              authorData: omit(account, Exclude),
               postData: post
             });
           });
@@ -52,7 +45,7 @@ exports.getAllPosts = async (req, res) => {
         const FoundAccount = await AccountSchema.findById(accountId);
         FoundAccount.posts.map((post) => {
           Posts.push({
-            authorData: _.pick(FoundAccount, _.keys(Filter)),
+            authorData: omit(FoundAccount, Exclude),
             postData: post
           });
         });

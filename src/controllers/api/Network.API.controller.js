@@ -87,7 +87,3 @@ exports.getUserStatus = (req, res) => {
     return res.json({ message: "offline" });
   }
 };
-
-setInterval(() => {
-  console.log(JSON.stringify(Users));
-}, 1000);

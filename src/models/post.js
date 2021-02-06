@@ -7,11 +7,12 @@ const AttachmentSchema = new mongoose.Schema({
 });
 
 const PostSchema = new mongoose.Schema({
+  comments: [CommentSchema],
+  attachments: [AttachmentSchema],
+  hearts: { type: Array, default: [] },
   text: { type: String, required: true },
   authorId: { type: String, required: true },
-  comments: [CommentSchema],
-  hearts: { type: Array, default: [] },
-  attachments: { type: [AttachmentSchema], default: [] },
   datefield: { type: String, required: true, default: Date() }
 });
+
 module.exports = PostSchema;

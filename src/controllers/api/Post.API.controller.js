@@ -80,27 +80,25 @@ exports.createPost = async (req, res) => {
           authorId: AuthorAccount._id
         });
 
-        req.files.map(async (file) => {
-          const _FILENAME = uniqid(); // Generating a unique filename
-          const _FILEPATH = `${AuthorAccount._id}/media/${_FILENAME}`;
+        for (const file of req.files) {
+          const _FILENAME_ = uniqid(); // Generating a unique filename
+          const _FILEPATH_ = `${AuthorAccount._id}/media/${_FILENAME_}`;
 
-          await MinIO.client.fPutObject(MinIO.bucket, _FILEPATH, file.path, {
+          await MinIO.client.fPutObject(MinIO.bucket, _FILEPATH_, file.path, {
             "Content-Type": file.mimetype
           });
-          const PresignedURL = await MinIO.client.presignedGetObject(MinIO.bucket, _FILEPATH);
+          const PresignedURL = await MinIO.client.presignedGetObject(MinIO.bucket, _FILEPATH_);
 
-          Post.attachments.push({
-            url: PresignedURL.toString(),
-            filename: _FILENAME.toString()
-          });
+          const _ATTACHMENT_ = {};
+          _ATTACHMENT_.url = PresignedURL;
+          _ATTACHMENT_.filename = _FILENAME_;
 
-          await Post.attachments.save(); // Saving because the array state does not persist
+          Post.attachments.push(_ATTACHMENT_);
           unlinkSync(path.resolve(file.path));
-        });
+        }
 
         AuthorAccount.posts.push(Post);
-
-        await Post.save();
+        await AuthorAccount.save();
         return res.json(Post);
       }
     }

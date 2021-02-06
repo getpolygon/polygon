@@ -1,6 +1,11 @@
-const ActiveUsers = [];
 const _ = require("lodash");
 const jwt = require("jsonwebtoken");
+
+const Users = {
+  active: [],
+  dnd: [],
+  idle: []
+};
 
 exports.onConnect = async (ws, req) => {
   ws.on("message", (message) => {
@@ -8,9 +13,9 @@ exports.onConnect = async (ws, req) => {
       if (err) return ws.send(JSON.stringify({ message: err }));
       else if (data) {
         if (JSON.parse(message).message === "ping") {
-          if (ActiveUsers.includes(data.id)) return ws.send(JSON.stringify({ message: "pong" }));
+          if (Users.active.includes(data.id)) return ws.send(JSON.stringify({ message: "pong" }));
           else {
-            ActiveUsers.push(data.id);
+            Users.active.push(data.id);
             return ws.send(JSON.stringify({ message: "pong" }));
           }
         }
@@ -26,7 +31,7 @@ exports.onConnect = async (ws, req) => {
       jwt.verify(token, process.env.JWT_TOKEN, (err, data) => {
         if (err) return ws.send(JSON.stringify({ error: err }));
         else if (data) {
-          return _.remove(ActiveUsers, data.id);
+          return _.remove(Users.active, data.id);
         }
       });
     };
@@ -40,15 +45,19 @@ exports.onConnect = async (ws, req) => {
   });
 };
 
-exports.getActiveUsers = (req, res) => {
+exports.getUserStatus = (req, res) => {
   const { accountId } = req.query;
-  if (_.includes(ActiveUsers, accountId.toString())) {
+  if (_.includes(Users.active, accountId)) {
     return res.status(200).json({
-      message: true
+      message: "active"
     });
-  } else {
+  } else if (_.includes(Users.dnd, accountId)) {
     return res.status(200).json({
-      message: false
+      message: "dnd"
+    });
+  } else if (_.includes(Users.idle, accountId)) {
+    return res.status(200).json({
+      message: "idle"
     });
   }
 };

@@ -8,15 +8,37 @@ const Users = {
 };
 
 exports.onConnect = async (ws, req) => {
+  ws.on("open", () => {});
   ws.on("message", (message) => {
     jwt.verify(req.cookies.jwt, process.env.JWT_TOKEN, (err, data) => {
       if (err) return ws.send(JSON.stringify({ message: err }));
       else if (data) {
-        if (JSON.parse(message).message === "ping") {
-          if (Users.active.includes(data.id)) return ws.send(JSON.stringify({ message: "pong" }));
-          else {
-            Users.active.push(data.id);
+        const _message = JSON.parse(message);
+
+        if (_message.message) {
+          if (_message.message === "ping") {
+            if (!Users.active.includes(data.id)) Users.active.push(data.id);
             return ws.send(JSON.stringify({ message: "pong" }));
+          }
+        } else {
+          if (_message.setStatus === "active") {
+            if (!Users.active.includes(data.id)) {
+              Users.active.push(data.id);
+              _.remove(Users.dnd, data.id);
+              _.remove(Users.idle, data.id);
+            }
+          } else if (_message.setStatus === "idle") {
+            if (!Users.idle.includes(data.id)) {
+              Users.idle.push(data.id);
+              _.remove(Users.active, data.id);
+              _.remove(Users.dnd, data.id);
+            }
+          } else if (_message.setStatus === "dnd") {
+            if (!Users.dnd.includes(data.id)) {
+              Users.dnd.push(data.id);
+              _.remove(Users.active, data.id);
+              _.remove(Users.idle, data.id);
+            }
           }
         }
       }
@@ -31,7 +53,9 @@ exports.onConnect = async (ws, req) => {
       jwt.verify(token, process.env.JWT_TOKEN, (err, data) => {
         if (err) return ws.send(JSON.stringify({ error: err }));
         else if (data) {
-          return _.remove(Users.active, data.id);
+          _.remove(Users.active, data.id);
+          _.remove(Users.idle, data.id);
+          _.remove(Users.dnd, data.id);
         }
       });
     };
@@ -59,5 +83,11 @@ exports.getUserStatus = (req, res) => {
     return res.status(200).json({
       message: "idle"
     });
+  } else {
+    return res.json({ message: "offline" });
   }
 };
+
+setInterval(() => {
+  console.log(JSON.stringify(Users));
+}, 1000);

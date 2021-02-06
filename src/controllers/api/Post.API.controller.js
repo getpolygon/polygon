@@ -15,6 +15,7 @@ const AccountSchema = require("../../models/account");
 // Get all posts
 exports.getAllPosts = async (req, res) => {
   const { jwt: token } = req.cookies;
+  // const { max } = req.params;
 
   jwt.verify(token, JWT_TOKEN, async (err, data) => {
     const Exclude = ["email", "password"];

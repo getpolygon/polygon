@@ -1,3 +1,4 @@
+const _ = require("lodash");
 const jwt = require("jsonwebtoken");
 const AccountSchema = require("../../models/account");
 
@@ -12,15 +13,16 @@ exports.verify = (req, res) => {
   } else {
     jwt.verify(token, JWT_TOKEN, async (err, data) => {
       if (err) {
-        return res
-          .json({
-            error: "Forbidden"
-          })
-          .status(403);
+        return res.status(403).json({
+          error: err
+        });
       } else if (data) {
         const User = await AccountSchema.findById(data.id);
-        if (User) {
-          return res.status(200).json(data);
+
+        const Except = ["password"];
+
+        if (User !== null) {
+          return res.status(200).json(_.omit(User, Except));
         } else {
           return res.status(200).clearCookie("jwt").json({
             error: false

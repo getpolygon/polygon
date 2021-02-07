@@ -1,4 +1,3 @@
-const _ = require("lodash");
 const jwt = require("jsonwebtoken");
 const omit = require("../../utils/omit");
 const MinIO = require("../../utils/minio");
@@ -81,4 +80,15 @@ exports.deleteAccount = async (req, res) => {
 
 exports.updateAccount = async (req, res) => {
   // TODO: Needs implementation
+};
+
+exports.getRandomAccounts = async (req, res) => {
+  const { jwt: token } = req.cookies;
+  jwt.verify(token, process.env.JWT_TOKEN, async (err, data) => {
+    if (err) return res.status(500).json({ error: err });
+    else if (data) {
+      const RandomAccounts = await AccountSchema.find().where("_id").ne(data.id).limit(10);
+      return res.json(RandomAccounts);
+    }
+  });
 };

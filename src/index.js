@@ -42,7 +42,7 @@ app.use("/", routes);
 app.get("*", (req, res) => {
   return res.status(404).json({
     error: "Something's not right",
-    requestPath: req.originalUrl
+    path: req.originalUrl
   });
 });
 

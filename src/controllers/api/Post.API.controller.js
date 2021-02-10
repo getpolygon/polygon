@@ -32,24 +32,42 @@ exports.getAllPosts = async (req, res) => {
       if (accountId === undefined) {
         const Posts = [];
 
-        OtherAccounts.map((account) => {
-          account.posts.map((post) => {
-            Posts.push({
-              authorData: omit(account, Exclude),
-              postData: post
-            });
-          });
-        });
+        for (const account in OtherAccounts) {
+          for (const post in account.posts) {
+            const _post = {};
+            _post.authorData = omit(account, Exclude);
+            _post.postData = post;
+
+            for (const comment in post.comments) {
+              const _comment = {};
+              _comment.commentData = comment;
+              _comment.authorData = omit(await AccountSchema.findById(comment.authorId), Exclude);
+              _post.postData.comments[_post.postData.comments.indexOf(comment)] = _comment;
+            }
+
+            Posts.push(_post);
+          }
+        }
         return res.json(Posts);
       } else {
         const Posts = [];
         const FoundAccount = await AccountSchema.findById(accountId);
-        FoundAccount.posts.map((post) => {
-          Posts.push({
-            authorData: omit(FoundAccount, Exclude),
-            postData: post
-          });
-        });
+
+        for (const post of FoundAccount.posts) {
+          const _post = {};
+          _post.postData = post;
+          _post.authorData = omit(CurrentAccount, Exclude.concat(["posts"]));
+
+          for (const comment of _post.postData.comments) {
+            const _comment = {};
+            _comment.commentData = comment;
+            _comment.authorData = omit(await AccountSchema.findById(comment.authorId), Exclude);
+            _post.postData.comments[_post.postData.comments.indexOf(comment)] = _comment;
+          }
+
+          Posts.push(_post);
+        }
+
         return res.json(Posts);
       }
     }
@@ -205,4 +223,64 @@ exports.unheartPost = async (req, res) => {
       }
     });
   }
+};
+
+exports.editPost = async (req, res) => {
+  const { text } = req.body;
+  const { postId } = req.query;
+  const { jwt: token } = req.cookies;
+
+  jwt.verify(token, JWT_TOKEN, async (err, data) => {
+    if (err) return res.status(500).json({ error: err });
+    else {
+      const PostAuthor = await AccountSchema.findOne({ "posts._id": postId });
+      const Post = await PostAuthor.posts.id(postId);
+
+      if (Post === null) {
+        return res.status(404).json({
+          error: "Post not found"
+        });
+      } else {
+        if (Post.authorId === data.id) {
+          Post.text = text;
+          Post.datefield = Date();
+          await PostAuthor.save();
+          return res.json({
+            message: "Updated"
+          });
+        } else {
+          return res.status(403).json({
+            error: "Forbidden"
+          });
+        }
+      }
+    }
+  });
+};
+
+exports.createComment = async (req, res) => {
+  const { postId } = req.query;
+  const { comment } = req.body;
+  const { jwt: token } = req.cookies;
+
+  jwt.verify(token, JWT_TOKEN, async (err, data) => {
+    if (err)
+      return res.status(500).json({
+        error: err
+      });
+    else {
+      const PostAuthor = await AccountSchema.findOne({ "posts._id": postId });
+      const CurrentAccount = await AccountSchema.findById(data.id);
+      const Post = PostAuthor.posts.id(postId);
+      const PAYLOAD = {
+        comment: comment,
+        authorId: CurrentAccount._id
+      };
+      Post.comments.push(Post.comments.create(PAYLOAD));
+      await PostAuthor.save();
+      return res.json({
+        message: "Commented"
+      });
+    }
+  });
 };

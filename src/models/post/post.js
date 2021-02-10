@@ -1,10 +1,6 @@
 const mongoose = require("mongoose");
 const CommentSchema = require("./comment");
-
-const AttachmentSchema = new mongoose.Schema({
-  url: { type: String },
-  filename: { type: String }
-});
+const AttachmentSchema = require("./attachment");
 
 const PostSchema = new mongoose.Schema({
   comments: [CommentSchema],

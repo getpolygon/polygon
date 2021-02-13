@@ -1,6 +1,8 @@
 const mongoose = require("mongoose");
-const PostSchema = require("./post/post");
+
+const SavedSchema = require("./saved");
 const FriendSchema = require("./friend");
+const PostSchema = require("./post/post");
 
 const AccountSchema = new mongoose.Schema({
   firstName: { type: String, required: true },
@@ -17,7 +19,7 @@ const AccountSchema = new mongoose.Schema({
     requested: { type: [FriendSchema], default: [] }
   },
   posts: [PostSchema],
-  saved: { type: Array, required: true, default: [] },
+  saved: [SavedSchema],
   datefield: { type: Date, required: true, default: Date() }
 });
 

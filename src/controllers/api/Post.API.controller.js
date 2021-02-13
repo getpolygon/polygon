@@ -284,3 +284,25 @@ exports.createComment = async (req, res) => {
     }
   });
 };
+
+exports.savePost = (req, res) => {
+  const { postId } = req.query;
+  const { jwt: token } = req.cookies;
+
+  jwt.verify(token, JWT_TOKEN, async (err, data) => {
+    if (err) return res.status(500).json({ error: err });
+    else {
+      const CurrentAccount = await AccountSchema.findOne({ _id: data.id });
+      if (CurrentAccount !== null) {
+        const Save = CurrentAccount.saved.create({
+          ...postId
+        });
+        CurrentAccount.saved.push(Save);
+        await CurrentAccount.save();
+        return res.json({ message: "Saved" });
+      } else {
+        return res.json({ error: "Account does not exist" });
+      }
+    }
+  });
+};

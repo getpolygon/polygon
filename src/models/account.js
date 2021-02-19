@@ -20,7 +20,7 @@ const AccountSchema = new mongoose.Schema({
   },
   posts: [PostSchema],
   saved: [SavedSchema],
-  datefield: { type: Date, required: true, default: Date.now() }
+  datefield: { type: Number, required: true, default: Date.now() }
 });
 
 module.exports = mongoose.model("Account", AccountSchema);

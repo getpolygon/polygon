@@ -1,9 +1,6 @@
 const _ = require("lodash");
-const path = require("path");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
-const mongoose = require("mongoose");
-const { unlinkSync } = require("fs");
 const emailValidator = require("email-validator");
 
 const MinIO = require("../../utils/minio");
@@ -22,9 +19,8 @@ exports.register = async (req, res) => {
         else if (salt) {
           bcrypt.hash(req.body.password, salt, async (err, hash) => {
             if (err) console.error(err);
-            else if (hash) {
+            else {
               const Account = new AccountSchema({
-                _id: new mongoose.Types.ObjectId(),
                 firstName: req.body.firstName,
                 lastName: req.body.lastName,
                 fullName: `${req.body.firstName} ${req.body.lastName}`,
@@ -43,22 +39,18 @@ exports.register = async (req, res) => {
                     "Content-Type": req.file.mimetype
                   }
                 );
-                const presignedUrl = await MinIO.client.presignedGetObject(
+
+                const AvatarURL = await MinIO.client.presignedGetObject(
                   MinIO.bucket,
                   `${Account._id}/${Account._id}.png`
                 );
-                Account.pictureUrl = presignedUrl;
-
-                try {
-                  unlinkSync(path.resolve("tmp", req.file.originalname));
-                } catch (error) {
-                  console.error(error);
-                }
+                Account.pictureUrl = AvatarURL;
               } else {
                 Account.pictureUrl = `https://avatars.dicebear.com/api/initials/${Account.fullName}.svg`;
               }
 
               await Account.save();
+
               jwt.sign({ id: Account._id }, process.env.JWT_TOKEN, (err, token) => {
                 if (err) console.log(err);
                 else if (token) {

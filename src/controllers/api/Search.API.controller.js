@@ -11,15 +11,19 @@ exports.query = async (req, res) => {
         error: "Forbidden"
       });
     } else if (data) {
-      const currentAccount = await AccountSchema.findById(data.id);
-      const regex = new RegExp(query, "gu");
-      const results = await AccountSchema.find({
-        fullName: regex
-      })
-        .where("_id")
-        .ne(currentAccount._id);
+      if (!query) {
+        return res.json({
+          error: "No query provided"
+        });
+      } else {
+        const currentAccount = await AccountSchema.findById(data.id);
+        const regex = new RegExp(query, "gu");
+        const results = await AccountSchema.find({ fullName: regex })
+          .where("_id")
+          .ne(currentAccount._id);
 
-      return res.status(200).json(results);
+        return res.status(200).json(results);
+      }
     }
   });
 };

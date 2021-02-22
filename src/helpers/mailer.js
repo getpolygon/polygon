@@ -25,7 +25,7 @@ class Mailer {
     this.#html = HTML;
   }
 
-  async sendMail() {
+  async send() {
     try {
       if (this.receiver === null || this.subject === null || this.title === null) {
         throw new Error("You have forgot to call the init() method on the mailer");

@@ -21,7 +21,6 @@ git clone https://github.com/MichaelGrigoryan25/ArmSocial
   MAILER_host=SMTP_HOST # Your SMTP host
   MAILER_email=SENDER_EMAIL # The email of sender
   MAILER_password=SMTP_PASSWORD # The password of the app (when using Google apps(Like Gmail))
-  MAILER_secure=SMTP_SECURE # SMTP is secure
   MAILER_port=SMTP_PORT # The SMTP port
 
   # Global vars

@@ -1,30 +1,50 @@
+require("dotenv").config();
 const nodemailer = require("nodemailer");
-// const nodePin = require("node-pin"); // For generating a random PIN
-const { MAILER_host, MAILER_email, MAILER_password, MAILER_secure, MAILER_port } = process.env;
+const { MAILER_HOST, MAILER_EMAIL, MAILER_PASS, MAILER_PORT } = process.env;
 
-module.exports = async function main(receiver, subject, title, html) {
-  try {
-    // create reusable transporter object using the default SMTP transport
-    let transporter = nodemailer.createTransport({
-      host: MAILER_host,
-      port: parseInt(MAILER_port),
-      secure: JSON.parse(MAILER_secure.toLowerCase()),
-      auth: {
-        user: MAILER_email,
-        pass: MAILER_password
-      }
-    });
+class Mailer {
+  #transporter = nodemailer.createTransport({
+    host: MAILER_HOST,
+    port: MAILER_PORT,
+    secure: true,
+    auth: {
+      user: MAILER_EMAIL,
+      pass: MAILER_PASS
+    }
+  });
+  #sender = MAILER_EMAIL;
+  #receiver = null;
+  #subject = null;
+  #title = null;
+  #html = null;
 
-    let info = await transporter.sendMail({
-      from: `"noreply" <${MAILER_email}>`, // sender address
-      to: `${receiver}`, // list of receivers
-      subject: `${subject}`, // Subject line
-      text: `${title}`, // plain text body
-      html: html // html body
-    });
-
-    return info;
-  } catch (err) {
-    console.error(err);
+  init(receiver, subject, title, HTML = ``) {
+    this.#receiver = receiver;
+    this.#subject = subject;
+    this.#title = title;
+    this.#html = HTML;
   }
-};
+
+  async sendMail() {
+    try {
+      if (this.receiver === null || this.subject === null || this.title === null) {
+        throw new Error("You have forgot to call the init() method on the mailer");
+      } else {
+        const Transporter = this.#transporter;
+        const Info = await Transporter.sendMail({
+          from: `"noreply" <${this.#sender}>`,
+          to: `${this.#receiver}`,
+          subject: `${this.#subject}`,
+          text: `${this.#title}`,
+          html: this.#html
+        });
+        return Info;
+      }
+    } catch (error) {
+      console.error(error);
+      return error;
+    }
+  }
+}
+
+module.exports = new Mailer();

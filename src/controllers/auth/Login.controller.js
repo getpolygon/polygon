@@ -4,8 +4,8 @@ const jwt = require("jsonwebtoken");
 const AccountSchema = require("../../models/account");
 
 exports.login = async (req, res) => {
+  const { password } = req.body;
   const email = _.toLower(req.body.email);
-  const password = req.body.password;
 
   if (email && password) {
     const Account = await AccountSchema.findOne({ email: email });
@@ -17,11 +17,17 @@ exports.login = async (req, res) => {
           });
         } else if (same) {
           jwt.sign({ id: Account._id }, process.env.JWT_TOKEN, (err, token) => {
-            if (err) return res.json({ error: "Unexpected Error" });
-            else if (token)
-              return res.status(200).cookie("jwt", token, { httpOnly: true }).json({
-                token: token
-              });
+            if (err) {
+              return res.json({ error: "Unexpected Error" });
+            } else {
+              return res
+                .cookie("jwt", token, {
+                  httpOnly: true
+                })
+                .json({
+                  token: token
+                });
+            }
           });
         } else {
           return res.json({

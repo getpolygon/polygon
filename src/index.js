@@ -27,7 +27,7 @@ app.use(
   session({
     secret: EXPRESS_SECRET,
     resave: false,
-    saveUninitialized: true,
+    saveUninitialized: false,
     store: new MongoStore({ mongooseConnection: mongoose.connection, dbName: "sessions" }),
     cookie: {
       httpOnly: true,

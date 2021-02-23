@@ -27,8 +27,10 @@ class Mailer {
 
   async send() {
     try {
-      if (this.receiver === null || this.subject === null || this.title === null) {
-        throw new Error("You have forgot to call the init() method on the mailer");
+      if (this.#receiver === null || this.#subject === null || this.#title === null) {
+        throw new Error(
+          "You have either forgot to call the init() method on the mailer or have not specified a parameter"
+        );
       } else {
         const Transporter = this.#transporter;
         const Info = await Transporter.sendMail({

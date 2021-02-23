@@ -1,5 +1,4 @@
 require("dotenv").config();
-
 const minio = require("minio");
 const {
   MINIO_ENDPOINT,
@@ -9,7 +8,6 @@ const {
   MINIO_SECKEY,
   MINIO_USESSL
 } = process.env;
-
 const MinIOClient = new minio.Client({
   endPoint: MINIO_ENDPOINT,
   port: parseInt(MINIO_PORT),

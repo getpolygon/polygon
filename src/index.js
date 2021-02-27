@@ -47,18 +47,17 @@ app.get("*", (req, res) => {
 });
 
 // Connect to MongoDB
-mongoose.connect(MONGO_URI, {
-  useNewUrlParser: true,
-  useUnifiedTopology: true,
-  useFindAndModify: false,
-  dbName: MONGO_CLUSTER,
-  user: MONGO_USER,
-  pass: MONGO_PASS
-});
-
-mongoose.connection.once("connected", () => {
-  console.log("MongoDB connection established successfully");
-});
+mongoose
+  .connect(MONGO_URI, {
+    user: MONGO_USER,
+    pass: MONGO_PASS,
+    dbName: MONGO_CLUSTER,
+    useNewUrlParser: true,
+    useFindAndModify: false,
+    useUnifiedTopology: true
+  })
+  .then(() => console.log("MongoDB connection established successfully"))
+  .catch((error) => console.error(error));
 
 // Start the server
 app.listen(port, "0.0.0.0", () => console.log(`Server started at port ${port}`));

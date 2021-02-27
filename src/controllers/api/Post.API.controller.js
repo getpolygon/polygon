@@ -294,11 +294,10 @@ exports.savePost = (req, res) => {
     else {
       const CurrentAccount = await AccountSchema.findOne({ _id: data.id });
       if (CurrentAccount !== null) {
-        const Save = CurrentAccount.saved.create({
-          ...postId
-        });
+        const Save = CurrentAccount.saved.create({ postId: postId });
         CurrentAccount.saved.push(Save);
         await CurrentAccount.save();
+
         return res.json({ message: "Saved" });
       } else {
         return res.json({ error: "Account does not exist" });

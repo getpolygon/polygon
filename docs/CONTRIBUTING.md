@@ -16,40 +16,40 @@ gh repo clone michaelgrigoryan25/armsocial-backend
 # Mailer Helper
 
 # Your SMTP host
-MAILER_HOST=smtp.gmail.com
+MAILER_HOST=
 # The email of sender
-MAILER_EMAIL=michael.grigoryan25@gmail.com
+MAILER_EMAIL=
 # The password of the app (when using Google apps(Like Gmail))
-MAILER_PASS=ociepfvbbvtklvdz
+MAILER_PASS=
 # The SMTP port
-MAILER_PORT=465
+MAILER_PORT=
 
 # Global vars
 
 # Express.js session secret
-EXPRESS_SECRET=4a9a04bd33c2b426ffa892a2e24d63bb369f814a6020eed456ddbe485543088877934b9c9f491486ec0d0253b7cd193a
+EXPRESS_SECRET=
 
 # MinIO
 
 # The MinIO endpoint (most of the time localhost:9000)
-MINIO_ENDPOINT=localhost
+MINIO_ENDPOINT=
 # The port of MinIO instance
-MINIO_PORT=9000
+MINIO_PORT=
 # The access key of MinIO
-MINIO_ACCKEY=minioadmin
+MINIO_ACCKEY=
 # The secret key of MinIO
-MINIO_SECKEY=minioadmin
+MINIO_SECKEY=
 # If MinIO has a HTTP Certificate set to true else set to false
-MINIO_USESSL=false
+MINIO_USESSL=
 # The bucket that'll be used by MinIO
-MINIO_BUCKET=local
+MINIO_BUCKET=
 
 # MongoDB
 
 # Your MongoDB endpoint
-MONGO_URI=mongodb://localhost:27017
+MONGO_URI=
 # Your MongoDB database name
-MONGO_CLUSTER=Cluster0
+MONGO_CLUSTER=
 # The user of the database
 MONGO_USER=
 # The password of the database
@@ -58,12 +58,8 @@ MONGO_PASS=
 # JWT TOKEN
 
 # Your JWT token that'll need to be generated manually by you
-JWT_TOKEN=14b94cd8a1f977912dcfa1cc565b817bd889c278c52dece554f4fe12dbe11ed80854782d1949b1c2a5547dfdbb388697
+JWT_TOKEN=
 # Your JWT refresh token that'll need to be generated manually by you
-JWT_REFRESH_TOKEN=ea4aafed1374bde47707f1b3d0329936573ecb581809479812101f69a91f6947cf7537985ab264a7d78fd9e6e41b853c
+JWT_REFRESH_TOKEN=
 
-# Node.js
-
-# Your Node.js environment
-NODE_ENV=development
 ```

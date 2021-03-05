@@ -12,6 +12,7 @@ router.get("/fetch", PostController.getAllPosts);
 router.put("/unheart", PostController.unheartPost);
 // To delete a post
 router.delete("/delete", PostController.deletePost);
+// TODO: Move to separate Comment controller
 // To create a comment
 router.post("/comments/create", PostController.createComment);
 // To create a post

@@ -1,6 +1,5 @@
-# Folders
-node_modules/
 tmp/
+node_modules/
 
-# Files
 .env
+.env.development.local

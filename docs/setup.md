@@ -74,3 +74,17 @@ openssl x509 -req -days 365 -in csr.pem -signkey key.pem -out cert.pem
 - Go to the root directory
 - In the terminal type `yarn`
 - After dependencies are done installing, type `yarn dev` and visit `localhost:3001` to make sure everything is working
+
+### Running a cluster
+
+- Go to the root directory and run
+
+```bash
+./scripts/run.sh
+```
+
+- To stop the cluster run
+
+```bash
+./scripts/stop.sh
+```

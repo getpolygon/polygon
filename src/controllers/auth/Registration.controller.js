@@ -1,9 +1,12 @@
 const _ = require("lodash");
+const path = require("path");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
+const { unlinkSync } = require("fs");
 const emailValidator = require("email-validator");
 
-const MinIO = require("../../utils/minio");
+const MinIO = require("../../db/minio");
+const errors = require("../../errors/errors");
 const AccountSchema = require("../../models/account");
 const _checkForDuplicates = require("../../helpers/checkForDuplicates");
 
@@ -15,19 +18,16 @@ exports.register = async (req, res) => {
 	if (hasValidEmail) {
 		if (!hasDuplicates) {
 			bcrypt.genSalt(10, (err, salt) => {
-				if (err) console.error(err);
+				if (err) return res.json(errors.unexpected.unexpected_error);
 				else if (salt) {
-					bcrypt.hash(req.body.password, salt, async (err, hash) => {
-						if (err) console.error(err);
+					bcrypt.hash(req.body.password, salt, async (err2, hash) => {
+						if (err2) return res.json(errors.unexpected.unexpected_error);
 						else {
 							const Account = new AccountSchema({
 								firstName: req.body.firstName,
 								lastName: req.body.lastName,
-								fullName: `${req.body.firstName} ${req.body.lastName}`,
 								email: email,
-								bio: req.body.bio,
-								password: hash,
-								isPrivate: req.body.privateCheck ? true : false
+								password: hash
 							});
 
 							if (req.file !== undefined) {
@@ -44,23 +44,27 @@ exports.register = async (req, res) => {
 									MinIO.bucket,
 									`${Account._id}/${Account._id}.png`
 								);
-								Account.pictureUrl = AvatarURL;
+								Account.avatar = AvatarURL;
+								unlinkSync(path.resolve("tmp/" + req.file.name));
 							} else {
-								Account.pictureUrl = `https://avatars.dicebear.com/api/initials/${Account.fullName}.svg`;
+								Account.avatar = `https://avatars.dicebear.com/api/initials/${Account.firstName}=${Account.lastName}.svg`;
 							}
 
 							await Account.save();
 
 							jwt.sign({ id: Account._id }, process.env.JWT_TOKEN, (err, token) => {
-								if (err) console.log(err);
+								if (err) return res.json({ error: err, code: "jwt_error".toUpperCase() });
 								else if (token) {
 									return res
 										.status(201)
 										.cookie("jwt", token, {
-											httpOnly: true
+											httpOnly: true,
+											secure: true,
+											sameSite: "none"
 										})
 										.json({
-											message: "Account Created"
+											message: "Created",
+											code: "account_created".toUpperCase()
 										});
 								}
 							});
@@ -69,13 +73,9 @@ exports.register = async (req, res) => {
 				}
 			});
 		} else {
-			return res.json({
-				error: "Forbidden"
-			});
+			return res.json(errors.registration.duplicate_account);
 		}
 	} else {
-		return res.json({
-			error: "Invalid email"
-		});
+		return res.json(errors.registration.invalid_email);
 	}
 };

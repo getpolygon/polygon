@@ -1,6 +1,6 @@
-exports.logout = (req, res) => {
-	req.session.destroy();
-	return res.status(200).clearCookie("jwt").json({
-		message: "Logged out"
+exports.logout = (_req, res) => {
+	return res.clearCookie("jwt").json({
+		message: "Logged out",
+		code: "logged_out".toUpperCase()
 	});
 };

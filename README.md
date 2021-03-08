@@ -1,5 +1,5 @@
 # Links
 
-[API Documentation](./docs/api.md)
+[Setup Guide](./docs/setup.md)
 
-[Contibution Guide](./docs/CONTRIBUTING.md)
+[API Documentation](./docs/api.md)

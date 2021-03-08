@@ -1,44 +1,34 @@
 const _ = require("lodash");
 const jwt = require("jsonwebtoken");
+const mongoose = require("mongoose");
 
+const errors = require("../../errors/errors");
 const AccountSchema = require("../../models/account");
 
-exports.addFriend = async (req, res) => {
+exports.addFriend = (req, res) => {
 	const { accountId } = req.query;
 	const { jwt: token } = req.cookies;
 
 	jwt.verify(token, process.env.JWT_TOKEN, async (err, data) => {
-		if (err) return res.json({ error: err });
+		if (err) return res.json({ error: err, code: "jwt_error".toUpperCase() });
 		else {
 			if (!accountId) {
-				return res.json({
-					error: "You didn't specify the account id to send a friend request to",
-					code: "no_id".toUpperCase()
-				});
+				return res.json(errors.friend.no_fr_account_id_spec);
 			} else {
 				const currentAccount = await AccountSchema.findById(data.id);
 				const addedAccount = await AccountSchema.findById(accountId);
 
 				// If current account does not exist
 				if (!currentAccount) {
-					return res.json({
-						error: "Your account is invalid or does not exist",
-						code: "nonexistent_current_account".toUpperCase()
-					});
+					return res.json(errors.account.does_not_exist);
 				}
 				// If other account does not exist
 				else if (!addedAccount) {
-					return res.json({
-						error: "The account that you're trying to send a friend request does not exist",
-						code: "nonexistent_other_account".toUpperCase()
-					});
+					return res.json(errors.friend.outgoing_account_does_not_exist);
 				}
 				// If both accounts don't exist
 				else if (!currentAccount && !addedAccount) {
-					return res.json({
-						error: "None of these accounts exist",
-						error: "nonexistent_accounts".toUpperCase()
-					});
+					return res.json(errors.friend.both_accounts_do_not_exist);
 				}
 				// If both exist
 				else {
@@ -76,7 +66,7 @@ exports.addFriend = async (req, res) => {
 					};
 
 					// If they're friends already
-					if (addedIncludesCurrentAccountIn.approved && currentIncludesAddedAccountIn.approved) {
+					if (addedIncludesCurrentAccountIn.approved || currentIncludesAddedAccountIn.approved) {
 						// Sending a response
 						return res.json({ message: "Friends", code: "friends".toUpperCase() });
 					}
@@ -101,8 +91,8 @@ exports.addFriend = async (req, res) => {
 						});
 						// The notification that the added user will receive
 						const notification = addedAccount.notifications.create({
-							type: "accepted_friend_request".toUpperCase(),
-							message: `${currentAccount.fullName} accepted your friend request`
+							type: "accepted_friend_request".toUpperCase()
+							// TODO: Add request parameter
 						});
 
 						// Pushing the friend to current account
@@ -149,18 +139,41 @@ exports.addFriend = async (req, res) => {
 							if (account.accountId === addedAccount._id) return account;
 						});
 						const notification = currentAccount.notifications.create({
-							type: "accepted_friend_request".toUpperCase(),
-							message: `${addedAccount.fullName} accepted your friend request`
+							type: "accepted_friend_request".toUpperCase()
+							// ! TODO add the request property
 						});
 
 						currentAccount.notifications.push(notification);
 						currentAccount.friends.requested.pull(requestObject);
 						currentAccount.friends.approved.push(approvalOfCurrentAccount);
 
-						addedAccount.frineds.pending.pull(pendingObject);
+						addedAccount.friends.pending.pull(pendingObject);
 						addedAccount.friends.approved.push(approvalOfAddedAccount);
 
 						return res.json({ message: "Pending", code: "PENDING" });
+					} else {
+						const requestObject = currentAccount.friends.requested.create({
+							accountId: addedAccount._id
+						});
+						const pendingObject = addedAccount.friends.pending.create({
+							accountId: currentAccount._id
+						});
+						const notification = addedAccount.notifications.create({
+							type: "incoming_friend_request".toUpperCase(),
+							request: {
+								from: currentAccount._id
+							}
+						});
+
+						addedAccount.notifications.push(notification);
+						addedAccount.friends.pending.push(pendingObject);
+
+						currentAccount.friends.requested.push(requestObject);
+
+						await addedAccount.save();
+						await currentAccount.save();
+
+						return res.json({ message: "Sent", code: "friend_request_sent".toUpperCase() });
 					}
 				}
 			}
@@ -168,6 +181,54 @@ exports.addFriend = async (req, res) => {
 	});
 };
 
-exports.checkFriendship = async (req, res) => {
-	// TODO:
+exports.checkFriendship = (req, res) => {
+	const { accountId } = req.query;
+	const { jwt: token } = req.cookies;
+
+	jwt.verify(token, process.env.JWT_TOKEN, async (err, data) => {
+		if (err) return res.json({ error: err, code: "error".toUpperCase() });
+		else {
+			if (accountId) {
+				const currentAccount = await AccountSchema.findById(data.id);
+
+				if (accountId === currentAccount._id) {
+					return res.json({
+						pending: false,
+						approved: false,
+						requested: false
+					});
+				} else {
+					if (mongoose.Types.ObjectId.isValid(accountId)) {
+						const otherAccount = await AccountSchema.findById(accountId);
+
+						if (!currentAccount) {
+							return res.json(errors.account.does_not_exist);
+						} else if (!otherAccount) {
+							return res.json(errors.friend.outgoing_account_does_not_exist);
+						} else if (!currentAccount && !otherAccount) {
+							return res.json(errors.friend.both_accounts_do_not_exist);
+						} else {
+							const pending = !_.isUndefined(_.find(currentAccount.friends.pending, { accountId }));
+							const approved = !_.isUndefined(
+								_.find(currentAccount.friends.approved, { accountId })
+							);
+							const requested = !_.isUndefined(
+								_.find(currentAccount.friends.requested, { accountId })
+							);
+
+							return res.json({
+								pending,
+								approved,
+								requested
+							});
+						}
+					} else {
+						return res.json(errors.account.invalid_id);
+					}
+				}
+			} else {
+				return res.json(errors.friend.no_fr_account_id_spec);
+			}
+		}
+	});
 };

@@ -1,7 +1,7 @@
 const jwt = require("jsonwebtoken");
 const AccountSchema = require("../../models/account");
 
-exports.query = async (req, res) => {
+exports.query = (req, res) => {
 	const { query } = req.query;
 	const token = req.cookies.jwt;
 
@@ -13,12 +13,16 @@ exports.query = async (req, res) => {
 		} else if (data) {
 			if (!query) {
 				return res.json({
-					error: "No query provided"
+					error: "No query provided",
+					code: "no_query".toUpperCase()
 				});
 			} else {
-				const currentAccount = await AccountSchema.findById(data.id);
 				const regex = new RegExp(query, "gu");
-				const results = await AccountSchema.find({ fullName: regex })
+
+				const currentAccount = await AccountSchema.findById(data.id);
+
+				// ! TODO: Improve search algorithm
+				const results = await AccountSchema.find({ firstName: regex })
 					.where("_id")
 					.ne(currentAccount._id);
 

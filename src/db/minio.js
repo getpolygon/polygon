@@ -13,7 +13,7 @@ const MinIOClient = new minio.Client({
 	port: parseInt(MINIO_PORT),
 	accessKey: MINIO_ACCKEY,
 	secretKey: MINIO_SECKEY,
-	useSSL: JSON.parse(MINIO_USESSL.toLowerCase())
+	useSSL: JSON.parse(MINIO_USESSL)
 });
 
 class MinIO {

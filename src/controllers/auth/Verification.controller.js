@@ -1,5 +1,7 @@
-const _ = require("lodash");
 const jwt = require("jsonwebtoken");
+
+const omit = require("../../utils/omit");
+const errors = require("../../errors/errors");
 const AccountSchema = require("../../models/account");
 
 exports.verify = (req, res) => {
@@ -7,9 +9,7 @@ exports.verify = (req, res) => {
 	const { jwt: token } = req.cookies;
 
 	if (!token) {
-		return res.status(200).json({
-			error: "No token"
-		});
+		return res.json(errors.jwt.invalid_token_or_does_not_exist);
 	} else {
 		jwt.verify(token, JWT_TOKEN, async (err, data) => {
 			if (err) {
@@ -17,16 +17,16 @@ exports.verify = (req, res) => {
 					error: err
 				});
 			} else if (data) {
+				const Except = ["password"];
 				const User = await AccountSchema.findById(data.id);
 
-				const Except = ["password"];
-
-				if (User !== null) {
-					return res.status(200).json(_.omit(User, Except));
-				} else {
-					return res.status(200).clearCookie("jwt").json({
-						error: false
+				if (User) {
+					return res.json({
+						userData: omit(User, Except),
+						code: "valid".toUpperCase()
 					});
+				} else {
+					return res.clearCookie("jwt").json(errors.verification.not_valid);
 				}
 			}
 		});

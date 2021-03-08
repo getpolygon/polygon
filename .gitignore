@@ -3,3 +3,7 @@ node_modules/
 
 .env
 .env.development.local
+
+cert/
+
+yarn-error.log

@@ -1,94 +1,139 @@
+const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
+const mongoose = require("mongoose");
+
+const MinIO = require("../../db/minio");
 const omit = require("../../utils/omit");
-const MinIO = require("../../utils/minio");
+const errors = require("../../errors/errors");
 const AccountSchema = require("../../models/account");
+const checkForDuplicates = require("../../helpers/checkForDuplicates");
 
 exports.fetchAccount = async (req, res) => {
 	const { accountId } = req.query;
 	const { jwt: token } = req.cookies;
 
-	if (token && !accountId) {
+	if (!accountId) {
 		// Filter for current account
 		const Exclude = ["password"];
 
-		return jwt.verify(token, process.env.JWT_Token, async (error, data) => {
+		return jwt.verify(token, process.env.JWT_TOKEN, async (error, data) => {
 			if (error) {
-				return res.json(403).json({
-					error: error
-				});
+				return res.json(errors.jwt.invalid_token_or_does_not_exist);
 			} else if (data) {
-				const foundAccount = await AccountSchema.findById(data.id);
-				const payload = omit(foundAccount, Exclude);
-				return res.status(200).json(payload);
+				if (mongoose.Types.ObjectId.isValid(data.id)) {
+					const foundAccount = await AccountSchema.findById(data.id);
+					if (!foundAccount) {
+						return res.json(errors.account.does_not_exist);
+					} else {
+						const payload = omit(foundAccount, Exclude);
+						return res.json(payload);
+					}
+				} else {
+					return res.json(errors.account.invalid_id);
+				}
 			}
 		});
-	} else if (accountId) {
-		// Filter for other accounts
-		const Exclude = ["password", "email"];
-
-		const foundAccount = await AccountSchema.findById(accountId);
-		const payload = omit(foundAccount, Exclude);
-		return res.status(200).json(payload);
 	} else {
-		return res.json({
-			error: "Forbidden"
-		});
+		if (mongoose.Types.ObjectId.isValid(accountId)) {
+			// Filter for other accounts
+			const Exclude = ["password", "email"];
+			const foundAccount = await AccountSchema.findById(accountId);
+
+			if (!foundAccount) {
+				return res.json(errors.account.doesnt_exist);
+			} else {
+				const payload = omit(foundAccount, Exclude);
+				return res.json(payload);
+			}
+		} else {
+			return res.json(errors.account.invalid_id);
+		}
 	}
 };
 
 exports.deleteAccount = async (req, res) => {
 	// For deleting the account
-
 	const { jwt: token } = req.cookies;
 	const { JWT_TOKEN } = process.env;
 
 	jwt.verify(token, JWT_TOKEN, async (err, data) => {
 		if (err) {
-			return res.json({
-				error: "Forbidden"
-			});
+			return res.json(errors.jwt.invalid_token_or_does_not_exist);
 		} else if (data) {
-			try {
-				const ObjectStream = MinIO.client.listObjectsV2(MinIO.bucket, data.id + "/", true);
+			if (mongoose.Types.ObjectId.isValid(data.id)) {
 				const _FILES_ = [];
+				const ObjectStream = MinIO.client.listObjectsV2(
+					MinIO.bucket,
+					// Directory of current account
+					data.id + "/",
+					true
+				);
 
-				try {
-					// Deleteing the account from MongoDB
-					await AccountSchema.findByIdAndDelete(data.id);
+				// Pushing every object to a file array
+				ObjectStream.on("data", (obj) => _FILES_.push(obj.name));
+				// Then deleting every file from the file array
+				ObjectStream.on("end", async () => {
+					await MinIO.client.removeObjects(MinIO.bucket, _FILES_);
+				});
 
-					// Deleting all the uploads
-					ObjectStream.on("data", (obj) => _FILES_.push(obj.name));
-					ObjectStream.on("end", async () => {
-						await MinIO.client.removeObjects(MinIO.bucket, _FILES_);
-					});
-				} catch (error) {
-					console.error(error);
-				}
+				// Deleteing the account from MongoDB
+				await AccountSchema.findByIdAndDelete(data.id);
 
 				return res.clearCookie("jwt").json({
 					message: "Deleted"
 				});
-			} catch (error) {
-				console.error(error);
-				return res.json({
-					error: error
-				});
+			} else {
+				return res.json(errors.account.invalid_id);
 			}
 		}
 	});
 };
 
 exports.updateAccount = async (req, res) => {
-	// TODO: Needs implementation
-};
-
-exports.getRandomAccounts = async (req, res) => {
 	const { jwt: token } = req.cookies;
-	jwt.verify(token, process.env.JWT_TOKEN, async (err, data) => {
-		if (err) return res.status(500).json({ error: err });
-		else if (data) {
-			const RandomAccounts = await AccountSchema.find().where("_id").ne(data.id).limit(10);
-			return res.json(RandomAccounts);
-		}
-	});
+	const { email, password, bio } = req.body;
+
+	if (!email && !password && !bio) {
+		return res.json(errors.account.update.empty_body);
+	} else {
+		jwt.verify(token, process.env.JWT_TOKEN, async (err, data) => {
+			if (err) return res.json(errors.jwt.invalid_token_or_does_not_exist);
+			else {
+				if (mongoose.Types.ObjectId.isValid(data.id)) {
+					const currentAccount = await AccountSchema.findById(data.id);
+
+					if (!currentAccount) {
+						return res.json(errors.account.does_not_exist);
+					} else {
+						// ! TODO: Update the way of updating the account
+						if (email && password) {
+							const hasDuplicates = await checkForDuplicates({ email: email }, AccountSchema);
+
+							if (hasDuplicates) {
+								return res.json(errors.account.update.duplicate_email);
+							} else {
+								bcrypt.compare(password, currentAccount.password, async (err, same) => {
+									if (err) return res.json(errors.unexpected.unexpected_error);
+									else {
+										if (same) {
+											currentAccount.email = email;
+											await currentAccount.save();
+											return res.json({
+												message: "Updated",
+												code: "updated".toUpperCase()
+											});
+										} else {
+											return res.json(errors.account.update.wrong_current_password);
+										}
+									}
+								});
+							}
+						}
+					}
+				} else {
+					return res.json(errors.account.invalid_id);
+				}
+			}
+		});
+	}
 };

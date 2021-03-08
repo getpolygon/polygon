@@ -1,9 +1,9 @@
 const router = require("express").Router();
 const NetworkController = require("../controllers/api/Network.API.controller");
 
-// To connect to the network via websocket
-router.ws("/", NetworkController.onConnect);
-// To get user status (active, dnd, idle)
-router.get("/status", NetworkController.getUserStatus);
+// When the user connects
+router.get("/heartbeat", NetworkController.heartbeat);
+// Check the connection of a certain user
+router.get("/status", NetworkController.getStatus);
 
 module.exports = router;

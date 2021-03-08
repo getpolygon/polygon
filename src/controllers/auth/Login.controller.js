@@ -1,6 +1,8 @@
 const _ = require("lodash");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
+
+const errors = require("../../errors/errors");
 const AccountSchema = require("../../models/account");
 
 exports.login = async (req, res) => {
@@ -10,39 +12,38 @@ exports.login = async (req, res) => {
 	if (email && password) {
 		const Account = await AccountSchema.findOne({ email: email });
 		if (Account) {
-			bcrypt.compare(password, Account.password, (err, same) => {
+			bcrypt.compare(password, Account.password, (err, _same) => {
 				if (err) {
-					return res.json({
-						error: err
-					});
-				} else if (same) {
-					jwt.sign({ id: Account._id }, process.env.JWT_TOKEN, (err, token) => {
-						if (err) {
-							return res.json({ error: "Unexpected Error" });
-						} else {
-							return res
-								.cookie("jwt", token, {
-									httpOnly: true
-								})
-								.json({
-									token: token
-								});
-						}
-					});
+					return res.json(errors.account.wrong_password);
 				} else {
-					return res.json({
-						error: "Forbidden"
-					});
+					jwt.sign(
+						{ id: Account._id },
+						process.env.JWT_TOKEN,
+						// * TODO
+						// Setting token expiration time
+						// { expiresIn: "1h" },
+						(err, token) => {
+							if (err) {
+								return res.json(errors.unexpected.unexpected_error);
+							} else {
+								return res
+									.cookie("jwt", token, {
+										httpOnly: true,
+										secure: true,
+										sameSite: "none"
+									})
+									.json({
+										token: token
+									});
+							}
+						}
+					);
 				}
 			});
 		} else {
-			return res.json({
-				error: "No Accounts"
-			});
+			return res.json(errors.account.does_not_exist);
 		}
 	} else {
-		return res.json({
-			error: "Missing fields"
-		});
+		return res.json(errors.fields.missing_fields);
 	}
 };

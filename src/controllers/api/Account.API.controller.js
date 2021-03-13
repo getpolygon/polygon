@@ -1,3 +1,4 @@
+const _ = require("lodash");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const mongoose = require("mongoose");
@@ -116,7 +117,7 @@ exports.updateAccount = async (req, res) => {
 									if (err) return res.json(errors.unexpected.unexpected_error);
 									else {
 										if (same) {
-											currentAccount.email = email;
+											currentAccount.email = _.toLower(email);
 											await currentAccount.save();
 											return res.json({
 												message: "Updated",

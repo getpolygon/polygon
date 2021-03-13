@@ -13,20 +13,24 @@ exports.heartbeat = (req, res) => {
 		} else {
 			// Setting connection status to true
 			redis.set(data.id, JSON.stringify({ connected: true }));
+			// Setting a TTL on the key to delete it after 5 minutes
+			redis.expire(data.id, 10);
+			// Getting the key value from the database
 			redis.get(data.id, (err, reply) => {
 				if (err) return res.json(errors.unexpected.unexpected_error);
 				else {
-					setTimeout(() => {
-						redis.del(data.id);
-					}, 60 * 5 * 1000);
-					return res.json(JSON.parse(reply));
+					if (!reply) {
+						return res.json({ connected: false });
+					} else {
+						return res.json(JSON.parse(reply));
+					}
 				}
 			});
 		}
 	});
 };
 
-exports.getStatus = (req, res) => {
+exports.status = (req, res) => {
 	const { accountId } = req.query;
 	const { jwt: token } = req.cookies;
 

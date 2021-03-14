@@ -5,4 +5,5 @@ const client = redis.createClient({
 	port: REDIS_PORT,
 	auth_pass: REDIS_PASS
 });
+
 module.exports = client;

@@ -81,5 +81,17 @@ module.exports = {
 			error: "Invalid email",
 			code: "invalid_email".toUpperCase()
 		}
+	},
+	post: {
+		does_not_exist: {
+			error: "Post does not exist",
+			code: "no_post".toUpperCase()
+		}
+	},
+	search: {
+		no_query: {
+			error: "No query was provided",
+			code: "no_query".toUpperCase()
+		}
 	}
 };

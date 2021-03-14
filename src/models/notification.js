@@ -5,7 +5,12 @@ const NotificationSchema = new mongoose.Schema({
 	},
 	type: { type: String, required: true },
 	seen: { type: Boolean, default: false },
-	datefield: { type: Number, default: Date.now() }
+	datefield: {
+		type: Date,
+		default: () => {
+			return new Date();
+		}
+	}
 });
 
 module.exports = NotificationSchema;

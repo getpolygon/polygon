@@ -17,6 +17,7 @@ const chalk = require("chalk");
 const crypto = require("crypto");
 const app = require("express")();
 const helmet = require("helmet");
+const { Policy } = require("minio");
 const minio = require("./db/minio");
 const redis = require("./db/redis");
 const mongoose = require("mongoose");
@@ -90,10 +91,11 @@ redis.once("error", (error) => {
 	console.error(error);
 });
 
-minio.client.bucketExists("heartbeat", (error, result) => {
+minio.client.bucketExists("heartbeat", (error, _result) => {
 	if (error) {
 		console.log(chalk.redBright("There was an error while trying to connect to MinIO"));
 	} else {
+		minio.client.setBucketPolicy(minio.bucket, JSON.stringify(minio.policy));
 		console.log(
 			`${chalk.greenBright("Connected to MinIO")} at ${chalk.bold(
 				`http://${MINIO_ENDPOINT}:${MINIO_PORT}/`

@@ -5,7 +5,7 @@ const jwt = require("jsonwebtoken");
 const { unlinkSync } = require("fs");
 const emailValidator = require("email-validator");
 
-const MinIO = require("../../db/minio");
+const minio = require("../../db/minio");
 const errors = require("../../errors/errors");
 const AccountSchema = require("../../models/account");
 const _checkForDuplicates = require("../../helpers/checkForDuplicates");
@@ -31,21 +31,21 @@ exports.register = async (req, res) => {
 							});
 
 							if (req.file !== undefined) {
-								MinIO.client.fPutObject(
-									MinIO.bucket,
+								await minio.client.putObject(
+									minio.bucket,
 									`${Account._id}/${Account._id}.png`,
-									req.file.path,
+									req.file.buffer,
+									req.file.size,
 									{
 										"Content-Type": req.file.mimetype
 									}
 								);
 
-								const AvatarURL = await MinIO.client.presignedGetObject(
-									MinIO.bucket,
+								const AvatarURL = await minio.client.presignedGetObject(
+									minio.bucket,
 									`${Account._id}/${Account._id}.png`
 								);
 								Account.avatar = AvatarURL;
-								unlinkSync(path.resolve("tmp/" + req.file.name));
 							} else {
 								Account.avatar = `https://avatars.dicebear.com/api/initials/${Account.firstName}=${Account.lastName}.svg`;
 							}

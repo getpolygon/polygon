@@ -3,7 +3,7 @@ const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const mongoose = require("mongoose");
 
-const MinIO = require("../../db/minio");
+const minio = require("../../db/minio");
 const omit = require("../../utils/omit");
 const errors = require("../../errors/errors");
 const AccountSchema = require("../../models/account");
@@ -63,8 +63,8 @@ exports.deleteAccount = async (req, res) => {
 		} else if (data) {
 			if (mongoose.Types.ObjectId.isValid(data.id)) {
 				const _FILES_ = [];
-				const ObjectStream = MinIO.client.listObjectsV2(
-					MinIO.bucket,
+				const ObjectStream = minio.client.listObjectsV2(
+					minio.bucket,
 					// Directory of current account
 					data.id + "/",
 					true
@@ -74,7 +74,7 @@ exports.deleteAccount = async (req, res) => {
 				ObjectStream.on("data", (obj) => _FILES_.push(obj.name));
 				// Then deleting every file from the file array
 				ObjectStream.on("end", async () => {
-					await MinIO.client.removeObjects(MinIO.bucket, _FILES_);
+					await minio.client.removeObjects(minio.bucket, _FILES_);
 				});
 
 				// Deleteing the account from MongoDB

@@ -10,7 +10,13 @@ const PostSchema = new mongoose.Schema({
 	hearts: { type: Array, default: [] },
 	text: { type: String, required: true },
 	authorId: { type: String, required: true },
-	datefield: { type: Number, required: true, default: Date.now() }
+	datefield: {
+		type: Date,
+		required: true,
+		default: () => {
+			return new Date();
+		}
+	}
 });
 
 // PostSchema.plugin(mongoosePaginate);

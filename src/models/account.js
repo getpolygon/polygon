@@ -24,7 +24,13 @@ const AccountSchema = new mongoose.Schema({
 	notifications: [NotificationSchema],
 	posts: [PostSchema],
 	saved: [SavedSchema],
-	datefield: { type: Number, required: true, default: Date.now() }
+	datefield: {
+		type: Date,
+		required: true,
+		default: () => {
+			return new Date();
+		}
+	}
 });
 
 module.exports = mongoose.model("Account", AccountSchema);

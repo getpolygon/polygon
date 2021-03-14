@@ -5,12 +5,10 @@ const SearchAPI = require("../Search.API");
 const FriendAPI = require("../Friend.API");
 const NetworkAPI = require("../Network.API");
 const AccountAPI = require("../Account.API");
-const CrawlerAPI = require("../Crawler.API");
 const NotificationAPI = require("../Notification.API");
 
 router.use("/posts", PostAPI);
 router.use("/search", SearchAPI);
-router.use("/crawl", CrawlerAPI);
 router.use("/friends", FriendAPI);
 router.use("/network", NetworkAPI);
 router.use("/accounts", AccountAPI);

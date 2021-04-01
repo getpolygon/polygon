@@ -1,6 +1,6 @@
 async function checkForDuplicates(props, Schema) {
 	const doc = await Schema.findOne(props);
-	if (doc === null) return false;
+	if (!doc) return false;
 	else return true;
 }
 

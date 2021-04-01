@@ -1,12 +1,7 @@
 const _ = require("lodash");
+const safeStringify = require("fast-safe-stringify").default;
 
-/**
- *
- * @param {Object} obj
- * @param {Array} keys
- */
 const omit = (obj, keys) => {
-	return _.omit(JSON.parse(JSON.stringify(obj)), keys);
+	return _.omit(JSON.parse(safeStringify(obj)), keys);
 };
-
 module.exports = omit;

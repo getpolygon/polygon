@@ -1,5 +1,4 @@
 const mongoose = require("mongoose");
-// const mongoosePaginate = require("mongoose-paginate-v2");
 
 const CommentSchema = require("./comment");
 const AttachmentSchema = require("./attachment");
@@ -18,7 +17,5 @@ const PostSchema = new mongoose.Schema({
 		}
 	}
 });
-
-// PostSchema.plugin(mongoosePaginate);
 
 module.exports = PostSchema;

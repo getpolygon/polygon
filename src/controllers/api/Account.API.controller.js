@@ -9,6 +9,8 @@ const errors = require("../../errors/errors");
 const AccountSchema = require("../../models/account");
 const checkForDuplicates = require("../../helpers/checkForDuplicates");
 
+const { JWT_TOKEN } = process.env;
+
 exports.fetchAccount = async (req, res) => {
 	const { accountId } = req.query;
 	const { jwt: token } = req.cookies;
@@ -17,7 +19,7 @@ exports.fetchAccount = async (req, res) => {
 		// Filter for current account
 		const Exclude = ["password"];
 
-		return jwt.verify(token, process.env.JWT_TOKEN, async (error, data) => {
+		return jwt.verify(token, JWT_TOKEN, async (error, data) => {
 			if (error) {
 				return res.json(errors.jwt.invalid_token_or_does_not_exist);
 			} else if (data) {
@@ -55,7 +57,6 @@ exports.fetchAccount = async (req, res) => {
 exports.deleteAccount = async (req, res) => {
 	// For deleting the account
 	const { jwt: token } = req.cookies;
-	const { JWT_TOKEN } = process.env;
 
 	jwt.verify(token, JWT_TOKEN, async (err, data) => {
 		if (err) {
@@ -97,7 +98,7 @@ exports.updateAccount = async (req, res) => {
 	if (!email && !password && !bio) {
 		return res.json(errors.account.update.empty_body);
 	} else {
-		jwt.verify(token, process.env.JWT_TOKEN, async (err, data) => {
+		jwt.verify(token, JWT_TOKEN, async (err, data) => {
 			if (err) return res.json(errors.jwt.invalid_token_or_does_not_exist);
 			else {
 				if (mongoose.Types.ObjectId.isValid(data.id)) {

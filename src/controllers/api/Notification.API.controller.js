@@ -3,11 +3,15 @@ const jwt = require("jsonwebtoken");
 
 const omit = require("../../utils/omit");
 const errors = require("../../errors/errors");
+const messages = require("../../messages/messages");
 const AccountSchema = require("../../models/account");
 
 exports.getAllNotifications = (req, res) => {
-	jwt.verify(req.cookies.jwt, process.env.JWT_TOKEN, async (err, data) => {
-		if (err) return res.status(403).json({ error: "Forbidden" });
+	const { token: jwt } = req.cookies;
+
+	jwt.verify(token, process.env.JWT_TOKEN, async (err, data) => {
+		// TODO
+		if (err) return res.json();
 		else if (data) {
 			const notifications = [];
 			const currentAccount = await AccountSchema.findById(data.id);

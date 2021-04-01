@@ -1,4 +1,5 @@
 const jwt = require("jsonwebtoken");
+const safeStringify = require("fast-safe-stringify").default;
 
 const redis = require("../../db/redis");
 const errors = require("../../errors/errors");
@@ -8,22 +9,18 @@ exports.heartbeat = (req, res) => {
 	const { jwt: token } = req.cookies;
 
 	jwt.verify(token, process.env.JWT_TOKEN, (err, data) => {
-		if (err) {
-			return res.json(errors.jwt.invalid_token_or_does_not_exist);
-		} else {
+		if (err) return res.json(errors.jwt.invalid_token_or_does_not_exist);
+		else {
 			// Setting connection status to true
-			redis.set(data.id, JSON.stringify({ connected: true }));
+			redis.set(data.id, safeStringify({ connected: true }));
 			// Setting a TTL on the key to delete it after 5 minutes
 			redis.expire(data.id, 10);
 			// Getting the key value from the database
 			redis.get(data.id, (err, reply) => {
 				if (err) return res.json(errors.unexpected.unexpected_error);
 				else {
-					if (!reply) {
-						return res.json({ connected: false });
-					} else {
-						return res.json(JSON.parse(reply));
-					}
+					if (!reply) return res.json({ connected: false });
+					else return res.json(JSON.parse(reply));
 				}
 			});
 		}
@@ -35,7 +32,7 @@ exports.status = (req, res) => {
 	const { jwt: token } = req.cookies;
 
 	// Verifying that our user is valid
-	jwt.verify(token, process.env.JWT_TOKEN, (err, _data) => {
+	jwt.verify(token, process.env.JWT_TOKEN, (err, _) => {
 		if (err) return res.json(errors.jwt.invalid_token_or_does_not_exist);
 		else {
 			// If account id was provided
@@ -43,16 +40,11 @@ exports.status = (req, res) => {
 				redis.exists(accountId, (err, reply) => {
 					if (err) return res.json(errors.unexpected.unexpected_error);
 					else {
-						if (reply) {
-							return res.json({ connected: true });
-						} else {
-							return res.json({ connected: false });
-						}
+						if (reply) return res.json({ connected: true });
+						else return res.json({ connected: false });
 					}
 				});
-			} else {
-				return res.json(errors.network.status_get_error_no_account_id_provided);
-			}
+			} else return res.json(errors.network.status_get_error_no_account_id_provided);
 		}
 	});
 };

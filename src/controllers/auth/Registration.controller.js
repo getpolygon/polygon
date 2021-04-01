@@ -1,12 +1,11 @@
 const _ = require("lodash");
-const path = require("path");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
-const { unlinkSync } = require("fs");
 const emailValidator = require("email-validator");
 
 const minio = require("../../db/minio");
 const errors = require("../../errors/errors");
+const messages = require("../../messages/messages");
 const AccountSchema = require("../../models/account");
 const _checkForDuplicates = require("../../helpers/checkForDuplicates");
 
@@ -30,7 +29,7 @@ exports.register = async (req, res) => {
 								password: hash
 							});
 
-							if (req.file !== undefined) {
+							if (req.file) {
 								await minio.client.putObject(
 									minio.bucket,
 									`${Account._id}/${Account._id}.png`,
@@ -41,6 +40,7 @@ exports.register = async (req, res) => {
 									}
 								);
 
+								// ! TODO: Play around with the bucket policies because presigned object urls have expiration date
 								const AvatarURL = await minio.client.presignedGetObject(
 									minio.bucket,
 									`${Account._id}/${Account._id}.png`
@@ -53,8 +53,8 @@ exports.register = async (req, res) => {
 							await Account.save();
 
 							jwt.sign({ id: Account._id }, process.env.JWT_TOKEN, (err, token) => {
-								if (err) return res.json({ error: err, code: "jwt_error".toUpperCase() });
-								else if (token) {
+								if (err) return res.json(errors.jwt.invalid_token_or_does_not_exist);
+								else {
 									return res
 										.status(201)
 										.cookie("jwt", token, {
@@ -62,10 +62,7 @@ exports.register = async (req, res) => {
 											secure: true,
 											sameSite: "none"
 										})
-										.json({
-											message: "Created",
-											code: "account_created".toUpperCase()
-										});
+										.json(messages.register.successful);
 								}
 							});
 						}

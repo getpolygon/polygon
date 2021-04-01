@@ -8,17 +8,27 @@ const BadWordsFilter = new BW({ placeHolder: "*" });
 const minio = require("../../db/minio");
 const omit = require("../../utils/omit");
 const errors = require("../../errors/errors");
+const messages = require("../../messages/messages");
 const AccountSchema = require("../../models/account");
 
 // Get all posts
 exports.getAllPosts = async (req, res) => {
-	// const { page, limit } = req.query;
 	const { jwt: token } = req.cookies;
+	// const { limit, page } = req.params;
+
+	// const query = {
+	// 	page,
+	// 	limit
+	// };
+
+	// TODO: Experiment with this
+	// AccountSchema.paginate({ populate: "posts" }, query, (err, result) => {
+
+	// });
 
 	jwt.verify(token, process.env.JWT_TOKEN, async (err, data) => {
-		if (err) {
-			return res.json(errors.jwt.invalid_token_or_does_not_exist);
-		} else {
+		if (err) return res.json(errors.jwt.invalid_token_or_does_not_exist);
+		else {
 			const { accountId } = req.query;
 			const exclude = ["email", "password"];
 			const otherAccounts = await AccountSchema.find().where("_id").ne(data.id);
@@ -142,21 +152,16 @@ exports.deletePost = async (req, res) => {
 			const currentAccount = await AccountSchema.findById(data.id);
 			const foundPost = currentAccount.posts.id(postId);
 
-			if (!foundPost) {
-				return res.json({
-					message: "Does not exist"
-				});
-			} else {
+			if (!foundPost) return res.json(errors.post.does_not_exist);
+			else {
 				for (const obj of foundPost.attachments) {
-					const _FILEPATH_ = currentAccount._id + "/media/" + obj.filename;
+					const _FILEPATH_ = `${currentAccount._id}/media/${obj.filename}`;
 					await minio.client.removeObject(minio.bucket, _FILEPATH_);
 				}
 
 				currentAccount.posts.pull(foundPost);
 				await currentAccount.save();
-				return res.json({
-					result: "Removed"
-				});
+				return res.json(messages.post.actions.delete.deleted);
 			}
 		}
 	});
@@ -175,17 +180,11 @@ exports.heartPost = async (req, res) => {
 			if (err) return res.json(errors.jwt.invalid_token_or_does_not_exist);
 			else {
 				if (foundPost.hearts.includes(data.id)) {
-					return res.json({
-						message: "This post is already hearted",
-						code: "already_hearted".toUpperCase()
-					});
+					return res.json(messages.post.actions.heart.alreadyHearted);
 				} else {
 					foundPost.hearts.push(data.id);
 					await postAuthor.save();
-					return res.json({
-						message: "Hearted the post",
-						code: "hearted".toUpperCase()
-					});
+					return res.json(messages.post.actions.heart.hearted);
 				}
 			}
 		});
@@ -199,27 +198,16 @@ exports.unheartPost = async (req, res) => {
 	const postAuthor = await AccountSchema.findOne({ "posts._id": postId });
 	const foundPost = postAuthor.posts.id(postId);
 
-	if (!foundPost) {
-		return res.json({
-			error: "foundPost does not exist"
-		});
-	} else {
+	if (!foundPost) return res.json(errors.post.does_not_exist);
+	else {
 		jwt.verify(token, process.env.JWT_TOKEN, async (err, data) => {
 			if (err) res.json(errors.jwt.invalid_token_or_does_not_exist);
 			else {
 				if (foundPost.hearts.includes(data.id)) {
 					foundPost.hearts.pull(data.id);
 					await postAuthor.save();
-					return res.json({
-						message: "Unhearted the post",
-						code: "unhearted".toUpperCase()
-					});
-				} else {
-					return res.json({
-						message: "This post is already unhearted",
-						code: "already_unhearted".toUpperCase()
-					});
-				}
+					return res.json(messages.post.actions.unheart.unhearted);
+				} else return res.json(messages.post.actions.unheart.alreadyUnhearted);
 			}
 		});
 	}
@@ -236,24 +224,14 @@ exports.editPost = async (req, res) => {
 			const postAuthor = await AccountSchema.findOne({ "posts._id": postId });
 			const foundPost = await postAuthor.posts.id(postId);
 
-			if (!foundPost) {
-				return res.json(errors.post.does_not_exist);
-			} else {
+			if (!foundPost) return res.json(errors.post.does_not_exist);
+			else {
 				if (foundPost.authorId === data.id) {
 					const sanitizedPostText = sanitizeHtml(BadWordsFilter.clean(text));
 					foundPost.text = sanitizedPostText;
-
 					await postAuthor.save();
-					return res.json({
-						message: "Updated the post",
-						code: "updated_post".toUpperCase()
-					});
-				} else {
-					return res.json({
-						error: "You do not have the permission to perform this action",
-						code: "forbidden".toUpperCase()
-					});
-				}
+					return res.json(messages.post.actions.update.updated);
+				} else return res.json(messages.post.actions.update.forbidden);
 			}
 		}
 	});
@@ -274,14 +252,9 @@ exports.createComment = async (req, res) => {
 				comment: sanitizedComment,
 				authorId: currentAccount._id
 			});
-
 			foundPost.comments.push(comment);
 			await postAuthor.save();
-
-			return res.json({
-				message: "Comment posted",
-				code: "comment_posted".toUpperCase()
-			});
+			return res.json(messages.post.actions.comment.created);
 		}
 	});
 };
@@ -299,10 +272,8 @@ exports.savePost = (req, res) => {
 				currentAccount.saved.push(Save);
 				await currentAccount.save();
 
-				return res.json({ message: "Saved" });
-			} else {
-				return res.json({ error: "Account does not exist" });
-			}
+				return res.json(messages.post.actions.save.saved);
+			} else return res.json(errors.account.does_not_exist);
 		}
 	});
 };

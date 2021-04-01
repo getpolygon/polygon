@@ -12,11 +12,11 @@ exports.verify = (req, res) => {
 		return res.json(errors.jwt.invalid_token_or_does_not_exist);
 	} else {
 		jwt.verify(token, JWT_TOKEN, async (err, data) => {
-			if (err) {
+			if (err)
 				return res.status(403).json({
 					error: err
 				});
-			} else if (data) {
+			else {
 				const Except = ["password"];
 				const User = await AccountSchema.findById(data.id);
 

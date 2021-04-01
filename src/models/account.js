@@ -4,6 +4,7 @@ const SavedSchema = require("./saved");
 const FriendSchema = require("./friend");
 const PostSchema = require("./post/post");
 const NotificationSchema = require("./notification");
+const mongoosePaginate = require("mongoose-paginate-v2");
 
 const AccountSchema = new mongoose.Schema({
 	firstName: { type: String, required: true },
@@ -30,7 +31,13 @@ const AccountSchema = new mongoose.Schema({
 		default: () => {
 			return new Date();
 		}
+	},
+	roles: {
+		verified: { type: Boolean, default: false },
+		teamMember: { type: Boolean, default: false }
 	}
 });
+
+AccountSchema.plugin(mongoosePaginate);
 
 module.exports = mongoose.model("Account", AccountSchema);

@@ -19,8 +19,7 @@ exports.login = async (req, res) => {
 					jwt.sign(
 						{ id: Account._id },
 						process.env.JWT_TOKEN,
-						// * TODO
-						// Setting token expiration time
+						// ! TODO: Set token expiration date
 						// { expiresIn: "1h" },
 						(err, token) => {
 							if (err) {

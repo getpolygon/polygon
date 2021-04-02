@@ -7,7 +7,7 @@ const messages = require("../../messages/messages");
 const AccountSchema = require("../../models/account");
 
 exports.getAllNotifications = (req, res) => {
-	const { token: jwt } = req.cookies;
+	const { jwt: token } = req.cookies;
 
 	jwt.verify(token, process.env.JWT_TOKEN, async (err, data) => {
 		// TODO

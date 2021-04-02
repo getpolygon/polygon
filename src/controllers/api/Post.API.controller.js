@@ -91,8 +91,9 @@ exports.getAllPosts = async (req, res) => {
 // Create a post
 exports.createPost = async (req, res) => {
 	jwt.verify(req.cookies.jwt, process.env.JWT_TOKEN, async (err, data) => {
-		if (err) return res.json({ error: err });
-		else if (data) {
+		if (err) return res.json(errors.jwt.invalid_token_or_does_not_exist);
+		else {
+			const exclude = ["email", "password"];
 			const authorAccount = await AccountSchema.findById(data.id);
 			const sanitizedPostText = sanitizeHtml(BadWordsFilter.clean(req.body.text));
 
@@ -105,7 +106,7 @@ exports.createPost = async (req, res) => {
 				authorAccount.posts.push(foundPost);
 				await authorAccount.save();
 
-				return res.json(foundPost);
+				return res.json({ postData: foundPost, authorData: omit(authorAccount, exclude) });
 			} else {
 				const foundPost = authorAccount.posts.create({
 					text: sanitizedPostText,
@@ -113,26 +114,27 @@ exports.createPost = async (req, res) => {
 				});
 
 				for (const file of req.files) {
-					const _FILENAME_ = uniqid(); // Generating a unique filename
-					const _FILEPATH_ = `${authorAccount._id}/media/${_FILENAME_}`; // File path in MinIO
-
+					// Generating a unique filename
+					const _FILENAME_ = uniqid();
+					// File path in MinIO
+					const _FILEPATH_ = `${authorAccount._id}/media/${_FILENAME_}`;
 					// Uploading to MinIO
 					await minio.client.putObject(minio.bucket, _FILEPATH_, file.buffer, file.size, {
 						"Content-Type": file.mimetype
 					});
-
-					const PresignedURL = await minio.client.presignedGetObject(minio.bucket, _FILEPATH_);
-
-					const _ATTACHMENT_ = {};
-					_ATTACHMENT_.url = PresignedURL;
-					_ATTACHMENT_.filename = _FILENAME_;
+					// Generating a presigned URL
+					const _URL_ = await minio.client.presignedGetObject(minio.bucket, _FILEPATH_);
+					const _ATTACHMENT_ = foundPost.attachments.create({
+						url: _URL_,
+						filename: _FILENAME_
+					});
 
 					foundPost.attachments.push(_ATTACHMENT_);
 				}
 
 				authorAccount.posts.push(foundPost);
 				await authorAccount.save();
-				return res.json(foundPost);
+				return res.json({ postData: foundPost, authorData: omit(authorAccount, exclude) });
 			}
 		}
 	});

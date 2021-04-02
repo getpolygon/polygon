@@ -17,7 +17,6 @@ const chalk = require("chalk");
 const crypto = require("crypto");
 const app = require("express")();
 const helmet = require("helmet");
-const { Policy } = require("minio");
 const minio = require("./db/minio");
 const redis = require("./db/redis");
 const mongoose = require("mongoose");

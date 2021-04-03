@@ -49,7 +49,8 @@ module.exports = {
 					code: "comment_created".toUpperCase()
 				},
 				deleted: {
-					// TODO
+					message: "Comment deleted",
+					code: "comment_deleted".toUpperCase()
 				}
 			},
 			save: {
@@ -64,6 +65,24 @@ module.exports = {
 					code: "post_deleted".toUpperCase()
 				}
 			}
+		}
+	},
+	account: {
+		actions: {
+			update: {
+				message: "Account updated",
+				code: "account_updated".toUpperCase()
+			},
+			delete: {
+				message: "Account deleted",
+				code: "account_deleted".toUpperCase()
+			}
+		}
+	},
+	friend_request: {
+		sent: {
+			message: "Friend request sent",
+			code: "friend_request_sent".toUpperCase()
 		}
 	}
 };

@@ -18,10 +18,10 @@ exports.register = async (req, res) => {
 	if (hasValidEmail) {
 		if (!hasDuplicates) {
 			bcrypt.genSalt(10, (err, salt) => {
-				if (err) return res.json(errors.unexpected.unexpected_error);
+				if (err) console.error(err);
 				else {
 					bcrypt.hash(req.body.password, salt, async (err, hash) => {
-						if (err) return res.json(errors.unexpected.unexpected_error);
+						if (err) console.error(err);
 						else {
 							const Account = new AccountSchema({
 								firstName: req.body.firstName,

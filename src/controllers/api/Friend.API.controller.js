@@ -4,6 +4,7 @@ const mongoose = require("mongoose");
 
 const { JWT_TOKEN } = process.env;
 const errors = require("../../errors/errors");
+const messages = require("../../messages/messages");
 const AccountSchema = require("../../models/account");
 
 exports.addFriend = (req, res) => {
@@ -11,7 +12,7 @@ exports.addFriend = (req, res) => {
 	const { jwt: token } = req.cookies;
 
 	jwt.verify(token, JWT_TOKEN, async (err, data) => {
-		if (err) return res.json({ error: err, code: "jwt_error".toUpperCase() });
+		if (err) return res.json(errors.jwt.invalid_token_or_does_not_exist);
 		else {
 			if (!accountId) return res.json(errors.friend.no_fr_account_id_spec);
 			else {
@@ -163,13 +164,12 @@ exports.addFriend = (req, res) => {
 
 						addedAccount.notifications.push(notification);
 						addedAccount.friends.pending.push(pendingObject);
-
 						currentAccount.friends.requested.push(requestObject);
 
 						await addedAccount.save();
 						await currentAccount.save();
 
-						return res.json({ message: "Sent", code: "friend_request_sent".toUpperCase() });
+						return res.json(messages.friend_request.sent);
 					}
 				}
 			}

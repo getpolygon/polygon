@@ -2,6 +2,7 @@ const _ = require("lodash");
 const jwt = require("jsonwebtoken");
 const mongoose = require("mongoose");
 
+const { JWT_TOKEN } = process.env;
 const errors = require("../../errors/errors");
 const AccountSchema = require("../../models/account");
 
@@ -9,23 +10,18 @@ exports.addFriend = (req, res) => {
 	const { accountId } = req.query;
 	const { jwt: token } = req.cookies;
 
-	jwt.verify(token, process.env.JWT_TOKEN, async (err, data) => {
+	jwt.verify(token, JWT_TOKEN, async (err, data) => {
 		if (err) return res.json({ error: err, code: "jwt_error".toUpperCase() });
 		else {
-			if (!accountId) {
-				return res.json(errors.friend.no_fr_account_id_spec);
-			} else {
+			if (!accountId) return res.json(errors.friend.no_fr_account_id_spec);
+			else {
 				const currentAccount = await AccountSchema.findById(data.id);
 				const addedAccount = await AccountSchema.findById(accountId);
 
 				// If current account does not exist
-				if (!currentAccount) {
-					return res.json(errors.account.does_not_exist);
-				}
+				if (!currentAccount) return res.json(errors.account.does_not_exist);
 				// If other account does not exist
-				else if (!addedAccount) {
-					return res.json(errors.friend.outgoing_account_does_not_exist);
-				}
+				else if (!addedAccount) return res.json(errors.friend.outgoing_account_does_not_exist);
 				// If both accounts don't exist
 				else if (!currentAccount && !addedAccount) {
 					return res.json(errors.friend.both_accounts_do_not_exist);
@@ -185,7 +181,7 @@ exports.checkFriendship = (req, res) => {
 	const { accountId } = req.query;
 	const { jwt: token } = req.cookies;
 
-	jwt.verify(token, process.env.JWT_TOKEN, async (err, data) => {
+	jwt.verify(token, JWT_TOKEN, async (err, data) => {
 		if (err) return res.json({ error: err, code: "error".toUpperCase() });
 		else {
 			if (accountId) {
@@ -201,11 +197,9 @@ exports.checkFriendship = (req, res) => {
 					if (mongoose.Types.ObjectId.isValid(accountId)) {
 						const otherAccount = await AccountSchema.findById(accountId);
 
-						if (!currentAccount) {
-							return res.json(errors.account.does_not_exist);
-						} else if (!otherAccount) {
-							return res.json(errors.friend.outgoing_account_does_not_exist);
-						} else if (!currentAccount && !otherAccount) {
+						if (!currentAccount) return res.json(errors.account.does_not_exist);
+						else if (!otherAccount) return res.json(errors.friend.outgoing_account_does_not_exist);
+						else if (!currentAccount && !otherAccount) {
 							return res.json(errors.friend.both_accounts_do_not_exist);
 						} else {
 							const pending = !_.isUndefined(_.find(currentAccount.friends.pending, { accountId }));
@@ -222,13 +216,9 @@ exports.checkFriendship = (req, res) => {
 								requested
 							});
 						}
-					} else {
-						return res.json(errors.account.invalid_id);
-					}
+					} else return res.json(errors.account.invalid_id);
 				}
-			} else {
-				return res.json(errors.friend.no_fr_account_id_spec);
-			}
+			} else return res.json(errors.friend.no_fr_account_id_spec);
 		}
 	});
 };

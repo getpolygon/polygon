@@ -1,4 +1,5 @@
 const router = require("express").Router();
+
 const LoginHandler = require("../Login");
 const LogoutHandler = require("../Logout");
 const VerificationHandler = require("../Verify");

@@ -13,12 +13,11 @@ exports.login = async (req, res) => {
 		const Account = await AccountSchema.findOne({ email: email });
 		if (Account) {
 			bcrypt.compare(password, Account.password, (err, _same) => {
-				if (err) {
-					return res.json(errors.account.wrong_password);
-				} else {
+				if (err) return res.json(errors.account.wrong_password);
+				else {
 					jwt.sign(
 						{ id: Account._id },
-						process.env.JWT_TOKEN,
+						JWT_TOKEN,
 						// ! TODO: Set token expiration date
 						// { expiresIn: "1h" },
 						(err, token) => {
@@ -39,10 +38,6 @@ exports.login = async (req, res) => {
 					);
 				}
 			});
-		} else {
-			return res.json(errors.account.does_not_exist);
-		}
-	} else {
-		return res.json(errors.fields.missing_fields);
-	}
+		} else return res.json(errors.account.does_not_exist);
+	} else return res.json(errors.fields.missing_fields);
 };

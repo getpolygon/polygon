@@ -1,6 +1,7 @@
 const jwt = require("jsonwebtoken");
 const safeStringify = require("fast-safe-stringify").default;
 
+const { JWT_TOKEN } = process.env;
 const redis = require("../../db/redis");
 const errors = require("../../errors/errors");
 
@@ -8,7 +9,7 @@ const errors = require("../../errors/errors");
 exports.heartbeat = (req, res) => {
 	const { jwt: token } = req.cookies;
 
-	jwt.verify(token, process.env.JWT_TOKEN, (err, data) => {
+	jwt.verify(token, JWT_TOKEN, (err, data) => {
 		if (err) return res.json(errors.jwt.invalid_token_or_does_not_exist);
 		else {
 			// Setting connection status to true
@@ -32,7 +33,7 @@ exports.status = (req, res) => {
 	const { jwt: token } = req.cookies;
 
 	// Verifying that our user is valid
-	jwt.verify(token, process.env.JWT_TOKEN, (err, _) => {
+	jwt.verify(token, JWT_TOKEN, (err, _) => {
 		if (err) return res.json(errors.jwt.invalid_token_or_does_not_exist);
 		else {
 			// If account id was provided

@@ -1,6 +1,7 @@
 const _ = require("lodash");
 const jwt = require("jsonwebtoken");
 
+const { JWT_TOKEN } = process.env;
 const omit = require("../../utils/omit");
 const errors = require("../../errors/errors");
 const messages = require("../../messages/messages");
@@ -9,7 +10,7 @@ const AccountSchema = require("../../models/account");
 exports.getAllNotifications = (req, res) => {
 	const { jwt: token } = req.cookies;
 
-	jwt.verify(token, process.env.JWT_TOKEN, async (err, data) => {
+	jwt.verify(token, JWT_TOKEN, async (err, data) => {
 		// TODO
 		if (err) return res.json();
 		else if (data) {

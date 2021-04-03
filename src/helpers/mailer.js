@@ -3,6 +3,11 @@ const nodemailer = require("nodemailer");
 const { MAILER_HOST, MAILER_EMAIL, MAILER_PASS, MAILER_PORT } = process.env;
 
 class Mailer {
+	#html = null;
+	#title = null;
+	#subject = null;
+	#receiver = null;
+	#sender = MAILER_EMAIL;
 	#transporter = nodemailer.createTransport({
 		host: MAILER_HOST,
 		port: MAILER_PORT,
@@ -12,12 +17,8 @@ class Mailer {
 			pass: MAILER_PASS
 		}
 	});
-	#sender = MAILER_EMAIL;
-	#receiver = null;
-	#subject = null;
-	#title = null;
-	#html = null;
 
+	// Used for initializng all of the data that is going to be sent via email
 	init(receiver, subject, title, HTML = ``) {
 		this.#receiver = receiver;
 		this.#subject = subject;
@@ -25,6 +26,7 @@ class Mailer {
 		this.#html = HTML;
 	}
 
+	// Used for sending the email
 	async send() {
 		try {
 			if (this.#receiver === null || this.#subject === null || this.#title === null) {
@@ -44,7 +46,6 @@ class Mailer {
 			}
 		} catch (error) {
 			console.error(error);
-			return error;
 		}
 	}
 }

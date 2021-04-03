@@ -95,25 +95,22 @@ exports.updateAccount = async (req, res) => {
 	const { jwt: token } = req.cookies;
 	const { email, password, bio } = req.body;
 
-	if (!email && !password && !bio) {
-		return res.json(errors.account.update.empty_body);
-	} else {
+	if (!email && !password && !bio) return res.json(errors.account.update.empty_body);
+	else {
 		jwt.verify(token, JWT_TOKEN, async (err, data) => {
 			if (err) return res.json(errors.jwt.invalid_token_or_does_not_exist);
 			else {
 				if (mongoose.Types.ObjectId.isValid(data.id)) {
 					const currentAccount = await AccountSchema.findById(data.id);
 
-					if (!currentAccount) {
-						return res.json(errors.account.does_not_exist);
-					} else {
+					if (!currentAccount) return res.json(errors.account.does_not_exist);
+					else {
 						// ! TODO: Update the way of updating the account
 						if (email && password) {
 							const hasDuplicates = await checkForDuplicates({ email: email }, AccountSchema);
 
-							if (hasDuplicates) {
-								return res.json(errors.account.update.duplicate_email);
-							} else {
+							if (hasDuplicates) return res.json(errors.account.update.duplicate_email);
+							else {
 								bcrypt.compare(password, currentAccount.password, async (err, same) => {
 									if (err) return res.json(errors.unexpected.unexpected_error);
 									else {
@@ -124,17 +121,13 @@ exports.updateAccount = async (req, res) => {
 												message: "Updated",
 												code: "updated".toUpperCase()
 											});
-										} else {
-											return res.json(errors.account.update.wrong_current_password);
-										}
+										} else return res.json(errors.account.update.wrong_current_password);
 									}
 								});
 							}
 						}
 					}
-				} else {
-					return res.json(errors.account.invalid_id);
-				}
+				} else return res.json(errors.account.invalid_id);
 			}
 		});
 	}

@@ -3,6 +3,7 @@ const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const emailValidator = require("email-validator");
 
+const { JWT_TOKEN } = process.env;
 const minio = require("../../db/minio");
 const errors = require("../../errors/errors");
 const messages = require("../../messages/messages");
@@ -18,9 +19,9 @@ exports.register = async (req, res) => {
 		if (!hasDuplicates) {
 			bcrypt.genSalt(10, (err, salt) => {
 				if (err) return res.json(errors.unexpected.unexpected_error);
-				else if (salt) {
-					bcrypt.hash(req.body.password, salt, async (err2, hash) => {
-						if (err2) return res.json(errors.unexpected.unexpected_error);
+				else {
+					bcrypt.hash(req.body.password, salt, async (err, hash) => {
+						if (err) return res.json(errors.unexpected.unexpected_error);
 						else {
 							const Account = new AccountSchema({
 								firstName: req.body.firstName,
@@ -52,7 +53,7 @@ exports.register = async (req, res) => {
 
 							await Account.save();
 
-							jwt.sign({ id: Account._id }, process.env.JWT_TOKEN, (err, token) => {
+							jwt.sign({ id: Account._id }, JWT_TOKEN, (err, token) => {
 								if (err) return res.json(errors.jwt.invalid_token_or_does_not_exist);
 								else {
 									return res
@@ -69,10 +70,6 @@ exports.register = async (req, res) => {
 					});
 				}
 			});
-		} else {
-			return res.json(errors.registration.duplicate_account);
-		}
-	} else {
-		return res.json(errors.registration.invalid_email);
-	}
+		} else return res.json(errors.registration.duplicate_account);
+	} else return res.json(errors.registration.invalid_email);
 };

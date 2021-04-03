@@ -1,33 +1,27 @@
 const jwt = require("jsonwebtoken");
 
+const { JWT_TOKEN } = process.env;
 const omit = require("../../utils/omit");
 const errors = require("../../errors/errors");
 const AccountSchema = require("../../models/account");
 
 exports.verify = (req, res) => {
-	const { JWT_TOKEN } = process.env;
 	const { jwt: token } = req.cookies;
 
-	if (!token) {
-		return res.json(errors.jwt.invalid_token_or_does_not_exist);
-	} else {
+	if (!token) return res.json(errors.jwt.invalid_token_or_does_not_exist);
+	else {
 		jwt.verify(token, JWT_TOKEN, async (err, data) => {
-			if (err)
-				return res.status(403).json({
-					error: err
-				});
+			if (err) return res.json(errors.jwt.invalid_token_or_does_not_exist);
 			else {
-				const Except = ["password"];
-				const User = await AccountSchema.findById(data.id);
+				const except = ["password"];
+				const user = await AccountSchema.findById(data.id);
 
-				if (User) {
+				if (user) {
 					return res.json({
-						userData: omit(User, Except),
+						userData: omit(user, except),
 						code: "valid".toUpperCase()
 					});
-				} else {
-					return res.clearCookie("jwt").json(errors.verification.not_valid);
-				}
+				} else return res.clearCookie("jwt").json(errors.verification.not_valid);
 			}
 		});
 	}

@@ -5,6 +5,7 @@ const mongoose = require("mongoose");
 const sanitizeHtml = require("sanitize-html");
 const BadWordsFilter = new BW({ placeHolder: "*" });
 
+const { JWT_TOKEN } = process.env;
 const minio = require("../../db/minio");
 const omit = require("../../utils/omit");
 const errors = require("../../errors/errors");
@@ -26,7 +27,7 @@ exports.getAllPosts = async (req, res) => {
 
 	// });
 
-	jwt.verify(token, process.env.JWT_TOKEN, async (err, data) => {
+	jwt.verify(token, JWT_TOKEN, async (err, data) => {
 		if (err) return res.json(errors.jwt.invalid_token_or_does_not_exist);
 		else {
 			const { accountId } = req.query;
@@ -52,6 +53,7 @@ exports.getAllPosts = async (req, res) => {
 						posts.push(_post);
 					}
 				}
+
 				return res.json(posts);
 			} else {
 				if (mongoose.Types.ObjectId.isValid(accountId)) {
@@ -80,9 +82,7 @@ exports.getAllPosts = async (req, res) => {
 
 						return res.json(posts);
 					}
-				} else {
-					return res.json(errors.account.invalid_id);
-				}
+				} else return res.json(errors.account.invalid_id);
 			}
 		}
 	});
@@ -90,10 +90,12 @@ exports.getAllPosts = async (req, res) => {
 
 // Create a post
 exports.createPost = async (req, res) => {
-	jwt.verify(req.cookies.jwt, process.env.JWT_TOKEN, async (err, data) => {
+	const { jwt: token } = req.cookies;
+
+	jwt.verify(token, JWT_TOKEN, async (err, data) => {
 		if (err) return res.json(errors.jwt.invalid_token_or_does_not_exist);
 		else {
-			const exclude = ["email", "password"];
+			const exclude = ["email", "password", "posts"];
 			const authorAccount = await AccountSchema.findById(data.id);
 			const sanitizedPostText = sanitizeHtml(BadWordsFilter.clean(req.body.text));
 
@@ -145,12 +147,9 @@ exports.deletePost = async (req, res) => {
 	const { postId } = req.query;
 	const { jwt: token } = req.cookies;
 
-	jwt.verify(token, process.env.JWT_TOKEN, async (err, data) => {
-		if (err) {
-			return res.json({
-				error: err
-			});
-		} else {
+	jwt.verify(token, JWT_TOKEN, async (err, data) => {
+		if (err) return res.json(errors.jwt.invalid_token_or_does_not_exist);
+		else {
 			const currentAccount = await AccountSchema.findById(data.id);
 			const foundPost = currentAccount.posts.id(postId);
 
@@ -178,7 +177,7 @@ exports.heartPost = async (req, res) => {
 
 	if (!foundPost) return res.json(errors.post.does_not_exist);
 	else {
-		jwt.verify(token, process.env.JWT_TOKEN, async (err, data) => {
+		jwt.verify(token, JWT_TOKEN, async (err, data) => {
 			if (err) return res.json(errors.jwt.invalid_token_or_does_not_exist);
 			else {
 				if (foundPost.hearts.includes(data.id)) {
@@ -202,7 +201,7 @@ exports.unheartPost = async (req, res) => {
 
 	if (!foundPost) return res.json(errors.post.does_not_exist);
 	else {
-		jwt.verify(token, process.env.JWT_TOKEN, async (err, data) => {
+		jwt.verify(token, JWT_TOKEN, async (err, data) => {
 			if (err) res.json(errors.jwt.invalid_token_or_does_not_exist);
 			else {
 				if (foundPost.hearts.includes(data.id)) {
@@ -220,7 +219,7 @@ exports.editPost = async (req, res) => {
 	const { postId } = req.query;
 	const { jwt: token } = req.cookies;
 
-	jwt.verify(token, process.env.JWT_TOKEN, async (err, data) => {
+	jwt.verify(token, JWT_TOKEN, async (err, data) => {
 		if (err) return res.json(errors.jwt.invalid_token_or_does_not_exist);
 		else {
 			const postAuthor = await AccountSchema.findOne({ "posts._id": postId });
@@ -243,7 +242,7 @@ exports.createComment = async (req, res) => {
 	const { postId } = req.query;
 	const { jwt: token } = req.cookies;
 
-	jwt.verify(token, process.env.JWT_TOKEN, async (err, data) => {
+	jwt.verify(token, JWT_TOKEN, async (err, data) => {
 		if (err) return res.json(errors.jwt.invalid_token_or_does_not_exist);
 		else {
 			const postAuthor = await AccountSchema.findOne({ "posts._id": postId });
@@ -265,7 +264,7 @@ exports.savePost = (req, res) => {
 	const { postId } = req.query;
 	const { jwt: token } = req.cookies;
 
-	jwt.verify(token, process.env.JWT_TOKEN, async (err, data) => {
+	jwt.verify(token, JWT_TOKENS, async (err, data) => {
 		if (err) return res.json(errors.jwt.invalid_token_or_does_not_exist);
 		else {
 			const currentAccount = await AccountSchema.findOne({ _id: data.id });

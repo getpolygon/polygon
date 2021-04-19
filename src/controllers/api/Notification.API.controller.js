@@ -3,8 +3,8 @@ const jwt = require("jsonwebtoken");
 
 const { JWT_TOKEN } = process.env;
 const omit = require("../../utils/omit");
-const errors = require("../../errors/errors");
-const messages = require("../../messages/messages");
+// const errors = require("../../errors/errors");
+// const messages = require("../../messages/messages");
 const AccountSchema = require("../../models/account");
 
 exports.getAllNotifications = (req, res) => {

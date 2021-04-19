@@ -4,7 +4,7 @@ const mongoose = require("mongoose");
 
 const minio = require("../../db/minio");
 const omit = require("../../utils/omit");
-const errors = require("../../errors/errors");
+// const errors = require("../../errors/errors");
 const messages = require("../../messages/messages");
 const AccountSchema = require("../../models/account");
 const propFilters = require("../../utils/prop.filters");
@@ -18,27 +18,34 @@ exports.fetchAccount = async (req, res) => {
 
 	if (!accountId) {
 		return jwt.verify(token, JWT_TOKEN, async (error, data) => {
-			if (error) return res.json(errors.jwt.invalid_token_or_does_not_exist);
-			else {
+			if (error) {
+				// return res.json(errors.jwt.invalid_token_or_does_not_exist);
+			} else {
 				if (mongoose.Types.ObjectId.isValid(data.id)) {
 					const account = await AccountSchema.findById(data.id);
-					if (!account) return res.json(errors.account.does_not_exist);
-					else {
+					if (!account) {
+						// return res.json(errors.account.does_not_exist);
+					} else {
 						const payload = omit(account, propFilters.api.account.current);
 						return res.json(payload);
 					}
-				} else return res.json(errors.account.invalid_id);
+				} else {
+					// return res.json(errors.account.invalid_id);
+				}
 			}
 		});
 	} else {
 		if (mongoose.Types.ObjectId.isValid(accountId)) {
 			const account = await AccountSchema.findById(accountId);
-			if (!account) return res.json(errors.account.doesnt_exist);
-			else {
+			if (!account) {
+				// return res.json(errors.account.doesnt_exist);
+			} else {
 				const payload = omit(account, propFilters.api.account.other);
 				return res.json(payload);
 			}
-		} else return res.json(errors.account.invalid_id);
+		} else {
+			// return res.json(errors.account.invalid_id);
+		}
 	}
 };
 
@@ -47,8 +54,9 @@ exports.deleteAccount = async (req, res) => {
 	const { jwt: token } = req.cookies;
 
 	jwt.verify(token, JWT_TOKEN, async (err, data) => {
-		if (err) return res.json(errors.jwt.invalid_token_or_does_not_exist);
-		else {
+		if (err) {
+			// return res.json(errors.jwt.invalid_token_or_does_not_exist);
+		} else {
 			if (mongoose.Types.ObjectId.isValid(data.id)) {
 				const files = [];
 				const objectStream = minio.client.listObjectsV2(
@@ -66,8 +74,11 @@ exports.deleteAccount = async (req, res) => {
 				// Deleteing the account from MongoDB
 				await AccountSchema.findByIdAndDelete(data.id);
 
-				return res.clearCookie("jwt").json(messages.account.actions.delete);
-			} else return res.json(errors.account.invalid_id);
+				return res.clearCookie("jwt");
+				// .json(messages.account.actions.delete);
+			} else {
+				// return res.json(errors.account.invalid_id);
+			}
 		}
 	});
 };
@@ -78,12 +89,14 @@ exports.updateAccount = async (req, res) => {
 	const { email, password, bio } = req.body;
 
 	jwt.verify(token, JWT_TOKEN, async (err, data) => {
-		if (err) return res.json(errors.jwt.invalid_token_or_does_not_exist);
-		else {
+		if (err) {
+			// return res.json(errors.jwt.invalid_token_or_does_not_exist);
+		} else {
 			if (mongoose.Types.ObjectId.isValid(data.id)) {
 				const account = await AccountSchema.findById(data.id);
-				if (!account) return res.json(errors.account.does_not_exist);
-				else {
+				if (!account) {
+					// return res.json(errors.account.does_not_exist);
+				} else {
 					if (bio) account.bio = bio;
 					if (email) {
 						const hasDuplicates = await checkForDuplicates({ email }, AccountSchema);
@@ -106,7 +119,9 @@ exports.updateAccount = async (req, res) => {
 					// TODO: Implement a warning system for untouched properties like email
 					return res.json(messages.account.actions.update);
 				}
-			} else return res.json(errors.account.invalid_id);
+			} else {
+				// return res.json(errors.account.invalid_id);
+			}
 		}
 	});
 };

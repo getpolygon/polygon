@@ -8,7 +8,7 @@ const BadWordsFilter = new BW({ placeHolder: "*" });
 const { JWT_TOKEN } = process.env;
 const minio = require("../../db/minio");
 const omit = require("../../utils/omit");
-const errors = require("../../errors/errors");
+// const errors = require("../../errors/errors");
 const messages = require("../../messages/messages");
 const AccountSchema = require("../../models/account");
 
@@ -28,8 +28,9 @@ exports.getAllPosts = async (req, res) => {
 	// });
 
 	jwt.verify(token, JWT_TOKEN, async (err, data) => {
-		if (err) return res.json(errors.jwt.invalid_token_or_does_not_exist);
-		else {
+		if (err) {
+			// return res.json(errors.jwt.invalid_token_or_does_not_exist);
+		} else {
 			const { accountId } = req.query;
 			const exclude = ["email", "password"];
 			const otherAccounts = await AccountSchema.find().where("_id").ne(data.id);
@@ -60,7 +61,7 @@ exports.getAllPosts = async (req, res) => {
 					const foundAccount = await AccountSchema.findById(accountId);
 
 					if (!foundAccount) {
-						return res.json(errors.account.does_not_exist);
+						// return res.json(errors.account.does_not_exist);
 					} else {
 						const posts = [];
 						const currentAccount = await AccountSchema.findById(data.id);
@@ -82,7 +83,9 @@ exports.getAllPosts = async (req, res) => {
 
 						return res.json(posts);
 					}
-				} else return res.json(errors.account.invalid_id);
+				} else {
+					// return res.json(errors.account.invalid_id);
+				}
 			}
 		}
 	});
@@ -93,8 +96,9 @@ exports.createPost = async (req, res) => {
 	const { jwt: token } = req.cookies;
 
 	jwt.verify(token, JWT_TOKEN, async (err, data) => {
-		if (err) return res.json(errors.jwt.invalid_token_or_does_not_exist);
-		else {
+		if (err) {
+			// return res.json(errors.jwt.invalid_token_or_does_not_exist);
+		} else {
 			const exclude = ["email", "password", "posts"];
 			const authorAccount = await AccountSchema.findById(data.id);
 			const sanitizedPostText = sanitizeHtml(BadWordsFilter.clean(req.body.text));
@@ -148,13 +152,15 @@ exports.deletePost = async (req, res) => {
 	const { jwt: token } = req.cookies;
 
 	jwt.verify(token, JWT_TOKEN, async (err, data) => {
-		if (err) return res.json(errors.jwt.invalid_token_or_does_not_exist);
-		else {
+		if (err) {
+			// return res.json(errors.jwt.invalid_token_or_does_not_exist);
+		} else {
 			const currentAccount = await AccountSchema.findById(data.id);
 			const foundPost = currentAccount.posts.id(postId);
 
-			if (!foundPost) return res.json(errors.post.does_not_exist);
-			else {
+			if (!foundPost) {
+				// return res.json(errors.post.does_not_exist);
+			} else {
 				for (const obj of foundPost.attachments) {
 					const _FILEPATH_ = `${currentAccount._id}/media/${obj.filename}`;
 					await minio.client.removeObject(minio.bucket, _FILEPATH_);
@@ -175,11 +181,13 @@ exports.heartPost = async (req, res) => {
 	const postAuthor = await AccountSchema.findOne({ "posts._id": postId });
 	const foundPost = postAuthor.posts.id(postId);
 
-	if (!foundPost) return res.json(errors.post.does_not_exist);
-	else {
+	if (!foundPost) {
+		// return res.json(errors.post.does_not_exist);
+	} else {
 		jwt.verify(token, JWT_TOKEN, async (err, data) => {
-			if (err) return res.json(errors.jwt.invalid_token_or_does_not_exist);
-			else {
+			if (err) {
+				// return res.json(errors.jwt.invalid_token_or_does_not_exist);
+			} else {
 				if (foundPost.hearts.includes(data.id)) {
 					return res.json(messages.post.actions.heart.alreadyHearted);
 				} else {
@@ -199,11 +207,13 @@ exports.unheartPost = async (req, res) => {
 	const postAuthor = await AccountSchema.findOne({ "posts._id": postId });
 	const foundPost = postAuthor.posts.id(postId);
 
-	if (!foundPost) return res.json(errors.post.does_not_exist);
-	else {
+	if (!foundPost) {
+		// return res.json(errors.post.does_not_exist);
+	} else {
 		jwt.verify(token, JWT_TOKEN, async (err, data) => {
-			if (err) res.json(errors.jwt.invalid_token_or_does_not_exist);
-			else {
+			if (err) {
+				// return res.json(errors.jwt.invalid_token_or_does_not_exist);
+			} else {
 				if (foundPost.hearts.includes(data.id)) {
 					foundPost.hearts.pull(data.id);
 					await postAuthor.save();
@@ -220,13 +230,15 @@ exports.editPost = async (req, res) => {
 	const { jwt: token } = req.cookies;
 
 	jwt.verify(token, JWT_TOKEN, async (err, data) => {
-		if (err) return res.json(errors.jwt.invalid_token_or_does_not_exist);
-		else {
+		if (err) {
+			// return res.json(errors.jwt.invalid_token_or_does_not_exist);
+		} else {
 			const postAuthor = await AccountSchema.findOne({ "posts._id": postId });
 			const foundPost = await postAuthor.posts.id(postId);
 
-			if (!foundPost) return res.json(errors.post.does_not_exist);
-			else {
+			if (!foundPost) {
+				// return res.json(errors.post.does_not_exist);
+			} else {
 				if (foundPost.authorId === data.id) {
 					const sanitizedPostText = sanitizeHtml(BadWordsFilter.clean(text));
 					foundPost.text = sanitizedPostText;
@@ -243,8 +255,9 @@ exports.createComment = async (req, res) => {
 	const { jwt: token } = req.cookies;
 
 	jwt.verify(token, JWT_TOKEN, async (err, data) => {
-		if (err) return res.json(errors.jwt.invalid_token_or_does_not_exist);
-		else {
+		if (err) {
+			// return res.json(errors.jwt.invalid_token_or_does_not_exist);
+		} else {
 			const postAuthor = await AccountSchema.findOne({ "posts._id": postId });
 			const currentAccount = await AccountSchema.findById(data.id);
 			const foundPost = postAuthor.posts.id(postId);
@@ -265,8 +278,9 @@ exports.savePost = (req, res) => {
 	const { jwt: token } = req.cookies;
 
 	jwt.verify(token, JWT_TOKENS, async (err, data) => {
-		if (err) return res.json(errors.jwt.invalid_token_or_does_not_exist);
-		else {
+		if (err) {
+			// return res.json(errors.jwt.invalid_token_or_does_not_exist);
+		} else {
 			const currentAccount = await AccountSchema.findOne({ _id: data.id });
 			if (currentAccount) {
 				const Save = currentAccount.saved.create({ postId: postId });
@@ -274,7 +288,9 @@ exports.savePost = (req, res) => {
 				await currentAccount.save();
 
 				return res.json(messages.post.actions.save.saved);
-			} else return res.json(errors.account.does_not_exist);
+			} else {
+				// return res.json(errors.account.does_not_exist);
+			}
 		}
 	});
 };

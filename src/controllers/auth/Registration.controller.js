@@ -5,7 +5,7 @@ const emailValidator = require("email-validator");
 
 const { JWT_TOKEN } = process.env;
 const minio = require("../../db/minio");
-const errors = require("../../errors/errors");
+// const errors = require("../../errors/errors");
 const messages = require("../../messages/messages");
 const AccountSchema = require("../../models/account");
 const _checkForDuplicates = require("../../helpers/checkForDuplicates");
@@ -54,8 +54,9 @@ exports.register = async (req, res) => {
 							await Account.save();
 
 							jwt.sign({ id: Account._id }, JWT_TOKEN, (err, token) => {
-								if (err) return res.json(errors.jwt.invalid_token_or_does_not_exist);
-								else {
+								if (err) {
+									// return res.json(errors.jwt.invalid_token_or_does_not_exist);
+								} else {
 									return res
 										.status(201)
 										.cookie("jwt", token, {
@@ -70,6 +71,10 @@ exports.register = async (req, res) => {
 					});
 				}
 			});
-		} else return res.json(errors.registration.duplicate_account);
-	} else return res.json(errors.registration.invalid_email);
+		} else {
+			// return res.json(errors.registration.duplicate_account);
+		}
+	} else {
+		// return res.json(errors.registration.invalid_email);
+	}
 };

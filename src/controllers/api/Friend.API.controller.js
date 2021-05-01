@@ -4,7 +4,7 @@ const mongoose = require("mongoose");
 
 const { JWT_TOKEN } = process.env;
 // const errors = require("../../errors/errors");
-const messages = require("../../messages/messages");
+// const messages = require("../../messages/messages");
 const AccountSchema = require("../../models/account");
 
 exports.addFriend = (req, res) => {
@@ -175,7 +175,7 @@ exports.addFriend = (req, res) => {
 						await addedAccount.save();
 						await currentAccount.save();
 
-						return res.json(messages.friend_request.sent);
+						// return res.json(messages.friend_request.sent);
 					}
 				}
 			}
@@ -187,50 +187,57 @@ exports.checkFriendship = (req, res) => {
 	const { accountId } = req.query;
 	const { jwt: token } = req.cookies;
 
-	jwt.verify(token, JWT_TOKEN, async (err, data) => {
-		if (err) {
-			// return res.json({ error: err, code: "error".toUpperCase() });
+	jwt.verify(token, JWT_TOKEN, async (error, data) => {
+		if (error) {
+			return res.status(498).json({
+				// TODO
+			});
 		} else {
 			if (accountId) {
 				const currentAccount = await AccountSchema.findById(data.id);
 
-				if (accountId === currentAccount._id) {
-					return res.json({
-						pending: false,
-						approved: false,
-						requested: false
-					});
-				} else {
-					if (mongoose.Types.ObjectId.isValid(accountId)) {
-						const otherAccount = await AccountSchema.findById(accountId);
-
-						if (!currentAccount) {
-							// return res.json(errors.account.does_not_exist);
-						} else if (!otherAccount) {
-							// return res.json(errors.friend.outgoing_account_does_not_exist);
-						} else if (!currentAccount && !otherAccount) {
-							// return res.json(errors.friend.both_accounts_do_not_exist);
-						} else {
-							const pending = !_.isUndefined(_.find(currentAccount.friends.pending, { accountId }));
-							const approved = !_.isUndefined(
-								_.find(currentAccount.friends.approved, { accountId })
-							);
-							const requested = !_.isUndefined(
-								_.find(currentAccount.friends.requested, { accountId })
-							);
-
-							return res.json({
-								pending,
-								approved,
-								requested
-							});
-						}
+				if (currentAccount) {
+					if (accountId === currentAccount._id) {
+						return res.json({
+							pending: false,
+							approved: false,
+							requested: false
+						});
 					} else {
-						// return res.json(errors.account.invalid_id);
+						if (mongoose.Types.ObjectId.isValid(accountId)) {
+							const otherAccount = await AccountSchema.findById(accountId);
+
+							if (!otherAccount) {
+								return res.status(404).json({
+									// TODO
+								});
+							} else {
+								const pending = !_.isUndefined(
+									_.find(currentAccount.friends.pending, { accountId })
+								);
+								const approved = !_.isUndefined(
+									_.find(currentAccount.friends.approved, { accountId })
+								);
+								const requested = !_.isUndefined(
+									_.find(currentAccount.friends.requested, { accountId })
+								);
+
+								return res.json({
+									pending,
+									approved,
+									requested
+								});
+							}
+						} else {
+							// TODO
+							return res.status().json();
+						}
 					}
+				} else {
+					// TODO
 				}
 			} else {
-				// return res.json(errors.friend.no_fr_account_id_spec);
+				// TODO
 			}
 		}
 	});

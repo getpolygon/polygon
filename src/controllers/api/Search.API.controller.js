@@ -8,8 +8,8 @@ exports.query = (req, res) => {
 	const { query } = req.query;
 	const { jwt: token } = req.cookies;
 
-	jwt.verify(token, JWT_TOKEN, async (err, data) => {
-		if (err) {
+	jwt.verify(token, JWT_TOKEN, async (error, data) => {
+		if (error) {
 			// return res.json(errors.jwt.invalid_token_or_does_not_exist);
 		} else {
 			if (!query) {

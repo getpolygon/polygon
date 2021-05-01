@@ -1,60 +1,68 @@
+const { JWT_TOKEN } = process.env;
+
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const mongoose = require("mongoose");
 
 const minio = require("../../db/minio");
-const omit = require("../../utils/omit");
-// const errors = require("../../errors/errors");
-const messages = require("../../messages/messages");
 const AccountSchema = require("../../models/account");
-const propFilters = require("../../utils/prop.filters");
 const checkForDuplicates = require("../../helpers/checkForDuplicates");
-
-const { JWT_TOKEN } = process.env;
 
 exports.fetchAccount = async (req, res) => {
 	const { accountId } = req.query;
 	const { jwt: token } = req.cookies;
 
 	if (!accountId) {
-		return jwt.verify(token, JWT_TOKEN, async (error, data) => {
-			if (error) {
-				// return res.json(errors.jwt.invalid_token_or_does_not_exist);
-			} else {
+		return jwt.verify(token, JWT_TOKEN, async (err, data) => {
+			if (err) return res.status(403).json(err);
+			else {
 				if (mongoose.Types.ObjectId.isValid(data.id)) {
-					const account = await AccountSchema.findById(data.id);
+					const account = await AccountSchema.findById(data.id, {
+						datefield: 0,
+						password: 0,
+						posts: 0
+					});
+
+					// No such account
 					if (!account) {
-						// return res.json(errors.account.does_not_exist);
-					} else {
-						const payload = omit(account, propFilters.api.account.current);
-						return res.json(payload);
-					}
+						return res.status(404).json({
+							// TODO
+						});
+					} else return res.json(account);
 				} else {
-					// return res.json(errors.account.invalid_id);
+					// Invalid ID
+					return res.status(400).json({
+						// TODO
+					});
 				}
 			}
 		});
 	} else {
 		if (mongoose.Types.ObjectId.isValid(accountId)) {
-			const account = await AccountSchema.findById(accountId);
+			const account = await AccountSchema.findById(
+				accountId,
+				// Excluding these fields
+				{ email: 0, password: 0, posts: 0 }
+			);
 			if (!account) {
-				// return res.json(errors.account.doesnt_exist);
-			} else {
-				const payload = omit(account, propFilters.api.account.other);
-				return res.json(payload);
-			}
+				return res.status(404).json({
+					//TODO
+				});
+			} else return res.status(200).json(account);
 		} else {
-			// return res.json(errors.account.invalid_id);
+			return res.status(400).json({
+				// TODO
+			});
 		}
 	}
 };
 
 exports.deleteAccount = async (req, res) => {
-	// For deleting the account
 	const { jwt: token } = req.cookies;
 
 	jwt.verify(token, JWT_TOKEN, async (err, data) => {
 		if (err) {
+			// TODO
 			// return res.json(errors.jwt.invalid_token_or_does_not_exist);
 		} else {
 			if (mongoose.Types.ObjectId.isValid(data.id)) {
@@ -104,11 +112,15 @@ exports.updateAccount = async (req, res) => {
 					}
 					if (password) {
 						bcrypt.genSalt(10, (err, salt) => {
-							if (err) console.error(err);
-							else {
+							if (err) {
+								// TODO
+								// console.error(err);
+							} else {
 								bcrypt.hash(password, salt, (err, hash) => {
-									if (err) console.error(err);
-									else account.password = hash;
+									if (err) {
+										// TODO
+										// console.error(err);
+									} else account.password = hash;
 								});
 							}
 						});
@@ -117,7 +129,7 @@ exports.updateAccount = async (req, res) => {
 					await account.save();
 
 					// TODO: Implement a warning system for untouched properties like email
-					return res.json(messages.account.actions.update);
+					// return res.json(messages.account.actions.update);
 				}
 			} else {
 				// return res.json(errors.account.invalid_id);

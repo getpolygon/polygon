@@ -9,7 +9,7 @@ const { JWT_TOKEN } = process.env;
 const minio = require("../../db/minio");
 const omit = require("../../utils/omit");
 // const errors = require("../../errors/errors");
-const messages = require("../../messages/messages");
+// const messages = require("../../messages/messages");
 const AccountSchema = require("../../models/account");
 
 // Get all posts
@@ -168,7 +168,7 @@ exports.deletePost = async (req, res) => {
 
 				currentAccount.posts.pull(foundPost);
 				await currentAccount.save();
-				return res.json(messages.post.actions.delete.deleted);
+				// return res.json(messages.post.actions.delete.deleted);
 			}
 		}
 	});
@@ -189,11 +189,11 @@ exports.heartPost = async (req, res) => {
 				// return res.json(errors.jwt.invalid_token_or_does_not_exist);
 			} else {
 				if (foundPost.hearts.includes(data.id)) {
-					return res.json(messages.post.actions.heart.alreadyHearted);
+					// return res.json(messages.post.actions.heart.alreadyHearted);
 				} else {
 					foundPost.hearts.push(data.id);
 					await postAuthor.save();
-					return res.json(messages.post.actions.heart.hearted);
+					// return res.json(messages.post.actions.heart.hearted);
 				}
 			}
 		});
@@ -217,8 +217,10 @@ exports.unheartPost = async (req, res) => {
 				if (foundPost.hearts.includes(data.id)) {
 					foundPost.hearts.pull(data.id);
 					await postAuthor.save();
-					return res.json(messages.post.actions.unheart.unhearted);
-				} else return res.json(messages.post.actions.unheart.alreadyUnhearted);
+					// return res.json(messages.post.actions.unheart.unhearted);
+				} else {
+					// return res.json(messages.post.actions.unheart.alreadyUnhearted);
+				}
 			}
 		});
 	}
@@ -243,8 +245,10 @@ exports.editPost = async (req, res) => {
 					const sanitizedPostText = sanitizeHtml(BadWordsFilter.clean(text));
 					foundPost.text = sanitizedPostText;
 					await postAuthor.save();
-					return res.json(messages.post.actions.update.updated);
-				} else return res.json(messages.post.actions.update.forbidden);
+					// return res.json(messages.post.actions.update.updated);
+				} else {
+					// return res.json(messages.post.actions.update.forbidden);
+				}
 			}
 		}
 	});
@@ -268,7 +272,7 @@ exports.createComment = async (req, res) => {
 			});
 			foundPost.comments.push(comment);
 			await postAuthor.save();
-			return res.json(messages.post.actions.comment.created);
+			// return res.json(messages.post.actions.comment.created);
 		}
 	});
 };
@@ -287,7 +291,7 @@ exports.savePost = (req, res) => {
 				currentAccount.saved.push(Save);
 				await currentAccount.save();
 
-				return res.json(messages.post.actions.save.saved);
+				// return res.json(messages.post.actions.save.saved);
 			} else {
 				// return res.json(errors.account.does_not_exist);
 			}

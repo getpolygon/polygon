@@ -34,15 +34,15 @@ class Mailer {
 					"You have either forgot to call the init() method on the mailer or have not specified a parameter"
 				);
 			} else {
-				const Transporter = this.#transporter;
-				const Info = await Transporter.sendMail({
+				const transporter = this.#transporter;
+				const info = await transporter.sendMail({
 					from: `"noreply" <${this.#sender}>`,
 					to: `${this.#receiver}`,
 					subject: `${this.#subject}`,
 					text: `${this.#title}`,
 					html: this.#html
 				});
-				return Info;
+				return info;
 			}
 		} catch (error) {
 			console.error(error);

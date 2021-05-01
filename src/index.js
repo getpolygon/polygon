@@ -17,15 +17,14 @@ const chalk = require("chalk");
 const crypto = require("crypto");
 const app = require("express")();
 const helmet = require("helmet");
+const express = require("express");
 const minio = require("./db/minio");
 const redis = require("./db/redis");
 const mongoose = require("mongoose");
 const port = process.env.PORT || 3001;
-const bodyParser = require("body-parser");
 const compression = require("compression");
 const cookieParser = require("cookie-parser");
 
-// Routes
 const routes = require("./routes/routes");
 const __DEV__ = NODE_ENV === "development";
 
@@ -35,18 +34,16 @@ app.use(
 		level: 9
 	})
 );
-app.use(helmet.noSniff());
-app.use(bodyParser.json());
-app.use(helmet.xssFilter());
-app.use(helmet.hidePoweredBy());
+app.use(helmet());
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
 app.use(cors({ origin: true, credentials: true }));
-app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cookieParser(crypto.randomBytes(30).toString("hex")));
 
 // Use the routes
 app.use("/", routes);
-app.get("*", (req, res) => {
-	return res.status(404).json({
+app.all("*", (req, res) => {
+	res.status(404).json({
 		error: "Something's not right",
 		path: req.originalUrl
 	});
@@ -103,6 +100,7 @@ minio.client.bucketExists("heartbeat", (error, _result) => {
 	}
 });
 
+// For development environment
 if (__DEV__) {
 	const fs = require("fs");
 	const https = require("https");
@@ -124,7 +122,9 @@ if (__DEV__) {
 			)} 🚀`
 		);
 	});
-} else {
+}
+// For production environment
+else {
 	// Start the server
 	app.listen(port, "0.0.0.0", () => {
 		console.clear();

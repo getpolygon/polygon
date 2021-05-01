@@ -5,8 +5,6 @@ const emailValidator = require("email-validator");
 
 const { JWT_TOKEN } = process.env;
 const minio = require("../../db/minio");
-// const errors = require("../../errors/errors");
-const messages = require("../../messages/messages");
 const AccountSchema = require("../../models/account");
 const _checkForDuplicates = require("../../helpers/checkForDuplicates");
 
@@ -41,7 +39,6 @@ exports.register = async (req, res) => {
 									}
 								);
 
-								// ! TODO: Play around with the bucket policies because presigned object urls have expiration date
 								const AvatarURL = await minio.client.presignedGetObject(
 									minio.bucket,
 									`${Account._id}/${Account._id}.png`
@@ -55,16 +52,14 @@ exports.register = async (req, res) => {
 
 							jwt.sign({ id: Account._id }, JWT_TOKEN, (err, token) => {
 								if (err) {
-									// return res.json(errors.jwt.invalid_token_or_does_not_exist);
+									// TODO
 								} else {
-									return res
-										.status(201)
-										.cookie("jwt", token, {
-											httpOnly: true,
-											secure: true,
-											sameSite: "none"
-										})
-										.json(messages.register.successful);
+									return res.status(201).cookie("jwt", token, {
+										httpOnly: true,
+										secure: true,
+										sameSite: "none"
+									});
+									// .json(messages.register.successful);
 								}
 							});
 						}

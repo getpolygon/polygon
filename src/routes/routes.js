@@ -5,21 +5,8 @@ const APIRoutes = require("../api/routes/routes");
 const AuthRoutes = require("../auth/routes/routes");
 
 // API
-router.use(
-	"/api",
-	// expressRateLimit({
-	// 	windowMs: 6 * 1000,
-	// 	max: 100
-	// }),
-	APIRoutes
-);
+router.use("/api", APIRoutes);
 // Authentication
-router.use(
-	"/auth",
-	// expressRateLimit({
-	// 	windowMs: 20 * 1000
-	// }),
-	AuthRoutes
-);
+router.use("/auth", AuthRoutes);
 
 module.exports = router;

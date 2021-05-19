@@ -1,6 +1,5 @@
 const jwt = require("jsonwebtoken");
-// const errors = require("../../errors/errors");
-const AccountSchema = require("../../models/account");
+const AccountSchema = require("../../models/all/account");
 
 const { JWT_TOKEN } = process.env;
 
@@ -10,10 +9,10 @@ exports.query = (req, res) => {
 
 	jwt.verify(token, JWT_TOKEN, async (error, data) => {
 		if (error) {
-			// return res.json(errors.jwt.invalid_token_or_does_not_exist);
+			// TODO
 		} else {
 			if (!query) {
-				// return res.json(errors.search.no_query);
+				// TODO
 			} else {
 				const regex = new RegExp(query, "gu");
 				const results = await AccountSchema.find({

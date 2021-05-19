@@ -4,22 +4,21 @@ const _ = require("lodash");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const emailValidator = require("email-validator");
-
-const AccountSchema = require("../../models/account");
+const AccountSchema = require("../../models/all/account");
 
 exports.login = async (req, res) => {
 	const { password } = req.body;
 	const email = _.toLower(req.body.email);
 
 	if (emailValidator.validate(email) && password) {
-		const Account = await AccountSchema.findOne({ email: email });
+		const account = await AccountSchema.findOne({ email: email });
 
-		if (Account) {
-			const same = await bcrypt.compare(password, Account.password);
+		if (account) {
+			const same = await bcrypt.compare(password, account.password);
 
 			if (same) {
 				jwt.sign(
-					{ id: Account._id },
+					{ id: account._id },
 					JWT_TOKEN,
 					{
 						expiresIn: "1h"
@@ -31,26 +30,21 @@ exports.login = async (req, res) => {
 								.status(200)
 								.cookie("jwt", token, {
 									httpOnly: true,
-									secure: true,
-									sameSite: "none"
+									sameSite: true,
+									signed: true,
+									secure: true
 								})
 								.json(token);
 						}
 					}
 				);
 			} else {
-				return res.status(403).json({
-					// TODO
-				});
+				// TODO
 			}
 		} else {
-			return res.status(404).json({
-				// TODO
-			});
+			// TODO
 		}
 	} else {
-		return res.status(422).json({
-			// TODO
-		});
+		// TODO
 	}
 };

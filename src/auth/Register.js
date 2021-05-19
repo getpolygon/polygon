@@ -2,7 +2,6 @@ const router = require("express").Router();
 const upload = require("../middleware/multer");
 const RegistrationController = require("../controllers/auth/Registration.controller");
 
-// For registration
 router.post("/", upload.single("avatar"), RegistrationController.register);
 
 module.exports = router;

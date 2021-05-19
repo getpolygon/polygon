@@ -1,9 +1,7 @@
-const jwt = require("jsonwebtoken");
-const safeStringify = require("fast-safe-stringify").default;
-
 const { JWT_TOKEN } = process.env;
+const jwt = require("jsonwebtoken");
 const redis = require("../../db/redis");
-// const errors = require("../../errors/errors");
+const safeStringify = require("fast-safe-stringify");
 
 // Used for sending a simple get request to the server and setting the key in redis
 exports.heartbeat = (req, res) => {
@@ -11,7 +9,7 @@ exports.heartbeat = (req, res) => {
 
 	jwt.verify(token, JWT_TOKEN, (err, data) => {
 		if (err) {
-			// return res.json(errors.jwt.invalid_token_or_does_not_exist);
+			// TODO
 		} else {
 			// Setting connection status to true
 			redis.set(data.id, safeStringify({ connected: true }));
@@ -20,7 +18,7 @@ exports.heartbeat = (req, res) => {
 			// Getting the key value from the database
 			redis.get(data.id, (err, reply) => {
 				if (err) {
-					// return res.json(errors.unexpected.unexpected_error);
+					// TODO
 				} else {
 					if (!reply) return res.json({ connected: false });
 					else return res.json(JSON.parse(reply));
@@ -30,6 +28,7 @@ exports.heartbeat = (req, res) => {
 	});
 };
 
+// Used for getting user status (online, offline, dnd, idle, ...)
 exports.status = (req, res) => {
 	const { accountId } = req.query;
 	const { jwt: token } = req.cookies;
@@ -37,20 +36,20 @@ exports.status = (req, res) => {
 	// Verifying that our user is valid
 	jwt.verify(token, JWT_TOKEN, (err, _) => {
 		if (err) {
-			// return res.json(errors.jwt.invalid_token_or_does_not_exist);
+			// TODO
 		} else {
 			// If account id was provided
 			if (accountId) {
 				redis.exists(accountId, (err, reply) => {
 					if (err) {
-						// return res.json(errors.unexpected.unexpected_error);
+						// TODO
 					} else {
 						if (reply) return res.json({ connected: true });
 						else return res.json({ connected: false });
 					}
 				});
 			} else {
-				// return res.json(errors.network.status_get_error_no_account_id_provided);
+				// TODO
 			}
 		}
 	});

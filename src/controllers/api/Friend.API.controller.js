@@ -3,9 +3,7 @@ const jwt = require("jsonwebtoken");
 const mongoose = require("mongoose");
 
 const { JWT_TOKEN } = process.env;
-// const errors = require("../../errors/errors");
-// const messages = require("../../messages/messages");
-const AccountSchema = require("../../models/account");
+const AccountSchema = require("../../models/all/account");
 
 exports.addFriend = (req, res) => {
 	const { accountId } = req.query;

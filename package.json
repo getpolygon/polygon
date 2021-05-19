@@ -30,6 +30,9 @@
     "multer": "^1.4.2",
     "node-pin": "^0.1.5",
     "nodemailer": "^6.4.17",
+    "passport": "^0.4.1",
+    "passport-jwt": "^4.0.0",
+    "passport-local": "^1.0.0",
     "redis": "^3.0.2",
     "sanitize-html": "^2.3.0",
     "uniqid": "^5.2.0"

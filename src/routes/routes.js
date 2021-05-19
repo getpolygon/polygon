@@ -1,6 +1,5 @@
+// const passport = require("passport");
 const router = require("express").Router();
-// const expressRateLimit = require("express-rate-limit");
-
 const APIRoutes = require("../api/routes/routes");
 const AuthRoutes = require("../auth/routes/routes");
 

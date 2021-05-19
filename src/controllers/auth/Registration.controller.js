@@ -1,26 +1,28 @@
+const { JWT_TOKEN } = process.env;
+
 const _ = require("lodash");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
-const emailValidator = require("email-validator");
-
-const { JWT_TOKEN } = process.env;
 const minio = require("../../db/minio");
-const AccountSchema = require("../../models/account");
-const _checkForDuplicates = require("../../helpers/checkForDuplicates");
+const emailValidator = require("email-validator");
+const AccountSchema = require("../../models/all/account");
+const checkForDuplicates = require("../../helpers/checkForDuplicates");
 
 exports.register = async (req, res) => {
 	const email = _.toLower(req.body.email);
 	const hasValidEmail = emailValidator.validate(email);
-	const hasDuplicates = await _checkForDuplicates({ email: email }, AccountSchema);
+	const hasDuplicates = await checkForDuplicates({ email }, AccountSchema);
 
 	if (hasValidEmail) {
 		if (!hasDuplicates) {
 			bcrypt.genSalt(10, (err, salt) => {
-				if (err) console.error(err);
-				else {
+				if (err) {
+					// TODO
+				} else {
 					bcrypt.hash(req.body.password, salt, async (err, hash) => {
-						if (err) console.error(err);
-						else {
+						if (err) {
+							// TODO
+						} else {
 							const Account = new AccountSchema({
 								firstName: req.body.firstName,
 								lastName: req.body.lastName,
@@ -54,10 +56,12 @@ exports.register = async (req, res) => {
 								if (err) {
 									// TODO
 								} else {
+									// TODO
 									return res.status(201).cookie("jwt", token, {
 										httpOnly: true,
-										secure: true,
-										sameSite: "none"
+										sameSite: true,
+										signed: true,
+										secure: true
 									});
 									// .json(messages.register.successful);
 								}
@@ -67,9 +71,9 @@ exports.register = async (req, res) => {
 				}
 			});
 		} else {
-			// return res.json(errors.registration.duplicate_account);
+			// TODO
 		}
 	} else {
-		// return res.json(errors.registration.invalid_email);
+		// TODO
 	}
 };

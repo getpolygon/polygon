@@ -1,6 +1,6 @@
 const router = require("express").Router();
-const upload = require("../middleware/multer");
-const PostController = require("../controllers/api/Post.API.controller");
+const upload = require("../../middleware/multer");
+const PostController = require("../../controllers/api/Post.API.controller");
 
 // To save a post
 router.put("/save", PostController.savePost);

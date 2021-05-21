@@ -3,58 +3,12 @@ const { JWT_TOKEN } = process.env;
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const mongoose = require("mongoose");
-
 const minio = require("../../db/minio");
-const AccountSchema = require("../../models/account");
+const AccountSchema = require("../../models/all/account");
 const checkForDuplicates = require("../../helpers/checkForDuplicates");
 
 exports.fetchAccount = async (req, res) => {
-	const { accountId } = req.query;
-	const { jwt: token } = req.cookies;
-
-	if (!accountId) {
-		return jwt.verify(token, JWT_TOKEN, async (err, data) => {
-			if (err) return res.status(403).json(err);
-			else {
-				if (mongoose.Types.ObjectId.isValid(data.id)) {
-					const account = await AccountSchema.findById(data.id, {
-						datefield: 0,
-						password: 0,
-						posts: 0
-					});
-
-					// No such account
-					if (!account) {
-						return res.status(404).json({
-							// TODO
-						});
-					} else return res.json(account);
-				} else {
-					// Invalid ID
-					return res.status(400).json({
-						// TODO
-					});
-				}
-			}
-		});
-	} else {
-		if (mongoose.Types.ObjectId.isValid(accountId)) {
-			const account = await AccountSchema.findById(
-				accountId,
-				// Excluding these fields
-				{ email: 0, password: 0, posts: 0 }
-			);
-			if (!account) {
-				return res.status(404).json({
-					//TODO
-				});
-			} else return res.status(200).json(account);
-		} else {
-			return res.status(400).json({
-				// TODO
-			});
-		}
-	}
+	return res.json(req.user);
 };
 
 exports.deleteAccount = async (req, res) => {

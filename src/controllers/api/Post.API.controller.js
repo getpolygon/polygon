@@ -1,92 +1,28 @@
+const { JWT_TOKEN } = process.env;
+
 const BW = require("bad-words");
 const uniqid = require("uniqid");
 const jwt = require("jsonwebtoken");
 const mongoose = require("mongoose");
+const minio = require("../../db/minio");
 const sanitizeHtml = require("sanitize-html");
 const BadWordsFilter = new BW({ placeHolder: "*" });
-
-const { JWT_TOKEN } = process.env;
-const minio = require("../../db/minio");
-const omit = require("../../utils/omit");
-// const errors = require("../../errors/errors");
-// const messages = require("../../messages/messages");
-const AccountSchema = require("../../models/account");
+const AccountSchema = require("../../models/all/account");
 
 // Get all posts
 exports.getAllPosts = async (req, res) => {
 	const { jwt: token } = req.cookies;
-	// const { limit, page } = req.params;
-
-	// const query = {
-	// 	page,
-	// 	limit
-	// };
-
-	// TODO: Experiment with this
-	// AccountSchema.paginate({ populate: "posts" }, query, (err, result) => {
-
-	// });
 
 	jwt.verify(token, JWT_TOKEN, async (err, data) => {
 		if (err) {
-			// return res.json(errors.jwt.invalid_token_or_does_not_exist);
+			return res.json({ err });
 		} else {
-			const { accountId } = req.query;
-			const exclude = ["email", "password"];
-			const otherAccounts = await AccountSchema.find().where("_id").ne(data.id);
+			// const { accountId } = req.query;
+			const otherAccounts = await AccountSchema.find({}, { email: 0, password: 0 });
+			// .where("_id")
+			// .ne(data.id);
 
-			if (!accountId) {
-				const posts = [];
-
-				for (const account in otherAccounts) {
-					for (const post in account.posts) {
-						const _post = {};
-						_post.authorData = omit(account, exclude);
-						_post.postData = post;
-
-						for (const comment in post.comments) {
-							const _comment = {};
-							_comment.commentData = comment;
-							_comment.authorData = omit(await AccountSchema.findById(comment.authorId), exclude);
-							_post.postData.comments[_post.postData.comments.indexOf(comment)] = _comment;
-						}
-
-						posts.push(_post);
-					}
-				}
-
-				return res.json(posts);
-			} else {
-				if (mongoose.Types.ObjectId.isValid(accountId)) {
-					const foundAccount = await AccountSchema.findById(accountId);
-
-					if (!foundAccount) {
-						// return res.json(errors.account.does_not_exist);
-					} else {
-						const posts = [];
-						const currentAccount = await AccountSchema.findById(data.id);
-
-						for (const post of foundAccount.posts) {
-							const _post = {};
-							_post.postData = post;
-							_post.authorData = omit(currentAccount, exclude.concat(["posts"]));
-
-							for (const comment of _post.postData.comments) {
-								const _comment = {};
-								_comment.commentData = comment;
-								_comment.authorData = omit(await AccountSchema.findById(comment.authorId), exclude);
-								_post.postData.comments[_post.postData.comments.indexOf(comment)] = _comment;
-							}
-
-							posts.push(_post);
-						}
-
-						return res.json(posts);
-					}
-				} else {
-					// return res.json(errors.account.invalid_id);
-				}
-			}
+			return res.json(otherAccounts);
 		}
 	});
 };
@@ -112,7 +48,12 @@ exports.createPost = async (req, res) => {
 				authorAccount.posts.push(foundPost);
 				await authorAccount.save();
 
-				return res.json({ postData: foundPost, authorData: omit(authorAccount, exclude) });
+				return res.json({
+					postData: foundPost,
+					authorData: {
+						// TODO
+					}
+				});
 			} else {
 				const foundPost = authorAccount.posts.create({
 					text: sanitizedPostText,
@@ -153,23 +94,9 @@ exports.deletePost = async (req, res) => {
 
 	jwt.verify(token, JWT_TOKEN, async (err, data) => {
 		if (err) {
-			// return res.json(errors.jwt.invalid_token_or_does_not_exist);
+			// TODO
 		} else {
-			const currentAccount = await AccountSchema.findById(data.id);
-			const foundPost = currentAccount.posts.id(postId);
-
-			if (!foundPost) {
-				// return res.json(errors.post.does_not_exist);
-			} else {
-				for (const obj of foundPost.attachments) {
-					const _FILEPATH_ = `${currentAccount._id}/media/${obj.filename}`;
-					await minio.client.removeObject(minio.bucket, _FILEPATH_);
-				}
-
-				currentAccount.posts.pull(foundPost);
-				await currentAccount.save();
-				// return res.json(messages.post.actions.delete.deleted);
-			}
+			// TODO
 		}
 	});
 };

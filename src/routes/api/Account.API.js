@@ -1,5 +1,5 @@
 const router = require("express").Router();
-const AccountController = require("../controllers/api/Account.API.controller");
+const AccountController = require("../../controllers/api/Account.API.controller");
 
 // For fetching account details
 router.get("/fetch", AccountController.fetchAccount);

@@ -1,5 +1,5 @@
 const router = require("express").Router();
-const FriendController = require("../controllers/api/Friend.API.controller");
+const FriendController = require("../../controllers/api/Friend.API.controller");
 
 // For adding a friend
 router.put("/add", FriendController.addFriend);

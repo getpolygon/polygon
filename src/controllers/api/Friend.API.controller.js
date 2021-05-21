@@ -2,14 +2,14 @@ const _ = require("lodash");
 const jwt = require("jsonwebtoken");
 const mongoose = require("mongoose");
 
-const { JWT_TOKEN } = process.env;
+const { JWT_PRIVATE_KEY } = process.env;
 const AccountSchema = require("../../models/all/account");
 
 exports.addFriend = (req, res) => {
   const { accountId } = req.query;
   const { jwt: token } = req.cookies;
 
-  jwt.verify(token, JWT_TOKEN, async (err, data) => {
+  jwt.verify(token, JWT_PRIVATE_KEY, async (err, data) => {
     if (err) {
       // return res.json(errors.jwt.invalid_token_or_does_not_exist);
     } else {
@@ -212,7 +212,7 @@ exports.checkFriendship = (req, res) => {
   const { accountId } = req.query;
   const { jwt: token } = req.cookies;
 
-  jwt.verify(token, JWT_TOKEN, async (error, data) => {
+  jwt.verify(token, JWT_PRIVATE_KEY, async (error, data) => {
     if (error) {
       return res.status(498).json({
         // TODO

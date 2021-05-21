@@ -1,4 +1,4 @@
-const { JWT_TOKEN } = process.env;
+const { JWT_PRIVATE_KEY } = process.env;
 
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
@@ -14,7 +14,7 @@ exports.fetchAccount = async (req, res) => {
 exports.deleteAccount = async (req, res) => {
   const { jwt: token } = req.cookies;
 
-  jwt.verify(token, JWT_TOKEN, async (err, data) => {
+  jwt.verify(token, JWT_PRIVATE_KEY, async (err, data) => {
     if (err) {
       // TODO
       // return res.json(errors.jwt.invalid_token_or_does_not_exist);
@@ -53,7 +53,7 @@ exports.updateAccount = async (req, res) => {
   const { jwt: token } = req.cookies;
   const { email, password, bio } = req.body;
 
-  jwt.verify(token, JWT_TOKEN, async (err, data) => {
+  jwt.verify(token, JWT_PRIVATE_KEY, async (err, data) => {
     if (err) {
       // return res.json(errors.jwt.invalid_token_or_does_not_exist);
     } else {

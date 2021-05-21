@@ -1,4 +1,4 @@
-const { JWT_TOKEN } = process.env;
+const { JWT_PRIVATE_KEY } = process.env;
 
 const _ = require("lodash");
 const bcrypt = require("bcrypt");
@@ -52,7 +52,7 @@ exports.register = async (req, res) => {
 
               await Account.save();
 
-              jwt.sign({ id: Account._id }, JWT_TOKEN, (err, token) => {
+              jwt.sign({ id: Account._id }, JWT_PRIVATE_KEY, (err, token) => {
                 if (err) {
                   // TODO
                 } else {

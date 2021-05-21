@@ -1,4 +1,4 @@
-const { JWT_TOKEN } = process.env;
+const { JWT_PRIVATE_KEY } = process.env;
 
 const BW = require("bad-words");
 const uniqid = require("uniqid");
@@ -13,7 +13,7 @@ const AccountSchema = require("../../models/all/account");
 exports.getAllPosts = async (req, res) => {
   const { jwt: token } = req.cookies;
 
-  jwt.verify(token, JWT_TOKEN, async (err, data) => {
+  jwt.verify(token, JWT_PRIVATE_KEY, async (err, data) => {
     if (err) {
       return res.json({ err });
     } else {
@@ -34,7 +34,7 @@ exports.getAllPosts = async (req, res) => {
 exports.createPost = async (req, res) => {
   const { jwt: token } = req.cookies;
 
-  jwt.verify(token, JWT_TOKEN, async (err, data) => {
+  jwt.verify(token, JWT_PRIVATE_KEY, async (err, data) => {
     if (err) {
       // return res.json(errors.jwt.invalid_token_or_does_not_exist);
     } else {
@@ -109,7 +109,7 @@ exports.deletePost = async (req, res) => {
   const { postId } = req.query;
   const { jwt: token } = req.cookies;
 
-  jwt.verify(token, JWT_TOKEN, async (err, data) => {
+  jwt.verify(token, JWT_PRIVATE_KEY, async (err, data) => {
     if (err) {
       // TODO
     } else {
@@ -128,7 +128,7 @@ exports.heartPost = async (req, res) => {
   if (!foundPost) {
     // return res.json(errors.post.does_not_exist);
   } else {
-    jwt.verify(token, JWT_TOKEN, async (err, data) => {
+    jwt.verify(token, JWT_PRIVATE_KEY, async (err, data) => {
       if (err) {
         // return res.json(errors.jwt.invalid_token_or_does_not_exist);
       } else {
@@ -154,7 +154,7 @@ exports.unheartPost = async (req, res) => {
   if (!foundPost) {
     // return res.json(errors.post.does_not_exist);
   } else {
-    jwt.verify(token, JWT_TOKEN, async (err, data) => {
+    jwt.verify(token, JWT_PRIVATE_KEY, async (err, data) => {
       if (err) {
         // return res.json(errors.jwt.invalid_token_or_does_not_exist);
       } else {
@@ -175,7 +175,7 @@ exports.editPost = async (req, res) => {
   const { postId } = req.query;
   const { jwt: token } = req.cookies;
 
-  jwt.verify(token, JWT_TOKEN, async (err, data) => {
+  jwt.verify(token, JWT_PRIVATE_KEY, async (err, data) => {
     if (err) {
       // return res.json(errors.jwt.invalid_token_or_does_not_exist);
     } else {
@@ -202,7 +202,7 @@ exports.createComment = async (req, res) => {
   const { postId } = req.query;
   const { jwt: token } = req.cookies;
 
-  jwt.verify(token, JWT_TOKEN, async (err, data) => {
+  jwt.verify(token, JWT_PRIVATE_KEY, async (err, data) => {
     if (err) {
       // return res.json(errors.jwt.invalid_token_or_does_not_exist);
     } else {
@@ -227,7 +227,7 @@ exports.savePost = (req, res) => {
   const { postId } = req.query;
   const { jwt: token } = req.cookies;
 
-  jwt.verify(token, JWT_TOKENS, async (err, data) => {
+  jwt.verify(token, JWT_PRIVATE_KEYS, async (err, data) => {
     if (err) {
       // return res.json(errors.jwt.invalid_token_or_does_not_exist);
     } else {

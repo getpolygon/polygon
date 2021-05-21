@@ -37,8 +37,7 @@ REDIS_PORT=
 REDIS_PASS=
 
 # JWT
-JWT_TOKEN=
-JWT_REFRESH_TOKEN=
+JWT_PRIVATE_KEY=
 
 # Node.js environment
 NODE_ENV=development

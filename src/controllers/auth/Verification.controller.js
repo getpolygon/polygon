@@ -1,4 +1,4 @@
-const { JWT_TOKEN } = process.env;
+const { JWT_PRIVATE_KEY } = process.env;
 const jwt = require("jsonwebtoken");
 const AccountSchema = require("../../models/all/account");
 
@@ -9,7 +9,7 @@ exports.verify = (req, res) => {
     // TODO
     return res.status(403).json(token);
   } else {
-    jwt.verify(token, JWT_TOKEN, async (err, data) => {
+    jwt.verify(token, JWT_PRIVATE_KEY, async (err, data) => {
       if (err) return res.status(403).json(err);
       else {
         const user = await AccountSchema.findById(data.id);

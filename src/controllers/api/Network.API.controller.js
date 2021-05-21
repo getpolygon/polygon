@@ -1,4 +1,4 @@
-const { JWT_TOKEN } = process.env;
+const { JWT_PRIVATE_KEY } = process.env;
 const jwt = require("jsonwebtoken");
 const redis = require("../../db/redis");
 const safeStringify = require("fast-safe-stringify");
@@ -7,7 +7,7 @@ const safeStringify = require("fast-safe-stringify");
 exports.heartbeat = (req, res) => {
   const { jwt: token } = req.cookies;
 
-  jwt.verify(token, JWT_TOKEN, (err, data) => {
+  jwt.verify(token, JWT_PRIVATE_KEY, (err, data) => {
     if (err) {
       // TODO
     } else {
@@ -34,7 +34,7 @@ exports.status = (req, res) => {
   const { jwt: token } = req.cookies;
 
   // Verifying that our user is valid
-  jwt.verify(token, JWT_TOKEN, (err, _) => {
+  jwt.verify(token, JWT_PRIVATE_KEY, (err, _) => {
     if (err) {
       // TODO
     } else {

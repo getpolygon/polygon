@@ -1,13 +1,13 @@
 const jwt = require("jsonwebtoken");
 const AccountSchema = require("../../models/all/account");
 
-const { JWT_TOKEN } = process.env;
+const { JWT_PRIVATE_KEY } = process.env;
 
 exports.query = (req, res) => {
   const { query } = req.query;
   const { jwt: token } = req.cookies;
 
-  jwt.verify(token, JWT_TOKEN, async (error, data) => {
+  jwt.verify(token, JWT_PRIVATE_KEY, async (error, data) => {
     if (error) {
       // TODO
     } else {

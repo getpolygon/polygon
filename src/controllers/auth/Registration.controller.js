@@ -36,7 +36,7 @@ exports.register = async (req, res) => {
         const path = `${account.id}/${account.id}.${format}`;
 
         // Uploading to MinIO
-        await minio.client.putObject(
+        minio.client.putObject(
           minio.config.MINIO_BUCKET,
           path,
           req.file.buffer,

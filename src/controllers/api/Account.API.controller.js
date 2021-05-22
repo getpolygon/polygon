@@ -23,9 +23,8 @@ exports.deleteAccount = async (req, res) => {
     // Pushing every object to a file array
     objectStream.on("data", (obj) => files.push(obj.name));
     // Then deleting every file from the file array
-    objectStream.on(
-      "end",
-      async () => await minio.client.removeObjects(minio.bucket, files)
+    objectStream.on("end", () =>
+      minio.client.removeObjects(minio.bucket, files)
     );
 
     // Deleteing the account from MongoDB

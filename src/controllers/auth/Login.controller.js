@@ -5,7 +5,7 @@ const jwt = require("jsonwebtoken");
 const emailValidator = require("email-validator");
 const AccountSchema = require("../../models/all/account");
 
-exports.login = async (req, res) => {
+export const login = async (req, res) => {
   // const { password } = req.body;
   // const email = _.toLower(req.body.email);
   // if (emailValidator.validate(email) && password) {

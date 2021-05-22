@@ -8,7 +8,7 @@ const emailValidator = require("email-validator");
 const AccountSchema = require("../../models/all/account");
 const checkForDuplicates = require("../../helpers/checkForDuplicates");
 
-exports.register = async (req, res) => {
+export const register = async (req, res) => {
   const email = _.toLower(req.body.email);
   const hasValidEmail = emailValidator.validate(email);
   const hasDuplicates = await checkForDuplicates({ email }, AccountSchema);
@@ -33,7 +33,9 @@ exports.register = async (req, res) => {
               if (req.file) {
                 await minio.client.putObject(
                   minio.bucket,
-                  `${Account._id}/${Account._id}.png`,
+                  `${Account._id}/${Account._id}.${
+                    req.file.mimetype.split(",")[1]
+                  }`,
                   req.file.buffer,
                   req.file.size,
                   {

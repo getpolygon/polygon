@@ -2,7 +2,7 @@ const { JWT_PRIVATE_KEY } = process.env;
 const jwt = require("jsonwebtoken");
 const AccountSchema = require("../../models/all/account");
 
-exports.verify = (req, res) => {
+export const verify = (req, res) => {
   const { jwt: token } = req.cookies;
 
   if (!token) {

@@ -7,11 +7,11 @@ const minio = require("../../db/minio");
 const AccountSchema = require("../../models/all/account");
 const checkForDuplicates = require("../../helpers/checkForDuplicates");
 
-exports.fetchAccount = async (req, res) => {
+export const fetchAccount = async (req, res) => {
   return res.json(req.user);
 };
 
-exports.deleteAccount = async (req, res) => {
+export const deleteAccount = async (req, res) => {
   const { jwt: token } = req.cookies;
 
   jwt.verify(token, JWT_PRIVATE_KEY, async (err, data) => {
@@ -49,7 +49,7 @@ exports.deleteAccount = async (req, res) => {
 };
 
 // TODO
-exports.updateAccount = async (req, res) => {
+export const updateAccount = async (req, res) => {
   const { jwt: token } = req.cookies;
   const { email, password, bio } = req.body;
 

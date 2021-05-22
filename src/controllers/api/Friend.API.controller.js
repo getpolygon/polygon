@@ -5,7 +5,7 @@ const mongoose = require("mongoose");
 const { JWT_PRIVATE_KEY } = process.env;
 const AccountSchema = require("../../models/all/account");
 
-exports.addFriend = (req, res) => {
+export const addFriend = (req, res) => {
   const { accountId } = req.query;
   const { jwt: token } = req.cookies;
 

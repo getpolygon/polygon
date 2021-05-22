@@ -3,7 +3,7 @@ const AccountSchema = require("../../models/all/account");
 
 const { JWT_PRIVATE_KEY } = process.env;
 
-exports.query = (req, res) => {
+export const query = (req, res) => {
   const { query } = req.query;
   const { jwt: token } = req.cookies;
 

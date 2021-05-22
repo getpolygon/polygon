@@ -10,7 +10,7 @@ const BadWordsFilter = new BW({ placeHolder: "*" });
 const AccountSchema = require("../../models/all/account");
 
 // Get all posts
-exports.getAllPosts = async (req, res) => {
+export const getAllPosts = async (req, res) => {
   const { jwt: token } = req.cookies;
 
   jwt.verify(token, JWT_PRIVATE_KEY, async (err, data) => {
@@ -31,7 +31,7 @@ exports.getAllPosts = async (req, res) => {
 };
 
 // Create a post
-exports.createPost = async (req, res) => {
+export const createPost = async (req, res) => {
   const { jwt: token } = req.cookies;
 
   jwt.verify(token, JWT_PRIVATE_KEY, async (err, data) => {
@@ -105,7 +105,7 @@ exports.createPost = async (req, res) => {
 };
 
 // Delete a post
-exports.deletePost = async (req, res) => {
+export const deletePost = async (req, res) => {
   const { postId } = req.query;
   const { jwt: token } = req.cookies;
 
@@ -118,7 +118,7 @@ exports.deletePost = async (req, res) => {
   });
 };
 
-exports.heartPost = async (req, res) => {
+export const heartPost = async (req, res) => {
   const { postId } = req.query;
   const { jwt: token } = req.cookies;
 
@@ -144,7 +144,7 @@ exports.heartPost = async (req, res) => {
   }
 };
 
-exports.unheartPost = async (req, res) => {
+export const unheartPost = async (req, res) => {
   const { postId } = req.query;
   const { jwt: token } = req.cookies;
 
@@ -170,7 +170,7 @@ exports.unheartPost = async (req, res) => {
   }
 };
 
-exports.editPost = async (req, res) => {
+export const editPost = async (req, res) => {
   const { text } = req.body;
   const { postId } = req.query;
   const { jwt: token } = req.cookies;
@@ -198,7 +198,7 @@ exports.editPost = async (req, res) => {
   });
 };
 
-exports.createComment = async (req, res) => {
+export const createComment = async (req, res) => {
   const { postId } = req.query;
   const { jwt: token } = req.cookies;
 
@@ -223,7 +223,7 @@ exports.createComment = async (req, res) => {
   });
 };
 
-exports.savePost = (req, res) => {
+export const savePost = (req, res) => {
   const { postId } = req.query;
   const { jwt: token } = req.cookies;
 

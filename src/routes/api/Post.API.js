@@ -15,6 +15,6 @@ router.delete("/delete", PostController.deletePost);
 // To create a comment
 router.post("/comments/create", PostController.createComment);
 // To create a post
-router.put("/create", upload.array("attachments"), PostController.createPost);
+router.post("/create", upload.array("attachments"), PostController.createPost);
 
 module.exports = router;

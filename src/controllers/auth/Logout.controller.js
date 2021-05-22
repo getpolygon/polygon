@@ -1,3 +1,3 @@
-export const logout = (_, res) => {
+exports.logout = (_, res) => {
   res.clearCookie("jwt", {}).json();
 };

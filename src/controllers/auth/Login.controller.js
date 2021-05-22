@@ -1,46 +1,42 @@
 const { JWT_PRIVATE_KEY } = process.env;
 
+const _ = require("lodash");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
+const { promisify } = require("util");
 const emailValidator = require("email-validator");
 const AccountSchema = require("../../models/all/account");
 
-export const login = async (req, res) => {
-  // const { password } = req.body;
-  // const email = _.toLower(req.body.email);
-  // if (emailValidator.validate(email) && password) {
-  //   const account = await AccountSchema.findOne({ email: email });
-  //   if (account) {
-  //     const same = await bcrypt.compare(password, account.password);
-  //     if (same) {
-  //       jwt.sign(
-  //         { id: account._id },
-  //         JWT_PRIVATE_KEY,
-  //         {
-  //           expiresIn: "1h",
-  //         },
-  //         (err, token) => {
-  //           if (err) return res.status(403).json(err);
-  //           else {
-  //             return res
-  //               .status(200)
-  //               .cookie("jwt", token, {
-  //                 httpOnly: true,
-  //                 sameSite: true,
-  //                 signed: true,
-  //                 secure: true,
-  //               })
-  //               .json(token);
-  //           }
-  //         }
-  //       );
-  //     } else {
-  //       // TODO
-  //     }
-  //   } else {
-  //     // TODO
-  //   }
-  // } else {
-  //   // TODO
-  // }
+exports.login = async (req, res) => {
+  jwt.sign = promisify(jwt.sign);
+  const { password } = req.body;
+  const email = _.toLower(req.body.email);
+
+  // If the email is valid and the password is provided
+  if (emailValidator.validate(email) && password) {
+    // Find the account with specified parameters
+    const account = await AccountSchema.findOne({ email: email });
+
+    // If the account exists
+    if (account) {
+      const same = await bcrypt.compare(password, account.password);
+
+      if (same) {
+        try {
+          const token = await jwt.sign({ id: account.id }, JWT_PRIVATE_KEY);
+
+          return res
+            .cookie("jwt", token, {
+              httpOnly: true,
+              sameSite: true,
+              signed: true,
+              secure: true,
+            })
+            .json({ token });
+        } catch (error) {
+          console.error(error);
+        }
+      } else return res.status(403).json("Invalid Password");
+    } else return res.status(404).json("Not Found");
+  } else return res.status(401).json("Invalid Fields");
 };

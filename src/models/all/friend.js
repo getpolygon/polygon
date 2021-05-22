@@ -16,6 +16,6 @@ const Friend = new mongoose.Schema({
 });
 
 // Plugins
-Friend.plugin(mongoosePaginate());
+// Friend.plugin(mongoosePaginate());
 
 module.exports = mongoose.model("Friend", Friend);

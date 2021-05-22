@@ -4,7 +4,7 @@ const redis = require("../../db/redis");
 const safeStringify = require("fast-safe-stringify");
 
 // Used for sending a simple get request to the server and setting the key in redis
-export const heartbeat = (req, res) => {
+exports.heartbeat = (req, res) => {
   const { jwt: token } = req.cookies;
 
   jwt.verify(token, JWT_PRIVATE_KEY, (err, data) => {

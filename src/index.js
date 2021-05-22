@@ -10,9 +10,9 @@ const {
   MINIO_ENDPOINT,
   MINIO_PORT,
   NODE_ENV,
+  COOKIE_SECRET,
 } = process.env;
 
-require("./helpers/passport");
 const path = require("path");
 const cors = require("cors");
 const chalk = require("chalk");
@@ -24,7 +24,6 @@ const routes = require("./routes");
 const express = require("express");
 const minio = require("./db/minio");
 const redis = require("./db/redis");
-const passport = require("passport");
 const mongoose = require("mongoose");
 const PORT = process.env.PORT || 3001;
 const compression = require("compression");
@@ -35,11 +34,10 @@ const cookieParser = require("cookie-parser");
 app.use(helmet());
 app.use(compression());
 app.use(express.json());
-app.use(passport.initialize());
 __DEV__ && app.use(morgan("dev"));
+app.use(cookieParser(COOKIE_SECRET));
 app.use(express.urlencoded({ extended: true }));
 app.use(cors({ origin: true, credentials: true }));
-app.use(cookieParser(crypto.randomBytes(30).toString("hex")));
 
 // Use the routes
 app.use(routes);

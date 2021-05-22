@@ -9,12 +9,9 @@ const Account = new mongoose.Schema({
   bio: { type: String, required: false, default: "" },
   posts: [{ type: mongoose.Types.ObjectId, ref: "Post" }],
   password: { type: String, required: true, minlength: 8 },
+  friends: [{ type: mongoose.Types.ObjectId, ref: "Friend" }],
   isPrivate: { type: Boolean, required: true, default: false },
-  friends: {
-    added: [{ type: mongoose.Types.ObjectId, ref: "Friend" }],
-    pending: [{ type: mongoose.Types.ObjectId, ref: "Friend" }],
-    requested: [{ type: mongoose.Types.ObjectId, ref: "Friend" }],
-  },
+  timestamp: { type: Date, default: () => Date.now(), required: true },
   notifications: [{ type: mongoose.Types.ObjectId, ref: "Notification" }],
 });
 

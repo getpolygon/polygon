@@ -8,7 +8,7 @@ const AccountSchema = require("../../models/all/account");
 const checkForDuplicates = require("../../helpers/checkForDuplicates");
 
 export const fetchAccount = async (req, res) => {
-  return res.json(req.user);
+  res.json(req.user);
 };
 
 export const deleteAccount = async (req, res) => {

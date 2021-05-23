@@ -13,10 +13,12 @@ const {
   COOKIE_SECRET,
 } = process.env;
 
+const PORT = process.env.PORT || 3001;
+const __DEV__ = NODE_ENV === "development";
+
 const path = require("path");
 const cors = require("cors");
 const chalk = require("chalk");
-const crypto = require("crypto");
 const app = require("express")();
 const morgan = require("morgan");
 const helmet = require("helmet");
@@ -25,9 +27,7 @@ const express = require("express");
 const minio = require("./db/minio");
 const redis = require("./db/redis");
 const mongoose = require("mongoose");
-const PORT = process.env.PORT || 3001;
 const compression = require("compression");
-const __DEV__ = NODE_ENV === "development";
 const cookieParser = require("cookie-parser");
 
 // Middleware
@@ -54,11 +54,7 @@ mongoose
   })
   .then(() => {
     console.log(
-      `${
-        __DEV__
-          ? chalk.greenBright("Connected to MongoDB")
-          : chalk.blueBright("Connected to MongoDB")
-      } at ${chalk.bold(MONGO_URI)} 🍃`
+      `${chalk.greenBright("Connected to MongoDB")} at ${chalk.bold(MONGO_URI)}`
     );
   })
   .catch((error) => {
@@ -71,11 +67,9 @@ mongoose
 // Connect to redis
 redis.once("connect", () =>
   console.log(
-    `${
-      __DEV__
-        ? chalk.greenBright("Connected to Redis")
-        : chalk.blueBright("Connected to Redis")
-    } at ${chalk.bold(`redis://${REDIS_HOST}:${REDIS_PORT}/`)} 🔑`
+    `${chalk.greenBright("Connected to Redis")} at ${chalk.bold(
+      `redis://${REDIS_HOST}:${REDIS_PORT}/`
+    )}`
   )
 );
 // On redis connection error
@@ -95,7 +89,7 @@ minio.client.bucketExists("heartbeat", (error, _result) => {
     console.log(
       `${chalk.greenBright("Connected to MinIO")} at ${chalk.bold(
         `http://${MINIO_ENDPOINT}:${MINIO_PORT}/`
-      )} 📷`
+      )}`
     );
   }
 });
@@ -120,19 +114,18 @@ if (__DEV__) {
     console.log(
       `${chalk.greenBright("HTTPS server")} started at ${chalk.bold(
         `https://localhost:${PORT}/`
-      )} 🚀`
+      )}`
     );
   });
 }
 // For production environment
 else {
-  // Start the server
   app.listen(PORT, "0.0.0.0", () => {
     console.clear();
     console.log(
-      `${chalk.blueBright("Production server")} started at port ${chalk.bold(
+      `${chalk.greenBright("Production server")} started at port ${chalk.bold(
         PORT
-      )} 🚀`
+      )}`
     );
   });
 }

@@ -15,8 +15,7 @@ module.exports = async (req, res, next) => {
     // Getting the ID from the token
     const data = jwt.verify(token, JWT_PRIVATE_KEY);
     // Finding the user with the ID
-    const account = await AccountSchema.findById(data.id);
-
+    const account = await AccountSchema.findById(data.id).populate("friends");
     // If there's no such account, forbid the request
     if (!account) return res.status(403).send("Unauthorized");
     // Move on to the next handler

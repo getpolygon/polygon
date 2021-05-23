@@ -8,14 +8,16 @@ const Friend = new mongoose.Schema({
    * 0 - Pending
    * 1 - Requested
    * 2 - Friends
+   * 3 - None
    * -----------------------------
    */
   type: { type: Number, required: true, default: 0 },
-  account: { type: mongoose.Types.ObjectId, ref: "Account" },
+  owner: { type: mongoose.Types.ObjectId, ref: "Account" },
+  sender: { type: mongoose.Types.ObjectId, ref: "Account" },
   timestamp: { type: Date, required: true, default: () => Date.now() },
 });
 
 // Plugins
-// Friend.plugin(mongoosePaginate());
+Friend.plugin(mongoosePaginate);
 
 module.exports = mongoose.model("Friend", Friend);

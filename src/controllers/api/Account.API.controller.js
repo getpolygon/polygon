@@ -19,7 +19,7 @@ exports.fetchAccount = async (req, res) => {
         // Only populating the type field to keep everything private
       }).populate("friends", "type");
       return res.json(account);
-    } else return res.status(400).send("Bad Request");
+    } else return res.status(400).send();
   }
 };
 
@@ -44,8 +44,8 @@ exports.deleteAccount = async (req, res) => {
     await AccountSchema.findByIdAndDelete(data.id);
 
     // Clearing the cookie and sending the response
-    return res.status(200).clearCookie("jwt").send("Deleted");
-  } else return res.status(400).send("Bad Request");
+    return res.status(200).clearCookie("jwt").send();
+  } else return res.status(400).send();
 };
 
 exports.updateAccount = async (req, res) => {};

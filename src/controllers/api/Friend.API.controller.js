@@ -6,7 +6,7 @@ const { AccountSchema, FriendSchema } = require("../../models");
 exports.addFriend = async (req, res) => {
   const { accountId } = req.query;
 
-  if (!accountId) return res.status(400).send("Bad Request");
+  if (!accountId) return res.status(400).send();
   else {
     const currentAccount = req.user;
     const addedAccount = await AccountSchema.findById(accountId).populate(
@@ -14,15 +14,15 @@ exports.addFriend = async (req, res) => {
     );
 
     // If the other account does not exist
-    if (!addedAccount) return res.status(410).send("Account Not Found");
+    if (!addedAccount) return res.status(410).send();
     else {
       // Checking for existing friend requests
       const existingFriendRequest = _.filter(addedAccount.friends, {
         sender: currentAccount._id,
-      });
+      })[0];
 
       // If there are no existing requests in the other account
-      if (!existingFriendRequest[0]) {
+      if (!existingFriendRequest) {
         // Friend document that will go to the other account
         const outgoing = await FriendSchema.create({
           // Pending
@@ -46,7 +46,30 @@ exports.addFriend = async (req, res) => {
         await currentAccount.save();
         return res.json({ status: 1 });
       } else {
-        // TODO
+        switch (existingFriendRequest.type) {
+          case 0: {
+            await FriendSchema.findOneAndUpdate(
+              { sender: addedAccount, owner: currentAccount },
+              {
+                type: 2,
+              }
+            );
+            await FriendSchema.findOneAndUpdate(
+              { sender: currentAccount, owner: addedAccount },
+              {
+                type: 2,
+              }
+            );
+
+            return res.json({ type: 2 });
+          }
+          case 1: {
+            return res.json({ status: 1 });
+          }
+          case 2: {
+            return res.status(403).json({ status: 2, already: true });
+          }
+        }
       }
     }
   }
@@ -57,13 +80,12 @@ exports.checkFriendship = async (req, res) => {
   const { accountId } = req.query;
 
   if (accountId) {
-    if (accountId === currentAccount._id)
-      return res.status(304).send("Not Modified");
+    if (accountId === currentAccount._id) return res.status(304).send();
     else {
       if (mongoose.Types.ObjectId.isValid(accountId)) {
         const otherAccount = await AccountSchema.findById(accountId);
 
-        if (!otherAccount) return res.status(404).send("Not Found");
+        if (!otherAccount) return res.status(404).send();
         else {
           const filtered = otherAccount.friends.filter(
             (request) => request.sender === currentAccount._id
@@ -72,7 +94,8 @@ exports.checkFriendship = async (req, res) => {
           if (!filtered) return res.json({ type: 3 });
           else return res.json({ type: filtered.type });
         }
-      } else return res.status().json();
+        // TODO
+      } else return res.status(0).send();
     }
-  } else return res.status(400).send("Bad Request");
+  } else return res.status(400).send();
 };

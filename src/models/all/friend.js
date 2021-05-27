@@ -12,9 +12,9 @@ const Friend = new mongoose.Schema({
    * -----------------------------
    */
   type: { type: Number, required: true, default: 0 },
-  owner: { type: mongoose.Types.ObjectId, ref: "Account" },
-  sender: { type: mongoose.Types.ObjectId, ref: "Account" },
   timestamp: { type: Date, required: true, default: () => Date.now() },
+  owner: { type: mongoose.Types.ObjectId, ref: "Account", required: true },
+  sender: { type: mongoose.Types.ObjectId, ref: "Account", required: true },
 });
 
 // Plugins

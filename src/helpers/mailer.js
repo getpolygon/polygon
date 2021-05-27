@@ -1,19 +1,18 @@
 require("dotenv").config();
 const nodemailer = require("nodemailer");
-const { MAILER_HOST, MAILER_EMAIL, MAILER_PASS, MAILER_PORT } = process.env;
+const { MAILER_HOST, MAILER_USER, MAILER_PASS, MAILER_PORT } = process.env;
 
 class Mailer {
   #html = null;
   #title = null;
   #subject = null;
   #receiver = null;
-  #sender = MAILER_EMAIL;
+  #sender = MAILER_USER;
   #transporter = nodemailer.createTransport({
     host: MAILER_HOST,
     port: MAILER_PORT,
-    secure: true,
     auth: {
-      user: MAILER_EMAIL,
+      user: MAILER_USER,
       pass: MAILER_PASS,
     },
   });
@@ -29,11 +28,7 @@ class Mailer {
   // Used for sending the email
   async send() {
     try {
-      if (
-        this.#receiver === null ||
-        this.#subject === null ||
-        this.#title === null
-      ) {
+      if (!this.#receiver || !this.#subject || !this.#title) {
         throw new Error(
           "You have either forgot to call the init() method on the mailer or have not specified a parameter"
         );

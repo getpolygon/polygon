@@ -22,21 +22,17 @@ exports.login = async (req, res) => {
       const same = await bcrypt.compare(password, account.password);
 
       if (same) {
-        try {
-          const token = await jwt.sign({ id: account.id }, JWT_PRIVATE_KEY);
+        const token = await jwt.sign({ id: account.id }, JWT_PRIVATE_KEY);
 
-          return res
-            .cookie("jwt", token, {
-              httpOnly: true,
-              sameSite: true,
-              signed: true,
-              secure: true,
-            })
-            .json({ token });
-        } catch (error) {
-          console.error(error);
-        }
-      } else return res.status(403).json("Invalid Password");
-    } else return res.status(404).json("Not Found");
-  } else return res.status(401).json("Invalid Fields");
+        return res
+          .cookie("jwt", token, {
+            httpOnly: true,
+            sameSite: true,
+            signed: true,
+            secure: true,
+          })
+          .json({ token });
+      } else return res.status(403).send();
+    } else return res.status(404).send();
+  } else return res.status(401).send();
 };

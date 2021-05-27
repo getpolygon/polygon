@@ -7,12 +7,14 @@ Detailed guide for setting up the development server of the backend
 - Create a `.env` file in the root folder
 - Here's a boilerplate to configure it
 
+__NOTE:__ For mailer host we're using [mailtrap](https://mailtrap.io)
+
 ```bash
 # Mailer Helper
 
 # SMTP
 MAILER_HOST=
-MAILER_EMAIL=
+MAILER_USER=
 MAILER_PASS=
 MAILER_PORT=
 

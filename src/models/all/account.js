@@ -7,10 +7,10 @@ const Account = new mongoose.Schema({
   lastName: { type: String, required: true },
   firstName: { type: String, required: true },
   bio: { type: String, required: false, default: "" },
-  posts: [{ type: mongoose.Schema.Types.ObjectId, ref: "Post" }],
   password: { type: String, required: true, minlength: 8 },
-  friends: [{ type: mongoose.Schema.Types.ObjectId, ref: "Friend" }],
   isPrivate: { type: Boolean, required: true, default: false },
+  posts: [{ type: mongoose.Schema.Types.ObjectId, ref: "Post" }],
+  friends: [{ type: mongoose.Schema.Types.ObjectId, ref: "Friend" }],
   timestamp: { type: Date, default: () => Date.now(), required: true },
   notifications: [
     { type: mongoose.Schema.Types.ObjectId, ref: "Notification" },

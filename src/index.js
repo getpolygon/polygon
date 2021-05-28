@@ -108,13 +108,14 @@ if (__DEV__) {
     app
   );
 
-  // HTTPS Server (NO HTTP)
+  // Start the server
   httpsServer.listen(PORT, "0.0.0.0", () => {
+    // Clear the console
     console.clear();
     console.log(
-      `${chalk.greenBright("HTTPS server")} started at ${chalk.bold(
-        `https://localhost:${PORT}/`
-      )}`
+      `${chalk.greenBright(
+        "Started secure development server "
+      )} at ${chalk.bold(`https://localhost:${PORT}/`)}`
     );
   });
 }

@@ -20,7 +20,7 @@ exports.create = async (req, res) => {
   const text = textCleaner(req.body.text);
   // Post
   // TODO: Fix a bug in the account or post. The issue is that the `posts` property on account is not being modified
-  const post = new PostSchema({ text, author: req.user });
+  const post = new PostSchema({ text, author: req.user._id });
 
   // Checking if there are no uploaded files
   if (req.files.length === 0) {

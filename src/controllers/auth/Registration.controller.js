@@ -5,14 +5,14 @@ const minio = require("../../db/minio");
 const emailValidator = require("email-validator");
 const { JWT_PRIVATE_KEY, SALT_ROUNDS } = process.env;
 const AccountSchema = require("../../models/all/account");
-const checkForDuplicates = require("../../helpers/checkForDuplicates");
+const duplicateCheck = require("../../helpers/duplicateCheck");
 const generateDicebearUrl = require("../../utils/generateDicebearUrl");
 
 module.exports = async (req, res) => {
   const email = _.toLower(req.body.email);
   const { password, firstName, lastName } = req.body;
   const hasValidEmail = emailValidator.validate(email);
-  const hasDuplicates = await checkForDuplicates({ email }, AccountSchema);
+  const hasDuplicates = await duplicateCheck({ email }, AccountSchema);
 
   // Checking if the email is valid
   if (hasValidEmail && password && firstName && lastName) {

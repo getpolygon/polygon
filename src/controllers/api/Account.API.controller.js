@@ -1,9 +1,6 @@
-// const bcrypt = require("bcrypt");
-// const jwt = require("jsonwebtoken");
 const mongoose = require("mongoose");
 const minio = require("../../db/minio");
 const { AccountSchema } = require("../../models");
-// const checkForDuplicates = require("../../helpers/checkForDuplicates");
 
 // For fetching account details
 exports.fetchAccount = async (req, res) => {
@@ -25,27 +22,22 @@ exports.fetchAccount = async (req, res) => {
 
 // For deleting account
 exports.deleteAccount = async (req, res) => {
-  if (mongoose.Types.ObjectId.isValid(req.user.id)) {
-    const files = [];
-    const objectStream = minio.client.listObjectsV2(
-      minio.bucket,
-      data.id + "/",
-      true
-    );
+  const objectStream = minio.client.listObjectsV2(
+    minio.config.MINIO_BUCKET,
+    req.user._id + "/",
+    true
+  );
 
-    // Pushing every object to a file array
-    objectStream.on("data", (obj) => files.push(obj.name));
-    // Then deleting every file from the file array
-    objectStream.on("end", () =>
-      minio.client.removeObjects(minio.bucket, files)
-    );
+  // Pushing every object to a file array
+  objectStream.on("data", async (obj) => {
+    await minio.client.removeObject(minio.config.MINIO_BUCKET, obj.name);
+  });
 
-    // Deleteing the account from MongoDB
-    await AccountSchema.findByIdAndDelete(data.id);
+  // Deleteing the account from MongoDB
+  await AccountSchema.findByIdAndDelete(req.user.id);
 
-    // Clearing the cookie and sending the response
-    return res.status(200).clearCookie("jwt").send();
-  } else return res.status(400).send();
+  // Clearing the cookie and sending the response
+  return res.status(200).clearCookie("jwt").send();
 };
 
-exports.updateAccount = async (req, res) => {};
+exports.updateAccount = (req, res) => res.status(501).send();

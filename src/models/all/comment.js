@@ -3,7 +3,7 @@ const mongoosePaginate = require("mongoose-paginate-v2");
 
 const Comment = new mongoose.Schema({
   content: { type: String, required: true },
-  post: { type: mongoose.Types.ObjectId, ref: "Post", required: true },
+  post: { type: mongoose.Schema.Types.ObjectId, ref: "Post", required: true },
   timestamp: { type: Date, required: true, default: () => Date.now() },
 });
 

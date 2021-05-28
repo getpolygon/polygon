@@ -2,19 +2,24 @@ const router = require("express").Router();
 const upload = require("../../middleware/multer");
 const PostController = require("../../controllers/api/Post.API.controller");
 
-// To save a post
-router.put("/save", PostController.savePost);
-// To heart a post
-router.put("/heart", PostController.heartPost);
 // To fetch posts
-router.get("/fetch", PostController.getAllPosts);
+router.get("/fetch", PostController.fetch);
+
+// To save a post
+router.put("/:id/save", PostController.save);
+// To unsave a post
+router.put("/:id/unsave", PostController.unsave);
+
+// To heart a post
+router.put("/:id/heart", PostController.heart);
 // To unheart a post
-router.put("/unheart", PostController.unheartPost);
+router.put("/:id/unheart", PostController.unheart);
+
+// To update a post
+router.patch("/:id/update", PostController.update);
 // To delete a post
-router.delete("/delete", PostController.deletePost);
-// To create a comment
-// router.post("/comments/create", PostController.createComment);
+router.delete("/:id/delete", PostController.delete);
 // To create a post
-router.post("/create", upload.array("attachments"), PostController.createPost);
+router.post("/create", upload.array("attachments"), PostController.create);
 
 module.exports = router;

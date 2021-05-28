@@ -1,3 +1,1 @@
-exports.getAllNotifications = (req, res) => {
-  res.json(req.user.notifications);
-};
+exports.getAll = (req, res) => res.json(req.user.notifications);

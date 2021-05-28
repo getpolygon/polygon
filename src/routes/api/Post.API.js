@@ -13,7 +13,7 @@ router.put("/unheart", PostController.unheartPost);
 // To delete a post
 router.delete("/delete", PostController.deletePost);
 // To create a comment
-router.post("/comments/create", PostController.createComment);
+// router.post("/comments/create", PostController.createComment);
 // To create a post
 router.post("/create", upload.array("attachments"), PostController.createPost);
 

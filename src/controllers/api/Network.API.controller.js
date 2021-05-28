@@ -1,10 +1,9 @@
-const { JWT_PRIVATE_KEY } = process.env;
-const jwt = require("jsonwebtoken");
 const redis = require("../../db/redis");
 const safeStringify = require("fast-safe-stringify");
 
 // Used for sending a simple get request to the server and setting the key in redis
 exports.heartbeat = (req, res) => {
+  // Getting the ID of the user
   const { id } = req.user;
 
   // Setting connection status to true
@@ -13,31 +12,26 @@ exports.heartbeat = (req, res) => {
   redis.expire(id, 10);
   // Getting the key value from the database
   redis.get(id, (error, reply) => {
-    if (error) {
-      // TODO
-    } else {
-      if (!reply) return res.json({ connected: false });
-      else return res.json(JSON.parse(reply));
+    if (error) console.error(error);
+    else {
+      if (reply) res.json(JSON.parse(reply));
+      else return res.json({ connected: false });
     }
   });
 };
 
 // Used for getting user status (online, offline, dnd, idle, ...)
 exports.status = (req, res) => {
+  // Getting the ID of current user
+  const { id } = req.user;
+  // ID provided in the optional query
   const { accountId } = req.query;
-  const { jwt: token } = req.cookies;
 
-  // If account id was provided
-  if (accountId) {
-    redis.exists(accountId, (err, reply) => {
-      if (err) {
-        // TODO
-      } else {
-        if (reply) return res.json({ connected: true });
-        else return res.json({ connected: false });
-      }
-    });
-  } else {
-    // TODO
-  }
+  redis.exists(accountId ? accountId : id, (error, reply) => {
+    if (error) console.error(error);
+    else {
+      if (reply) return res.json({ connected: true });
+      else return res.json({ connected: false });
+    }
+  });
 };

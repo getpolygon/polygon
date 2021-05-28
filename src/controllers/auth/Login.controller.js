@@ -7,7 +7,7 @@ const { promisify } = require("util");
 const emailValidator = require("email-validator");
 const AccountSchema = require("../../models/all/account");
 
-exports.login = async (req, res) => {
+module.exports = async (req, res) => {
   jwt.sign = promisify(jwt.sign);
   const { password } = req.body;
   const email = _.toLower(req.body.email);

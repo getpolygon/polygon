@@ -34,4 +34,4 @@ exports.deletePost = async (req, res) => {};
 // Unheart a post
 exports.unheartPost = async (req, res) => {};
 // Create a comment
-exports.createComment = async (req, res) => {};
+// exports.createComment = async (req, res) => {};

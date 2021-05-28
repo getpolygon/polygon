@@ -3,7 +3,8 @@
   "private": true,
   "scripts": {
     "start": "node  src/index",
-    "dev": "nodemon src/index --verbose"
+    "dev": "nodemon src/index --verbose",
+    "test:mailer": "node tests/mailer.test"
   },
   "author": "Michael Grigoryan",
   "dependencies": {
@@ -33,6 +34,7 @@
     "nodemailer": "^6.4.17",
     "redis": "^3.0.2",
     "sanitize-html": "^2.3.0",
+    "showdown": "^1.9.1",
     "uniqid": "^5.2.0"
   },
   "devDependencies": {

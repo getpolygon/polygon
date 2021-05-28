@@ -1,4 +1,6 @@
 require("dotenv").config();
+// const nodePin = require("node-pin");
+// const showdown = require("showdown");
 const nodemailer = require("nodemailer");
 const { MAILER_HOST, MAILER_USER, MAILER_PASS, MAILER_PORT } = process.env;
 
@@ -7,10 +9,10 @@ class Mailer {
   #title = null;
   #subject = null;
   #receiver = null;
-  #sender = MAILER_USER;
   #transporter = nodemailer.createTransport({
     host: MAILER_HOST,
     port: MAILER_PORT,
+    secure: false,
     auth: {
       user: MAILER_USER,
       pass: MAILER_PASS,
@@ -18,11 +20,13 @@ class Mailer {
   });
 
   // Used for initializng all of the data that is going to be sent via email
-  init(receiver, subject, title, HTML = ``) {
+  init(receiver, subject, title) {
+    // TODO: Add body
     this.#receiver = receiver;
     this.#subject = subject;
     this.#title = title;
-    this.#html = HTML;
+
+    return this;
   }
 
   // Used for sending the email
@@ -34,12 +38,17 @@ class Mailer {
     } else {
       const transporter = this.#transporter;
       const info = await transporter.sendMail({
-        from: `"noreply" <${this.#sender}>`,
         to: `${this.#receiver}`,
         subject: `${this.#subject}`,
         text: `${this.#title}`,
         html: this.#html,
       });
+
+      this.#receiver = null;
+      this.#subject = null;
+      this.#title = null;
+      this.#html = null;
+
       return info;
     }
   }

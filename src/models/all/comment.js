@@ -1,10 +1,10 @@
-const mongoose = require("mongoose");
+const { Schema, model } = require("mongoose");
 const mongoosePaginate = require("mongoose-paginate-v2");
 
-const Comment = new mongoose.Schema(
+const Comment = new Schema(
   {
     content: { type: String, required: true },
-    post: { type: mongoose.Schema.Types.ObjectId, ref: "Post", required: true },
+    post: { type: Schema.Types.ObjectId, ref: "Post", required: true },
     timestamp: { type: Date, required: true, default: () => Date.now() },
   },
   {
@@ -18,4 +18,4 @@ const Comment = new mongoose.Schema(
 // Plugins
 Comment.plugin(mongoosePaginate);
 
-module.exports = mongoose.model("Comment", Comment);
+module.exports = model("Comment", Comment);

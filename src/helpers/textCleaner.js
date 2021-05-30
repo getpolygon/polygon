@@ -4,5 +4,4 @@ const BadWordsFilter = new BW({ placeHolder: "*" });
 
 const clean = (text) => sanitizeHtml(BadWordsFilter.clean(text));
 
-exports.clean = clean;
 module.exports = clean;

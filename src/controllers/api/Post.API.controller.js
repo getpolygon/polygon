@@ -4,6 +4,19 @@ const minio = require("../../db/minio");
 const { PostSchema } = require("../../models");
 const textCleaner = require("../../helpers/textCleaner");
 
+// TODO: continue implementation
+const PostAPIController = {
+  // Get all posts
+  fetch: async (req, res) => {
+    const posts = await PostSchema.find()
+      .where("author._id")
+      .ne(req.user._id)
+      .limit(15);
+
+    res.json(posts);
+  },
+};
+
 // Get all posts
 exports.fetch = async (req, res) => {
   const posts = await PostSchema.find()

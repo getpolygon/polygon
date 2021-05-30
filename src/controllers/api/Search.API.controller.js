@@ -33,8 +33,6 @@ const SearchAPIController = {
           timestamp: 0,
         }
       )
-        .where("private")
-        .ne(true)
         .where("_id")
         .ne(req.user.id);
 

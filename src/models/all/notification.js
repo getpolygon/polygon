@@ -1,7 +1,7 @@
-const mongoose = require("mongoose");
+const { Schema, model } = require("mongoose");
 const mongoosePaginate = require("mongoose-paginate-v2");
 
-const Notification = new mongoose.Schema(
+const Notification = new Schema(
   {
     seen: { type: Boolean, default: false, required: true },
     account: { type: mongoose.Schema.Types.ObjectId, ref: "Account" },
@@ -18,4 +18,4 @@ const Notification = new mongoose.Schema(
 // Plugins
 Notification.plugin(mongoosePaginate);
 
-module.exports = mongoose.model("Notification", Notification);
+module.exports = model("Notification", Notification);

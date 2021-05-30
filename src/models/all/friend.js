@@ -1,4 +1,4 @@
-const mongoose = require("mongoose");
+const { Schema, model } = require("mongoose");
 const mongoosePaginate = require("mongoose-paginate-v2");
 
 const Friend = new mongoose.Schema(
@@ -15,12 +15,12 @@ const Friend = new mongoose.Schema(
     type: { type: Number, required: true, default: 0 },
     timestamp: { type: Date, required: true, default: () => Date.now() },
     owner: {
-      type: mongoose.Schema.Types.ObjectId,
+      type: Schema.Types.ObjectId,
       ref: "Account",
       required: true,
     },
     sender: {
-      type: mongoose.Schema.Types.ObjectId,
+      type: Schema.Types.ObjectId,
       ref: "Account",
       required: true,
     },
@@ -36,4 +36,4 @@ const Friend = new mongoose.Schema(
 // Plugins
 Friend.plugin(mongoosePaginate);
 
-module.exports = mongoose.model("Friend", Friend);
+module.exports = model("Friend", Friend);

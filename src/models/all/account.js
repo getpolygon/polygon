@@ -1,7 +1,7 @@
-const mongoose = require("mongoose");
+const { Schema, model } = require("mongoose");
 const mongoosePaginate = require("mongoose-paginate-v2");
 
-const Account = new mongoose.Schema(
+const Account = new Schema(
   {
     email: { type: String, required: true },
     avatar: { type: String, required: true },
@@ -10,12 +10,12 @@ const Account = new mongoose.Schema(
     bio: { type: String, required: false, default: "" },
     password: { type: String, required: true, minlength: 8 },
     private: { type: Boolean, required: true, default: false },
-    posts: [{ type: mongoose.Schema.Types.ObjectId, ref: "Post" }],
-    friends: [{ type: mongoose.Schema.Types.ObjectId, ref: "Friend" }],
+    notifications: {
+      type: [{ type: Schema.Types.ObjectId, ref: "Notification" }],
+    },
+    posts: { type: [{ type: Schema.Types.ObjectId, ref: "Post" }] },
+    friends: { type: [{ type: Schema.Types.ObjectId, ref: "Friend" }] },
     timestamp: { type: Date, default: () => Date.now(), required: true },
-    notifications: [
-      { type: mongoose.Schema.Types.ObjectId, ref: "Notification" },
-    ],
   },
   {
     toJSON: {
@@ -28,4 +28,4 @@ const Account = new mongoose.Schema(
 // Plugins
 Account.plugin(mongoosePaginate);
 
-module.exports = mongoose.model("Account", Account);
+module.exports = model("Account", Account);

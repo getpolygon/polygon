@@ -1,17 +1,17 @@
-const mongoose = require("mongoose");
+const { Schema, model } = require("mongoose");
 const mongoosePaginate = require("mongoose-paginate-v2");
 
-const Post = new mongoose.Schema(
+const Post = new Schema(
   {
     text: { type: String, required: true },
     private: { type: Boolean, required: true, default: false },
     author: {
-      type: mongoose.Schema.Types.ObjectId,
+      type: Schema.Types.ObjectId,
       ref: "Account",
       required: true,
     },
     comments: {
-      type: [{ type: mongoose.Schema.Types.ObjectId, ref: "Comment" }],
+      type: [{ type: Schema.Types.ObjectId, ref: "Comment" }],
       default: [],
       required: true,
     },
@@ -36,4 +36,4 @@ const Post = new mongoose.Schema(
 // Plugins
 Post.plugin(mongoosePaginate);
 
-module.exports = mongoose.model("Post", Post);
+module.exports = model("Post", Post);

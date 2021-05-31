@@ -1,7 +1,7 @@
 const { Schema, model } = require("mongoose");
 const mongoosePaginate = require("mongoose-paginate-v2");
 
-const Friend = new mongoose.Schema(
+const Friend = new Schema(
   {
     /**
      * Friend types

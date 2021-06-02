@@ -19,17 +19,13 @@ const Post = new Schema(
       urls: { type: [{ type: String }], default: [], required: true },
       objects: { type: [{ type: String }], default: [], required: true },
     },
-    timestamp: {
-      type: Date,
-      required: true,
-      default: () => Date.now(),
-    },
   },
   {
     toJSON: {
       virtuals: true,
       getters: true,
     },
+    timestamps: true,
   }
 );
 

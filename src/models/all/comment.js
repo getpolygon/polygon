@@ -12,6 +12,7 @@ const Comment = new Schema(
       virtuals: true,
       getters: true,
     },
+    timestamps: true,
   }
 );
 

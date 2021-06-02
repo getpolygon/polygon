@@ -13,7 +13,6 @@ const Friend = new Schema(
      * -----------------------------
      */
     type: { type: Number, required: true, default: 0 },
-    timestamp: { type: Date, required: true, default: () => Date.now() },
     owner: {
       type: Schema.Types.ObjectId,
       ref: "Account",
@@ -30,6 +29,7 @@ const Friend = new Schema(
       virtuals: true,
       getters: true,
     },
+    timestamps: true,
   }
 );
 

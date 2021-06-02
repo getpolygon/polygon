@@ -22,6 +22,7 @@ const Account = new Schema(
       getters: true,
       virtuals: true,
     },
+    timestamps: true,
   }
 );
 

@@ -5,13 +5,13 @@ const Notification = new Schema(
   {
     seen: { type: Boolean, default: false, required: true },
     account: { type: Schema.Types.ObjectId, ref: "Account" },
-    timestamp: { type: Date, required: true, default: () => Date.now() },
   },
   {
     toJSON: {
       virtuals: true,
       getters: true,
     },
+    timestamps: true,
   }
 );
 

@@ -5,7 +5,7 @@ const AccountSchema = require("../models/all/account");
 // Middleware for authenticating users
 module.exports = async (req, res, next) => {
   // Getting the `jwt` cookie
-  const { jwt: token } = req.signedCookies;
+  const { jwt: token } = req.signedCookies ? req.signedCookies : req.cookies;
 
   console.log(req.signedCookies)
 

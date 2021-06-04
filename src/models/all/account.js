@@ -15,7 +15,6 @@ const Account = new Schema(
     },
     posts: { type: [{ type: Schema.Types.ObjectId, ref: "Post" }] },
     friends: { type: [{ type: Schema.Types.ObjectId, ref: "Friend" }] },
-    timestamp: { type: Date, default: () => Date.now(), required: true },
   },
   {
     toJSON: {

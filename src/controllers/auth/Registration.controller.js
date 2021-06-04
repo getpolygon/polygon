@@ -64,18 +64,21 @@ module.exports = async (req, res) => {
       await account.save();
 
       // Creating an account token
-      const token = jwt.sign({ id: account._id }, JWT_PRIVATE_KEY);
-
-      // Returning the token
-      return res
-        .status(201)
-        .cookie("jwt", token, {
-          httpOnly: true,
-          sameSite: true,
-          // signed: true,
-          secure: true,
-        })
-        .json({ token });
+      jwt.sign({ id: account._id }, JWT_PRIVATE_KEY, {}, (err, token) => {
+        if (err) console.error(err);
+        else {
+          // Returning the token
+          return res
+            .status(201)
+            .cookie("jwt", token, {
+              httpOnly: true,
+              sameSite: true,
+              signed: true,
+              secure: true,
+            })
+            .json({ token });
+        }
+      });
     } else return res.status(403).send();
   } else return res.status(401).send();
 };

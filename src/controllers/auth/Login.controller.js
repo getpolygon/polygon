@@ -3,11 +3,9 @@ const { JWT_PRIVATE_KEY } = process.env;
 const _ = require("lodash");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
-const { promisify } = require("util");
 const emailValidator = require("email-validator");
 const AccountSchema = require("../../models/all/account");
 
-// ! TODO: When deploying to Heroku the cookie doesn't get signed
 module.exports = async (req, res) => {
   jwt.sign = promisify(jwt.sign);
   const { password } = req.body;
@@ -23,16 +21,19 @@ module.exports = async (req, res) => {
       const same = await bcrypt.compare(password, account.password);
 
       if (same) {
-        const token = await jwt.sign({ id: account.id }, JWT_PRIVATE_KEY);
-
-        return res
-          .cookie("jwt", token, {
-            httpOnly: true,
-            sameSite: true,
-            // signed: true,
-            secure: true,
-          })
-          .json({ token });
+        jwt.sign({ id: account.id }, JWT_PRIVATE_KEY, {}, (err, token) => {
+          if (err) console.error(err);
+          else {
+            return res
+              .cookie("jwt", token, {
+                httpOnly: true,
+                sameSite: true,
+                signed: true,
+                secure: true,
+              })
+              .json({ token });
+          }
+        });
       } else return res.status(403).send();
     } else return res.status(404).send();
   } else return res.status(401).send();

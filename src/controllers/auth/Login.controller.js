@@ -26,7 +26,7 @@ module.exports = async (req, res) => {
             return res
               .cookie("jwt", token, {
                 httpOnly: true,
-                sameSite: true,
+                sameSite: "Lax",
                 signed: true,
                 secure: true,
               })

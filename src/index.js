@@ -37,9 +37,7 @@ app.use(express.json());
 __DEV__ && app.use(morgan("dev"));
 app.use(cookieParser(COOKIE_SECRET));
 app.use(express.urlencoded({ extended: true }));
-app.use(
-  cors({ origin: ["https://usc-preview.vercel.app"], credentials: true })
-);
+app.use(cors({ origin: true, credentials: true }));
 
 // Use the routes
 app.use(routes);

@@ -7,6 +7,7 @@ const { promisify } = require("util");
 const emailValidator = require("email-validator");
 const AccountSchema = require("../../models/all/account");
 
+// ! TODO: When deploying to Heroku the cookie doesn't get signed
 module.exports = async (req, res) => {
   jwt.sign = promisify(jwt.sign);
   const { password } = req.body;

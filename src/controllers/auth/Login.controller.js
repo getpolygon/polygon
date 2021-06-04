@@ -29,7 +29,6 @@ module.exports = async (req, res) => {
                 sameSite: "None",
                 signed: true,
                 secure: true,
-                domain: req.origin,
               })
               .json({ token });
           }

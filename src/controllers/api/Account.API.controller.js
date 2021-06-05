@@ -20,7 +20,10 @@ const AccountController = {
           friends: 0,
           // Only populating the type field to keep everything private
         }).populate("friends", "type");
-        return res.json(account);
+
+        // If the account does not exist
+        if (!account) return res.status(404).send();
+        else return res.json(account);
       } else return res.status(400).send();
     }
   },

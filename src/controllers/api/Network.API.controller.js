@@ -13,8 +13,10 @@ const NetworkAPIController = {
     redis.expire(id, 10);
     // Getting the key value from the database
     redis.get(id, (error, reply) => {
+      // If there was an error
       if (error) console.error(error);
       else {
+        // If there is a reply
         if (reply) res.json(JSON.parse(reply));
         else return res.json({ connected: false });
       }

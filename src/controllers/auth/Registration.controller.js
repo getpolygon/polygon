@@ -51,8 +51,11 @@ module.exports = async (req, res) => {
           }
         );
 
+        // TODO: Implement secure TLS with SSL or something
+        const PROTOCOL = "http://";
+
         // Setting the account URL to the
-        account.avatar = `${minio.config.MINIO_ENDPOINT}:${minio.config.MINIO_PORT}/${minio.config.MINIO_BUCKET}/${path}`;
+        account.avatar = `${PROTOCOL}${minio.config.MINIO_ENDPOINT}:${minio.config.MINIO_PORT}/${minio.config.MINIO_BUCKET}/${path}`;
       } else {
         // Getting the properties
         const { firstName, lastName } = account;

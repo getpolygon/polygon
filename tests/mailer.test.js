@@ -1,9 +1,12 @@
-const mailer = require("../src/helpers/mailer");
+const sendMail = require("../src/helpers/mailer");
 
-(async () => {
-  const result = await mailer
-    .init("johndoe@example.com", "Testing", "Testing")
-    .send();
+async function mail() {
+  try {
+    const result = await sendMail("johndoe@example.com", "Testing", "Testing", "<h1>Hello></h1>");
+    return result;
+  } catch (error) {
+    throw new Error(error);
+  }
+}
 
-  console.log({ result });
-})();
+mail();

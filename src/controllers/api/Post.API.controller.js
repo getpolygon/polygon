@@ -7,14 +7,15 @@ const textCleaner = require("../../helpers/textCleaner");
 const PostAPIController = {
   // Get all posts
   fetch: async (req, res) => {
-    const posts = await PostSchema.find().populate(
-      "author",
-      "-notifications -friends -password -email -posts -createdAt -updatedAt"
-    )
-    .where("author")
-    .ne(req.user.id)
-    .where("author.private")
-    .ne(true);
+    const posts = await PostSchema.find()
+      .populate(
+        "author",
+        "-notifications -friends -password -email -posts -createdAt -updatedAt"
+      )
+      .where("author")
+      .ne(req.user.id)
+      .where("author.private")
+      .ne(true);
 
     res.json(posts);
   },
@@ -50,13 +51,13 @@ const PostAPIController = {
         // Pushing the generated url and mimetype to the array
         post.attachments.urls.push({
           url,
-          mimetype: file.mimetype.split("/")[1],
+          mimetype: file.mimetype.split("/")[0],
         });
 
         // Saving the file
         await minio.client.putObject(
           minio.config.MINIO_BUCKET,
-          path,
+          objectPath,
           buffer,
           size,
           {

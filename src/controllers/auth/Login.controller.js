@@ -34,6 +34,6 @@ module.exports = async (req, res) => {
           }
         });
       } else return res.status(403).send();
-    } else return res.status(404).send();
+    } else return res.status(204).send();
   } else return res.status(401).send();
 };

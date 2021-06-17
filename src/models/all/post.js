@@ -3,7 +3,7 @@ const mongoosePaginate = require("mongoose-paginate-v2");
 
 const Post = new Schema(
   {
-    text: { type: String, required: true },
+    body: { type: String, required: true },
     private: { type: Boolean, required: true, default: false },
     author: {
       type: Schema.Types.ObjectId,
@@ -16,8 +16,15 @@ const Post = new Schema(
       required: true,
     },
     attachments: {
-      urls: { type: [{ type: String }], default: [], required: true },
       objects: { type: [{ type: String }], default: [], required: true },
+      urls: {
+        type: [{ mimetype: { type: String }, url: { type: String } }],
+        default: [],
+        required: true,
+      },
+    },
+    hearts: {
+      count: { type: Number, default: 0, required: true },
     },
   },
   {

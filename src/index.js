@@ -47,22 +47,23 @@ mongoose
   .connect(MONGO_URI, {
     user: MONGO_USER,
     pass: MONGO_PASS,
+    // autoCreate: true,
+    useCreateIndex: true,
     dbName: MONGO_CLUSTER,
     useNewUrlParser: true,
     useFindAndModify: false,
     useUnifiedTopology: true,
-    useCreateIndex: true,
   })
-  .then(() => {
+  .then(() =>
     console.log(
       `${chalk.greenBright("Connected to MongoDB")} at ${chalk.bold(MONGO_URI)}`
-    );
-  })
+    )
+  )
   .catch((error) => {
     console.log(
       chalk.redBright("There was an error while conecting to MongoDB")
     );
-    console.error(error);
+    throw new Error(error);
   });
 
 // Connect to redis
@@ -73,20 +74,21 @@ redis.once("connect", () =>
     )}`
   )
 );
+
 // On redis connection error
 redis.once("error", (error) => {
   console.log(chalk.redBright("There was an error while connecting to Redis"));
-  console.error(error);
+  throw new Error(error);
 });
 
 // Checking MinIO connection
 minio.client.bucketExists("heartbeat", (error, _result) => {
-  if (error)
+  if (error) {
     console.log(
       chalk.redBright("There was an error while trying to connect to MinIO")
     );
-  else {
-    // minio.client.setBucketPolicy(minio.bucket, JSON.stringify(minio.policy));
+    throw new Error(error);
+  } else {
     console.log(
       `${chalk.greenBright("Connected to MinIO")} at ${chalk.bold(
         `http://${MINIO_ENDPOINT}:${MINIO_PORT}/`

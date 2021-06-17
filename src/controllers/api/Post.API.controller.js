@@ -7,12 +7,14 @@ const textCleaner = require("../../helpers/textCleaner");
 const PostAPIController = {
   // Get all posts
   fetch: async (req, res) => {
-    const posts = await PostSchema.find()
-      .populate("author", "-notifications -friends -password -email -posts")
-      .where("author")
-      .ne(req.user.id)
-      .where("author.private")
-      .ne(true);
+    const posts = await PostSchema.find().populate(
+      "author",
+      "-notifications -friends -password -email -posts -createdAt -updatedAt"
+    )
+    .where("author")
+    .ne(req.user.id)
+    .where("author.private")
+    .ne(true);
 
     res.json(posts);
   },
@@ -21,8 +23,7 @@ const PostAPIController = {
     // Post text
     const text = textCleaner(req.body.text);
     // Post
-    // TODO: Fix a bug in the account or post. The issue is that the `posts` property on account is not being modified
-    const post = new PostSchema({ text, author: req.user._id });
+    const post = new PostSchema({ body: text, author: req.user });
 
     // Checking if there are no uploaded files
     if (req.files.length === 0) {
@@ -36,19 +37,21 @@ const PostAPIController = {
         // Getting the properties
         const { buffer, size, mimetype } = file;
         // Creating a path for the file
-        const path = `${req.user._id}/media/${uuid}.${
+        const objectPath = `${req.user._id}/media/${uuid}.${
           file.mimetype.split("/")[1]
         }`;
 
         // Making path the object because at some point of time we might want to delete or update the post
-        const object = path;
         // URL for accessing the object
-        const url = `${minio.config.MINIO_ENDPOINT}:${minio.config.MINIO_PORT}/${minio.config.MINIO_BUCKET}/${path}`;
+        const url = `${minio.config.MINIO_ENDPOINT}:${minio.config.MINIO_PORT}/${minio.config.MINIO_BUCKET}/${objectPath}`;
 
         // Pushing the name of the object to the attachment object array
-        post.attachments.objects.push(object);
-        // Pushing the generated url to the array
-        post.attachments.urls.push(url);
+        post.attachments.objects.push(objectPath);
+        // Pushing the generated url and mimetype to the array
+        post.attachments.urls.push({
+          url,
+          mimetype: file.mimetype.split("/")[1],
+        });
 
         // Saving the file
         await minio.client.putObject(

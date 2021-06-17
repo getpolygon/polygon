@@ -1,5 +1,4 @@
 const redis = require("../../db/redis");
-const safeStringify = require("fast-safe-stringify");
 
 const NetworkAPIController = {
   // Used for sending a simple get request to the server and setting the key in redis
@@ -8,9 +7,9 @@ const NetworkAPIController = {
     const { id } = req.user;
 
     // Setting connection status to true
-    redis.set(id, safeStringify({ connected: true }));
+    redis.set(id, JSON.stringify({ connected: true }));
     // Setting a TTL on the key to delete it after 5 minutes
-    redis.expire(id, 10);
+    redis.expire(id, 5);
     // Getting the key value from the database
     redis.get(id, (error, reply) => {
       // If there was an error

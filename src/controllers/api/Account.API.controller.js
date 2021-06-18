@@ -35,6 +35,8 @@ const AccountController = {
     const posts = await PostSchema.find({ author: id });
     // Deleteing the account from MongoDB
     const result = await AccountSchema.findByIdAndDelete(id);
+    // Deleting the posts that are associated with this account
+    // const postResult = await PostSchema.deleteMany({ author: id });
 
     // Clearing the cookie and sending the response
     return res.status(200).clearCookie("jwt").send();

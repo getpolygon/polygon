@@ -24,7 +24,7 @@ const PostAPIController = {
     // Post text
     const text = textCleaner(req.body.text);
     // Post
-    const post = new PostSchema({ body: text, author: req.user });
+    const post = new PostSchema({ body: text, author: req.user.id });
 
     // Checking if there are no uploaded files
     if (req.files.length === 0) {

@@ -10,11 +10,9 @@ const Account = new Schema(
     bio: { type: String, required: false, default: "" },
     password: { type: String, required: true, minlength: 8 },
     private: { type: Boolean, required: true, default: false },
-    notifications: {
-      type: [{ type: Schema.Types.ObjectId, ref: "Notification" }],
-    },
     posts: { type: [{ type: Schema.Types.ObjectId, ref: "Post" }] },
     friends: { type: [{ type: Schema.Types.ObjectId, ref: "Friend" }] },
+    notifications: [{ type: Schema.Types.ObjectId, ref: "Notification" }],
   },
   {
     toJSON: {

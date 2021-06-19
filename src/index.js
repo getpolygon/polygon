@@ -82,13 +82,15 @@ redis.once("error", (error) => {
 });
 
 // Checking MinIO connection
-minio.client.bucketExists("heartbeat", (error, _result) => {
+minio.client.bucketExists(minio.config.MINIO_BUCKET, (error, result) => {
   if (error) {
     console.log(
       chalk.redBright("There was an error while trying to connect to MinIO")
     );
     throw new Error(error);
   } else {
+    if (!result) minio.client.makeBucket(minio.config.MINIO_BUCKET, "am");
+
     console.log(
       `${chalk.greenBright("Connected to MinIO")} at ${chalk.bold(
         `http://${MINIO_ENDPOINT}:${MINIO_PORT}/`

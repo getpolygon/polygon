@@ -12,8 +12,8 @@ const Account = new Schema(
     private: { type: Boolean, required: true, default: false },
     // username: { type: String, required: true, unique: true },
     posts: { type: [{ type: Schema.Types.ObjectId, ref: "Post" }] },
-    friends: { type: [{ type: Schema.Types.ObjectId, ref: "Friend" }] },
-    notifications: [{ type: Schema.Types.ObjectId, ref: "Notification" }],
+    // friends: { type: [{ type: Schema.Types.ObjectId, ref: "Friend" }] },
+    // notifications: [{ type: Schema.Types.ObjectId, ref: "Notification" }],
   },
   {
     toJSON: {
@@ -30,8 +30,8 @@ Account.index({
   lastName: 1,
   email: -1,
   password: -1,
-  notifications: -1,
-  friends: -1,
+  // notifications: -1,
+  // friends: -1,
   bio: 1,
   avatar: -1,
   username: 1,

@@ -1,4 +1,5 @@
 const jwt = require("jsonwebtoken");
+const { PostSchema } = require("../models");
 const { JWT_PRIVATE_KEY } = process.env;
 const AccountSchema = require("../models/all/account");
 
@@ -13,7 +14,7 @@ module.exports = async (req, res, next) => {
     // Getting the ID from the token
     const data = jwt.verify(token, JWT_PRIVATE_KEY);
     // Finding the user with the ID
-    const account = await AccountSchema.findById(data.id).populate("friends");
+    const account = await AccountSchema.findById(data.id);
     // If there's no such account, forbid the request
     if (!account) return res.status(403).send();
     // Move on to the next handler

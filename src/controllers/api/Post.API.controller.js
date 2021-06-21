@@ -1,7 +1,7 @@
 const { nanoid } = require("nanoid");
 const mongoose = require("mongoose");
 const minio = require("../../db/minio");
-const { PostSchema } = require("../../models");
+const { PostSchema, AccountSchema } = require("../../models");
 const textCleaner = require("../../helpers/textCleaner");
 
 const PostAPIController = {
@@ -23,13 +23,17 @@ const PostAPIController = {
   create: async (req, res) => {
     // Post text
     const text = textCleaner(req.body.text);
-    // Post
+    // Post document
     const post = new PostSchema({ body: text, author: req.user.id });
 
     // Checking if there are no uploaded files
     if (req.files.length === 0) {
       // Save the post
       await post.save();
+      const user = await AccountSchema.findByIdAndUpdate(req.user.id, {
+        $push: { posts: post.id },
+      });
+      await user.save();
       return res.status(201).json(post);
     } else {
       for (const file of req.files) {

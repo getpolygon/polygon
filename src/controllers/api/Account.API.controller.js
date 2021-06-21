@@ -42,7 +42,35 @@ const AccountController = {
     return res.status(200).clearCookie("jwt").send();
   },
   // For updating account
-  updateAccount: async (_, res) => res.status(501).send(),
+  updateAccount: async (req, res) => {
+    // Getting the user and the payload
+    const { user, body } = req;
+
+    // If theme was provided
+    if (body?.theme) {
+      // Getting the theme
+      const { theme } = body;
+
+      // If dark theme was selected
+      if (theme?.dark && !theme?.light) {
+        const result = await AccountSchema.findByIdAndUpdate(user.id, {
+          theme: "dark",
+        });
+        return res.json({ result });
+      }
+      // If light theme was selected
+      else if (theme?.light && !theme?.dark) {
+        const result = await AccountSchema.findByIdAndUpdate(user.id, {
+          theme: "light",
+        });
+        return res.json({ result });
+      }
+      // If there's no data/invalid
+      else return res.status(401).send();
+    }
+    // If nothing was provided
+    else return res.status(401).send();
+  },
 };
 
 module.exports = AccountController;

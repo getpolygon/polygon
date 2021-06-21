@@ -29,6 +29,7 @@ const NetworkAPIController = {
     // ID provided in the optional query
     const { accountId } = req.query;
 
+    // If no accountId was provided getting current user's status
     redis.exists(accountId ? accountId : id, (error, reply) => {
       if (error) console.error(error);
       else {

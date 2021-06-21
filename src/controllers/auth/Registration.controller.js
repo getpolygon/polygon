@@ -5,19 +5,15 @@ const minio = require("../../db/minio");
 const emailValidator = require("email-validator");
 const { JWT_PRIVATE_KEY, SALT_ROUNDS } = process.env;
 const AccountSchema = require("../../models/all/account");
-const duplicateCheck = require("../../helpers/duplicateCheck");
 const generateDicebearUrl = require("../../utils/generateDicebearUrl");
 
 module.exports = async (req, res) => {
   const email = _.toLower(req.body.email);
   const { password, firstName, lastName } = req.body;
   const hasValidEmail = emailValidator.validate(email);
-  const hasDuplicates = await duplicateCheck({ email }, AccountSchema);
 
-  // Checking if the email is valid
   if (hasValidEmail && password && firstName && lastName) {
-    // If there are no duplicates
-    if (!hasDuplicates) {
+    try {
       // Hashing the password
       const hashedPassword = await bcrypt.hash(password, parseInt(SALT_ROUNDS));
       // Creating the account document
@@ -82,6 +78,13 @@ module.exports = async (req, res) => {
             .json({ token });
         }
       });
-    } else return res.status(403).send();
+    } catch (error) {
+      // Catching duplicate error
+      if (error.code === 11000) return res.status(403).send();
+      else {
+        console.error({ error });
+        return res.status(500).send();
+      }
+    }
   } else return res.status(401).send();
 };

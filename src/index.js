@@ -104,7 +104,7 @@ if (__DEV__) {
   const fs = require("fs");
   const https = require("https");
 
-  // Development server with SSL
+  //Development server with SSL
   const httpsServer = https.createServer(
     {
       key: fs.readFileSync(path.resolve("cert/key.pem")),
@@ -113,7 +113,7 @@ if (__DEV__) {
     app
   );
 
-  // Start the server
+  //Start the server
   httpsServer.listen(PORT, "0.0.0.0", () => {
     // Clear the console
     console.clear();
@@ -135,3 +135,14 @@ else {
     );
   });
 }
+
+// Commented out HTTP server code
+// for testing reverse proxy connections
+// app.listen(PORT, () => {
+//   console.clear();
+//   console.log(
+//     `${chalk.greenBright("Started development server ")} at ${chalk.bold(
+//       `https://localhost:${PORT}/`
+//     )}`
+//   );
+// });

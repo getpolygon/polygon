@@ -1,5 +1,4 @@
 const mongoose = require("mongoose");
-// const minio = require("../../db/minio");
 const { AccountSchema, PostSchema } = require("../../models");
 
 const AccountController = {

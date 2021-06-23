@@ -1,11 +1,18 @@
-const { JWT_PRIVATE_KEY } = process.env;
-
 const _ = require("lodash");
 const bcrypt = require("bcrypt");
+const Express = require("express");
 const jwt = require("jsonwebtoken");
+const { JWT_PRIVATE_KEY } = process.env;
 const emailValidator = require("email-validator");
 const AccountSchema = require("../../models/all/account");
 
+/**
+ * Login controller
+ *
+ * @param {Express.Request} req
+ * @param {Express.Response} res
+ * @returns {Express.Response}
+ */
 module.exports = async (req, res) => {
   const { password } = req.body;
   const email = _.toLower(req.body.email);

@@ -1,5 +1,6 @@
 const _ = require("lodash");
 const bcrypt = require("bcrypt");
+const Express = require("express");
 const jwt = require("jsonwebtoken");
 const minio = require("../../db/minio");
 const emailValidator = require("email-validator");
@@ -7,6 +8,12 @@ const { JWT_PRIVATE_KEY, SALT_ROUNDS } = process.env;
 const AccountSchema = require("../../models/all/account");
 const generateDicebearUrl = require("../../utils/generateDicebearUrl");
 
+/**
+ *
+ * @param {Express.Request} req
+ * @param {Express.Response} res
+ * @returns
+ */
 module.exports = async (req, res) => {
   const email = _.toLower(req.body.email);
   const { password, firstName, lastName } = req.body;

@@ -1,9 +1,18 @@
+// Will be used for adding types
+const Express = require("express");
 const jwt = require("jsonwebtoken");
-const { PostSchema } = require("../models");
 const { JWT_PRIVATE_KEY } = process.env;
 const AccountSchema = require("../models/all/account");
 
-// Middleware for authenticating users
+/**
+ * Middleware for authenticating users
+ *
+ * Providing JSDoc types to make the development easier
+ * @param {Express.Request} req
+ * @param {Express.Response} res
+ * @param {Express.NextFunction} next
+ * @returns {Express.NextFunction | Express.Response}
+ */
 module.exports = async (req, res, next) => {
   // Getting the `jwt` cookie
   const { jwt: token } = req.signedCookies;

@@ -10,6 +10,7 @@
   "dependencies": {
     "@types/express": "^4.17.12",
     "@types/mongoose": "^5.11.97",
+    "@types/multer": "^1.4.6",
     "bad-words": "^3.0.4",
     "bcrypt": "^5.0.0",
     "chalk": "^4.1.0",
@@ -35,11 +36,14 @@
     "node-pin": "^0.1.5",
     "nodemailer": "^6.4.17",
     "redis": "^3.0.2",
-    "sanitize-html": "^2.3.0"
+    "sanitize-html": "^2.3.0",
+    "swagger-jsdoc": "^6.1.0",
+    "swagger-ui-express": "^4.1.6"
   },
   "devDependencies": {
     "babel-eslint": "^10.1.0",
     "eslint": "^7.18.0",
+    "jsdoc": "^3.6.7",
     "nodemon": "^2.0.7"
   }
 }

@@ -5,6 +5,7 @@ const Express = require("express");
  *
  * @param {Express.Request} req
  * @param {Express.Response} res
+ * @returns {Express.Response}
  */
 module.exports = (req, res) => {
   const { jwt: token } = req.signedCookies;

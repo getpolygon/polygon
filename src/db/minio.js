@@ -1,5 +1,3 @@
-require("dotenv").config();
-const minio = require("minio");
 const {
   MINIO_ENDPOINT,
   MINIO_BUCKET,
@@ -8,15 +6,6 @@ const {
   MINIO_SECKEY,
   MINIO_USESSL,
 } = process.env;
-
-const client = new minio.Client({
-  endPoint: MINIO_ENDPOINT,
-  port: parseInt(MINIO_PORT),
-  accessKey: MINIO_ACCKEY,
-  secretKey: MINIO_SECKEY,
-  useSSL: JSON.parse(MINIO_USESSL),
-});
-
 const config = {
   MINIO_ENDPOINT,
   MINIO_BUCKET,
@@ -25,6 +14,14 @@ const config = {
   MINIO_SECKEY,
   MINIO_USESSL,
 };
+const minio = require("minio");
+const client = new minio.Client({
+  endPoint: MINIO_ENDPOINT,
+  port: parseInt(MINIO_PORT),
+  accessKey: MINIO_ACCKEY,
+  secretKey: MINIO_SECKEY,
+  useSSL: JSON.parse(MINIO_USESSL),
+});
 
 module.exports = {
   client,

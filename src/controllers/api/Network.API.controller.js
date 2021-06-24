@@ -1,7 +1,15 @@
+const Express = require("express");
 const redis = require("../../db/redis");
 
 const NetworkAPIController = {
-  // Used for sending a simple get request to the server and setting the key in redis
+  /**
+   * Used for sending a simple get request
+   * to the server and setting the key in redis
+   *
+   * @param {Express.Request} req
+   * @param {Express.Response} res
+   * @returns {Express.Response}
+   */
   heartbeat: (req, res) => {
     // Getting the ID of the user
     const { id } = req.user;
@@ -22,7 +30,12 @@ const NetworkAPIController = {
     });
   },
 
-  // Used for getting user status (online, offline, dnd, idle, ...)
+  /**
+   * Used for getting user's status
+   *
+   * @param {Express.Request} req
+   * @param {Express.Response} res
+   */
   status: (req, res) => {
     // Getting the ID of current user
     const { id } = req.user;

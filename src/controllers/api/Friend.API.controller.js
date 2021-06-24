@@ -1,9 +1,16 @@
 const _ = require("lodash");
+const Express = require("express");
 const mongoose = require("mongoose");
 const { AccountSchema, FriendSchema } = require("../../models");
 
 const FriendAPIController = {
-  // For checking the relationship between accounts
+  /**
+   * For checking the relationship between accounts
+   *
+   * @param {Express.Request} req
+   * @param {Express.Response} res
+   * @returns {Express.Response}
+   */
   check: async (req, res) => {
     const currentAccount = req.user;
     const { accountId } = req.params;
@@ -33,7 +40,13 @@ const FriendAPIController = {
       } else return res.status(400).send();
     }
   },
-  // For accepting a friend request
+  /**
+   * For accepting a friend request
+   *
+   * @param {Express.Request} req
+   * @param {Express.Response} res
+   * @returns {Express.Response}
+   */
   accept: async (req, res) => {
     const { requestId } = req.params;
 
@@ -48,7 +61,13 @@ const FriendAPIController = {
       }
     } else return res.status(400).send();
   },
-  // For declining a friend request
+  /**
+   * For declining a friend request
+   *
+   * @param {Express.Request} req
+   * @param {Express.Response} res
+   * @returns {Express.Response}
+   */
   decline: async (req, res) => {
     const { requestId } = req.params;
 
@@ -64,7 +83,13 @@ const FriendAPIController = {
       }
     } else return res.status(400).send();
   },
-  // For sending a friend request
+  /**
+   * For sending a friend request
+   *
+   * @param {Express.Request} req
+   * @param {Express.Response} res
+   * @returns {Express.Response}
+   */
   request: async (req, res) => {
     const currentAccount = req.user;
     const { accountId: otherID } = req.params;

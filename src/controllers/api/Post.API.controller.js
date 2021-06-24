@@ -1,3 +1,4 @@
+const Express = require("express");
 const { nanoid } = require("nanoid");
 const mongoose = require("mongoose");
 const minio = require("../../db/minio");
@@ -5,7 +6,12 @@ const { PostSchema, AccountSchema } = require("../../models");
 const textCleaner = require("../../helpers/textCleaner");
 
 const PostAPIController = {
-  // Get all posts
+  /**
+   * Get post(s)
+   *
+   * @param {Express.Request} req
+   * @param {Express.Response} res
+   */
   fetch: async (req, res) => {
     const posts = await PostSchema.find()
       .populate(
@@ -19,7 +25,12 @@ const PostAPIController = {
 
     res.json(posts);
   },
-  // Create a post
+  /**
+   * For creating a post
+   * @param {Express.Request} req
+   * @param {Express.Response} res
+   * @returns {Express.Response}
+   */
   create: async (req, res) => {
     // Post text
     const text = textCleaner(req.body.text);
@@ -30,10 +41,13 @@ const PostAPIController = {
     if (req.files.length === 0) {
       // Save the post
       await post.save();
+      // Push post's ID to the user
       const user = await AccountSchema.findByIdAndUpdate(req.user.id, {
         $push: { posts: post.id },
       });
+      // Save the user
       await user.save();
+      // Send the response
       return res.status(201).json(post);
     } else {
       for (const file of req.files) {
@@ -46,7 +60,8 @@ const PostAPIController = {
           file.mimetype.split("/")[1]
         }`;
 
-        // Making path the object because at some point of time we might want to delete or update the post
+        // Making path the object because at some point of
+        // time we might want to delete or update the post
         // URL for accessing the object
         const url = `${minio.config.MINIO_ENDPOINT}:${minio.config.MINIO_PORT}/${minio.config.MINIO_BUCKET}/${objectPath}`;
 
@@ -75,7 +90,13 @@ const PostAPIController = {
       return res.status(201).json(post);
     }
   },
-  // Delete a post
+  /**
+   * For deleting a post
+   *
+   * @param {Express.Request} req
+   * @param {Express.Response} res
+   * @returns {Express.Response}
+   */
   delete: async (req, res) => {
     const { id } = req.params;
 

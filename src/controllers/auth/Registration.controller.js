@@ -12,7 +12,7 @@ const generateDicebearUrl = require("../../utils/generateDicebearUrl");
  *
  * @param {Express.Request} req
  * @param {Express.Response} res
- * @returns
+ * @returns {Express.Response}
  */
 module.exports = async (req, res) => {
   const email = _.toLower(req.body.email);

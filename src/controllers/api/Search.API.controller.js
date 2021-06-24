@@ -1,6 +1,13 @@
+const Express = require("express");
 const models = require("../../models");
 
 const SearchAPIController = {
+  /**
+   *
+   * @param {Express.Request} req
+   * @param {Express.Response} res
+   * @returns {Express.Response}
+   */
   query: async (req, res) => {
     const { q } = req.query;
 

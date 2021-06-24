@@ -29,6 +29,8 @@ const redis = require("./db/redis");
 const mongoose = require("mongoose");
 const compression = require("compression");
 const cookieParser = require("cookie-parser");
+// const swaggerJsDoc = require("swagger-jsdoc");
+// const swaggerUiExpress = require("swagger-ui-express");
 
 // Middleware
 app.use(helmet());

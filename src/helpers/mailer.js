@@ -36,4 +36,4 @@ const send = async (receiver, subject, title, html) => {
   }
 };
 
-module.exports = send;
+module.exports = { send };

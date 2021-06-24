@@ -88,10 +88,7 @@ module.exports = async (req, res) => {
     } catch (error) {
       // Catching duplicate error
       if (error.code === 11000) return res.status(403).send();
-      else {
-        console.error({ error });
-        return res.status(500).send();
-      }
+      else return res.status(500).send();
     }
   } else return res.status(401).send();
 };

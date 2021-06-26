@@ -13,17 +13,45 @@ const PostAPIController = {
    * @param {Express.Response} res
    */
   fetch: async (req, res) => {
-    const posts = await PostSchema.find()
-      .populate(
-        "author",
-        "-notifications -friends -password -email -posts -createdAt -updatedAt"
-      )
-      .where("author")
-      .ne(req.user.id)
-      .where("author.private")
-      .ne(true);
+    const { accountId } = req.query;
 
-    res.json(posts);
+    if (!accountId) {
+      const posts = await PostSchema.find()
+        .populate(
+          "author",
+          "-notifications -friends -password -email -createdAt -updatedAt"
+        )
+        .where("author")
+        .ne(req.user.id)
+        .where("author.private")
+        .ne(true);
+
+      return res.json(posts);
+    } else {
+      if (req.user.id === accountId) {
+        const posts = await PostSchema.find({ author: accountId }).populate(
+          "author",
+          "-notifications -friends -password -email -createdAt -updatedAt"
+        );
+        // .where("author")
+        // .ne(req.user.id);
+        // .where("author.private")
+        // .ne(true);
+
+        return res.json(posts);
+      } else {
+        const posts = await PostSchema.find({ author: accountId }).populate(
+          "author",
+          "-notifications -friends -password -email -createdAt -updatedAt"
+        );
+        // .where("author")
+        // .ne(req.user.id);
+        // .where("author.private")
+        // .ne(true);
+
+        return res.json(posts);
+      }
+    }
   },
   /**
    * For creating a post

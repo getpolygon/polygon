@@ -13,17 +13,20 @@ const SearchAPIController = {
 
     if (!q) return res.status(400).send();
     else {
-      /**
-       * TODO: Update search indexes to improve privacy including:
-       * * Don't allow finding a user by their email
-       * * Don't allow finding a user by their password hash
-       * * Don't allow finding a user by their friend connections
-       *
-       * ? Documentation on indexes from mongoose: https://mongoosejs.com/docs/guide.html#indexes
-       */
-      const posts = await models.PostSchema.find({ $text: { $search: q } })
+      const posts = await models.PostSchema.find(
+        { $text: { $search: q } },
+        {
+          __v:          0,
+          // hearts:       0,
+          private:      0,
+          comments:     0,
+          // createdAt:    0,
+          updatedAt:    0,
+          // attachments:  0,
+        }
+      )
         .where("private")
-        .ne(true)
+        .equals(false)
         .where("author")
         .ne(req.user.id);
 
@@ -32,12 +35,15 @@ const SearchAPIController = {
           $text: { $search: q },
         },
         {
-          email: 0,
-          password: 0,
-          notifications: 0,
-          friends: 0,
-          posts: 0,
-          timestamp: 0,
+          __v:            0,
+          email:          0,
+          posts:          0,
+          private:        0,
+          friends:        0,
+          password:       0,
+          createdAt:      0,
+          updatedAt:      0,
+          notifications:  0,
         }
       )
         .where("_id")

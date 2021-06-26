@@ -45,7 +45,7 @@ const NetworkAPIController = {
     // If no accountId was provided getting current user's status
     redis.get(accountId || id, (error, reply) => {
       if (error) console.error(error);
-      else return res.json({ connected: reply });
+      else return res.json(JSON.parse(reply));
     });
   },
 };

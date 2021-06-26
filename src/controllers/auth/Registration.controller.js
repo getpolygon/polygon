@@ -90,5 +90,5 @@ module.exports = async (req, res) => {
       if (error.code === 11000) return res.status(403).send();
       else return res.status(500).send();
     }
-  } else return res.status(401).send();
+  } else return res.status(400).send();
 };

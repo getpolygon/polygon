@@ -3,6 +3,14 @@ const mongoosePaginate = require("mongoose-paginate-v2");
 
 const Account = new Schema(
   {
+    // avatar: {
+    //   poor: { type: String, required: true },
+    //   good: { type: String, required: true },
+    // },
+    // cover: {
+    //   poor: { type: String, required: true },
+    //   good: { type: String, required: true },
+    // },
     avatar: { type: String, required: true },
     lastName: { type: String, required: true },
     firstName: { type: String, required: true },
@@ -11,7 +19,6 @@ const Account = new Schema(
     password: { type: String, required: true, minlength: 8 },
     theme: { type: String, required: true, default: "light" },
     private: { type: Boolean, required: true, default: false },
-    posts: [{ type: Schema.Types.ObjectId, ref: "Post", required: true }],
   },
   {
     toJSON: {
@@ -24,13 +31,10 @@ const Account = new Schema(
 
 // Creating indexes
 Account.index({
-  firstName: 1,
-  lastName: 1,
-  email: -1,
-  password: -1,
-  bio: 1,
-  avatar: -1,
-  username: 1,
+  bio: "text",
+  username: "text",
+  lastName: "text",
+  firstName: "text",
 });
 
 // Plugins

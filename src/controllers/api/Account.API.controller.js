@@ -1,4 +1,6 @@
+const Express = require("express");
 const mongoose = require("mongoose");
+const textCleaner = require("../../helpers/textCleaner");
 const { AccountSchema, PostSchema } = require("../../models");
 
 const AccountController = {
@@ -13,12 +15,15 @@ const AccountController = {
       if (mongoose.Types.ObjectId.isValid(accountId)) {
         // Finding the account and omitting `password`, `email`, `notifications`, `friends` fields
         const account = await AccountSchema.findById(accountId, {
-          password: 0,
           email: 0,
+          posts: 0,
+          theme: 0,
+          password: 0,
           notifications: 0,
-          friends: 0,
-          // Only populating the type field to keep everything private
-        }).populate("friends", "type");
+          // friends: 0,
+        });
+        // Only populating the type field to keep everything private
+        // .populate("friends", "type");
 
         // If the account does not exist
         if (!account) return res.status(404).send();
@@ -40,16 +45,20 @@ const AccountController = {
     // Clearing the cookie and sending the response
     return res.status(200).clearCookie("jwt").send();
   },
-  // For updating account
+  /**
+   *
+   * @param {Express.Request} req
+   * @param {Express.Response} res
+   * @returns {Promise<void>}
+   */
   updateAccount: async (req, res) => {
-    // Getting the user and the payload
-    const { user, body } = req;
+    // Getting the user
+    const { user } = req;
+    // Getting the payload
+    const { bio, theme } = req.body;
 
     // If theme was provided
-    if (body?.theme) {
-      // Getting the theme
-      const { theme } = body;
-
+    if (theme) {
       // If dark theme was selected
       if (theme?.dark && !theme?.light) {
         const result = await AccountSchema.findByIdAndUpdate(user.id, {
@@ -64,11 +73,21 @@ const AccountController = {
         });
         return res.json({ result });
       }
-      // If there's no data/invalid
-      else return res.status(401).send();
+      // If there's no data or it՛s invalid
+      else return res.status(400).send();
     }
-    // If nothing was provided
-    else return res.status(401).send();
+    // If the user wants to upate the bio
+    else if (bio) {
+      // Cleaning the text
+      const cleanedBio = textCleaner(bio);
+      // Updating the bio
+      const result = await AccountSchema.findByIdAndUpdate(user.id, {
+        bio: cleanedBio,
+      });
+      return res.json({ result });
+    }
+    // If nothing was provided or the choice doesn't match
+    else return res.status(400).send();
   },
 };
 

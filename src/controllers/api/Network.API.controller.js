@@ -16,8 +16,8 @@ const NetworkAPIController = {
 
     // Setting connection status to true
     redis.set(id, JSON.stringify({ connected: true }));
-    // Setting a TTL on the key to delete it after 5 minutes
-    redis.expire(id, 5);
+    // Setting a TTL on the key to delete it after 10 minutes
+    redis.expire(id, 1000 * 5 * 60);
     // Getting the key value from the database
     redis.get(id, (error, reply) => {
       // If there was an error
@@ -43,12 +43,9 @@ const NetworkAPIController = {
     const { accountId } = req.query;
 
     // If no accountId was provided getting current user's status
-    redis.exists(accountId ? accountId : id, (error, reply) => {
+    redis.get(accountId || id, (error, reply) => {
       if (error) console.error(error);
-      else {
-        if (reply) return res.json({ connected: true });
-        else return res.json({ connected: false });
-      }
+      else return res.json({ connected: reply });
     });
   },
 };

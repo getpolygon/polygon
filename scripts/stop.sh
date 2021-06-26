@@ -1,3 +1,3 @@
 #! /bin/bash
 
-pm2 stop backend && pm2 delete backend
+pm2 stop backend && pm2 delete backend && pm2 save --force

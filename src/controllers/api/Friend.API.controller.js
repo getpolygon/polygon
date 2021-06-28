@@ -27,7 +27,7 @@ const FriendAPIController = {
         if (!otherAccount) return res.status(404).send();
         else {
           // Filtering out the request that contains the request sent from this account (may not be found and may be an empty array [])
-          const filtered = otherAccount.friends.filter(
+          const filtered = otherAccount.friends?.filter(
             (request) => request.sender === currentAccount._id
           )[0];
 

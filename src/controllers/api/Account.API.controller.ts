@@ -10,7 +10,7 @@ const AccountController = {
     const { accountId } = req.query;
 
     // If no account ID was provided
-    if (!accountId) return res.json(req.user);
+    if (!accountId) return res.json(req.user!!);
     else {
       // Finding the account and omitting `password`, `email`, `notifications`, `friends` fields
       const user = await prisma.user.findUnique({
@@ -20,7 +20,7 @@ const AccountController = {
         select: {
           id: true,
           bio: true,
-          role: true,
+          roles: true,
           avatar: true,
           username: true,
           lastName: true,

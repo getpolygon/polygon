@@ -1,7 +1,7 @@
 const router = require("express").Router();
-const NotFoundRoute = require("./misc/404");
 const APIRoutes = require("./api/routes/index");
 const AuthRoutes = require("./auth/routes/index");
+const NotFoundRoute = require("./misc/404").default;
 const authenticate = require("../middleware/authenticate").default;
 
 // Auth

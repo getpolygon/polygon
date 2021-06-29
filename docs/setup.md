@@ -7,19 +7,18 @@ Detailed guide for setting up the development server of the backend
 - Create a `.env` file in the root folder
 - Here's a boilerplate to configure it
 
-__NOTE:__ For mailer host we're using [mailtrap](https://mailtrap.io)
+**NOTE:** For mailer host we're using [mailtrap](https://mailtrap.io)
 
 ```bash
 # Mailer Helper
 
 # SMTP
-MAILER_HOST=
-MAILER_USER=
-MAILER_PASS=
-MAILER_PORT=
+MAILER_PORT=465
+MAILER_USER=ceab5fee72e492
+MAILER_PASS=d5a5d21e69e62c
+MAILER_HOST=smtp.mailtrap.io
 
 # MinIO
-
 MINIO_ENDPOINT=
 MINIO_PORT=
 MINIO_ACCKEY=
@@ -27,22 +26,31 @@ MINIO_SECKEY=
 MINIO_USESSL=
 MINIO_BUCKET=
 
-# MongoDB
-MONGO_URI=
-MONGO_CLUSTER=
-MONGO_USER=
-MONGO_PASS=
-
 # Redis
 REDIS_HOST=
 REDIS_PORT=
 REDIS_PASS=
 
 # JWT
-JWT_PRIVATE_KEY=
+JWT_PRIVATE_KEY=RANDOM_STRING
 
-# Node.js environment
+# Auth
+SALT_ROUNDS=INTEGER
+
+# Cookies
+COOKIE_SECRET=RANDOM_STRING
+
 NODE_ENV=development
+
+# This text is inserted by `prisma init`:
+# Environment variables declared in this file are automatically made available to Prisma.
+# See the documentation for more detail: https://pris.ly/d/prisma-schema#using-environment-variables
+
+# Prisma supports the native connection string format for PostgreSQL, MySQL, SQL Server and SQLite.
+# See the documentation for all the connection string options: https://pris.ly/d/connection-strings
+
+DATABASE_URL="POSTGRESQL_URL"
+
 ```
 
 ## Configuring SSL development environment

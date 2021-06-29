@@ -1,6 +1,7 @@
 const router = require("express").Router();
 const upload = require("../../middleware/multer");
-const PostController = require("../../controllers/api/Post.API.controller");
+const PostController =
+  require("../../controllers/api/Post.API.controller").default;
 
 // To fetch posts
 router.get("/fetch", PostController.fetch);

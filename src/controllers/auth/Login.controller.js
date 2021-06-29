@@ -3,8 +3,9 @@ const bcrypt = require("bcrypt");
 const Express = require("express");
 const jwt = require("jsonwebtoken");
 const { JWT_PRIVATE_KEY } = process.env;
-const prisma = require("../../db/prisma");
 const emailValidator = require("email-validator");
+const { PrismaClient } = require("@prisma/client");
+const prisma = new PrismaClient();
 
 /**
  * Login controller

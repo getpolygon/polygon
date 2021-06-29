@@ -3,11 +3,11 @@ const bcrypt = require("bcrypt");
 const Express = require("express");
 const jwt = require("jsonwebtoken");
 const minio = require("../../db/minio");
-const prisma = require("../../db/prisma");
-const { Prisma } = require("@prisma/client");
 const emailValidator = require("email-validator");
 const { JWT_PRIVATE_KEY, SALT_ROUNDS } = process.env;
+const { Prisma, PrismaClient } = require("@prisma/client");
 const generateDicebearUrl = require("../../utils/generateDicebearUrl");
+const prisma = new PrismaClient();
 
 /**
  *

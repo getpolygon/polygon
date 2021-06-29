@@ -1,18 +1,19 @@
 "use strict";
 require("dotenv").config();
-const PORT = process.env.PORT || 3001;
+const PORT = Number(process.env.PORT) || 3001;
 const __DEV__ = process.env.NODE_ENV === "development";
 
-const path = require("path");
-const cors = require("cors");
-const chalk = require("chalk");
-const app = require("express")();
-const morgan = require("morgan");
-const helmet = require("helmet");
-const routes = require("./routes");
-const express = require("express");
-const compression = require("compression");
-const cookieParser = require("cookie-parser");
+import path from "path";
+import cors from "cors";
+import chalk from "chalk";
+import morgan from "morgan";
+import helmet from "helmet";
+import routes from "./routes";
+import express from "express";
+import compression from "compression";
+import cookieParser from "cookie-parser";
+
+const app = express();
 
 // Middleware
 app.use(helmet());

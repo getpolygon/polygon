@@ -1,7 +1,8 @@
 const Express = require("express");
 const { nanoid } = require("nanoid");
 const minio = require("../../db/minio");
-const prisma = require("../../db/prisma");
+const { PrismaClient } = require("@prisma/client");
+const prisma = new PrismaClient();
 const textCleaner = require("../../helpers/textCleaner");
 
 const PostAPIController = {

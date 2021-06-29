@@ -1,9 +1,9 @@
 // Will be used for adding types
 import Express from "express";
-import jwt, { JwtPayload } from "jsonwebtoken";
+import jwt from "jsonwebtoken";
+import { Token } from "../@types";
 const { JWT_PRIVATE_KEY } = process.env;
 import { PrismaClient } from "@prisma/client";
-import { Token } from "../types";
 
 const prisma = new PrismaClient();
 

@@ -18,6 +18,7 @@ model User {
   email          String    @unique @db.VarChar(255)
   password       String
   avatar         String
+  theme          String    @default("light")
   bio            String?   @default("")
   username       String    @unique
   createdAt      DateTime  @default(now()) @map("created_at")

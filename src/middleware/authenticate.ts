@@ -29,6 +29,7 @@ export default () => {
         include: {
           posts: true,
           comments: true,
+          notifications: true,
         },
       });
       // If there's no such account, forbid the request

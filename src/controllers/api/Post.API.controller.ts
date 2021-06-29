@@ -91,7 +91,7 @@ const PostAPIController = {
       const text = textCleaner(req.body.text);
 
       // Checking if there are no uploaded files
-      if (!req.files) {
+      if (req.files?.length === 0) {
         // Create new post
         const post = await prisma.post.create({
           data: {

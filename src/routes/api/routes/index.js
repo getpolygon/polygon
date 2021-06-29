@@ -1,9 +1,9 @@
 const router = require("express").Router();
 
 const PostAPI = require("../Post.API");
-const SearchAPI = require("../Search.API");
 const NetworkAPI = require("../Network.API");
 const AccountAPI = require("../Account.API");
+const SearchAPI = require("../Search.API").default;
 const FriendAPI = require("../Friend.API").default;
 // const NotificationAPI = require("../Notification.API");
 

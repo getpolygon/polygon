@@ -5,4 +5,4 @@ import SearchController from "../../controllers/api/Search.API.controller";
 // For searching
 router.get("/", SearchController.query);
 
-module.exports = router;
+export default router;

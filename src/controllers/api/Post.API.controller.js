@@ -1,8 +1,7 @@
 const Express = require("express");
 const { nanoid } = require("nanoid");
-const mongoose = require("mongoose");
 const minio = require("../../db/minio");
-const { PostSchema, AccountSchema } = require("../../models");
+const prisma = require("../../db/prisma");
 const textCleaner = require("../../helpers/textCleaner");
 
 const PostAPIController = {
@@ -16,41 +15,85 @@ const PostAPIController = {
     const { accountId } = req.query;
 
     if (!accountId) {
-      const posts = await PostSchema.find()
-        .populate(
-          "author",
-          "-notifications -friends -password -email -createdAt -updatedAt"
-        )
-        .where("author")
-        .ne(req.user.id)
-        .where("author.private")
-        .ne(true);
+      const posts = await prisma.post.findMany({
+        where: {
+          userId: {
+            not: req.user.id,
+          },
+          user: {
+            privateAccount: false,
+          },
+        },
+        include: {
+          comments: {
+            include: {
+              user: {
+                select: {
+                  id: true,
+                  bio: true,
+                  role: true,
+                  avatar: true,
+                  lastName: true,
+                  username: true,
+                  firstName: true,
+                  privateAccount: true,
+                },
+              },
+            },
+          },
+          user: {
+            select: {
+              email: false,
+              posts: false,
+              password: false,
+              comments: false,
+              createdAt: false,
+              id: true,
+              bio: true,
+              role: true,
+              avatar: true,
+              lastName: true,
+              username: true,
+              firstName: true,
+              privateAccount: true,
+            },
+          },
+        },
+      });
 
       return res.json(posts);
     } else {
-      if (req.user.id === accountId) {
-        const posts = await PostSchema.find({ author: accountId }).populate(
-          "author",
-          "-notifications -friends -password -email -createdAt -updatedAt"
-        );
-        // .where("author")
-        // .ne(req.user.id);
-        // .where("author.private")
-        // .ne(true);
+      const posts = await prisma.post.findMany({
+        where: {
+          userId: {
+            not: req.user.id,
+          },
+          user: {
+            privateAccount: false,
+          },
+        },
+        include: {
+          user: {
+            select: {
+              email: false,
+              posts: false,
+              password: false,
+              comments: false,
+              createdAt: false,
+              id: true,
+              bio: true,
+              role: true,
+              avatar: true,
+              lastName: true,
+              username: true,
+              firstName: true,
+              privateAccount: true,
+            },
+          },
+        },
+      });
 
-        return res.json(posts);
-      } else {
-        const posts = await PostSchema.find({ author: accountId }).populate(
-          "author",
-          "-notifications -friends -password -email -createdAt -updatedAt"
-        );
-        // .where("author")
-        // .ne(req.user.id);
-        // .where("author.private")
-        // .ne(true);
-
-        return res.json(posts);
-      }
+      return res.json(posts);
     }
   },
   /**
@@ -62,19 +105,30 @@ const PostAPIController = {
   create: async (req, res) => {
     // Post text
     const text = textCleaner(req.body.text);
-    // Post document
-    const post = new PostSchema({ body: text, author: req.user.id });
 
     // Checking if there are no uploaded files
     if (req.files.length === 0) {
-      // Save the post
-      await post.save();
-      // Push post's ID to the user
-      const user = await AccountSchema.findByIdAndUpdate(req.user.id, {
-        $push: { posts: post.id },
+      // Create new post
+      const post = await prisma.post.create({
+        data: {
+          body: text,
+          userId: req.user.id,
+        },
+        include: {
+          user: {
+            select: {
+              avatar: true,
+              bio: true,
+              firstName: true,
+              id: true,
+              lastName: true,
+              role: true,
+              username: true,
+            },
+          },
+          comments: true,
+        },
       });
-      // Save the user
-      await user.save();
       // Send the response
       return res.status(201).json(post);
     } else {
@@ -127,32 +181,7 @@ const PostAPIController = {
    */
   delete: async (req, res) => {
     const { id } = req.params;
-
-    // Checking if post id is valid
-    if (mongoose.Types.ObjectId.isValid(id)) {
-      // Finding the post
-      const post = await PostSchema.findById(id);
-
-      // If there's no such post
-      if (!post) return res.status(404).send();
-      else {
-        // Checking if there are any attachments
-        if (post.attachments.objects.length !== 0) {
-          console.log("deleting files");
-          // Deleting all attachments
-          await minio.client.removeObjects(
-            minio.config.MINIO_BUCKET,
-            post.attachments.objects
-          );
-        }
-
-        // Deleting the post
-        const result = await PostSchema.findByIdAndDelete(id);
-        // Checking if the result is successful
-        if (!result) return res.status(404).send();
-        else return res.status(200).send();
-      }
-    } else return res.status(400).send();
+    // TODO: Implement
   },
   /**
    * TODO: Implement

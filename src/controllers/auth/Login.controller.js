@@ -3,8 +3,8 @@ const bcrypt = require("bcrypt");
 const Express = require("express");
 const jwt = require("jsonwebtoken");
 const { JWT_PRIVATE_KEY } = process.env;
+const prisma = require("../../db/prisma");
 const emailValidator = require("email-validator");
-const AccountSchema = require("../../models/all/account");
 
 /**
  * Login controller
@@ -20,14 +20,18 @@ module.exports = async (req, res) => {
   // If the email is valid and the password is provided
   if (emailValidator.validate(email) && password) {
     // Find the account with specified parameters
-    const account = await AccountSchema.findOne({ email: email });
+    const user = await prisma.user.findUnique({
+      where: {
+        email,
+      },
+    });
 
     // If the account exists
-    if (account) {
-      const same = await bcrypt.compare(password, account.password);
+    if (user) {
+      const same = await bcrypt.compare(password, user.password);
 
       if (same) {
-        jwt.sign({ id: account.id }, JWT_PRIVATE_KEY, {}, (err, token) => {
+        jwt.sign({ id: user.id }, JWT_PRIVATE_KEY, {}, (err, token) => {
           if (err) console.error(err);
           else {
             return res

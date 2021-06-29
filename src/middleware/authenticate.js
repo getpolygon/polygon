@@ -1,13 +1,12 @@
 // Will be used for adding types
 const Express = require("express");
 const jwt = require("jsonwebtoken");
+const prisma = require("../db/prisma");
 const { JWT_PRIVATE_KEY } = process.env;
-const AccountSchema = require("../models/all/account");
 
 /**
  * Middleware for authenticating users
  *
- * Providing JSDoc types to make the development easier
  * @param {Express.Request} req
  * @param {Express.Response} res
  * @param {Express.NextFunction} next
@@ -23,12 +22,20 @@ module.exports = async (req, res, next) => {
     // Getting the ID from the token
     const data = jwt.verify(token, JWT_PRIVATE_KEY);
     // Finding the user with the ID
-    const account = await AccountSchema.findById(data.id);
+    const user = await prisma.user.findFirst({
+      where: {
+        id: data.id,
+      },
+      include: {
+        posts: true,
+        comments: true,
+      },
+    });
     // If there's no such account, forbid the request
-    if (!account) return res.status(403).send();
+    if (!user) return res.status(403).send();
     // Move on to the next handler
     else {
-      req.user = account;
+      req.user = user;
       return next();
     }
   }

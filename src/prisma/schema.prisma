@@ -1,7 +1,6 @@
 // This is your Prisma schema file,
 // learn more about it in the docs: https://pris.ly/d/prisma-schema
 
-
 datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
@@ -23,8 +22,9 @@ model User {
   bio            String?        @default("")
   username       String         @unique
   createdAt      DateTime       @default(now()) @map("created_at")
-  posts          Post[]
   roles          Role[]
+  saved          Post[]         @relation("saved_posts")
+  posts          Post[]         @relation("created_posts")
   comments       Comment[]
   notifications  Notification[]
 }
@@ -40,9 +40,10 @@ model Comment {
 }
 
 model Notification {
-  id        String  @id @default(uuid())
-  belongsTo String? @map("belongs_to")
-  user      User?   @relation(fields: [belongsTo], references: [id])
+  id        String           @id @default(uuid())
+  belongsTo String?          @map("belongs_to")
+  user      User?            @relation(fields: [belongsTo], references: [id])
+  type      NotificationType
 }
 
 model Post {
@@ -50,7 +51,8 @@ model Post {
   body      String    @db.Text
   comments  Comment[]
   userId    String    @map("user_id")
-  user      User      @relation(fields: [userId], references: [id])
+  user      User      @relation("created_posts", fields: [userId], references: [id])
+  save      User      @relation("saved_posts", fields: [userId], references: [id])
   createdAt DateTime  @default(now()) @map("created_at")
 }
 
@@ -58,4 +60,11 @@ enum Role {
   PARTNER
   VERIFIED
   CORE_TEAM
+}
+
+enum NotificationType {
+  NEW_POST
+  POST_REACTION
+  FRIEND_REQUEST
+  FRIEND_REQUEST_ACCEPT
 }

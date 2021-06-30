@@ -13,7 +13,7 @@ const AccountController = {
     if (!accountId) return res.json(req.user!!);
     else {
       // Finding the account and omitting `password`, `email`, `notifications`, `friends` fields
-      const user = await prisma.user.findUnique({
+      const user = await prisma.user.findFirst({
         where: {
           id: accountId.toString(),
         },

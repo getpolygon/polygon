@@ -1,85 +1,41 @@
+import { sql } from "slonik";
 import Express from "express";
-// import { nanoid } from "nanoid";
+import slonik from "../../db/slonik";
 // import minio from "../../db/minio";
-import { PrismaClient } from "@prisma/client";
 import textCleaner from "../../helpers/textCleaner";
 
-const prisma = new PrismaClient();
+//  WHERE id <> ${req.user?.id!!}
 
 const PostAPIController = {
   fetch: async (req: Express.Request, res: Express.Response) => {
     const { accountId } = req.query;
 
     if (!accountId) {
-      const posts = await prisma.post.findMany({
-        where: {
-          userId: {
-            not: req.user?.id,
-          },
-          user: {
-            privateAccount: false,
-          },
-        },
-        include: {
-          comments: {
-            include: {
-              user: {
-                select: {
-                  id: true,
-                  bio: true,
-                  roles: true,
-                  avatar: true,
-                  lastName: true,
-                  username: true,
-                  firstName: true,
-                  privateAccount: true,
-                },
-              },
-            },
-          },
-          user: {
-            select: {
-              id: true,
-              bio: true,
-              roles: true,
-              avatar: true,
-              lastName: true,
-              username: true,
-              firstName: true,
-              privateAccount: true,
-            },
-          },
-        },
-      });
+      // TODO: Only allow public user's public posts to be discovered
+      const posts = await slonik.query(sql`
+        SELECT post.*, row_to_json(author) AS user 
+        FROM posts post
+          LEFT JOIN 
+            (SELECT first_name, last_name, avatar, id, username FROM users) author
+              ON post.user_id = author.id
+            
+        WHERE user_id <> ${req.user?.id!!}
+      `);
 
-      return res.json(posts);
+      return res.json(posts.rows);
     } else {
-      const posts = await prisma.post.findMany({
-        where: {
-          userId: {
-            not: req.user?.id,
-          },
-          user: {
-            privateAccount: false,
-          },
-        },
-        include: {
-          user: {
-            select: {
-              id: true,
-              bio: true,
-              roles: true,
-              avatar: true,
-              lastName: true,
-              username: true,
-              firstName: true,
-              privateAccount: true,
-            },
-          },
-        },
-      });
+      // TODO: Only allow public user's public posts to be discovered
+      const posts = await slonik.query(sql`
+            SELECT post.*, row_to_json(author) AS user 
+            FROM posts post
+              LEFT JOIN 
+                (SELECT first_name, last_name, avatar, id, username FROM users) author
+                  ON post.user_id = author.id
+                
+            WHERE user_id = ${accountId.toString()}
+          `);
 
-      return res.json(posts);
+      return res.json(posts.rows);
     }
   },
 
@@ -93,84 +49,25 @@ const PostAPIController = {
       // Checking if there are no uploaded files
       if (req.files?.length === 0) {
         // Create new post
-        const post = await prisma.post.create({
-          data: {
-            body: text,
-            userId: req.user?.id!!,
-          },
-          include: {
-            user: {
-              select: {
-                id: true,
-                bio: true,
-                roles: true,
-                avatar: true,
-                username: true,
-                lastName: true,
-                firstName: true,
-              },
-            },
-            comments: true,
-          },
-        });
-        // Send the response
-        return res.status(201).json(post);
+        const post = await slonik.query(sql`
+          INSERT INTO posts (body, user_id)
+          VALUES (${text}, ${req.user?.id!!})
+          RETURNING *;
+        `);
+
+        // Sending the response
+        return res.json(post.rows[0]);
       } else {
-        // // Initializing the payload
-        // const data = {
-        //   body: null,
-        //   attachments: [],
-        // };
-        // // Looping through each file and creating an object in minio
-        // for (const file of req.files) {
-        //   // Creating a random ID
-        //   const uuid = nanoid();
-        //   // Getting the properties
-        //   const { buffer, size, mimetype } = file;
-        //   // Creating a path for the file
-        //   const objectPath = `${req.user?.id}/media/${uuid}.${
-        //     file.mimetype.split("/")[1]
-        //   }`;
-        //   // Making path the object because at some point of
-        //   // time we might want to delete or update the post
-        //   // URL for accessing the object
-        //   const url = `${minio.config.MINIO_ENDPOINT}:${minio.config.MINIO_PORT}/${minio.config.MINIO_BUCKET}/${objectPath}`;
-        //   // Pushing the name of the object to the attachment object array
-        //   data.attachments.objects.push(objectPath);
-        //   // Pushing the generated url and mimetype to the array
-        //   data.attachments.urls.push({
-        //     url,
-        //     mimetype: file.mimetype.split("/")[0],
-        //   });
-        //   // Saving the file
-        //   await minio.client.putObject(
-        //     minio.config.MINIO_BUCKET,
-        //     objectPath,
-        //     buffer,
-        //     size,
-        //     {
-        //       "Content-Type": mimetype,
-        //     }
-        //   );
+        // TODO: Needs to be implemented
       }
     }
   },
-  delete: async (req: Express.Request, res: Express.Response) => {
-    res.status(501).send();
-  },
-  save: (req: Express.Request, res: Express.Response) => res.status(501).send(),
-  heart: (req: Express.Request, res: Express.Response) => {
-    res.status(501).send();
-  },
-  unsave: (req: Express.Request, res: Express.Response) => {
-    res.status(501).send();
-  },
-  unheart: (req: Express.Request, res: Express.Response) => {
-    res.status(501).send();
-  },
-  update: (req: Express.Request, res: Express.Response) => {
-    res.status(501).send();
-  },
+  save: (req: Express.Request, res: Express.Response) => {},
+  heart: (req: Express.Request, res: Express.Response) => {},
+  delete: (req: Express.Request, res: Express.Response) => {},
+  update: (req: Express.Request, res: Express.Response) => {},
+  unsave: (req: Express.Request, res: Express.Response) => {},
+  unheart: (req: Express.Request, res: Express.Response) => {},
 };
 
 export default PostAPIController;

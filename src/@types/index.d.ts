@@ -1,13 +1,30 @@
 import * as express from "express";
-import { User, Post, Comment, Notification } from "@prisma/client";
 
-declare module "express-serve-static-core" {
-  interface Request {
-    user?: User;
-  }
+export type User = {
+  id: string;
+  bio: string;
+  email: string;
+  avatar: string;
+  password: string;
+  username: string;
+  last_name: string;
+  first_name: string;
+};
 
-  interface Response {
-    user?: User;
+declare global {
+  namespace Express {
+    interface Request {
+      user?: User;
+      file?: Multer.File;
+      files?: Multer.File[];
+      signedCookies?: {
+        jwt?: string;
+      };
+    }
+
+    interface Response {
+      user?: User;
+    }
   }
 }
 

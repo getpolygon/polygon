@@ -1,7 +1,4 @@
-"use strict";
 require("dotenv").config();
-const PORT = Number(process.env.PORT) || 3001;
-const __DEV__ = process.env.NODE_ENV === "development";
 
 import path from "path";
 import cors from "cors";
@@ -10,8 +7,13 @@ import morgan from "morgan";
 import helmet from "helmet";
 import routes from "./routes";
 import express from "express";
+import slonik from "./db/slonik";
 import compression from "compression";
+import initDB from "./utils/initDB";
 import cookieParser from "cookie-parser";
+const PORT = Number(process.env.PORT) || 3001;
+const __DEV__ = process.env.NODE_ENV === "development";
+const origins = __DEV__ ? true : JSON.parse(process.env.ORIGINS!!) || null;
 
 const app = express();
 
@@ -22,10 +24,13 @@ app.use(express.json());
 __DEV__ && app.use(morgan("dev"));
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser(process.env.COOKIE_SECRET));
-app.use(cors({ origin: true, credentials: true }));
+app.use(cors({ origin: origins, credentials: true }));
 
 // Use the routes
 app.use(routes);
+
+// Initialize database connection
+slonik.connect(async (connection) => await initDB(connection));
 
 // For development environment
 if (__DEV__) {
@@ -41,7 +46,7 @@ if (__DEV__) {
     app
   );
 
-  //Start the server
+  // Start the server
   httpsServer.listen(PORT, "0.0.0.0", () => {
     // Clear the console
     console.clear();
@@ -54,7 +59,10 @@ if (__DEV__) {
 }
 // For production environment
 else {
-  app.listen(PORT, "0.0.0.0", () => {
+  const http = require("http");
+  const server = http.createServer(app);
+
+  server.listen(PORT, "0.0.0.0", () => {
     console.clear();
     console.log(
       `${chalk.greenBright("Production server")} started at port ${chalk.bold(

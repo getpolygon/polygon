@@ -4,10 +4,10 @@ const AuthRoutes = require("./auth/routes/index");
 const NotFoundRoute = require("./misc/404").default;
 const authenticate = require("../middleware/authenticate").default;
 
-// Auth
-router.use("/auth", AuthRoutes);
 // API
 router.use("/api", authenticate(), APIRoutes);
+// Auth
+router.use("/auth", authenticate(true), AuthRoutes);
 // 404
 router.use(NotFoundRoute);
 

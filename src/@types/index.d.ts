@@ -2,8 +2,10 @@ import * as express from "express";
 
 export type User = {
   id: string;
+  posts?; [];
   bio: string;
   email: string;
+  comments?: [];
   avatar: string;
   password: string;
   username: string;

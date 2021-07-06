@@ -1,95 +1,60 @@
+import { sql } from "slonik";
 import Express from "express";
-const textCleaner = require("../../helpers/textCleaner");
+import slonik from "../../db/slonik";
+import { User } from "../../@types";
 
-const AccountController = {
-  // For fetching account details
-  fetchAccount: async (req: Express.Request, res: Express.Response) => {
-    const { accountId } = req.query;
+// For fetching account details
+export const fetchAccount = async (
+  req: Express.Request,
+  res: Express.Response
+) => {
+  // Get the username from the query
+  const { username } = req.query;
 
-    // If no account ID was provided
-    if (!accountId) return res.json(req.user!!);
-    else {
-      // Finding the account and omitting `password`, `email`, `notifications`, `friends` fields
-      // const user = await prisma.user.findFirst({
-      //   where: {
-      //     id: accountId.toString(),
-      //   },
-      //   select: {
-      //     id: true,
-      //     bio: true,
-      //     roles: true,
-      //     avatar: true,
-      //     username: true,
-      //     lastName: true,
-      //     firstName: true,
-      //     privateAccount: true,
-      //   },
-      // });
-      // // If the account does not exist
-      // if (!user) return res.status(404).send();
-      // else return res.json(user);
-    }
-  },
-  // For deleting account
-  deleteAccount: async () => {
-    // // Getting the ID of the user
-    // const { id } = req.user;
-    // // Getting all posts
-    // const posts = await PostSchema.find({ author: id });
-    // // Deleteing the account from MongoDB
-    // const result = await AccountSchema.findByIdAndDelete(id);
-    // // Deleting the posts that are associated with this account
-    // // const postResult = await PostSchema.deleteMany({ author: id });
-    // // Clearing the cookie and sending the response
-    // return res.status(200).clearCookie("jwt").send();
-  },
+  // If no account ID was provided
+  if (!username) {
+    // Get current user
+    const {
+      rows: { 0: user },
+    } = await slonik.query<User>(sql`
+      SELECT * FROM users WHERE id = ${req.user?.id!!}
+    `);
 
-  updateAccount: async (req: Express.Request, res: Express.Response) => {
-    // // Getting the user
-    // const { user } = req;
-    // // Creating an updated variable to store modified data
-    // let updated: User | null = null;
-    // // Getting the payload
-    // const { bio, theme, avatar } = req.body;
-    // // If theme was provided
-    // if (theme) {
-    //   // If dark theme was selected
-    //   if (theme?.dark && !theme?.light) {
-    //     updated = await prisma.user.update({
-    //       where: {
-    //         id: user?.id,
-    //       },
-    //       data: {
-    //         theme: "dark",
-    //       },
-    //     });
-    //   } else {
-    //     updated = await prisma.user.update({
-    //       where: {
-    //         id: user?.id,
-    //       },
-    //       data: {
-    //         theme: "light",
-    //       },
-    //     });
-    //   }
-    // }
-    // // If the user wants to upate the bio
-    // else if (bio) {
-    //   // Cleaning the text
-    //   const cleanBio = textCleaner(bio);
-    //   // Updating the bio
-    //   updated = await prisma.user.update({
-    //     where: {
-    //       id: user?.id,
-    //     },
-    //     data: {
-    //       bio: cleanBio,
-    //     },
-    //   });
-    // }
-    // return res.json(updated);
-  },
+    // Get all posts
+    const { rows: posts } = await slonik.query(sql`
+      SELECT * FROM posts WHERE user_id = ${req.user?.id!!}
+    `);
+
+    // Get all comments
+    const { rows: comments } = await slonik.query(sql`
+      SELECT * FROM comments WHERE user_id = ${req.user?.id!!}
+    `);
+
+    user.posts = posts as [];
+    user.comments = comments as [];
+
+    return res.json(user);
+  } else {
+    // Find the user
+    const {
+      rows: { 0: user },
+    } = await slonik.query<User>(sql`
+      SELECT * FROM users WHERE username = ${username.toString()} LIMIT 1
+    `);
+    // If user does not exist
+    if (!user) return res.status(404).send();
+    else return res.json(user);
+  }
 };
 
-export default AccountController;
+// For deleting account
+export const deleteAccount = async (
+  req: Express.Request,
+  res: Express.Response
+) => {};
+
+// For updating account
+export const updateAccount = async (
+  req: Express.Request,
+  res: Express.Response
+) => {};

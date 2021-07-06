@@ -37,13 +37,11 @@ export default (authRoutes = false) => {
         // If the request was from other endpoints
         else return res.status(403).send();
       } else {
+        req.user = user;
         // If the request was from auth endpoint
         if (authRoutes) return res.status(403).send();
         // If the request was from other endpoints
-        else {
-          req.user = user;
-          return next();
-        }
+        else return next();
       }
     }
   };

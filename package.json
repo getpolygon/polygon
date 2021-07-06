@@ -3,8 +3,8 @@
   "private": true,
   "scripts": {
     "start": "ts-node  src/index",
-    "dev": "ts-node-dev src/index",
-    "test:mailer": "node tests/mailer.test"
+    "test:mailer": "node tests/mailer.test",
+    "dev": "ts-node-dev --transpile-only --rs --deps src/index"
   },
   "author": "Michael Grigoryan",
   "dependencies": {

@@ -19,8 +19,6 @@ export default async (req: Express.Request, res: Express.Response) => {
       SELECT * FROM users WHERE email = ${email};
     `);
 
-    console.log(query);
-
     // Getting the user
     const user = query.rows[0];
 

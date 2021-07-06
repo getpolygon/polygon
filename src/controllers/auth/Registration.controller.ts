@@ -17,8 +17,6 @@ export default async (req: Express.Request, res: Express.Response) => {
   const { password, firstName, lastName } = req.body;
   const hasValidEmail = emailValidator.validate(email);
 
-  console.log(" in it ");
-
   if (hasValidEmail && password && firstName && lastName && username) {
     try {
       // Hashing the password

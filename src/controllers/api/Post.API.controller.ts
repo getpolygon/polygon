@@ -11,15 +11,20 @@ const PostAPIController = {
     const { accountId } = req.query;
 
     if (!accountId) {
-      // TODO: Only allow public user's public posts to be discovered
       const posts = await slonik.query(sql`
-        SELECT post.*, row_to_json(author) AS user 
+        SELECT 
+          post.id, 
+          post.body, 
+          post.privacy, 
+          post.created_at, 
+          row_to_json(author) AS user
+
         FROM posts post
-          LEFT JOIN 
+          JOIN 
             (SELECT first_name, last_name, avatar, id, username FROM users) author
               ON post.user_id = author.id
             
-        WHERE user_id <> ${req.user?.id!!}
+        WHERE user_id <> ${req.user?.id!!} AND privacy = E'PUBLIC';
       `);
 
       return res.json(posts.rows);

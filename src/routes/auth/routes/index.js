@@ -3,9 +3,10 @@ const router = require("express").Router();
 const LoginHandler = require("../Login");
 const LogoutHandler = require("../Logout");
 const RegistrationHandler = require("../Register");
+const authenticate = require("../../../middleware/authenticate").default;
 
-router.use("/login", LoginHandler);
 router.use("/logout", LogoutHandler);
-router.use("/register", RegistrationHandler);
+router.use("/login", authenticate(true), LoginHandler);
+router.use("/register", authenticate(true), RegistrationHandler);
 
 module.exports = router;

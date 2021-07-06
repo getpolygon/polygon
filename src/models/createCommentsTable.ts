@@ -8,7 +8,6 @@ export const createCommentsTable = async (
       id          UUID NOT NULL PRIMARY KEY DEFAULT gen_random_uuid(),
       body        TEXT NOT NULL,
       user_id     UUID NOT NULL REFERENCES users(id),
-      likes       INT  NOT NULL DEFAULT 0,
       post_id     UUID NOT NULL REFERENCES posts(id) ON DELETE CASCADE,
       created_at  TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP
     );

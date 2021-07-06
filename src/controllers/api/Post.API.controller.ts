@@ -1,7 +1,6 @@
 import { sql } from "slonik";
 import Express from "express";
 import slonik from "../../db/slonik";
-// import minio from "../../db/minio";
 import textCleaner from "../../helpers/textCleaner";
 
 export const fetchOne = async (req: Express.Request, res: Express.Response) => {
@@ -33,9 +32,9 @@ export const fetchOne = async (req: Express.Request, res: Express.Response) => {
 };
 
 export const fetch = async (req: Express.Request, res: Express.Response) => {
-  const { account: accountId } = req.query;
+  const { username } = req.query;
 
-  if (!accountId) {
+  if (!username) {
     const { rows: posts } = await slonik.query(sql`
       SELECT 
         post.id, 
@@ -52,13 +51,14 @@ export const fetch = async (req: Express.Request, res: Express.Response) => {
         
         LEFT OUTER JOIN comments ON comments.post_id = post.id
 
-      WHERE author.id <> ${req.user
-        ?.id!!} GROUP BY post.id, author.* ORDER BY post.created_at DESC;
+      WHERE post.privacy <> E'PRIVATE'
+      GROUP BY post.id, author.* 
+      ORDER BY post.created_at DESC;
     `);
 
     return res.json(posts);
   } else {
-    // ! TODO: Only allow public user's public posts to be discovered
+    // TODO: Only allow public user's public posts to be discovered
     const posts = await slonik.query(sql`
       SELECT 
         post.id, 
@@ -75,7 +75,7 @@ export const fetch = async (req: Express.Request, res: Express.Response) => {
         
         JOIN comments ON comments.post_id = post.id
 
-      GROUP BY post.id, author.* ORDER BY post.created_at DESC;
+      WHERE author.username = ${username.toString()} GROUP BY post.id, author.* ORDER BY post.created_at DESC;
     `);
 
     return res.json(posts.rows);

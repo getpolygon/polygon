@@ -14,12 +14,12 @@ const config = {
   MINIO_SECKEY,
   MINIO_USESSL,
 };
-const minio = require("minio");
-const client = new minio.Client({
-  endPoint: MINIO_ENDPOINT,
+import { Client } from "minio";
+const client = new Client({
+  endPoint: MINIO_ENDPOINT!!,
   port: parseInt(MINIO_PORT!!),
-  accessKey: MINIO_ACCKEY,
-  secretKey: MINIO_SECKEY,
+  accessKey: MINIO_ACCKEY!!,
+  secretKey: MINIO_SECKEY!!,
   useSSL: JSON.parse(MINIO_USESSL!!),
 });
 

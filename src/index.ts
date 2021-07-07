@@ -7,6 +7,7 @@ import morgan from "morgan";
 import helmet from "helmet";
 import routes from "./routes";
 import express from "express";
+import minio from "./db/minio";
 import slonik from "./db/slonik";
 import compression from "compression";
 import initDB from "./utils/initDB";
@@ -31,6 +32,13 @@ app.use(routes);
 
 // Initialize database connection
 slonik.connect(async (connection) => await initDB(connection));
+
+minio.client.bucketExists(minio.config.MINIO_BUCKET!!, (error, exists) => {
+  if (error) throw error;
+  else {
+    if (!exists) minio.client.makeBucket(minio.config.MINIO_BUCKET!!, "am_EVN");
+  }
+});
 
 // For development environment
 if (__DEV__) {

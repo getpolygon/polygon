@@ -2,6 +2,7 @@ import { sql } from "slonik";
 import Express from "express";
 import slonik from "../../db/slonik";
 import textCleaner from "../../helpers/textCleaner";
+// import { validationResult, body } from "express-validator";
 
 export const fetchOne = async (req: Express.Request, res: Express.Response) => {
   const { post: postId } = req.params;
@@ -36,23 +37,23 @@ export const fetch = async (req: Express.Request, res: Express.Response) => {
 
   if (!username) {
     const { rows: posts } = await slonik.query(sql`
-      SELECT 
-        post.id, 
-        post.body, 
-        post.privacy, 
-        post.created_at, 
+      SELECT
+        post.id,
+        post.body,
+        post.privacy,
+        post.created_at,
         row_to_json(author) AS user,
         json_agg(comments) AS comments
 
       FROM posts post
-        LEFT OUTER JOIN 
+        LEFT OUTER JOIN
           (SELECT first_name, last_name, avatar, id, username FROM users) author
             ON post.user_id = author.id
-        
+
         LEFT OUTER JOIN comments ON comments.post_id = post.id
 
       WHERE post.privacy <> E'PRIVATE'
-      GROUP BY post.id, author.* 
+      GROUP BY post.id, author.*
       ORDER BY post.created_at DESC;
     `);
 

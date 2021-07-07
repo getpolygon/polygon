@@ -1,10 +1,10 @@
 import _ from "lodash";
-import uuid from "uuid";
 import bcrypt from "bcrypt";
 import Express from "express";
 import jwt from "jsonwebtoken";
 import minio from "../../db/minio";
 import { User } from "../../@types";
+import { v4 as uuidv4 } from "uuid";
 import slonik from "../../db/slonik";
 import emailValidator from "email-validator";
 const { JWT_PRIVATE_KEY, SALT_ROUNDS } = process.env;
@@ -45,10 +45,10 @@ export default async (req: Express.Request, res: Express.Response) => {
         // Getting file format
         const format = req.file.mimetype.split(",")[1];
         // Creating a unique filename
-        const path = `${uuid.v4()}.${format}`;
+        const path = `${uuidv4()}.${format}`;
         // Uploading to MinIO
-        await minio.client.putObject(
-          minio.config.MINIO_BUCKET,
+        const etag = await minio.client.putObject(
+          minio.config.MINIO_BUCKET!!,
           path,
           req.file.buffer,
           req.file.size,
@@ -56,11 +56,14 @@ export default async (req: Express.Request, res: Express.Response) => {
             "Content-Type": req.file.mimetype,
           }
         );
+        console.log(etag);
         data.avatar = path;
       }
 
       // Creating the account
-      const createResponse = await slonik.query<Partial<User>>(sql`
+      const {
+        rows: { 0: user },
+      } = await slonik.query<Partial<User>>(sql`
         INSERT INTO users (first_name, last_name, email, password, avatar, username)
         
         VALUES (
@@ -77,7 +80,7 @@ export default async (req: Express.Request, res: Express.Response) => {
 
       // Creating an account token
       jwt.sign(
-        { id: createResponse.rows[0].id },
+        { id: user.id },
         JWT_PRIVATE_KEY!!,
         {
           expiresIn: "7 days",
@@ -100,7 +103,10 @@ export default async (req: Express.Request, res: Express.Response) => {
       );
     } catch (error) {
       if (error instanceof UniqueIntegrityConstraintViolationError) {
-        return res.status(403).json(error);
+        return res.status(403).send();
+      } else {
+        console.error(error);
+        return res.status(500).send();
       }
     }
   } else return res.status(400).send();

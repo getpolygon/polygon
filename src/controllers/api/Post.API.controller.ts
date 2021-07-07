@@ -10,16 +10,16 @@ export const fetchOne = async (req: Express.Request, res: Express.Response) => {
   const {
     rows: { 0: post },
   } = await slonik.query(sql`
-      SELECT 
-        post.id, 
-        post.body, 
-        post.privacy, 
-        post.created_at, 
+      SELECT
+        post.id,
+        post.body,
+        post.privacy,
+        post.created_at,
         row_to_json(author) AS user,
         json_agg(comments) AS comments
 
       FROM posts post
-        LEFT OUTER JOIN 
+        LEFT OUTER JOIN
           (SELECT first_name, last_name, avatar, id, username FROM users) author
             ON post.user_id = author.id
 
@@ -36,25 +36,40 @@ export const fetch = async (req: Express.Request, res: Express.Response) => {
   const { username } = req.query;
 
   if (!username) {
+    // const { rows: posts } = await slonik.query(sql`
+    //   SELECT
+    //     post.id,
+    //     post.body,
+    //     post.privacy,
+    //     post.created_at,
+    //     row_to_json(author) AS user,
+    //     json_agg(comments) AS comments
+
+    //   FROM posts post
+    //     LEFT OUTER JOIN
+    //       (SELECT first_name, last_name, avatar, id, username FROM users) author
+    //         ON post.user_id = author.id
+
+    //     LEFT OUTER JOIN comments ON comments.post_id = post.id
+
+    //   WHERE post.privacy <> E'PRIVATE'
+    //   GROUP BY post.id, author.*
+    //   ORDER BY post.created_at DESC;
+    // `);
+
     const { rows: posts } = await slonik.query(sql`
-      SELECT
-        post.id,
-        post.body,
-        post.privacy,
-        post.created_at,
-        row_to_json(author) AS user,
-        json_agg(comments) AS comments
+        SELECT
+          to_json(users) AS user, 
+          to_json(array_remove(array_agg(comments), NULL)) AS comments
 
-      FROM posts post
-        LEFT OUTER JOIN
-          (SELECT first_name, last_name, avatar, id, username FROM users) author
-            ON post.user_id = author.id
+        FROM posts Post
 
-        LEFT OUTER JOIN comments ON comments.post_id = post.id
+        LEFT JOIN users    ON users.id = Post.user_id
+        LEFT JOIN comments ON Post.id  = comments.post_id
 
-      WHERE post.privacy <> E'PRIVATE'
-      GROUP BY post.id, author.*
-      ORDER BY post.created_at DESC;
+        WHERE Post.privacy <> E'PRIVATE'
+        GROUP BY users.*, comments.*, post.id
+        ORDER BY Post.created_at DESC;
     `);
 
     return res.json(posts);

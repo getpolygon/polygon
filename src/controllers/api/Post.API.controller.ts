@@ -36,7 +36,58 @@ export const fetch = async (req: Express.Request, res: Express.Response) => {
   const { username } = req.query;
 
   if (!username) {
-    // const { rows: posts } = await slonik.query(sql`
+    const { rows: posts } = await slonik.query(sql`
+        SELECT
+          Post.*,
+          to_json(Author) AS user,
+          to_json(array_remove(array_agg(Comments), NULL)) AS comments
+
+        FROM posts Post
+
+        LEFT OUTER JOIN (
+          SELECT 
+            id, 
+            avatar, 
+            private, 
+            username, 
+            last_name, 
+            first_name 
+          
+          FROM users
+          ) Author ON Author.id = Post.user_id
+        
+        LEFT OUTER JOIN (
+          
+          SELECT
+            Comment.*,
+            to_json(CommentAuthor) AS user
+
+          FROM comments Comment
+
+          LEFT OUTER JOIN (
+
+            SELECT 
+              id, 
+              bio,
+              avatar, 
+              username, 
+              first_name, 
+              last_name
+            
+            FROM users
+            ) CommentAuthor ON Comment.user_id = CommentAuthor.id
+            
+        ) Comments ON Post.id  = Comments.post_id
+
+        WHERE Post.privacy <> E'PRIVATE'
+        GROUP BY Post.id, Author.*, Comments.*
+        ORDER BY Post.created_at DESC;
+    `);
+
+    return res.json(posts);
+  } else {
+    // TODO: Only allow public user's public posts to be discovered
+    // const posts = await slonik.query(sql`
     //   SELECT
     //     post.id,
     //     post.body,
@@ -46,55 +97,16 @@ export const fetch = async (req: Express.Request, res: Express.Response) => {
     //     json_agg(comments) AS comments
 
     //   FROM posts post
-    //     LEFT OUTER JOIN
+    //     JOIN
     //       (SELECT first_name, last_name, avatar, id, username FROM users) author
     //         ON post.user_id = author.id
 
-    //     LEFT OUTER JOIN comments ON comments.post_id = post.id
+    //     JOIN comments ON comments.post_id = post.id
 
-    //   WHERE post.privacy <> E'PRIVATE'
-    //   GROUP BY post.id, author.*
-    //   ORDER BY post.created_at DESC;
+    //   WHERE author.username = ${username.toString()} GROUP BY post.id, author.* ORDER BY post.created_at DESC;
     // `);
 
-    const { rows: posts } = await slonik.query(sql`
-        SELECT
-          to_json(users) AS user, 
-          to_json(array_remove(array_agg(comments), NULL)) AS comments
-
-        FROM posts Post
-
-        LEFT JOIN users    ON users.id = Post.user_id
-        LEFT JOIN comments ON Post.id  = comments.post_id
-
-        WHERE Post.privacy <> E'PRIVATE'
-        GROUP BY users.*, comments.*, post.id
-        ORDER BY Post.created_at DESC;
-    `);
-
-    return res.json(posts);
-  } else {
-    // TODO: Only allow public user's public posts to be discovered
-    const posts = await slonik.query(sql`
-      SELECT 
-        post.id, 
-        post.body, 
-        post.privacy, 
-        post.created_at, 
-        row_to_json(author) AS user,
-        json_agg(comments) AS comments
-
-      FROM posts post
-        JOIN 
-          (SELECT first_name, last_name, avatar, id, username FROM users) author
-            ON post.user_id = author.id
-        
-        JOIN comments ON comments.post_id = post.id
-
-      WHERE author.username = ${username.toString()} GROUP BY post.id, author.* ORDER BY post.created_at DESC;
-    `);
-
-    return res.json(posts.rows);
+    return res.json("no response yet");
   }
 };
 

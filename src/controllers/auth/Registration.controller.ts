@@ -31,6 +31,7 @@ export default async (req: Express.Request, res: Express.Response) => {
         lastName,
         username,
         firstName,
+        cover: "",
         avatar: "",
         password: hashedPassword,
       };
@@ -43,7 +44,7 @@ export default async (req: Express.Request, res: Express.Response) => {
         data.avatar = generateDicebearUrl(firstName, lastName);
       } else {
         // Getting file format
-        const format = req.file.mimetype.split(",")[1];
+        const format = req.file.mimetype.split("/")[1];
         // Creating a unique filename
         const path = `${uuidv4()}.${format}`;
         // Uploading to MinIO
@@ -64,7 +65,7 @@ export default async (req: Express.Request, res: Express.Response) => {
       const {
         rows: { 0: user },
       } = await slonik.query<Partial<User>>(sql`
-        INSERT INTO users (first_name, last_name, email, password, avatar, username)
+        INSERT INTO users (first_name, last_name, email, password, avatar, username, cover)
         
         VALUES (
           ${data.firstName}, 
@@ -72,7 +73,8 @@ export default async (req: Express.Request, res: Express.Response) => {
           ${data.email}, 
           ${data.password}, 
           ${data.avatar}, 
-          ${data.username}
+          ${data.username},
+          ${`NEEDS TO BE IMPLEMENTED`}
         )
 
         RETURNING *;

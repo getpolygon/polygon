@@ -130,7 +130,7 @@ export const create = async (req: Express.Request, res: Express.Response) => {
       // Sending the response
       return res.json(post);
     } else {
-      // TODO: Needs to be implemented
+      // TODO: Implement
     }
   }
 };

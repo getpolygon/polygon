@@ -1,12 +1,18 @@
-const router = require("express").Router();
-const upload = require("../../middleware/multer").default;
-const PostController = require("../../controllers/api/Post.API.controller");
+import Express from "express";
+const router = Express.Router();
+import upload from "../../middleware/multer";
+import {
+  fetch,
+  create,
+  remove,
+  fetchOne,
+} from "../../controllers/api/Post.API.controller";
 
 // To fetch posts of an account
-router.get("/fetch", PostController.fetch);
+router.get("/fetch", fetch);
 
 // To fetch one post
-router.get("/one/:post", PostController.fetchOne);
+router.get("/one/:post", fetchOne);
 
 // // To save a post
 // router.put("/:id/save", PostController.save);
@@ -21,8 +27,8 @@ router.get("/one/:post", PostController.fetchOne);
 // // To update a post
 // router.patch("/:id/update", PostController.update);
 // To delete a post
-router.delete("/:id/delete", PostController.remove);
+router.delete("/:id/delete", remove);
 // To create a post
-router.post("/create", upload.array("attachments"), PostController.create);
+router.post("/create", upload.array("attachments"), create);
 
-module.exports = router;
+export default router;

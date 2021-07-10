@@ -21,6 +21,7 @@ const mailer = nodemailer.createTransport({
  * @param {String} receiver
  * @param {String} subject
  * @param {String} title
+ * @param {String} html
  */
 const send = async (receiver, subject, title, html) => {
   if (!receiver) throw new Error("Receiver not specified");

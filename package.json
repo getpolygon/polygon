@@ -53,6 +53,7 @@
     "@types/morgan": "^1.9.2",
     "@types/multer": "^1.4.6",
     "@types/node": "^15.12.5",
+    "@types/nodemailer": "^6.4.4",
     "@types/redis": "^2.8.30",
     "@types/sanitize-html": "^2.3.1",
     "@types/uuid": "^8.3.1",

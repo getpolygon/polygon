@@ -2,7 +2,6 @@ import { sql } from "slonik";
 import Express from "express";
 import slonik from "../../db/slonik";
 import textCleaner from "../../helpers/textCleaner";
-// import { validationResult, body } from "express-validator";
 
 export const fetchOne = async (req: Express.Request, res: Express.Response) => {
   const { post: postId } = req.params;
@@ -120,14 +119,14 @@ export const create = async (req: Express.Request, res: Express.Response) => {
     // Checking if there are no uploaded files
     if (req.files?.length === 0) {
       // Create new post
-      const post = await slonik.query(sql`
+      const { rows: { 0: post } } = await slonik.query(sql`
         INSERT INTO posts (body, user_id)
         VALUES (${text}, ${req.user?.id!!})
         RETURNING *;
       `);
 
       // Sending the response
-      return res.json(post.rows[0]);
+      return res.json(post);
     } else {
       // TODO: Needs to be implemented
     }

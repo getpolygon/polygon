@@ -1,10 +1,11 @@
-const router = require("express").Router();
-// const upload = require("../../middleware/multer");
-const {
+import Express from "express";
+const router = Express.Router();
+
+import {
   updateAccount,
   deleteAccount,
   fetchAccount,
-} = require("../../controllers/api/Account.API.controller");
+} from "../../controllers/api/Account.API.controller";
 
 // For fetching account details
 router.get("/fetch", fetchAccount);
@@ -13,4 +14,4 @@ router.patch("/update", updateAccount);
 // For deleting account
 router.delete("/delete", deleteAccount);
 
-module.exports = router;
+export default router;

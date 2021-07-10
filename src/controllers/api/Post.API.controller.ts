@@ -119,7 +119,9 @@ export const create = async (req: Express.Request, res: Express.Response) => {
     // Checking if there are no uploaded files
     if (req.files?.length === 0) {
       // Create new post
-      const { rows: { 0: post } } = await slonik.query(sql`
+      const {
+        rows: { 0: post },
+      } = await slonik.query(sql`
         INSERT INTO posts (body, user_id)
         VALUES (${text}, ${req.user?.id!!})
         RETURNING *;

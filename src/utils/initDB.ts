@@ -3,6 +3,7 @@ const __DEV__ = process.env.NODE_ENV === "development";
 import { createPostsTable } from "../models/createPostsTable";
 import { createUsersTable } from "../models/createUsersTable";
 import { createCommentsTable } from "../models/createCommentsTable";
+import { createAttachmentsTable } from "../models/createAttachmentsTable";
 
 export default async (connection: DatabaseConnectionType) => {
   try {
@@ -17,6 +18,8 @@ export default async (connection: DatabaseConnectionType) => {
     await createPostsTable(connection);
     // Creating comments table
     await createCommentsTable(connection);
+    // Creating attachments table
+    await createAttachmentsTable(connection);
   } catch (error) {
     console.error(error);
   }

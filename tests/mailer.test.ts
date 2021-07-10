@@ -10,7 +10,7 @@ async function mail() {
     );
     return result;
   } catch (error) {
-    throw new Error(error);
+    throw error;
   }
 }
 

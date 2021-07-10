@@ -1,29 +1,25 @@
-require("dotenv").config();
 // const nodePin = require("node-pin");
 // const showdown = require("showdown");
-const nodemailer = require("nodemailer");
+import nodemailer from "nodemailer";
 const { MAILER_HOST, MAILER_USER, MAILER_PASS, MAILER_PORT } = process.env;
 
 // Creating a reusable transport
 const mailer = nodemailer.createTransport({
-  host: MAILER_HOST,
-  port: MAILER_PORT,
+  host: MAILER_HOST!!,
+  port: parseInt(MAILER_PORT!!),
   secure: false,
   auth: {
-    user: MAILER_USER,
-    pass: MAILER_PASS,
+    user: MAILER_USER!!,
+    pass: MAILER_PASS!!,
   },
 });
 
-/**
- * Function for sending emails
- *
- * @param {String} receiver
- * @param {String} subject
- * @param {String} title
- * @param {String} html
- */
-const send = async (receiver, subject, title, html) => {
+const send = async (
+  receiver: string,
+  subject: string,
+  title: string,
+  html: string
+) => {
   if (!receiver) throw new Error("Receiver not specified");
   else {
     const data = await mailer.sendMail({

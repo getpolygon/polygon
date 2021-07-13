@@ -8,6 +8,7 @@
   },
   "author": "Michael Grigoryan",
   "dependencies": {
+    "@types/pug": "^2.0.5",
     "bad-words": "^3.0.4",
     "bcrypt": "^5.0.0",
     "chalk": "^4.1.0",
@@ -29,10 +30,11 @@
     "morgan": "^1.10.0",
     "multer": "^1.4.2",
     "nanoid": "^3.1.23",
-    "node-pin": "^0.1.5",
     "nodemailer": "^6.4.17",
+    "pug": "^3.0.2",
     "redis": "^3.0.2",
     "sanitize-html": "^2.3.0",
+    "secure-pin": "^1.0.14",
     "slonik": "^23.8.3",
     "uuid": "^8.3.2"
   },

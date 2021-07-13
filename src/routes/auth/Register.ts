@@ -1,15 +1,17 @@
 import Express from "express";
 const router = Express.Router();
-import upload from "../../middleware/multer";
-import { registrationValidationRules, validate } from "../../utils/validation";
-import RegistrationController from "../../controllers/auth/Registration.controller";
+// import upload from "../../middleware/multer";
+import {
+  verify,
+  register,
+} from "../../controllers/auth/Registration.controller";
+import {
+  validate,
+  registrationValidationRules,
+  verificationValidationRules,
+} from "../../utils/validation";
 
-router.post(
-  "/",
-  upload.single("avatar"),
-  registrationValidationRules(),
-  validate(),
-  RegistrationController
-);
+router.post("/", registrationValidationRules(), validate(), register);
+router.post("/verify/:sid", verificationValidationRules(), validate(), verify);
 
 export default router;

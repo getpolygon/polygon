@@ -14,17 +14,17 @@ const mailer = nodemailer.createTransport({
   },
 });
 
-const send = async (
-  receiver: string,
-  subject: string,
-  title: string,
-  html: string
-) => {
+interface MailerInterface {
+  html: string;
+  subject?: string;
+  receiver: string;
+}
+
+const send = async ({ receiver, subject, html }: MailerInterface) => {
   if (!receiver) throw new Error("Receiver not specified");
   else {
     const data = await mailer.sendMail({
       html: html,
-      text: title,
       to: receiver,
       subject: subject,
     });
@@ -33,4 +33,4 @@ const send = async (
   }
 };
 
-module.exports = { send };
+export { send };

@@ -8,12 +8,12 @@ export const registrationValidationRules = () => {
     body("email").normalizeEmail().isEmail(),
     body("lastName").trim().escape().notEmpty(),
     body("firstName").trim().escape().notEmpty(),
-    body("username")
-      .trim()
-      .escape()
-      .toLowerCase()
-      .isLength({ min: 8, max: 15 }),
   ];
+};
+
+// Rules for registration->verification
+export const verificationValidationRules = () => {
+  return [body("password").isLength({ min: 8 })];
 };
 
 // Validators for login

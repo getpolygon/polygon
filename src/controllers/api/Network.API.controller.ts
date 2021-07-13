@@ -9,7 +9,7 @@ export const heartbeat = (req: Express.Request, res: Express.Response) => {
   // Setting connection status to true
   redis.set(username, JSON.stringify({ connected: true }));
   // Setting a TTL on the key to delete it after 10 minutes
-  redis.expire(username, 1000 * 5 * 60);
+  redis.expire(username, 10 * 60);
   // Getting the key value from the database
   redis.get(username, (error, reply) => {
     // If there was an error

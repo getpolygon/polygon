@@ -1,0 +1,23 @@
+div(style="font-family: sans-serif")
+  h1 Verify your email
+  p Hello 
+    | 
+    b #{firstName} #{lastName} 
+    | & welcome to Usocial!
+
+  p As per your request from 
+    | ip address 
+    b #{ip} 
+    | you're receiving 
+    | this message to verify your new account at Usocial
+  
+  p Please click on this link to activate your account: 
+  
+  a(href=`${FRONTEND_URL}/verify/${sid}/`) #{FRONTEND_URL}/verify/#{sid}/
+
+  p(style="color: red")
+    b WARNING: 
+    | For the security of your account, please don't share this email with anyone else.
+
+  h4 Thank you!
+  small If you are not trying to register to Usocial, you can safely ignore this message

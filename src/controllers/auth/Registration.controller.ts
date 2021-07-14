@@ -54,7 +54,7 @@ export const register = async (req: Express.Request, res: Express.Response) => {
     SendMail({
       html: rendered,
       receiver: email,
-      subject: "Usocial email verification"
+      subject: "Polygon email verification"
     });
 
     // Creating a payload

@@ -10,14 +10,14 @@ import redis from "../../db/redis";
 // import minio from "../../db/minio";
 // import { User } from "../../@types";
 import slonik from "../../db/slonik";
-const { FRONTEND_URL } = process.env;
+const { BASE_FRONTEND_URL } = process.env;
 // import { v4 as uuidv4 } from "uuid";
 // import { generatePinSync } from "secure-pin";
 const { JWT_PRIVATE_KEY, SALT_ROUNDS } = process.env;
 import { send as SendMail } from "../../helpers/mailer";
 // import generateDicebearUrl from "../../utils/generateDicebearUrl";
 import {
-  sql
+  sql,
   // UniqueIntegrityConstraintViolationError
 } from "slonik";
 
@@ -47,14 +47,14 @@ export const register = async (req: Express.Request, res: Express.Response) => {
       sid,
       lastName,
       firstName,
-      FRONTEND_URL
+      BASE_FRONTEND_URL,
     });
 
     // Sending an email
     SendMail({
       html: rendered,
       receiver: email,
-      subject: "Polygon email verification"
+      subject: "Polygon email verification",
     });
 
     // Creating a payload
@@ -63,7 +63,7 @@ export const register = async (req: Express.Request, res: Express.Response) => {
       username,
       lastName,
       firstName,
-      password: bcrypt.hashSync(password, parseInt(SALT_ROUNDS!!))
+      password: bcrypt.hashSync(password, parseInt(SALT_ROUNDS!!)),
     };
 
     // Setting a random key with initial, stringified values
@@ -108,7 +108,7 @@ export const verify = (req: Express.Request, res: Express.Response) => {
         // If passwords match
         if (same) {
           const {
-            rows: { 0: user }
+            rows: { 0: user },
           } = await slonik.query(sql`
             INSERT INTO users (
               email, 
@@ -133,7 +133,7 @@ export const verify = (req: Express.Request, res: Express.Response) => {
             { id: user.id },
             JWT_PRIVATE_KEY!!,
             {
-              expiresIn: "7 days"
+              expiresIn: "7 days",
             },
             (error, token) => {
               if (error) console.error(error);
@@ -149,9 +149,9 @@ export const verify = (req: Express.Request, res: Express.Response) => {
                         secure: true,
                         signed: true,
                         httpOnly: true,
-                        sameSite: "none"
+                        sameSite: "none",
                       })
-                      .json({ token });
+                      .json(user);
                   }
                 });
               }

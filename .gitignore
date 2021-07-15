@@ -1,8 +1,5 @@
-node_modules/
-
 .env
-.env.development.local
-
 cert/
-
+node_modules/
 yarn-error.log
+.env.development.local

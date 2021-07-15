@@ -11,9 +11,9 @@ div(style="font-family: sans-serif")
     | you're receiving 
     | this message to verify your new account at Polygon
   
-  p Please click on this link to activate your account: 
-  
-  a(href=`${FRONTEND_URL}/verify/${sid}/`) #{FRONTEND_URL}/verify/#{sid}/
+  p Please click on the link below activate your account: 
+    span
+      a(href=`${BASE_FRONTEND_URL}/welcome?verification=${sid}/`) Activate your account
 
   p(style="color: red")
     b WARNING: 

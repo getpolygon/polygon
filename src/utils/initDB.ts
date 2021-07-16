@@ -4,6 +4,7 @@ import { createPostsTable } from "../models/createPostsTable";
 import { createUsersTable } from "../models/createUsersTable";
 import { createCommentsTable } from "../models/createCommentsTable";
 import { createAttachmentsTable } from "../models/createAttachmentsTable";
+import { createRelationsTable } from "../models/createRelationsTable";
 
 export default async (connection: DatabaseConnectionType) => {
   try {
@@ -20,6 +21,8 @@ export default async (connection: DatabaseConnectionType) => {
     await createCommentsTable(connection);
     // Creating attachments table
     await createAttachmentsTable(connection);
+    // Creating relationships table
+    await createRelationsTable(connection);
   } catch (error) {
     console.error(error);
   }

@@ -32,10 +32,7 @@ export const fetchOne = async (req: Express.Request, res: Express.Response) => {
 };
 
 export const fetch = async (req: Express.Request, res: Express.Response) => {
-  const {
-    username,
-    // page
-  } = req.query;
+  const { username } = req.query;
 
   if (!username) {
     // TODO: Implement pagination

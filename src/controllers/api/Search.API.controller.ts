@@ -3,7 +3,7 @@ import Express from "express";
 const SearchAPIController = {
   query: async (req: Express.Request, res: Express.Response) => {
     //   const { q } = req.query;
-    //   if (!q) return res.status(400).send();
+    //   if (!q) return res.status(400).json();
     //   else {
     //     const posts = await prisma.post.findMany({
     //       where: {

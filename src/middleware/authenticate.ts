@@ -6,7 +6,7 @@ import { Token, User } from "../@types";
 import slonik from "../db/slonik";
 const { JWT_PRIVATE_KEY } = process.env;
 
-export default (authRoutes = false) => {
+export default (authRoute = false) => {
   return async (
     req: Express.Request,
     res: Express.Response,
@@ -17,8 +17,8 @@ export default (authRoutes = false) => {
 
     // Checking if it exists
     if (!token) {
-      if (authRoutes) return next();
-      else return res.status(403).send();
+      if (authRoute) return next();
+      else return res.status(403).json();
     } else {
       // Getting the ID from the token
       const data = jwt.verify(token, JWT_PRIVATE_KEY!!) as Token;
@@ -33,13 +33,13 @@ export default (authRoutes = false) => {
       // If the account does not exist
       if (!user) {
         // If the request was from auth endpoint
-        if (authRoutes) return next();
+        if (authRoute) return next();
         // If the request was from other endpoints
-        else return res.status(403).send();
+        else return res.status(403).json();
       } else {
         req.user = user;
         // If the request was from auth endpoint
-        if (authRoutes) return res.status(403).send();
+        if (authRoute) return res.status(403).json();
         // If the request was from other endpoints
         else return next();
       }

@@ -6,41 +6,41 @@ import jwt from "jsonwebtoken";
 import { User } from "../../@types";
 import slonik from "../../db/slonik";
 const { JWT_PRIVATE_KEY } = process.env;
-import emailValidator from "email-validator";
 
 export default async (req: Express.Request, res: Express.Response) => {
-  const { password } = req.body;
-  const email = _.toLower(req.body.email);
+  // Get the email and the password
+  const { password, email } = req.body;
 
-  // If the email is valid and the password is provided
-  if (emailValidator.validate(email) && password) {
-    // Find the account with specified parameters
-    const query = await slonik.query(sql<User>`
+  // Find the user with specified parameters
+  const {
+    rows: { 0: user },
+  } = await slonik.query(sql<User>`
       SELECT * FROM users WHERE email = ${email};
-    `);
+  `);
 
-    // Getting the user
-    const user = query.rows[0];
+  // If user exists
+  if (user) {
+    // Comparing passwords
+    const same = await bcrypt.compare(password, user.password);
 
-    // If the account exists
-    if (user) {
-      const same = await bcrypt.compare(password, user.password);
-
-      if (same) {
-        jwt.sign({ id: user.id }, JWT_PRIVATE_KEY!!, {}, (err, token) => {
-          if (err) console.error(err);
-          else {
-            return res
-              .cookie("jwt", token, {
-                signed: true,
-                secure: true,
-                httpOnly: true,
-                sameSite: "none",
-              })
-              .json({ token });
-          }
-        });
-      } else return res.status(403).send();
-    } else return res.status(204).send();
-  } else return res.status(400).send();
+    // If passwords match
+    if (same) {
+      // Create a JWT
+      jwt.sign({ id: user.id }, JWT_PRIVATE_KEY!!, {}, (error, token) => {
+        if (error) return res.status(500).json();
+        else {
+          // Send the JWT as a cookie
+          return res
+            .cookie("jwt", token, {
+              signed: true,
+              secure: true,
+              httpOnly: true,
+              sameSite: "none",
+            })
+            .status(204)
+            .json();
+        }
+      });
+    } else return res.status(403).json();
+  } else return res.status(204).json();
 };

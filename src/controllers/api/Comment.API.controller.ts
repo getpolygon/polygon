@@ -22,7 +22,7 @@ export const create = async (req: Express.Request, res: Express.Response) => {
     `);
 
     return res.json(comment);
-  } else return res.status(404).send();
+  } else return res.status(404).json();
 };
 
 export const update = async (req: Express.Request, res: Express.Response) => {
@@ -55,7 +55,7 @@ export const update = async (req: Express.Request, res: Express.Response) => {
         return res.json(comment);
       } else return res.status(403);
     } else return res.status(404);
-  } else return res.status(404).send();
+  } else return res.status(404).json();
 };
 
 export const remove = async (req: Express.Request, res: Express.Response) => {
@@ -85,10 +85,10 @@ export const remove = async (req: Express.Request, res: Express.Response) => {
         await slonik.query(sql`
           DELETE FROM comments WHERE id = ${commentId};
         `);
-        return res.status(204).send();
+        return res.status(204).json();
       }
       // Forbid the request
-      else return res.status(403).send();
-    } else return res.status(404).send();
+      else return res.status(403).json();
+    } else return res.status(404).json();
   }
 };

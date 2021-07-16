@@ -10,41 +10,26 @@ export const fetchAccount = async (
   // Get the username from the query
   const { username } = req.query;
 
+  // Finding the account
   const {
     rows: { 0: user },
   } = await slonik.query(sql`
-      SELECT 
-        Account.*, 
-        to_json(
-          array_remove(
-            array_agg(Posts), NULL
-          )
-        ) AS posts,
-        to_json(
-          array_remove(
-            array_agg(Comments), NULL
-          )
-        ) AS comments
-      FROM users Account
+    SELECT 
+     id,
+     bio,
+     cover,
+     avatar,
+     private,
+     username,
+     last_name,
+     first_name,
+     created_at
 
-      LEFT OUTER JOIN (SELECT * FROM posts) Posts ON Posts.user_id = Account.id
-      LEFT OUTER JOIN (
-        SELECT 
-          Comment.*, 
-          to_json(Post) as post
-          
-        FROM comments Comment
+    FROM users 
+    WHERE username = ${String(username)};
+  `);
 
-        LEFT OUTER JOIN posts Post ON Comment.post_id = Post.id
-      ) Comments ON Comments.user_id = Account.id
-
-      WHERE Account.username = ${
-        !username ? req.user?.username!! : username.toString()
-      }
-      GROUP BY Account.id, Posts.*, Comments.*;
-    `);
-
-  if (!user) return res.status(404).send();
+  if (!user) return res.status(404).json();
   else return res.json(user);
 };
 
@@ -52,10 +37,34 @@ export const fetchAccount = async (
 export const deleteAccount = async (
   req: Express.Request,
   res: Express.Response
-) => {};
+) => {
+  const { id: userId } = req?.user!!;
+
+  const deleteUserResponse = await slonik.query(sql`
+    DELETE FROM users WHERE id = ${userId};
+  `);
+
+  const deleteCommentsResponse = await slonik.query(sql`
+    DELETE FROM comments WHERE user_id = ${userId};
+  `);
+
+  const { rows: posts } = await slonik.query(sql<object[]>`
+    SELECT * 
+    
+    FROM posts
+    
+    LEFT OUTER JOIN attachments ON attachments.post_id = posts.id
+    
+    WHERE user_id = ${userId};
+  `);
+
+  return res.json({ deleteUserResponse, deleteCommentsResponse, posts });
+};
 
 // For updating account
 export const updateAccount = async (
   req: Express.Request,
   res: Express.Response
-) => {};
+) => {
+  // TODO: Implement
+};

@@ -6,7 +6,7 @@ import { body, validationResult } from "express-validator";
 
 // Middleware function for express-validator for validating user emails
 const validateEmail = async (value: string) => {
-  const { valid, reason } = await emailValidator({
+  const { valid } = await emailValidator({
     email: value,
     validateMx: true,
     validateTypo: true,
@@ -31,7 +31,7 @@ const validateEmail = async (value: string) => {
     else return Promise.reject("Email is taken");
   }
   // If it's invalid
-  else return Promise.reject(reason?.toUpperCase());
+  else return Promise.reject("Invalid email");
 };
 
 // Middleware function for express-validator for validating user usernames
@@ -78,7 +78,7 @@ export const loginValidationRules = () => {
     body("email")
       .normalizeEmail()
       .custom(async (value) => {
-        const { valid, reason } = await emailValidator({
+        const { valid } = await emailValidator({
           email: value,
           validateMx: true,
           validateTypo: true,
@@ -89,7 +89,7 @@ export const loginValidationRules = () => {
         });
 
         if (valid) return Promise.resolve(valid);
-        else return Promise.reject(reason);
+        else return Promise.reject("Invalid email");
       }),
   ];
 };

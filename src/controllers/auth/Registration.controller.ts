@@ -27,53 +27,54 @@ export const register = async (req: Express.Request, res: Express.Response) => {
   // Getting the properties from the body
   const { firstName, lastName, email, password, username } = req.body;
 
-  // Checking whether there are other accounts with this email
-  const sqlRequest = await slonik.query(sql`
-    SELECT * FROM users WHERE email = ${email} OR username = ${username};
-  `);
+  // // Checking whether there are other accounts with this email
+  // const sqlRequest = await slonik.query(sql`
+  //   SELECT * FROM users WHERE email = ${email} OR username = ${username};
+  // `);
 
-  // If there are no duplicate accounts
-  if (!sqlRequest.rows[0]) {
-    // Rendering the template
-    const rendered = pug.render(template, {
-      ip,
-      sid,
-      lastName,
-      firstName,
-      BASE_FRONTEND_URL,
-    });
+  // // If there are no duplicate accounts
+  // if (!sqlRequest.rows[0]) {
 
-    // Sending an email
-    SendMail({
-      html: rendered,
-      receiver: email,
-      subject: "Polygon email verification",
-    });
+  // Rendering the email template
+  const rendered = pug.render(template, {
+    ip,
+    sid,
+    lastName,
+    firstName,
+    BASE_FRONTEND_URL,
+  });
 
-    // Creating a payload
-    const payload = {
-      email,
-      username,
-      lastName,
-      firstName,
-      password: bcrypt.hashSync(password, parseInt(SALT_ROUNDS!!)),
-    };
+  // Sending an email
+  SendMail({
+    html: rendered,
+    receiver: email,
+    subject: "Polygon email verification",
+  });
 
-    // Setting a random key with initial, stringified values
-    redis.set(sid, JSON.stringify(payload), (error, _) => {
-      // Sending an error on error
-      if (error) return res.status(500).json();
-      else {
-        // Set an expiration date on the key
-        redis.expire(sid, 60 * 5, (error, _) => {
-          // Sending an error on error
-          if (error) return res.status(500).json();
-          // Sending a "No Content" response on success
-          else return res.status(204).json();
-        });
-      }
-    });
-  } else return res.status(403).json();
+  // Creating a payload
+  const payload = {
+    email,
+    username,
+    lastName,
+    firstName,
+    password: bcrypt.hashSync(password, parseInt(SALT_ROUNDS!!)),
+  };
+
+  // Setting a random key with initial, stringified values
+  redis.set(sid, JSON.stringify(payload), (error, _) => {
+    // Sending an error on error
+    if (error) return res.status(500).json();
+    else {
+      // Set an expiration date on the key
+      redis.expire(sid, 60 * 5, (error, _) => {
+        // Sending an error on error
+        if (error) return res.status(500).json();
+        // Sending a "No Content" response on success
+        else return res.status(204).json();
+      });
+    }
+  });
+  // } else return res.status(403).json();
 };
 
 // Will be used to verify temporary registration request

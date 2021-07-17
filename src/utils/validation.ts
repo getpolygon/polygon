@@ -1,6 +1,59 @@
+import { sql } from "slonik";
 import Express from "express";
-import validateEmail from "deep-email-validator-extended";
+import slonik from "../db/slonik";
+import emailValidator from "deep-email-validator-extended";
 import { body, validationResult } from "express-validator";
+
+// Middleware function for express-validator for validating user emails
+const validateEmail = async (value: string) => {
+  const { valid, reason } = await emailValidator({
+    email: value,
+    validateMx: true,
+    validateTypo: true,
+    validateRegex: true,
+    validateSMTP: false,
+    validateMxTimeout: 2000,
+    validateDisposable: true,
+  });
+
+  // If the email is valid
+  if (valid) {
+    // Checking for existing users with that email
+    const {
+      rows: { 0: existingUser },
+    } = await slonik.query(sql`
+      SELECT * FROM users WHERE email = ${value};
+    `);
+
+    // If there is no user with that email
+    if (!existingUser) return Promise.resolve(valid);
+    // If there is a user with that email
+    else return Promise.reject("Email is taken");
+  }
+  // If it's invalid
+  else return Promise.reject(reason?.toUpperCase());
+};
+
+// Middleware function for express-validator for validating user usernames
+const validateUsername = async (value: string) => {
+  // Validating the username by regex
+  const validRegex = /^[a-z0-9_\.]+$/.test(value);
+
+  // If the regex isn't valid
+  if (!validRegex) return Promise.reject("Invalid username");
+  else {
+    // Finding another user with the same username if it exists
+    const {
+      rows: { 0: existingUser },
+    } = await slonik.query(sql`
+      SELECT * FROM users WHERE username = ${value};
+    `);
+
+    // If there are no accounts with that username, make the field valid
+    if (!existingUser) return Promise.resolve(validRegex);
+    else return Promise.reject("Username is taken");
+  }
+};
 
 // Validators for registration
 export const registrationValidationRules = () => {
@@ -8,25 +61,8 @@ export const registrationValidationRules = () => {
     body("password").isLength({ min: 8 }),
     body("lastName").trim().escape().notEmpty(),
     body("firstName").trim().escape().notEmpty(),
-    body("username")
-      .toLowerCase()
-      .custom((value) => /^[a-z0-9_\.]+$/.test(value)),
-    body("email")
-      .normalizeEmail()
-      .custom(async (value) => {
-        const { valid, reason } = await validateEmail({
-          email: value,
-          validateMx: true,
-          validateTypo: true,
-          validateRegex: true,
-          validateSMTP: false,
-          validateMxTimeout: 2000,
-          validateDisposable: true,
-        });
-
-        if (valid) return Promise.resolve(valid);
-        else return Promise.reject(reason?.toUpperCase());
-      }),
+    body("email").normalizeEmail().custom(validateEmail),
+    body("username").toLowerCase().custom(validateUsername),
   ];
 };
 
@@ -39,21 +75,7 @@ export const verificationValidationRules = () => {
 export const loginValidationRules = () => {
   return [
     body("password").isLength({ min: 8 }),
-    body("email")
-      .normalizeEmail()
-      .custom(async (value) => {
-        const { valid, reason } = await validateEmail({
-          email: value,
-          validateMx: true,
-          validateTypo: true,
-          validateRegex: true,
-          validateSMTP: false,
-          validateMxTimeout: 2000,
-          validateDisposable: true,
-        });
-        if (valid) return Promise.resolve(valid);
-        else return Promise.reject(reason?.toUpperCase());
-      }),
+    body("email").normalizeEmail().custom(validateEmail),
   ];
 };
 

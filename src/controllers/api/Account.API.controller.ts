@@ -10,10 +10,11 @@ export const fetchAccount = async (
   // Get the username from the query
   const { username } = req.query;
 
-  // Finding the account
-  const {
-    rows: { 0: user },
-  } = await slonik.query(sql`
+  if (username) {
+    // Finding the account with username
+    const {
+      rows: { 0: user },
+    } = await slonik.query(sql`
     SELECT 
      id,
      bio,
@@ -29,8 +30,31 @@ export const fetchAccount = async (
     WHERE username = ${String(username)};
   `);
 
-  if (!user) return res.status(404).json();
-  else return res.json(user);
+    if (!user) return res.status(404).json();
+    else return res.json(user);
+  } else {
+    // Finding the account with username
+    const {
+      rows: { 0: user },
+    } = await slonik.query(sql`
+        SELECT 
+         id,
+         bio,
+         cover,
+         avatar,
+         private,
+         username,
+         last_name,
+         first_name,
+         created_at
+    
+        FROM users 
+        WHERE id = ${req.user?.id!!};
+      `);
+
+    if (!user) return res.status(404).json();
+    else return res.json(user);
+  }
 };
 
 // For deleting account

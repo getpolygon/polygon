@@ -75,7 +75,22 @@ export const verificationValidationRules = () => {
 export const loginValidationRules = () => {
   return [
     body("password").isLength({ min: 8 }),
-    body("email").normalizeEmail().custom(validateEmail),
+    body("email")
+      .normalizeEmail()
+      .custom(async (value) => {
+        const { valid, reason } = await emailValidator({
+          email: value,
+          validateMx: true,
+          validateTypo: true,
+          validateRegex: true,
+          validateSMTP: false,
+          validateMxTimeout: 2000,
+          validateDisposable: true,
+        });
+
+        if (valid) return Promise.resolve(valid);
+        else return Promise.reject(reason);
+      }),
   ];
 };
 

@@ -1,6 +1,6 @@
 require("dotenv").config();
 
-import path from "path";
+import http from "http";
 import cors from "cors";
 import chalk from "chalk";
 import morgan from "morgan";
@@ -9,8 +9,8 @@ import routes from "./routes";
 import express from "express";
 import minio from "./db/minio";
 import slonik from "./db/slonik";
-import compression from "compression";
 import initDB from "./utils/initDB";
+import compression from "compression";
 import cookieParser from "cookie-parser";
 const PORT = Number(process.env.PORT) || 3001;
 const __DEV__ = process.env.NODE_ENV === "development";
@@ -42,26 +42,16 @@ minio.client.bucketExists(minio.config.MINIO_BUCKET!!, (error, exists) => {
 
 // For development environment
 if (__DEV__) {
-  const fs = require("fs");
-  const https = require("https");
-
-  //Development server with SSL
-  const httpsServer = https.createServer(
-    {
-      key: fs.readFileSync(path.resolve("cert/key.pem")),
-      cert: fs.readFileSync(path.resolve("cert/cert.pem")),
-    },
-    app
-  );
-
+  const httpServer = http.createServer(app);
+  
   // Start the server
-  httpsServer.listen(PORT, "0.0.0.0", () => {
+  httpServer.listen(PORT, "0.0.0.0", () => {
     // Clear the console
     console.clear();
     console.log(
-      `${chalk.greenBright(
-        "Started secure development server"
-      )} at ${chalk.bold(`https://localhost:${PORT}/`)}`
+      `${chalk.greenBright("Started development server")} at ${chalk.bold(
+        `http://localhost:${PORT}/`
+      )}`
     );
   });
 }
@@ -73,7 +63,7 @@ else {
   server.listen(PORT, "0.0.0.0", () => {
     console.clear();
     console.log(
-      `${chalk.greenBright("Production server")} started at port ${chalk.bold(
+      `${chalk.greenBright("Started production server")} at port ${chalk.bold(
         PORT
       )}`
     );

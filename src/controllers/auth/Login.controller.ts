@@ -37,7 +37,6 @@ export default async (req: Express.Request, res: Express.Response) => {
               httpOnly: true,
               sameSite: "none",
             })
-            .status(204)
             .json();
         }
       });

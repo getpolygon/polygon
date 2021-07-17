@@ -79,9 +79,9 @@ caddy run --config ./Caddyfile
 
 Here are HTTPS endpoints that are available via Caddy:
 
-[Backend](https://backend.localhost) - https://backend.localhost
+[Backend](https://localhost:5001) - https://localhost:5001
 
-[Frontend](https://frontend.localhost) - https://frontend.localhost
+[Frontend](https://localhost:5000) - https://localhost:5000
 
 ### Running a cluster
 

@@ -18,7 +18,7 @@ export default (authRoute = false) => {
     // Checking if it exists
     if (!token) {
       if (authRoute) return next();
-      else return res.status(403).json();
+      else return res.status(401).json();
     } else {
       // Getting the ID from the token
       const data = jwt.verify(token, JWT_PRIVATE_KEY!!) as Token;
@@ -35,8 +35,9 @@ export default (authRoute = false) => {
         // If the request was from auth endpoint
         if (authRoute) return next();
         // If the request was from other endpoints
-        else return res.status(403).json();
+        else return res.status(401).json();
       } else {
+        // Setting the user
         req.user = user;
         // If the request was from auth endpoint
         if (authRoute) return res.status(403).json();

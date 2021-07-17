@@ -42,5 +42,5 @@ export default async (req: Express.Request, res: Express.Response) => {
         }
       });
     } else return res.status(403).json();
-  } else return res.status(204).json();
+  } else return res.status(404).json();
 };

@@ -94,10 +94,10 @@ export const fetch = async (req: Express.Request, res: Express.Response) => {
 
 export const create = async (req: Express.Request, res: Express.Response) => {
   // If no text is present prevent the user from posting
-  if (!req.body.text) return res.status(401).json();
+  if (!req.body.body) return res.status(401).json();
   else {
     // Post text
-    const text = textCleaner(req.body.text);
+    const text = textCleaner(req.body.body);
 
     // Checking if there are no uploaded files
     if (req.files?.length === 0) {

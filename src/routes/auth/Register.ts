@@ -1,6 +1,5 @@
 import Express from "express";
 const router = Express.Router();
-// import upload from "../../middleware/multer";
 import {
   verify,
   register,

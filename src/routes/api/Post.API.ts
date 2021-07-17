@@ -9,7 +9,7 @@ import {
 } from "../../controllers/api/Post.API.controller";
 
 // To fetch posts of an account
-router.get("/fetch", fetch);
+router.get("/", fetch);
 
 // To fetch one post
 router.get("/one/:post", fetchOne);

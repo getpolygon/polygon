@@ -12,7 +12,7 @@ const validateEmail = async (value: string) => {
     validateTypo: true,
     validateRegex: true,
     validateSMTP: false,
-    validateMxTimeout: 2000,
+    validateMxTimeout: 500,
     validateDisposable: true,
   });
 
@@ -55,7 +55,7 @@ const validateUsername = async (value: string) => {
   }
 };
 
-// Validators for registration
+// Rules for registration
 export const registrationValidationRules = () => {
   return [
     body("password").isLength({ min: 8 }),
@@ -71,26 +71,11 @@ export const verificationValidationRules = () => {
   return [body("password").isLength({ min: 8 })];
 };
 
-// Validators for login
+// Rules for login
 export const loginValidationRules = () => {
   return [
     body("password").isLength({ min: 8 }),
-    body("email")
-      .normalizeEmail()
-      .custom(async (value) => {
-        const { valid } = await emailValidator({
-          email: value,
-          validateMx: true,
-          validateTypo: true,
-          validateRegex: true,
-          validateSMTP: false,
-          validateMxTimeout: 2000,
-          validateDisposable: true,
-        });
-
-        if (valid) return Promise.resolve(valid);
-        else return Promise.reject("Invalid email");
-      }),
+    body("email").normalizeEmail().isEmail(),
   ];
 };
 

@@ -32,10 +32,9 @@ export const fetchOne = async (req: Express.Request, res: Express.Response) => {
 };
 
 export const fetch = async (req: Express.Request, res: Express.Response) => {
-  const { username } = req.query;
+  const { username, page } = req.query;
 
   if (!username) {
-    // TODO: Implement pagination
     const { rows: posts } = await slonik.query(sql`
         SELECT
           Post.*,
@@ -81,14 +80,60 @@ export const fetch = async (req: Express.Request, res: Express.Response) => {
 
         WHERE Post.privacy <> 'PRIVATE'
         GROUP BY Post.id, Author.*, Comments.*
-        ORDER BY Post.created_at DESC;
+        ORDER BY Post.created_at DESC
+        LIMIT 2 OFFSET ${(Number(page) || 0) * 2}
     `);
 
     return res.json(posts);
   } else {
-    // TODO: Only allow public user's public posts to be discovered
+    const { rows: posts } = await slonik.query(sql`
+        SELECT
+          Post.*,
+          to_json(Author) AS user,
+          to_json(array_remove(array_agg(Comments), NULL)) AS comments
 
-    return res.json("no response yet");
+        FROM posts Post
+
+        LEFT OUTER JOIN (
+          SELECT 
+            id, 
+            avatar, 
+            private, 
+            username, 
+            last_name, 
+            first_name 
+          
+          FROM users
+          ) Author ON Author.id = Post.user_id
+        
+        LEFT OUTER JOIN (
+          SELECT
+            Comment.*,
+            to_json(CommentAuthor) AS user
+
+          FROM comments Comment
+
+          LEFT OUTER JOIN (
+            SELECT 
+              id, 
+              bio,
+              avatar, 
+              username, 
+              first_name, 
+              last_name
+            
+            FROM users
+            ) CommentAuthor ON Comment.user_id = CommentAuthor.id
+        ) Comments ON Post.id  = Comments.post_id
+
+        WHERE Post.privacy <> 'PRIVATE'
+        AND Author.username = ${String(username)}
+        GROUP BY Post.id, Author.*, Comments.*
+        ORDER BY Post.created_at DESC
+        LIMIT 2 OFFSET ${(Number(page) || 0) * 2}
+    `);
+
+    return res.json(posts);
   }
 };
 

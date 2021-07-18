@@ -17,17 +17,17 @@ export const followers = async (
     const {
       rows: { 0: blocked },
     } = await slonik.query(sql`
-      SELECT * FROM relations WHERE to_user = ${req.user
-        ?.id!!} AND status = 'BLOCKED' AND from_user = ${String(id)};
+      SELECT * FROM relations
+      WHERE to_user = ${req.user?.id!!} 
+      AND status = 'BLOCKED' AND from_user = ${String(id)};
     `);
 
     if (!blocked) {
       const { rows: followers } = await slonik.query(sql`
         SELECT Follower.* FROM relations Relation
   
-        LEFT OUTER JOIN 
-          (
-            SELECT 
+        LEFT OUTER JOIN (
+          SELECT 
               id,
               cover,
               avatar,
@@ -35,12 +35,11 @@ export const followers = async (
               last_name,
               first_name
   
-            FROM users
-          ) Follower ON Relation.from_user = Follower.id
+          FROM users
+        ) Follower ON Relation.from_user = Follower.id
   
-        WHERE Relation.status = 'FOLLOWING' AND Relation.to_user = ${String(
-          id
-        )};
+        WHERE Relation.status = 'FOLLOWING' 
+        AND Relation.to_user = ${String(id)};
       `);
 
       return res.json(followers);
@@ -60,19 +59,12 @@ export const check = async (req: Express.Request, res: Express.Response) => {
     const {
       rows: { 0: relation },
     } = await slonik.query(sql`
-    SELECT * 
-    
-    FROM relations 
-    
-    WHERE 
-      to_user 
-        IN (${String(id)}, ${req.user?.id!!}) 
-      AND 
-        from_user 
-          IN (${String(id)}, ${req.user?.id!!});
+    SELECT status FROM relations 
+    WHERE to_user IN (${String(id)}, ${req.user?.id!!}) 
+    AND from_user IN (${String(id)}, ${req.user?.id!!});
   `);
 
-    return res.json(relation || null);
+    return res.json(relation?.status || null);
   } catch (error) {
     // TODO: Handle invalid UUID ID error
   }
@@ -97,10 +89,10 @@ export const follow = async (req: Express.Request, res: Express.Response) => {
         ${req.user?.id!!}
       )
 
-      RETURNING *;
+      RETURNING status;
     `);
 
-    return res.json(response);
+    return res.json(response.status);
   } catch (error) {
     if (error instanceof ForeignKeyIntegrityConstraintViolationError) {
       return res.status(404).json();
@@ -108,4 +100,22 @@ export const follow = async (req: Express.Request, res: Express.Response) => {
       return res.status(409).json();
     } else console.error(error);
   }
+};
+
+// For unfollowing a user
+export const unfollow = async (req: Express.Request, res: Express.Response) => {
+  const { id } = req.params;
+
+  try {
+    // Deleting the record
+    await slonik.query(sql`
+      DELETE FROM relations 
+      WHERE to_user = ${id} AND from_user = ${req?.user?.id!!};
+    `);
+
+    /**
+     * Returning null because the user has unfollowed
+     */
+    return res.json(null);
+  } catch (error) {}
 };

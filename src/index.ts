@@ -2,6 +2,7 @@ require("dotenv").config();
 
 import http from "http";
 import cors from "cors";
+// import csurf from "csurf";
 import chalk from "chalk";
 import morgan from "morgan";
 import helmet from "helmet";
@@ -43,7 +44,7 @@ minio.client.bucketExists(minio.config.MINIO_BUCKET!!, (error, exists) => {
 // For development environment
 if (__DEV__) {
   const httpServer = http.createServer(app);
-  
+
   // Start the server
   httpServer.listen(PORT, "0.0.0.0", () => {
     // Clear the console

@@ -11,10 +11,10 @@ Detailed guide for setting up the development server of the backend
 
 ```bash
 # Mailer
-MAILER_PORT=465
-MAILER_USER="ceab5fee72e492"
-MAILER_PASS="d5a5d21e69e62c"
-MAILER_HOST="smtp.mailtrap.io"
+MAILER_PORT=
+MAILER_USER=""
+MAILER_PASS=""
+MAILER_HOST=""
 
 # PostgreSQL
 DATABASE_URL=""

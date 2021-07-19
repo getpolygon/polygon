@@ -79,6 +79,15 @@ export const loginValidationRules = () => {
   ];
 };
 
+// Rules for post creation
+export const createPostValidationRules = () => {
+  return [
+    body("body")
+      .notEmpty()
+      // .customSanitizer((input, meta) => {}),
+  ];
+};
+
 // Middleware for validating requests
 export const validate = () => {
   return (

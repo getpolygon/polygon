@@ -138,27 +138,24 @@ export const fetch = async (req: Express.Request, res: Express.Response) => {
 };
 
 export const create = async (req: Express.Request, res: Express.Response) => {
-  // If no text is present prevent the user from posting
-  if (!req.body.body) return res.status(401).json();
-  else {
-    // Post text
-    const text = textCleaner(req.body.body);
+  // Post text
+  const text = textCleaner(req.body.body);
 
-    // Checking if there are no uploaded files
-    if (req.files?.length === 0) {
-      // Create new post
-      const {
-        rows: { 0: postId },
-      } = await slonik.query(sql`
+  // Checking if there are no uploaded files
+  if (req.files?.length === 0) {
+    // Create new post
+    const {
+      rows: { 0: postId },
+    } = await slonik.query(sql`
         INSERT INTO posts (body, user_id)
         VALUES (${text}, ${req.user?.id!!})
 
         RETURNING id;
       `);
 
-      const {
-        rows: { 0: post },
-      } = await slonik.query(sql`
+    const {
+      rows: { 0: post },
+    } = await slonik.query(sql`
         SELECT
           Post.*,
           to_json(Author) AS user,
@@ -205,11 +202,10 @@ export const create = async (req: Express.Request, res: Express.Response) => {
         ORDER BY Post.created_at DESC;
       `);
 
-      // Sending the response
-      return res.json(post);
-    } else {
-      // TODO: Implement
-    }
+    // Sending the response
+    return res.json(post);
+  } else {
+    // TODO: Implement
   }
 };
 

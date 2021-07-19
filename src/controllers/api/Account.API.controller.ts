@@ -2,58 +2,63 @@ import { sql } from "slonik";
 import Express from "express";
 import slonik from "../../db/slonik";
 
-// For fetching account details
-export const fetchAccount = async (
-  req: Express.Request,
-  res: Express.Response
-) => {
-  // Get the username from the query
-  const { username } = req.query;
-
-  if (username) {
-    // Finding the account with username
+// For fetching current account details
+export const me = async (req: Express.Request, res: Express.Response) => {
+  try {
+    // Getting the account
     const {
       rows: { 0: user },
     } = await slonik.query(sql`
-    SELECT 
-     id,
-     bio,
-     cover,
-     avatar,
-     private,
-     username,
-     last_name,
-     first_name,
-     created_at
+      SELECT 
+        id,
+        bio,
+        cover,
+        avatar,
+        private,
+        username,
+        last_name,
+        first_name,
+        created_at
 
-    FROM users 
-    WHERE username = ${String(username)};
-  `);
-
-    if (!user) return res.status(404).json();
-    else return res.json(user);
-  } else {
-    // Finding the account with username
-    const {
-      rows: { 0: user },
-    } = await slonik.query(sql`
-        SELECT 
-         id,
-         bio,
-         cover,
-         avatar,
-         private,
-         username,
-         last_name,
-         first_name,
-         created_at
-    
-        FROM users 
+        FROM users
         WHERE id = ${req.user?.id!!};
-      `);
+    `);
 
-    if (!user) return res.status(404).json();
-    else return res.json(user);
+    // Sending the response
+    return res.json(user);
+  } catch (error) {
+    console.error(error);
+  }
+};
+
+// For fetching account details
+export const fetch = async (req: Express.Request, res: Express.Response) => {
+  const { username } = req.params;
+
+  try {
+    // Getting the account
+    const {
+      rows: { 0: user },
+    } = await slonik.query(sql`
+      SELECT 
+        id,
+        bio,
+        cover,
+        avatar,
+        private,
+        username,
+        last_name,
+        first_name,
+        created_at
+
+        FROM users
+        WHERE username = ${String(username)};
+    `);
+
+    // Sending the response
+    return res.json(user);
+  } catch (error) {
+    console.error(error);
   }
 };
 
@@ -86,9 +91,4 @@ export const deleteAccount = async (
 };
 
 // For updating account
-export const updateAccount = async (
-  req: Express.Request,
-  res: Express.Response
-) => {
-  // TODO: Implement
-};
+export const update = async (req: Express.Request, res: Express.Response) => {};

@@ -4,6 +4,7 @@ import {
   follow,
   unfollow,
   followers,
+  following,
 } from "../../controllers/api/Relation.API.controller";
 
 const router = express.Router();
@@ -16,5 +17,7 @@ router.post("/:id/follow", follow);
 router.post("/:id/unfollow", unfollow);
 // For fetching the followers of an account
 router.get("/:id/followers", followers);
+// For fetching the people that the user follows
+router.get("/:id/following", following);
 
 export default router;

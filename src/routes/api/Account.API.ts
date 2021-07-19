@@ -2,15 +2,18 @@ import Express from "express";
 const router = Express.Router();
 
 import {
-  updateAccount,
+  me,
+  fetch,
+  update,
   deleteAccount,
-  fetchAccount,
 } from "../../controllers/api/Account.API.controller";
 
+// For fetching current account details
+router.get("/me", me);
 // For fetching account details
-router.get("/fetch", fetchAccount);
+router.get("/:username", fetch);
 // For updating account
-router.patch("/update", updateAccount);
+router.patch("/update", update);
 // For deleting account
 router.delete("/delete", deleteAccount);
 

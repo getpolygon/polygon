@@ -6,6 +6,41 @@ import {
   ForeignKeyIntegrityConstraintViolationError,
 } from "slonik";
 
+// For getting the people whom the account follows
+export const following = async (
+  req: Express.Request,
+  res: Express.Response
+) => {
+  // The ID of the user
+  const { id } = req.params;
+
+  try {
+    const { rows: following } = await slonik.query(sql`
+      SELECT UserFollowing.* FROM 
+      relations Following
+
+      LEFT OUTER JOIN (
+        SELECT
+          id,
+          cover,
+          avatar,
+          username,
+          last_name,
+          first_name
+        
+        FROM users
+      ) UserFollowing ON Following.to_user = UserFollowing.id
+
+      WHERE Following.from_user = ${id} AND Following.status = 'FOLLOWING';
+    `);
+
+    return res.json(following);
+  } catch (error) {
+    console.error(error);
+  }
+};
+
+// For getting the followers of an account
 export const followers = async (
   req: Express.Request,
   res: Express.Response

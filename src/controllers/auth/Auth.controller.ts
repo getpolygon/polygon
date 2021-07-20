@@ -28,7 +28,16 @@ export default async (req: Express.Request, res: Express.Response) => {
     WHERE id = ${data.id};
   `);
 
-    if (!user) return res.status(404).json();
-    else return res.send(user);
+    if (!user) {
+      return res
+        .status(404)
+        .clearCookie("jwt", {
+          signed: true,
+          secure: true,
+          httpOnly: true,
+          sameSite: "none",
+        })
+        .json();
+    } else return res.send(user);
   }
 };

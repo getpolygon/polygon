@@ -113,21 +113,13 @@ export const follow = async (req: Express.Request, res: Express.Response) => {
   try {
     const {
       rows: { 0: response },
-    } = await slonik.query(sql`
-      INSERT INTO relations (
-        status,
-        to_user,
-        from_user
-      ) VALUES (
-        'FOLLOWING',
-        ${id},
-        ${req.user?.id!!}
-      )
-
+    } = await slonik.query(sql<any>`
+      INSERT INTO relations (status, to_user, from_user) 
+      VALUES ('FOLLOWING', ${id}, ${req.user?.id!!})
       RETURNING status;
     `);
 
-    return res.json(response.status);
+    return res.json(response?.status);
   } catch (error) {
     if (error instanceof ForeignKeyIntegrityConstraintViolationError) {
       return res.status(404).json();
@@ -139,14 +131,19 @@ export const follow = async (req: Express.Request, res: Express.Response) => {
 
 // For unfollowing a user
 export const unfollow = async (req: Express.Request, res: Express.Response) => {
+  // Other user's ID
   const { id } = req.params;
 
   try {
     // Deleting the record
-    await slonik.query(sql`
-      DELETE FROM relations 
-      WHERE to_user = ${id} AND from_user = ${req?.user?.id!!};
+    const status = await slonik.query(sql`
+      DELETE FROM relations
+      WHERE to_user = ${id} 
+      AND from_user = ${req?.user?.id!!} 
+      AND status = 'FOLLOWING';
     `);
+
+    console.log({ status });
 
     /**
      * Returning null because the user has unfollowed

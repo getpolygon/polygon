@@ -9,10 +9,9 @@ import {
 } from "../../controllers/api/Post.API.controller";
 
 // To fetch posts of an account
-router.get("/", fetch);
-
-// To fetch one post
-router.get("/one/:post", fetchOne);
+router.get("/:username", fetch);
+// To fetch only one post with ID
+router.get("/only/:id", fetchOne);
 
 // // To save a post
 // router.put("/:id/save", PostController.save);

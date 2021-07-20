@@ -3,8 +3,10 @@ import Express from "express";
 import slonik from "../../db/slonik";
 import textCleaner from "../../helpers/textCleaner";
 
+// For fetching one post
 export const fetchOne = async (req: Express.Request, res: Express.Response) => {
-  const { post: postId } = req.params;
+  // The id of the post
+  const { id } = req.params;
 
   const {
     rows: { 0: post },
@@ -18,123 +20,85 @@ export const fetchOne = async (req: Express.Request, res: Express.Response) => {
         json_agg(comments) AS comments
 
       FROM posts post
-        LEFT OUTER JOIN
-          (SELECT first_name, last_name, avatar, id, username FROM users) author
-            ON post.user_id = author.id
 
-        LEFT OUTER JOIN comments ON comments.post_id = post.id
+      LEFT OUTER JOIN (
+        SELECT 
+            first_name, 
+            last_name, 
+            avatar, 
+            id, 
+            username 
+        FROM users
+      ) author ON post.user_id = author.id
 
-      WHERE post.id = ${postId.toString()} GROUP BY post.id, author.* ORDER BY post.created_at DESC;
+      LEFT OUTER JOIN comments ON comments.post_id = post.id
+
+      WHERE post.id = ${String(id)} 
+      GROUP BY post.id, author.* 
+      ORDER BY post.created_at DESC;
   `);
 
   if (post) return res.json(post);
   else return res.status(403).json();
 };
 
+// For fetching one user's post
 export const fetch = async (req: Express.Request, res: Express.Response) => {
-  const { username, page } = req.query;
+  const { page } = req.query;
+  const { username } = req.params;
 
-  if (!username) {
-    const { rows: posts } = await slonik.query(sql`
-        SELECT
-          Post.*,
-          to_json(Author) AS user,
-          to_json(array_remove(array_agg(Comments), NULL)) AS comments
+  // Fetching the posts
+  const { rows: posts } = await slonik.query(sql`
+    SELECT
+      Post.id,
+      Post.body,
+      Post.privacy,
+      Post.created_at,
+      to_json(Author) AS user,
+      to_json(array_remove(array_agg(Comments), NULL)) AS comments
 
-        FROM posts Post
+    FROM posts Post
 
-        LEFT OUTER JOIN (
-          SELECT 
-            id, 
-            avatar, 
-            private, 
-            username, 
-            last_name, 
-            first_name 
-          
-          FROM users
-          ) Author ON Author.id = Post.user_id
+    LEFT OUTER JOIN (
+      SELECT 
+        id, 
+        avatar, 
+        private, 
+        username, 
+        last_name, 
+        first_name 
+      
+      FROM users
+    ) Author ON Author.id = Post.user_id
         
-        LEFT OUTER JOIN (
-          
-          SELECT
-            Comment.*,
-            to_json(CommentAuthor) AS user
+    LEFT OUTER JOIN (
+      SELECT
+        Comment.*,
+        to_json(CommentAuthor) AS user
 
-          FROM comments Comment
+      FROM comments Comment
 
-          LEFT OUTER JOIN (
-
-            SELECT 
-              id, 
-              bio,
-              avatar, 
-              username, 
-              first_name, 
-              last_name
+      LEFT OUTER JOIN (
+        SELECT 
+          id, 
+          bio,
+          avatar, 
+          username, 
+          first_name, 
+          last_name
             
-            FROM users
-            ) CommentAuthor ON Comment.user_id = CommentAuthor.id
-            
-        ) Comments ON Post.id  = Comments.post_id
-
-        WHERE Post.privacy <> 'PRIVATE'
-        GROUP BY Post.id, Author.*, Comments.*
-        ORDER BY Post.created_at DESC
-        LIMIT 2 OFFSET ${(Number(page) || 0) * 2}
-    `);
-
-    return res.json(posts);
-  } else {
-    const { rows: posts } = await slonik.query(sql`
-        SELECT
-          Post.*,
-          to_json(Author) AS user,
-          to_json(array_remove(array_agg(Comments), NULL)) AS comments
-
-        FROM posts Post
-
-        LEFT OUTER JOIN (
-          SELECT 
-            id, 
-            avatar, 
-            private, 
-            username, 
-            last_name, 
-            first_name 
-          
           FROM users
-          ) Author ON Author.id = Post.user_id
-        
-        LEFT OUTER JOIN (
-          SELECT
-            Comment.*,
-            to_json(CommentAuthor) AS user
+        ) CommentAuthor ON Comment.user_id = CommentAuthor.id
+      ) Comments ON Post.id  = Comments.post_id
 
-          FROM comments Comment
+      WHERE Post.privacy <> 'PRIVATE'
+      AND Author.username = ${String(username)}
+      GROUP BY Post.id, Author.*, Comments.*
+      ORDER BY Post.created_at DESC
+      LIMIT 2 OFFSET ${(Number(page) || 0) * 2};
+  `);
 
-          LEFT OUTER JOIN (
-            SELECT 
-              id, 
-              bio,
-              avatar, 
-              username, 
-              first_name, 
-              last_name
-            
-            FROM users
-            ) CommentAuthor ON Comment.user_id = CommentAuthor.id
-        ) Comments ON Post.id  = Comments.post_id
-
-        WHERE Post.privacy <> 'PRIVATE'
-        AND Author.username = ${String(username)}
-        GROUP BY Post.id, Author.*, Comments.*
-        ORDER BY Post.created_at DESC
-        LIMIT 2 OFFSET ${(Number(page) || 0) * 2}
-    `);
-
-    return res.json(posts);
-  }
+  return res.json(posts);
 };
 
 export const create = async (req: Express.Request, res: Express.Response) => {

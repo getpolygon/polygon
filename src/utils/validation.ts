@@ -1,5 +1,6 @@
 import { sql } from "slonik";
 import Express from "express";
+import { User } from "../types";
 import slonik from "../db/slonik";
 import emailValidator from "deep-email-validator-extended";
 import { body, validationResult } from "express-validator";
@@ -19,9 +20,7 @@ const validateEmail = async (value: string) => {
   // If the email is valid
   if (valid) {
     // Checking for existing users with that email
-    const {
-      rows: { 0: existingUser },
-    } = await slonik.query(sql`
+    const existingUser = await slonik.maybeOne(sql<User>`
       SELECT * FROM users WHERE email = ${value};
     `);
 
@@ -43,9 +42,7 @@ const validateUsername = async (value: string) => {
   if (!validRegex) return Promise.reject("Invalid username");
   else {
     // Finding another user with the same username if it exists
-    const {
-      rows: { 0: existingUser },
-    } = await slonik.query(sql`
+    const existingUser = await slonik.maybeOne(sql<User>`
       SELECT * FROM users WHERE username = ${value};
     `);
 
@@ -82,9 +79,8 @@ export const loginValidationRules = () => {
 // Rules for post creation
 export const createPostValidationRules = () => {
   return [
-    body("body")
-      .notEmpty()
-      // .customSanitizer((input, meta) => {}),
+    body("body").notEmpty(),
+    // .customSanitizer((input, meta) => {}),
   ];
 };
 

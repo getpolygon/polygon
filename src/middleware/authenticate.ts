@@ -2,7 +2,7 @@
 import Express from "express";
 import jwt from "jsonwebtoken";
 import { sql } from "slonik";
-import { Token, User } from "../@types";
+import { Token, User } from "../types";
 import slonik from "../db/slonik";
 const { JWT_PRIVATE_KEY } = process.env;
 
@@ -23,12 +23,9 @@ export default (authRoute = false) => {
       // Getting the ID from the token
       const data = jwt.verify(token, JWT_PRIVATE_KEY!!) as Token;
       // Finding the user with the ID
-      const response = await slonik.query<User>(sql`
+      const user = await slonik.maybeOne(sql<Partial<User>>`
         SELECT * FROM users WHERE id = ${data.id};
       `);
-
-      // Getting the user
-      const user = response.rows[0];
 
       // If the account does not exist
       if (!user) {

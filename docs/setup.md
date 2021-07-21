@@ -34,6 +34,8 @@ REDIS_PASS=
 
 # JWT
 JWT_PRIVATE_KEY=""
+# JWT refresh key
+JWT_REFRESH_KEY=""
 # Cookies
 COOKIE_SECRET=""
 

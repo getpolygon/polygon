@@ -1,8 +1,8 @@
 import { sql } from "slonik";
+import { Post, User } from "../../types";
 import slonik from "../../db/slonik";
 import { Request, Response } from "express";
 
-// TODO: Implement
 export const posts = async (req: Request, res: Response) => {
   const { cursor } = req.query;
 
@@ -10,7 +10,7 @@ export const posts = async (req: Request, res: Response) => {
   const next = offset + 2;
   const prev = offset - 2;
 
-  const { rows: nextPosts } = await slonik.query(sql`
+  const { rows: nextPosts } = await slonik.query(sql<Partial<Post>[]>`
     SELECT * FROM posts Post
 
     WHERE Post.privacy <> 'PRIVATE'
@@ -18,7 +18,7 @@ export const posts = async (req: Request, res: Response) => {
     LIMIT 2 OFFSET ${next};
   `);
 
-  const { rows: posts } = await slonik.query(sql`
+  const { rows: posts } = await slonik.query(sql<Partial<Post>[]>`
     SELECT
       Post.id,
       Post.body,
@@ -67,8 +67,6 @@ export const posts = async (req: Request, res: Response) => {
     LIMIT 2 OFFSET ${offset};
   `);
 
-  // console.dir({ posts, nextPosts }, { depth: 1000 });
-
   return res.json({
     prev,
     data: posts,
@@ -78,7 +76,7 @@ export const posts = async (req: Request, res: Response) => {
 
 // TODO: Implement
 export const accounts = async (req: Request, res: Response) => {
-  const { rows: accounts } = await slonik.query(sql`
+  const { rows: accounts } = await slonik.query(sql<Partial<User>[]>`
 
   `);
 

@@ -27,14 +27,6 @@ export const register = async (req: Express.Request, res: Express.Response) => {
   // Getting the properties from the body
   const { firstName, lastName, email, password, username } = req.body;
 
-  // // Checking whether there are other accounts with this email
-  // const sqlRequest = await slonik.query(sql`
-  //   SELECT * FROM users WHERE email = ${email} OR username = ${username};
-  // `);
-
-  // // If there are no duplicate accounts
-  // if (!sqlRequest.rows[0]) {
-
   // Rendering the email template
   const rendered = pug.render(template, {
     ip,
@@ -44,7 +36,7 @@ export const register = async (req: Express.Request, res: Express.Response) => {
     BASE_FRONTEND_URL,
   });
 
-  // Sending an email
+  // Sending an email for verification
   SendMail({
     html: rendered,
     receiver: email,
@@ -74,7 +66,6 @@ export const register = async (req: Express.Request, res: Express.Response) => {
       });
     }
   });
-  // } else return res.status(403).json();
 };
 
 // Will be used to verify temporary registration request

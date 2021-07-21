@@ -1,5 +1,6 @@
 import { sql } from "slonik";
 import Express from "express";
+import { Post } from "../../types";
 import slonik from "../../db/slonik";
 import textCleaner from "../../helpers/textCleaner";
 
@@ -8,9 +9,8 @@ export const fetchOne = async (req: Express.Request, res: Express.Response) => {
   // The id of the post
   const { id } = req.params;
 
-  const {
-    rows: { 0: post },
-  } = await slonik.query(sql`
+  // Getting the post
+  const post = await slonik.maybeOne(sql`
       SELECT
         post.id,
         post.body,
@@ -33,22 +33,36 @@ export const fetchOne = async (req: Express.Request, res: Express.Response) => {
 
       LEFT OUTER JOIN comments ON comments.post_id = post.id
 
-      WHERE post.id = ${String(id)} 
+      WHERE post.id = ${id!!} 
       GROUP BY post.id, author.* 
       ORDER BY post.created_at DESC;
   `);
 
+  // If post exists
   if (post) return res.json(post);
   else return res.status(403).json();
 };
 
 // For fetching one user's post
 export const fetch = async (req: Express.Request, res: Express.Response) => {
-  const { page } = req.query;
+  const { cursor } = req.query;
   const { username } = req.params;
 
+  const offset = Number(cursor) || 0;
+  const next = offset + 2;
+  const prev = offset - 2;
+
+  // To determine whether there is a next page or not
+  const { rows: nextPosts } = await slonik.query(sql<Partial<Post>[]>`
+    SELECT * FROM posts Post
+
+    WHERE Post.privacy <> 'PRIVATE'
+    ORDER BY Post.created_at
+    LIMIT 2 OFFSET ${next};
+  `);
+
   // Fetching the posts
-  const { rows: posts } = await slonik.query(sql`
+  const { rows: posts } = await slonik.query(sql<Partial<Post>[]>`
     SELECT
       Post.id,
       Post.body,
@@ -92,34 +106,38 @@ export const fetch = async (req: Express.Request, res: Express.Response) => {
       ) Comments ON Post.id  = Comments.post_id
 
       WHERE Post.privacy <> 'PRIVATE'
-      AND Author.username = ${String(username)}
+      AND Author.username = ${username!!}
       GROUP BY Post.id, Author.*, Comments.*
       ORDER BY Post.created_at DESC
-      LIMIT 2 OFFSET ${(Number(page) || 0) * 2};
+      LIMIT 2 OFFSET ${offset};
   `);
 
-  return res.json(posts);
+  return res.json({
+    prev,
+    data: posts,
+    next: nextPosts.length === 0 ? null : next,
+  });
 };
 
+// For creating a post
 export const create = async (req: Express.Request, res: Express.Response) => {
   // Post text
   const text = textCleaner(req.body.body);
 
   // Checking if there are no uploaded files
-  if (req.files?.length === 0) {
+  // if (req.files?.length === 0) {
+
+  try {
     // Create new post
-    const {
-      rows: { 0: postId },
-    } = await slonik.query(sql`
+    const created = await slonik.maybeOne(sql<Partial<Post>>`
         INSERT INTO posts (body, user_id)
         VALUES (${text}, ${req.user?.id!!})
 
         RETURNING id;
-      `);
+    `);
 
-    const {
-      rows: { 0: post },
-    } = await slonik.query(sql`
+    // Getting the post
+    const post = await slonik.maybeOne(sql<Partial<Post>>`
         SELECT
           Post.*,
           to_json(Author) AS user,
@@ -161,15 +179,19 @@ export const create = async (req: Express.Request, res: Express.Response) => {
             
         ) Comments ON Post.id  = Comments.post_id
 
-        WHERE Post.privacy <> 'PRIVATE'
+        WHERE Post.id = ${created?.id!!}
         GROUP BY Post.id, Author.*, Comments.*
         ORDER BY Post.created_at DESC;
       `);
 
     // Sending the response
     return res.json(post);
-  } else {
-    // TODO: Implement
+    // } else {
+    //   // TODO: Implement
+    // }
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json();
   }
 };
 
@@ -178,21 +200,21 @@ export const remove = async (req: Express.Request, res: Express.Response) => {
   try {
     // Getting post id from the query
     const { id } = req.params;
+
     // Deleting from the database
-    const {
-      rows: { 0: post },
-    } = await slonik.query(sql`
-      SELECT * FROM posts WHERE id = ${id.toString()};
+    const post = await slonik.maybeOne(sql<Partial<Post>>`
+      SELECT * FROM posts WHERE id = ${id!!};
     `);
 
     // Checking if the post exists
     if (post) {
       // If the author of the post is the same as current user
       if (post?.user_id === req.user?.id) {
+        // Deleting the post
         await slonik.query(sql`
-        DELETE FROM posts WHERE id = ${id.toString()};
-      `);
-        // Sending "No content response"
+          DELETE FROM posts WHERE id = ${id.toString()};
+        `);
+
         return res.status(204).json();
       } else return res.status(403).json();
     } else return res.status(404).json();

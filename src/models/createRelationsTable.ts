@@ -9,7 +9,7 @@ export const createRelationsTable = async (
       from_user     UUID NOT NULL UNIQUE REFERENCES users(id),
       created_at    TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
       id            UUID NOT NULL PRIMARY KEY DEFAULT gen_random_uuid(),
-      status        VARCHAR NOT NULL CHECK (status IN ('PENDING', 'FOLLOWING', 'BLOCKED'))
+      status        VARCHAR NOT NULL UNIQUE CHECK (status IN ('PENDING', 'FOLLOWING', 'BLOCKED'))
     );
   `);
 };

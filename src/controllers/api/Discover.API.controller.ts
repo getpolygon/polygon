@@ -1,8 +1,9 @@
 import { sql } from "slonik";
-import { Post, User } from "../../types";
 import slonik from "../../db/slonik";
+import { Post, User } from "../../types";
 import { Request, Response } from "express";
 
+// For post discovery
 export const posts = async (req: Request, res: Response) => {
   const { cursor } = req.query;
 
@@ -11,11 +12,8 @@ export const posts = async (req: Request, res: Response) => {
   const prev = offset - 2;
 
   const { rows: nextPosts } = await slonik.query(sql<Partial<Post>[]>`
-    SELECT * FROM posts Post
-
-    WHERE Post.privacy <> 'PRIVATE'
-    ORDER BY Post.created_at
-    LIMIT 2 OFFSET ${next};
+    SELECT * FROM posts Post WHERE Post.privacy <> 'PRIVATE'
+    ORDER BY Post.created_at LIMIT 2 OFFSET ${next};
   `);
 
   const { rows: posts } = await slonik.query(sql<Partial<Post>[]>`
@@ -63,7 +61,7 @@ export const posts = async (req: Request, res: Response) => {
 
     WHERE Post.privacy <> 'PRIVATE'
     GROUP BY Post.id, Author.*, Comments.*
-    ORDER BY Post.created_at
+    ORDER BY Post.created_at DESC
     LIMIT 2 OFFSET ${offset};
   `);
 
@@ -74,7 +72,7 @@ export const posts = async (req: Request, res: Response) => {
   });
 };
 
-// TODO: Implement
+// For discovering popular accounts
 export const accounts = async (req: Request, res: Response) => {
   const { rows: accounts } = await slonik.query(sql<Partial<User>[]>`
 

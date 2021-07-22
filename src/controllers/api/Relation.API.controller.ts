@@ -111,7 +111,7 @@ export const check = async (req: Express.Request, res: Express.Response) => {
       AND from_user IN (${id!!}, ${req.user?.id!!});
   `);
 
-    return res.json(relation?.status);
+    return res.json(relation?.status || null);
   } catch (error) {
     // If the user id is invalid
     if (error instanceof InvalidInputError) return res.status(400).json();
@@ -148,7 +148,7 @@ export const follow = async (req: Express.Request, res: Express.Response) => {
       `);
 
         // Sending the status
-        return res.json(response?.status);
+        return res.json(response?.status || null);
       } else return res.status(403).json();
     }
   } catch (error) {

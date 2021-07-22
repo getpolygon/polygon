@@ -1,12 +1,11 @@
 import { sql } from "slonik";
-import Express from "express";
-import { User } from "../types";
-import slonik from "../db/slonik";
+import { User } from "../../types";
+import slonik from "../../db/slonik";
 import emailValidator from "deep-email-validator-extended";
-import { body, validationResult } from "express-validator";
 
 // Middleware function for express-validator for validating user emails
-const validateEmail = async (value: string) => {
+export const validateEmail = async (value: string) => {
+  // Checking if the email is really valid
   const { valid } = await emailValidator({
     email: value,
     validateMx: true,
@@ -34,7 +33,7 @@ const validateEmail = async (value: string) => {
 };
 
 // Middleware function for express-validator for validating user usernames
-const validateUsername = async (value: string) => {
+export const validateUsername = async (value: string) => {
   // Validating the username by regex
   const validRegex = /^[a-z0-9_\.]+$/.test(value);
 
@@ -50,49 +49,4 @@ const validateUsername = async (value: string) => {
     if (!existingUser) return Promise.resolve(validRegex);
     else return Promise.reject("Username is taken");
   }
-};
-
-// Rules for registration
-export const registrationValidationRules = () => {
-  return [
-    body("password").isLength({ min: 8 }),
-    body("lastName").trim().escape().notEmpty(),
-    body("firstName").trim().escape().notEmpty(),
-    body("email").normalizeEmail().custom(validateEmail),
-    body("username").toLowerCase().custom(validateUsername),
-  ];
-};
-
-// Rules for registration->verification
-export const verificationValidationRules = () => {
-  return [body("password").isLength({ min: 8 })];
-};
-
-// Rules for login
-export const loginValidationRules = () => {
-  return [
-    body("password").isLength({ min: 8 }),
-    body("email").normalizeEmail().isEmail(),
-  ];
-};
-
-// Rules for post creation
-export const createPostValidationRules = () => {
-  return [
-    body("body").notEmpty(),
-    // .customSanitizer((input, meta) => {}),
-  ];
-};
-
-// Middleware for validating requests
-export const validate = () => {
-  return (
-    req: Express.Request,
-    res: Express.Response,
-    next: Express.NextFunction
-  ) => {
-    const errors = validationResult(req);
-    if (errors.isEmpty()) return next();
-    else return res.status(400).json(errors);
-  };
 };

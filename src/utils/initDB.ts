@@ -1,14 +1,16 @@
 import { DatabaseConnectionType, sql } from "slonik";
-const __DEV__ = process.env.NODE_ENV === "development";
 import { createPostsTable } from "../models/createPostsTable";
 import { createUsersTable } from "../models/createUsersTable";
 import { createCommentsTable } from "../models/createCommentsTable";
-import { createAttachmentsTable } from "../models/createAttachmentsTable";
 import { createRelationsTable } from "../models/createRelationsTable";
 
+/**
+ * Function for initializing the connection
+ * to the database and for creating all tables
+ */
 export default async (connection: DatabaseConnectionType) => {
   try {
-    // Enabling UUID extension if not enabled
+    // UUID Support
     await connection.query!!(sql`
       CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
     `);
@@ -19,11 +21,10 @@ export default async (connection: DatabaseConnectionType) => {
     await createPostsTable(connection);
     // Creating comments table
     await createCommentsTable(connection);
-    // Creating attachments table
-    await createAttachmentsTable(connection);
     // Creating relationships table
     await createRelationsTable(connection);
   } catch (error) {
     console.error(error);
+    process.exit(1);
   }
 };

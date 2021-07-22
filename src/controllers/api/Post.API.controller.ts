@@ -1,8 +1,8 @@
-import { sql } from "slonik";
 import Express from "express";
-import { Post } from "../../types";
 import slonik from "../../db/slonik";
-import textCleaner from "../../helpers/textCleaner";
+import { Post, User } from "../../types";
+import { InvalidInputError, sql } from "slonik";
+import { checkStatus } from "../../helpers/helpers";
 
 // For fetching one post
 export const fetchOne = async (req: Express.Request, res: Express.Response) => {
@@ -48,50 +48,64 @@ export const fetch = async (req: Express.Request, res: Express.Response) => {
   const { cursor } = req.query;
   const { username } = req.params;
 
-  const offset = Number(cursor) || 0;
-  const next = offset + 2;
-  const prev = offset - 2;
-
-  // To determine whether there is a next page or not
-  const { rows: nextPosts } = await slonik.query(sql<Partial<Post>[]>`
-    SELECT * FROM posts Post
-
-    WHERE Post.privacy <> 'PRIVATE'
-    ORDER BY Post.created_at
-    LIMIT 2 OFFSET ${next};
+  // Getting the user
+  const user = await slonik.maybeOne(sql<Partial<User>>`
+    SELECT * FROM users WHERE username = ${username!!};
   `);
 
-  // Fetching the posts
-  const { rows: posts } = await slonik.query(sql<Partial<Post>[]>`
-    SELECT
-      Post.id,
-      Post.body,
-      Post.privacy,
-      Post.created_at,
-      to_json(Author) AS user,
-      to_json(array_remove(array_agg(Comments), NULL)) AS comments
+  // Checking the relation between this and other account
+  const status = await checkStatus({
+    other: user?.id!!,
+    current: req?.user?.id!!,
+  });
 
-    FROM posts Post
+  // If other account has blocked this one
+  if (status === "BLOCKED") return res.status(403).json();
+  else {
+    const offset = Number(cursor) || 0;
+    const next = offset + 2;
+    const prev = offset - 2;
 
-    LEFT OUTER JOIN (
-      SELECT 
-        id, 
-        avatar, 
-        private, 
-        username, 
-        last_name, 
-        first_name 
-      
-      FROM users
-    ) Author ON Author.id = Post.user_id
-        
-    LEFT OUTER JOIN (
+    // To determine whether there is a next page or not
+    const { rows: nextPosts } = await slonik.query(sql<Partial<Post>[]>`
+      SELECT * FROM posts Post
+  
+      WHERE Post.privacy <> 'PRIVATE'
+      ORDER BY Post.created_at
+      LIMIT 2 OFFSET ${next};
+    `);
+
+    // Fetching the posts
+    const { rows: posts } = await slonik.query(sql<Partial<Post>[]>`
       SELECT
+        Post.id,
+        Post.body,
+        Post.privacy,
+        Post.created_at,
+        to_json(Author) AS user,
+        to_json(array_remove(array_agg(Comments), NULL)) AS comments
+  
+      FROM posts Post
+  
+      LEFT OUTER JOIN (
+        SELECT 
+          id, 
+          avatar, 
+          private, 
+          username, 
+          last_name, 
+          first_name 
+        
+        FROM users
+      ) Author ON Author.id = Post.user_id
+          
+      LEFT OUTER JOIN (
+        SELECT
         Comment.*,
         to_json(CommentAuthor) AS user
-
+      
       FROM comments Comment
-
+  
       LEFT OUTER JOIN (
         SELECT 
           id, 
@@ -104,26 +118,25 @@ export const fetch = async (req: Express.Request, res: Express.Response) => {
           FROM users
         ) CommentAuthor ON Comment.user_id = CommentAuthor.id
       ) Comments ON Post.id  = Comments.post_id
-
+  
       WHERE Post.privacy <> 'PRIVATE'
       AND Author.username = ${username!!}
       GROUP BY Post.id, Author.*, Comments.*
       ORDER BY Post.created_at DESC
       LIMIT 2 OFFSET ${offset};
-  `);
+    `);
 
-  return res.json({
-    prev,
-    data: posts,
-    next: nextPosts.length === 0 ? null : next,
-  });
+    return res.json({
+      prev,
+      data: posts,
+      next: nextPosts.length === 0 ? null : next,
+    });
+  }
 };
 
 // For creating a post
 export const create = async (req: Express.Request, res: Express.Response) => {
-  // Post text
-  const text = textCleaner(req.body.body);
-
+  const { body } = req.body;
   // Checking if there are no uploaded files
   // if (req.files?.length === 0) {
 
@@ -131,7 +144,7 @@ export const create = async (req: Express.Request, res: Express.Response) => {
     // Create new post
     const created = await slonik.maybeOne(sql<Partial<Post>>`
         INSERT INTO posts (body, user_id)
-        VALUES (${text}, ${req.user?.id!!})
+        VALUES (${body}, ${req.user?.id!!})
 
         RETURNING id;
     `);
@@ -215,11 +228,17 @@ export const remove = async (req: Express.Request, res: Express.Response) => {
           DELETE FROM posts WHERE id = ${id.toString()};
         `);
 
+        // Returing the response
         return res.status(204).json();
       } else return res.status(403).json();
     } else return res.status(404).json();
   } catch (error) {
-    console.error(error);
-    return res.status(500).json();
+    // TODO: Redundant
+    // If the ID of the post is invalid
+    if (error instanceof InvalidInputError) return res.status(400).json();
+    else {
+      console.error(error);
+      return res.status(500).json();
+    }
   }
 };

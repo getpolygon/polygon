@@ -1,14 +1,14 @@
 import Express from "express";
 const router = Express.Router();
+import validate from "../../validation";
+import {
+  registrationValidationRules,
+  verificationValidationRules,
+} from "../../validation/rules";
 import {
   verify,
   register,
 } from "../../controllers/auth/Registration.controller";
-import {
-  validate,
-  registrationValidationRules,
-  verificationValidationRules,
-} from "../../utils/validation";
 
 router.post("/", registrationValidationRules(), validate(), register);
 router.post("/verify/:sid", verificationValidationRules(), validate(), verify);

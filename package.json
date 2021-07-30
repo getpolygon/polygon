@@ -2,7 +2,7 @@
   "main": "index.js",
   "private": true,
   "scripts": {
-    "start": "ts-node  src/index",
+    "start": "ts-node src/index",
     "test:mailer": "node tests/mailer.test",
     "dev": "ts-node-dev --transpile-only --rs --deps src/index"
   },

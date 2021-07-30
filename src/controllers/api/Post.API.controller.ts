@@ -66,11 +66,15 @@ export const fetch = async (req: Express.Request, res: Express.Response) => {
     const next = offset + 2;
     const prev = offset - 2;
 
+    const user = await slonik.maybeOne(sql<User>`
+      SELECT * FROM users WHERE username = ${username};
+    `);
+
     // To determine whether there is a next page or not
     const { rows: nextPosts } = await slonik.query(sql<Partial<Post>[]>`
       SELECT * FROM posts Post
   
-      WHERE Post.privacy <> 'PRIVATE'
+      WHERE Post.user_id = ${user?.id!!}
       ORDER BY Post.created_at
       LIMIT 2 OFFSET ${next};
     `);
@@ -101,22 +105,22 @@ export const fetch = async (req: Express.Request, res: Express.Response) => {
           
       LEFT OUTER JOIN (
         SELECT
-        Comment.*,
-        to_json(CommentAuthor) AS user
+          Comment.*,
+          to_json(CommentAuthor) AS user
       
-      FROM comments Comment
-  
-      LEFT OUTER JOIN (
-        SELECT 
-          id, 
-          bio,
-          avatar, 
-          username, 
-          first_name, 
-          last_name
-            
+        FROM comments Comment
+
+        LEFT OUTER JOIN (
+          SELECT 
+            id, 
+            bio,
+            avatar, 
+            username, 
+            first_name, 
+            last_name
+          
           FROM users
-        ) CommentAuthor ON Comment.user_id = CommentAuthor.id
+          ) CommentAuthor ON Comment.user_id = CommentAuthor.id
       ) Comments ON Post.id  = Comments.post_id
   
       WHERE Post.privacy <> 'PRIVATE'
@@ -137,8 +141,6 @@ export const fetch = async (req: Express.Request, res: Express.Response) => {
 // For creating a post
 export const create = async (req: Express.Request, res: Express.Response) => {
   const { body } = req.body;
-  // Checking if there are no uploaded files
-  // if (req.files?.length === 0) {
 
   try {
     // Create new post
@@ -199,9 +201,6 @@ export const create = async (req: Express.Request, res: Express.Response) => {
 
     // Sending the response
     return res.json(post);
-    // } else {
-    //   // TODO: Implement
-    // }
   } catch (error) {
     console.error(error);
     return res.status(500).json();

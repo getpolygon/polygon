@@ -28,10 +28,10 @@ export const create = async (req: Express.Request, res: Express.Response) => {
     if (status === "BLOCKED") return res.status(403).json();
     else {
       const comment = await slonik.maybeOne(sql`
-      INSERT INTO comments (body, post_id, user_id)
-      VALUES (${body}, ${postId}, ${req.user?.id!!})
-      RETURNING *;
-    `);
+        INSERT INTO comments (body, post_id, user_id)
+        VALUES (${body}, ${postId}, ${req.user?.id!!})
+        RETURNING created_at, body, id;
+      `);
 
       return res.json(comment);
     }

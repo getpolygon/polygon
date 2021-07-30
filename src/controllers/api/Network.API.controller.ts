@@ -7,11 +7,11 @@ export const heartbeat = (req: Express.Request, res: Express.Response) => {
   const { username } = req.user!!;
 
   // Setting connection status to true
-  redis.set(username, JSON.stringify({ connected: true }));
+  redis.set(username!!, JSON.stringify({ connected: true }));
   // Setting a TTL on the key to delete it after 10 minutes
-  redis.expire(username, 10 * 60);
+  redis.expire(username!!, 10 * 60);
   // Getting the key value from the database
-  redis.get(username, (error, reply) => {
+  redis.get(username!!, (error, reply) => {
     // If there was an error
     if (error) console.error(error);
     else {
@@ -30,7 +30,7 @@ export const status = (req: Express.Request, res: Express.Response) => {
   const { username: currentUsername } = req.user!!;
 
   // If no accountId was provided getting current user's status
-  redis.get(username?.toString() || currentUsername, (error, reply) => {
+  redis.get(username?.toString() || currentUsername!!, (error, reply) => {
     if (error) console.error(error);
     else return res.json(JSON.parse(reply!!));
   });

@@ -1,7 +1,5 @@
-import Express from "express";
-import { body, validationResult } from "express-validator";
+import { body } from "express-validator";
 import { validateEmail, validateUsername } from "./functions";
-import sanitize from "./other/sanitize";
 
 // Rules for registration
 export const registrationValidationRules = () => {
@@ -29,7 +27,5 @@ export const loginValidationRules = () => {
 
 // Rules for post creation
 export const createPostValidationRules = () => {
-  return [
-    body("body").notEmpty().isLength({ max: 700 }).customSanitizer(sanitize),
-  ];
+  return [body("body").notEmpty().isLength({ max: 700 })];
 };

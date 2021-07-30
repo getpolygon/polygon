@@ -1,10 +1,6 @@
 import redis from "redis";
-const { REDIS_HOST, REDIS_PORT, REDIS_PASS } = process.env;
+const { REDIS_URL } = process.env;
 
-const client = redis.createClient({
-  host: REDIS_HOST,
-  auth_pass: REDIS_PASS,
-  port: parseInt(REDIS_PORT!!),
-});
+const client = redis.createClient(REDIS_URL!!);
 
 export default client;

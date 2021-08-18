@@ -1,25 +1,21 @@
-import fs from "fs";
-import pug from "pug";
-import _ from "lodash";
-import path from "path";
 import bcrypt from "bcrypt";
 import { sql } from "slonik";
 import Express from "express";
 import jwt from "jsonwebtoken";
 import { nanoid } from "nanoid";
 import redis from "../../db/redis";
+import handlebars from "handlebars";
 import slonik from "../../db/slonik";
 const { BASE_FRONTEND_URL } = process.env;
-const { JWT_PRIVATE_KEY, SALT_ROUNDS } = process.env;
+import readTemplate from "../../utils/readTemplate";
 import { send as SendMail } from "../../helpers/mailer";
+
+const { JWT_PRIVATE_KEY, SALT_ROUNDS } = process.env;
 
 // Will be used for temporary registration
 export const register = async (req: Express.Request, res: Express.Response) => {
   // Reading the template
-  const template = fs
-    .readFileSync(path.resolve("src/templates/verification.pug"))
-    .toString();
-
+  const template = readTemplate("verification.html");
   // Getting the IP from the request
   const { ip } = req;
   // Generating a random id
@@ -28,12 +24,12 @@ export const register = async (req: Express.Request, res: Express.Response) => {
   const { firstName, lastName, email, password, username } = req.body;
 
   // Rendering the email template
-  const rendered = pug.render(template, {
+  const rendered = handlebars.compile(template)({
     ip,
-    sid,
-    lastName,
-    firstName,
-    BASE_FRONTEND_URL,
+    token: sid,
+    name: firstName,
+    time: new Date(),
+    frontendUrl: BASE_FRONTEND_URL,
   });
 
   // Sending an email for verification

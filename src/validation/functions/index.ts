@@ -9,9 +9,9 @@ export const validateEmail = async (value: string) => {
   const { valid } = await emailValidator({
     email: value,
     validateMx: true,
-    validateTypo: true,
-    validateRegex: true,
+    validateTypo: false,
     validateSMTP: false,
+    validateRegex: true,
     validateMxTimeout: 500,
     validateDisposable: true,
   });
@@ -25,16 +25,13 @@ export const validateEmail = async (value: string) => {
 
     // If there is no user with that email
     if (!existingUser) return Promise.resolve(valid);
-    // If there is a user with that email
     else return Promise.reject("Email is taken");
-  }
-  // If it's invalid
-  else return Promise.reject("Invalid email");
+  } else return Promise.reject("Invalid email");
 };
 
 // Middleware function for express-validator for validating user usernames
 export const validateUsername = async (value: string) => {
-  // Validating the username by regex
+  // Validating the username with a regex
   const validRegex = /^[a-z0-9_\.]+$/.test(value);
 
   // If the regex isn't valid

@@ -1,12 +1,12 @@
 import Express from "express";
 import slonik from "../../db/slonik";
-import { Relation, User } from "../../types/index";
 import {
   sql,
   InvalidInputError,
   UniqueIntegrityConstraintViolationError,
   ForeignKeyIntegrityConstraintViolationError,
 } from "slonik";
+import { Relation, User } from "../../types/index";
 import { checkStatus } from "../../helpers/helpers";
 
 // For getting the people whom the account follows

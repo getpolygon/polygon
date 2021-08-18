@@ -1,6 +1,7 @@
 import express from "express";
-const router = express.Router();
 import { query } from "../../controllers/api/Search.API.controller";
+
+const router = express.Router();
 
 // For searching
 router.get("/", query);

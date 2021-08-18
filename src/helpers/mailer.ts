@@ -1,17 +1,18 @@
-// const nodePin = require("node-pin");
-// const showdown = require("showdown");
 import nodemailer from "nodemailer";
-const { MAILER_HOST, MAILER_USER, MAILER_PASS, MAILER_PORT } = process.env;
+const { MAILER_HOST, MAILER_USER, MAILER_PASS, MAILER_PORT, NODE_ENV } =
+  process.env;
+const __DEV__ = NODE_ENV === "development";
 
 // Creating a reusable transport
 const mailer = nodemailer.createTransport({
   host: MAILER_HOST!!,
-  port: parseInt(MAILER_PORT!!),
-  secure: false,
+  port: JSON.parse(MAILER_PORT!!),
+  secure: __DEV__ ? false : true,
   auth: {
     user: MAILER_USER!!,
     pass: MAILER_PASS!!,
   },
+  from: MAILER_USER!!
 });
 
 interface MailerInterface {

@@ -1,3 +1,4 @@
+import { Client } from "minio";
 const {
   MINIO_ENDPOINT,
   MINIO_BUCKET,
@@ -14,7 +15,6 @@ const config = {
   MINIO_SECKEY,
   MINIO_USESSL,
 };
-import { Client } from "minio";
 const client = new Client({
   endPoint: MINIO_ENDPOINT!!,
   port: parseInt(MINIO_PORT!!),

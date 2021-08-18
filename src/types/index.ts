@@ -1,9 +1,6 @@
-// import * as express from "express";
-
 /**
  * Custom declarations
  */
-
 export type User = {
   id: string;
   bio: string;
@@ -14,9 +11,6 @@ export type User = {
   username: string;
   last_name: string;
   first_name: string;
-
-  posts: Post[];
-  comments: Comment[];
 };
 
 export type Relation = {
@@ -36,13 +30,7 @@ export type Post = {
   user_id: string;
   created_at: string;
   comments: Comment[];
-  privacy: PostPrivacy;
 };
-
-export enum PostPrivacy {
-  "PRIVATE",
-  "PUBLIC",
-}
 
 export type Comment = {
   id: string;
@@ -65,8 +53,6 @@ declare global {
   namespace Express {
     interface Request {
       user?: Partial<User>;
-      // file?: Multer.File;
-      // files?: Multer.File[];
       signedCookies?: {
         jwt?: string;
       };

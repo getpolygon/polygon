@@ -1,8 +1,8 @@
 import { sql } from "slonik";
 import Express from "express";
 import slonik from "../../db/slonik";
+import { User } from "../../types/index";
 import { checkStatus } from "../../helpers/helpers";
-import { RelationStatus, User } from "../../types/index";
 
 // For fetching current account details
 export const me = async (req: Express.Request, res: Express.Response) => {
@@ -31,7 +31,7 @@ export const me = async (req: Express.Request, res: Express.Response) => {
   }
 };
 
-// For fetching account details
+// For fetching other accounts
 export const fetch = async (req: Express.Request, res: Express.Response) => {
   // Getting the username
   const { username } = req.params;
@@ -82,7 +82,7 @@ export const deleteAccount = async (
   const { id } = req?.user!!;
 
   try {
-    // TODO: Implement
+    // TODO
   } catch (error) {
     console.error(error);
     return res.status(500).json();
@@ -90,4 +90,38 @@ export const deleteAccount = async (
 };
 
 // For updating account
-export const update = async (req: Express.Request, res: Express.Response) => {};
+export const update = async (req: Express.Request, res: Express.Response) => {
+  const { body } = req;
+
+  for (const field in body) {
+    const value = body[field];
+
+    try {
+      switch (field) {
+        case "firstName": {
+          await slonik.query(sql`
+            UPDATE users SET first_name = ${value} 
+            WHERE id = ${req.user?.id!!}
+          `);
+          break;
+        }
+        case "lastName": {
+          await slonik.query(sql`
+            UPDATE users SET last_name = ${value} 
+            WHERE id = ${req.user?.id!!}
+          `);
+          break;
+        }
+        default: {
+          res.status(304).json();
+          break;
+        }
+      }
+
+      return res.status(204).json();
+    } catch (error) {
+      console.error({ error });
+      return res.status(304).json();
+    }
+  }
+};

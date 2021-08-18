@@ -1,9 +1,8 @@
-// Will be used for adding types
+import { sql } from "slonik";
 import Express from "express";
 import jwt from "jsonwebtoken";
-import { sql } from "slonik";
-import { Token, User } from "../types";
 import slonik from "../db/slonik";
+import { Token, User } from "../types";
 const { JWT_PRIVATE_KEY } = process.env;
 
 export default (authRoute = false) => {
@@ -15,8 +14,9 @@ export default (authRoute = false) => {
     // Getting the `jwt` cookie
     const { jwt: token } = req.signedCookies;
 
-    // Checking if it exists
+    // Checking if the token exists
     if (!token) {
+      // If the request was from an auth endpoint
       if (authRoute) return next();
       else return res.status(401).json();
     } else {
@@ -31,14 +31,13 @@ export default (authRoute = false) => {
       if (!user) {
         // If the request was from auth endpoint
         if (authRoute) return next();
-        // If the request was from other endpoints
         else return res.status(401).json();
       } else {
         // Setting the user
         req.user = user;
+
         // If the request was from auth endpoint
         if (authRoute) return res.status(403).json();
-        // If the request was from other endpoints
         else return next();
       }
     }

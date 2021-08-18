@@ -1,4 +1,4 @@
-import { sql } from "slonik";
+import { InvalidInputError, sql } from "slonik";
 import Express from "express";
 import slonik from "../../db/slonik";
 import { Comment, Post } from "../../types";
@@ -38,6 +38,7 @@ export const create = async (req: Express.Request, res: Express.Response) => {
   } else return res.status(404).json();
 };
 
+// For updating a comment
 export const update = async (req: Express.Request, res: Express.Response) => {
   // Getting the updated body
   const { body } = req.body;
@@ -131,6 +132,70 @@ export const remove = async (req: Express.Request, res: Express.Response) => {
       }
       // If the comment doesn't exist
       else return res.status(404).json();
+    }
+  }
+};
+
+// For fetching comments of a post
+export const fetch = async (req: Express.Request, res: Express.Response) => {
+  // Getting the post from the query
+  const { post: postId } = req.params;
+  // Getting next comment cursor and limit per page
+  const { next, limit = 2 } = req.query;
+
+  try {
+    // Finding the post
+    const post = await slonik.maybeOne(sql<Partial<Post>>`
+      SELECT * FROM posts WHERE id = ${postId};
+    `);
+
+    // If post doesn't exist
+    if (!post) return res.status(404).json();
+    else {
+      // Checking the relations between current user and post author
+      const status = await checkStatus({
+        other: post.user_id!!,
+        current: req.user?.id!!,
+      });
+
+      // If the relation between 2 users is BLOCKED
+      if (status === "BLOCKED") return res.status(403).json();
+      else {
+        // If no comment cursor was supplied
+        if (!next) {
+          // Fetching the comments
+          const comments = await slonik.many(sql<Partial<Comment>>`
+            SELECT * FROM comments WHERE post_id = ${post.id!!}
+            ORDER BY created_at DESC
+            LIMIT ${Number(limit) || 2}
+          `);
+
+          // Getting next cursor
+          const next =
+            comments?.length === 0
+              ? null
+              : await slonik.maybeOne(sql<Partial<Comment>>`
+            SELECT * FROM comments WHERE post_id = ${post.id!!}
+            AND id > ${comments[comments.length - 1].id!!}
+            AND created_at > ${comments[comments.length - 1].created_at!!}
+            ORDER BY created_at DESC
+            LIMIT 1;
+          `);
+
+          return res.json({
+            data: comments,
+            next: next?.id,
+          });
+        } else {
+          return res.json("not implemented");
+        }
+      }
+    }
+  } catch (error) {
+    if (error instanceof InvalidInputError) return res.status(400).json();
+    else {
+      console.error(error);
+      return res.status(500).json();
     }
   }
 };

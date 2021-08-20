@@ -12,12 +12,11 @@ const mailer = nodemailer.createTransport({
     user: MAILER_USER!!,
     pass: MAILER_PASS!!,
   },
-  from: MAILER_USER!!
 });
 
 interface MailerInterface {
   html: string;
-  subject?: string;
+  subject: string;
   receiver: string;
 }
 
@@ -28,6 +27,7 @@ const send = async ({ receiver, subject, html }: MailerInterface) => {
       html: html,
       to: receiver,
       subject: subject,
+      from: MAILER_USER!!,
     });
 
     return data;

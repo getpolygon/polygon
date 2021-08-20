@@ -4,13 +4,13 @@
 export type User = {
   id: string;
   bio: string;
-  cover: string;
   email: string;
-  avatar: string;
   password: string;
   username: string;
   last_name: string;
   first_name: string;
+  cover: string | null;
+  avatar: string | null;
 };
 
 export type Relation = {

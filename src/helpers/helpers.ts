@@ -13,10 +13,8 @@ export const checkStatus = async ({
   current: string;
 }): Promise<RelationStatus> => {
   const relation = await slonik.maybeOne!!(sql<Relation>`
-    SELECT * FROM relations 
-    WHERE to_user = ${current} 
-    AND from_user = ${other} 
-    AND status = 'BLOCKED';
+    SELECT * FROM relations WHERE to_user = ${current} 
+    AND from_user = ${other} AND status = 'BLOCKED';
   `);
 
   return relation?.status!!;

@@ -164,7 +164,7 @@ export const fetch = async (req: Express.Request, res: Express.Response) => {
         // If no comment cursor was supplied
         if (!next) {
           // Fetching the comments
-          const comments = await slonik.many(sql<Partial<Comment>>`
+          const { rows: comments } = await slonik.query(sql<Partial<Comment>>`
             SELECT * FROM comments WHERE post_id = ${post.id!!}
             ORDER BY created_at DESC
             LIMIT ${Number(limit) || 2}

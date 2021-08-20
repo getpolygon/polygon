@@ -1,4 +1,5 @@
 import Express from "express";
+import { Post } from "../../types";
 import slonik from "../../db/slonik";
 import {
   sql,
@@ -45,6 +46,7 @@ export const fetchOne = async (req: Express.Request, res: Express.Response) => {
 };
 
 // For fetching one user's post
+// TODO: Implement
 export const fetch = async (req: Express.Request, res: Express.Response) => {
   // Cursor for next page
   const { cursor } = req.query;
@@ -65,7 +67,40 @@ export const fetch = async (req: Express.Request, res: Express.Response) => {
   // If other account has blocked this one
   if (status === "BLOCKED") return res.status(403).json();
   else {
-    // TODO: Implement
+    if (!cursor) {
+      const { rows: posts } = await slonik.query(sql`
+        SELECT 
+          Post.id,
+          Post.body,
+          Post.created_at,
+          TO_JSON(Author) as user
+
+        FROM posts Post
+
+        INNER JOIN (
+          SELECT
+            id,
+            avatar,
+            username,
+            last_name,
+            first_name,
+            created_at
+
+          FROM users
+        ) Author ON Post.user_id = Author.id
+
+        WHERE username = ${username}
+        LIMIT 2;
+      `);
+
+      const next = "";
+
+      return res.json({
+        next,
+        data: posts,
+      });
+    } else {
+    }
   }
 };
 

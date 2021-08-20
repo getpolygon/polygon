@@ -2,8 +2,9 @@
   "main": "index.js",
   "private": true,
   "scripts": {
-    "migrate": "node migrate",
     "build": "tsc --project .",
+    "migrate": "node tools/migrator",
+    "seed": "cd tools/seeder && go run .",
     "dev": "ts-node-dev --rs --deps src/index",
     "start": "npm run build && node build/src/index.js"
   },

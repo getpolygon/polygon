@@ -1,6 +1,6 @@
 import bcrypt from "bcrypt";
 import { sql } from "slonik";
-import Express from "express";
+import express from "express";
 import jwt from "jsonwebtoken";
 import { nanoid } from "nanoid";
 import redis from "../../db/redis";
@@ -13,7 +13,7 @@ import { send as SendMail } from "../../helpers/mailer";
 const { JWT_PRIVATE_KEY, SALT_ROUNDS } = process.env;
 
 // Will be used for temporary registration
-export const register = async (req: Express.Request, res: Express.Response) => {
+export const register = async (req: express.Request, res: express.Response) => {
   // Reading the template
   const template = readTemplate("verification.html");
   // Getting the IP from the request
@@ -65,7 +65,7 @@ export const register = async (req: Express.Request, res: Express.Response) => {
 };
 
 // Will be used to verify temporary registration request
-export const verify = (req: Express.Request, res: Express.Response) => {
+export const verify = (req: express.Request, res: express.Response) => {
   // Getting the token
   const { sid } = req.params;
   // Getting the password

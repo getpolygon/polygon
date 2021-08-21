@@ -1,5 +1,5 @@
-import Express from "express";
-const router = Express.Router();
+import express from "express";
+const router = express.Router();
 import validate from "../../validation";
 import { loginValidationRules } from "../../validation/rules";
 import LoginController from "../../controllers/auth/Login.controller";

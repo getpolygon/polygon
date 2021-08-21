@@ -1,11 +1,11 @@
 import { sql } from "slonik";
-import Express from "express";
+import express from "express";
 import jwt from "jsonwebtoken";
 import slonik from "../../db/slonik";
 const { JWT_PRIVATE_KEY } = process.env;
 import { Token, User } from "../../types";
 
-export default async (req: Express.Request, res: Express.Response) => {
+export default async (req: express.Request, res: express.Response) => {
   const { jwt: token } = req.signedCookies;
 
   if (!token) return res.status(401).json();

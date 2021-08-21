@@ -1,12 +1,12 @@
-import Express from "express";
+import express from "express";
 import { validationResult } from "express-validator";
 
 // Middleware for validating requests
 export default () => {
   return (
-    req: Express.Request,
-    res: Express.Response,
-    next: Express.NextFunction
+    req: express.Request,
+    res: express.Response,
+    next: express.NextFunction
   ) => {
     const errors = validationResult(req);
     if (errors.isEmpty()) return next();

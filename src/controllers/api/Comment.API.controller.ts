@@ -1,11 +1,11 @@
 import { InvalidInputError, sql } from "slonik";
-import Express from "express";
+import express from "express";
 import slonik from "../../db/slonik";
 import { Comment, Post } from "../../types";
 import { checkStatus } from "../../helpers/helpers";
 
 // For creating a comment
-export const create = async (req: Express.Request, res: Express.Response) => {
+export const create = async (req: express.Request, res: express.Response) => {
   // Post content
   const { body } = req.body;
   // The id of the post
@@ -39,7 +39,7 @@ export const create = async (req: Express.Request, res: Express.Response) => {
 };
 
 // For updating a comment
-export const update = async (req: Express.Request, res: Express.Response) => {
+export const update = async (req: express.Request, res: express.Response) => {
   // Getting the updated body
   const { body } = req.body;
   // Getting some parameters
@@ -92,7 +92,7 @@ export const update = async (req: Express.Request, res: Express.Response) => {
 };
 
 // For deleting a comment
-export const remove = async (req: Express.Request, res: Express.Response) => {
+export const remove = async (req: express.Request, res: express.Response) => {
   // Getting some params
   const { post: postId, comment: commentId } = req.params;
 
@@ -137,7 +137,7 @@ export const remove = async (req: Express.Request, res: Express.Response) => {
 };
 
 // For fetching comments of a post
-export const fetch = async (req: Express.Request, res: Express.Response) => {
+export const fetch = async (req: express.Request, res: express.Response) => {
   // Getting the post from the query
   const { post: postId } = req.params;
   // Getting next comment cursor and limit per page

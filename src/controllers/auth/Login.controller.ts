@@ -1,12 +1,12 @@
 import bcrypt from "bcrypt";
 import { sql } from "slonik";
-import Express from "express";
+import express from "express";
 import jwt from "jsonwebtoken";
 import { User } from "../../types";
 import slonik from "../../db/slonik";
 const { JWT_PRIVATE_KEY } = process.env;
 
-export default async (req: Express.Request, res: Express.Response) => {
+export default async (req: express.Request, res: express.Response) => {
   // Get the email and the password
   const { password, email } = req.body;
 

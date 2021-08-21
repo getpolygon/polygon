@@ -1,11 +1,11 @@
 import { sql } from "slonik";
-import Express from "express";
+import express from "express";
 import slonik from "../../db/slonik";
 import { User } from "../../types/index";
 import { checkStatus } from "../../helpers/helpers";
 
 // For fetching current account details
-export const me = async (req: Express.Request, res: Express.Response) => {
+export const me = async (req: express.Request, res: express.Response) => {
   try {
     // Getting the account
     const user = await slonik.maybeOne(sql<Partial<User>>`
@@ -32,7 +32,7 @@ export const me = async (req: Express.Request, res: Express.Response) => {
 };
 
 // For fetching other accounts
-export const fetch = async (req: Express.Request, res: Express.Response) => {
+export const fetch = async (req: express.Request, res: express.Response) => {
   // Getting the username
   const { username } = req.params;
 
@@ -76,8 +76,8 @@ export const fetch = async (req: Express.Request, res: Express.Response) => {
 
 // For deleting account
 export const deleteAccount = async (
-  req: Express.Request,
-  res: Express.Response
+  req: express.Request,
+  res: express.Response
 ) => {
   const { id } = req?.user!!;
 
@@ -90,7 +90,7 @@ export const deleteAccount = async (
 };
 
 // For updating account
-export const update = async (req: Express.Request, res: Express.Response) => {
+export const update = async (req: express.Request, res: express.Response) => {
   const { body } = req;
 
   for (const field in body) {

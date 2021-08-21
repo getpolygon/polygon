@@ -1,6 +1,6 @@
-import Express from "express";
+import express from "express";
 
-export default (req: Express.Request, res: Express.Response) => {
+export default (req: express.Request, res: express.Response) => {
   const { jwt: token } = req.signedCookies;
 
   if (token) {

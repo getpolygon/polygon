@@ -50,7 +50,7 @@ export type Token = {
  * Global declarations
  */
 declare global {
-  namespace Express {
+  namespace express {
     interface Request {
       user?: Partial<User>;
       signedCookies?: {

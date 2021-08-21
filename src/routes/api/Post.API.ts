@@ -1,4 +1,4 @@
-import Express from "express";
+import express from "express";
 import validate from "../../validation";
 import {
   fetch,
@@ -10,7 +10,7 @@ import {
 } from "../../controllers/api/Post.API.controller";
 import { createPostValidationRules } from "../../validation/rules";
 
-const router = Express.Router();
+const router = express.Router();
 
 // To fetch posts of an account
 router.get("/:username", fetch);

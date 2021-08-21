@@ -1,4 +1,4 @@
-import Express from "express";
+import express from "express";
 import {
   me,
   fetch,
@@ -6,7 +6,7 @@ import {
   deleteAccount,
 } from "../../controllers/api/Account.API.controller";
 
-const router = Express.Router();
+const router = express.Router();
 
 // For fetching current account details
 router.get("/me", me);

@@ -1,10 +1,10 @@
-import Express from "express";
+import express from "express";
 import {
   status,
   heartbeat,
 } from "../../controllers/api/Network.API.controller";
 
-const router = Express.Router();
+const router = express.Router();
 
 // Check the connection of a certain user
 router.get("/status", status);

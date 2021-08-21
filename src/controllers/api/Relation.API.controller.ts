@@ -1,4 +1,4 @@
-import Express from "express";
+import express from "express";
 import slonik from "../../db/slonik";
 import {
   sql,
@@ -11,8 +11,8 @@ import { checkStatus } from "../../helpers/helpers";
 
 // For getting the people whom the account follows
 export const following = async (
-  req: Express.Request,
-  res: Express.Response
+  req: express.Request,
+  res: express.Response
 ) => {
   // The ID of the user
   const { id } = req.params;
@@ -54,8 +54,8 @@ export const following = async (
 
 // For getting the followers of an account
 export const followers = async (
-  req: Express.Request,
-  res: Express.Response
+  req: express.Request,
+  res: express.Response
 ) => {
   // The ID of the user
   const { id } = req.params;
@@ -99,7 +99,7 @@ export const followers = async (
 };
 
 // For checking relation status
-export const check = async (req: Express.Request, res: Express.Response) => {
+export const check = async (req: express.Request, res: express.Response) => {
   // The ID of other user
   const { id } = req.params;
 
@@ -124,7 +124,7 @@ export const check = async (req: Express.Request, res: Express.Response) => {
 };
 
 // For following another user
-export const follow = async (req: Express.Request, res: Express.Response) => {
+export const follow = async (req: express.Request, res: express.Response) => {
   // The ID of other user
   const { id } = req.params;
 
@@ -173,7 +173,7 @@ export const follow = async (req: Express.Request, res: Express.Response) => {
 };
 
 // For unfollowing a user
-export const unfollow = async (req: Express.Request, res: Express.Response) => {
+export const unfollow = async (req: express.Request, res: express.Response) => {
   // Other user's ID
   const { id } = req.params;
 
@@ -205,7 +205,7 @@ export const unfollow = async (req: Express.Request, res: Express.Response) => {
 };
 
 // For blocking users
-export const block = async (req: Express.Request, res: Express.Response) => {
+export const block = async (req: express.Request, res: express.Response) => {
   // Other user's ID
   const { id } = req.params;
 
@@ -236,7 +236,7 @@ export const block = async (req: Express.Request, res: Express.Response) => {
 };
 
 // For unblocking users
-export const unblock = async (req: Express.Request, res: Express.Response) => {
+export const unblock = async (req: express.Request, res: express.Response) => {
   // Other user's ID
   const { id } = req.params;
 

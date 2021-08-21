@@ -1,4 +1,4 @@
-import Express from "express";
+import express from "express";
 
 // Main controller for executing search
-export const query = (req: Express.Request, res: Express.Response) => {};
+export const query = (req: express.Request, res: express.Response) => {};

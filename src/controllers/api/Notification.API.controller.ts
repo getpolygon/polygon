@@ -1,3 +1,3 @@
-import Express from "express";
+import express from "express";
 
-export const fetch = (req: Express.Request, res: Express.Response) => {};
+export const fetch = (req: express.Request, res: express.Response) => {};

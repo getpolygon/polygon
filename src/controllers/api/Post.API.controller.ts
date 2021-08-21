@@ -1,4 +1,4 @@
-import Express from "express";
+import express from "express";
 import { Post } from "../../types";
 import slonik from "../../db/slonik";
 import {
@@ -9,7 +9,7 @@ import {
 import { checkStatus } from "../../helpers/helpers";
 
 // For fetching one post
-export const fetchOne = async (req: Express.Request, res: Express.Response) => {
+export const fetchOne = async (req: express.Request, res: express.Response) => {
   // The id of the post
   const { id } = req.params;
 
@@ -47,7 +47,7 @@ export const fetchOne = async (req: Express.Request, res: Express.Response) => {
 
 // For fetching one user's post
 // TODO: Implement
-export const fetch = async (req: Express.Request, res: Express.Response) => {
+export const fetch = async (req: express.Request, res: express.Response) => {
   // Cursor for next page
   const { cursor } = req.query;
   // Account's username to fetch posts
@@ -105,7 +105,7 @@ export const fetch = async (req: Express.Request, res: Express.Response) => {
 };
 
 // For creating a post
-export const create = async (req: Express.Request, res: Express.Response) => {
+export const create = async (req: express.Request, res: express.Response) => {
   // Post body
   const { body } = req.body;
 
@@ -149,7 +149,7 @@ export const create = async (req: Express.Request, res: Express.Response) => {
 };
 
 // For removing a post
-export const remove = async (req: Express.Request, res: Express.Response) => {
+export const remove = async (req: express.Request, res: express.Response) => {
   try {
     // Getting post id from the query
     const { id } = req.params;
@@ -183,7 +183,7 @@ export const remove = async (req: Express.Request, res: Express.Response) => {
 };
 
 // For hearting a post
-export const heart = async (req: Express.Request, res: Express.Response) => {
+export const heart = async (req: express.Request, res: express.Response) => {
   // Getting post id from params
   const { id } = req.params;
 
@@ -200,7 +200,7 @@ export const heart = async (req: Express.Request, res: Express.Response) => {
 };
 
 // For unhearting a post
-export const unheart = async (req: Express.Request, res: Express.Response) => {
+export const unheart = async (req: express.Request, res: express.Response) => {
   const { id } = req.params;
 
   try {

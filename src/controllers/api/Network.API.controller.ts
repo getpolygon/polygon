@@ -1,8 +1,8 @@
-import Express from "express";
+import express from "express";
 import redis from "../../db/redis";
 
 // For storing user status
-export const heartbeat = (req: Express.Request, res: Express.Response) => {
+export const heartbeat = (req: express.Request, res: express.Response) => {
   // Getting the ID of the user
   const { username } = req.user!!;
 
@@ -20,7 +20,7 @@ export const heartbeat = (req: Express.Request, res: Express.Response) => {
 };
 
 // For getting the status of a certain user
-export const status = (req: Express.Request, res: Express.Response) => {
+export const status = (req: express.Request, res: express.Response) => {
   // ID provided in the query
   const { username } = req.query;
   // Getting current username

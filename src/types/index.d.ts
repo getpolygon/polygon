@@ -50,15 +50,15 @@ export type Token = {
  * Global declarations
  */
 declare global {
-  namespace express {
-    interface Request {
+  namespace Express {
+    export interface Request {
       user?: Partial<User>;
       signedCookies?: {
         jwt?: string;
       };
     }
 
-    interface Response {
+    export interface Response {
       user?: Partial<User>;
     }
   }

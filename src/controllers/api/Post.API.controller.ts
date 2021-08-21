@@ -1,5 +1,4 @@
 import express from "express";
-import { Post } from "../../types";
 import slonik from "../../db/slonik";
 import {
   sql,

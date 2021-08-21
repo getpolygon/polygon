@@ -6,5 +6,8 @@
     "outDir": "./build",
     "esModuleInterop": true,
     "strict": true
-  }
+  },
+  "files": [
+    "src/types/index.d.ts"
+  ]
 }

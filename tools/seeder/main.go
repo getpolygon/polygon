@@ -24,6 +24,10 @@ var Seeders = []Seeder{
 		ID:   1,
 		Name: "users",
 	},
+	{
+		ID:   2,
+		Name: "posts",
+	},
 }
 
 // A function that will return a nice list of all the seed commands
@@ -62,6 +66,8 @@ func main() {
 		SeedAll(dbConn)
 	case 1:
 		SeedUsersFunc(dbConn)
+	case 2:
+		SeedPostsFunc(dbConn)
 	default:
 		fmt.Fprintln(os.Stderr, "No matching command found")
 	}

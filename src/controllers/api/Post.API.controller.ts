@@ -1,3 +1,4 @@
+import pg from "../../db/pg";
 import express from "express";
 import slonik from "../../db/slonik";
 import {
@@ -12,8 +13,9 @@ export const fetchOne = async (req: express.Request, res: express.Response) => {
   // The id of the post
   const { id } = req.params;
 
-  // Getting the post
-  const post = await slonik.maybeOne(sql`
+  try {
+    // Getting the post
+    const post = await slonik.maybeOne(sql`
       SELECT
         Post.id,
         Post.body,
@@ -37,27 +39,43 @@ export const fetchOne = async (req: express.Request, res: express.Response) => {
       WHERE Post.id = ${id!!} 
       GROUP BY Post.id, Author.* 
       ORDER BY Post.created_at DESC;
-  `);
+    `);
 
-  // If post exists
-  if (post) return res.json(post);
-  else return res.status(403).json();
+    // Fetching the relation status between users
+    const status = await checkStatus({
+      current: req.user?.id!!,
+      other: post?.user_id!! as string,
+    });
+
+    // If post exists
+    if (!post) return res.status(404).json();
+    else {
+      // If post author has blocked current user
+      if (status === "BLOCKED") return res.status(403).json();
+      else return res.json(post);
+    }
+  } catch (error) {
+    if (error instanceof InvalidInputError) return res.status(400).json();
+    else {
+      console.error(error);
+      return res.status(500).json();
+    }
+  }
 };
 
 // For fetching one user's post
-// TODO: Implement
 export const fetch = async (req: express.Request, res: express.Response) => {
   // Cursor for next page
   const { cursor } = req.query;
   // Account's username to fetch posts
   const { username } = req.params;
 
-  // Getting the user
+  // Getting post author
   const user = await slonik.maybeOne(sql`
     SELECT * FROM users WHERE username = ${username!!};
   `);
 
-  // Checking the relation between this and other account
+  // Checking the relation between this and author account
   const status = await checkStatus({
     current: req?.user?.id!!,
     other: user?.id!! as string,
@@ -67,13 +85,13 @@ export const fetch = async (req: express.Request, res: express.Response) => {
   if (status === "BLOCKED") return res.status(403).json();
   else {
     if (!cursor) {
-      const { rows: posts } = await slonik.query(sql`
-        SELECT 
+      const { rows: posts } = await pg.query(
+        `
+        SELECT
           Post.id,
           Post.body,
           Post.created_at,
           TO_JSON(Author) as user
-
         FROM posts Post
 
         INNER JOIN (
@@ -84,21 +102,108 @@ export const fetch = async (req: express.Request, res: express.Response) => {
             last_name,
             first_name,
             created_at
-
           FROM users
         ) Author ON Post.user_id = Author.id
 
-        WHERE username = ${username}
-        LIMIT 2;
-      `);
+        WHERE Post.user_id = $1
+        ORDER BY Post.created_at DESC LIMIT 2;
+        `,
+        [user?.id!!]
+      );
 
-      const next = "";
+      // Fetching next page
+      // const next = await new Promise(async (resolve, _) => {
+      //   if (posts.length === 0) return resolve(null);
+      //   else {
+      //     const lastPost = posts[posts.length - 1];
+      //     const { rows } = await pg.query(
+      //       `
+      //       SELECT * FROM posts
+      //       WHERE user_id = $1
+      //       AND created_at <= $2
+      //       AND (created_at < $2 OR id < $3)
+      //       ORDER BY created_at DESC, id DESC LIMIT 1;
+      //     `,
+      //       [user?.id!!, lastPost?.created_at!!, lastPost?.id!!]
+      //     );
+
+      //     return resolve(rows[0]?.id!! || null);
+      //   }
+      // });
 
       return res.json({
-        next,
         data: posts,
+        next: posts[posts.length - 1]?.id || null,
       });
-    } else {
+    }
+    // If cursor was given
+    else {
+      try {
+        // Fetching the post with the supplied cursor
+        const {
+          rows: { 0: cursorPost },
+        } = await pg.query(
+          `SELECT * FROM posts WHERE id = $1 AND user_id = $2`,
+          [cursor, user?.id!!]
+        );
+
+        // Fetching the posts on current page
+        const { rows: posts } = await pg.query(
+          `
+          SELECT
+            Post.id,
+            Post.body,
+            Post.created_at,
+            TO_JSON(Author) as user
+          FROM posts Post
+
+          INNER JOIN (
+            SELECT
+              id,
+              avatar,
+              username,
+              last_name,
+              first_name,
+              created_at
+            FROM users
+          ) Author ON Post.user_id = Author.id
+
+          WHERE Post.created_at < $1 OR (Post.created_at = $1 AND Post.id < $2) AND Post.user_id = $3
+          ORDER BY Post.created_at DESC, Post.id DESC LIMIT 2;
+        `,
+          [cursorPost?.created_at!!, cursor, user?.id!!]
+        );
+
+        // Fetching next page
+        // const next = await new Promise(async (resolve, _) => {
+        //   if (posts.length === 0) return resolve(null);
+        //   else {
+        //     const lastPost = posts[posts.length - 1];
+        //     const { rows } = await pg.query(
+        //       `
+        //       SELECT * FROM posts WHERE user_id = $1
+        //       AND created_at <= $2 AND (created_at < $2 OR id < $3)
+        //       ORDER BY created_at DESC, id DESC LIMIT 1;
+        //     `,
+        //       [user?.id!!, lastPost?.created_at!!, lastPost?.id!!]
+        //     );
+
+        //     return resolve(rows[0]?.id!! || null);
+        //   }
+        // });
+
+        return res.json({
+          data: posts,
+          next: posts[posts.length - 1]?.id || null,
+        });
+      } catch (error) {
+        // Invalid cursor ID
+        if (error?.code === "22P02") return res.status(400).json();
+        else {
+          console.error(error);
+          return res.status(500).json();
+        }
+      }
     }
   }
 };
@@ -117,7 +222,10 @@ export const create = async (req: express.Request, res: express.Response) => {
     `);
 
     // Getting the post
-    const post = await slonik.maybeOne(sql`
+    const {
+      rows: { 0: post },
+    } = await pg.query(
+      `
       SELECT Post.id, Post.body, Post.created_at, to_json(Author) AS user
 
       FROM posts Post
@@ -134,10 +242,12 @@ export const create = async (req: express.Request, res: express.Response) => {
         FROM users
       ) Author ON Author.id = Post.user_id
 
-      WHERE Post.id = ${created?.id!!} 
+      WHERE Post.id = $1
       GROUP BY Post.id, Author.* 
       ORDER BY Post.created_at DESC;
-    `);
+    `,
+      [created?.id!!]
+    );
 
     // Sending the response
     return res.json(post);

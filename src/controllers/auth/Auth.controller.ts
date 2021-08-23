@@ -36,6 +36,6 @@ export default async (req: express.Request, res: express.Response) => {
           sameSite: "none",
         })
         .json();
-    } else return res.send(user);
+    } else return res.json(user);
   }
 };

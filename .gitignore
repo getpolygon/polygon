@@ -1,6 +1,6 @@
-.env
+.env*
+yarn-error.log
+
 cert/
 build/
 node_modules/
-yarn-error.log
-.env.development.local

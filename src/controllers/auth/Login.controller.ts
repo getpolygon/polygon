@@ -30,6 +30,7 @@ export default async (req: express.Request, res: express.Response) => {
         else {
           // Send the JWT as a cookie
           return res
+            .status(204)
             .cookie("jwt", token, {
               signed: true,
               secure: true,

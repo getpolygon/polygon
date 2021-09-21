@@ -1,7 +1,7 @@
 import { sql } from "slonik";
 import express from "express";
 import slonik from "../../db/slonik";
-import { User } from "../../types/index";
+import { User } from "../../@types/index";
 import { checkStatus } from "../../helpers/helpers";
 
 // For fetching current account details

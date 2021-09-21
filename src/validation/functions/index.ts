@@ -1,5 +1,5 @@
 import { sql } from "slonik";
-import { User } from "../../types";
+import { User } from "../../@types";
 import slonik from "../../db/slonik";
 import emailValidator from "deep-email-validator-extended";
 

@@ -6,7 +6,7 @@ import {
   UniqueIntegrityConstraintViolationError,
   ForeignKeyIntegrityConstraintViolationError,
 } from "slonik";
-import { Relation, User } from "../../types/index";
+import { Relation, User } from "../../@types/index";
 import { checkStatus } from "../../helpers/helpers";
 
 // For getting the people whom the account follows

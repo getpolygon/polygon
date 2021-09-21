@@ -2,7 +2,7 @@ import bcrypt from "bcrypt";
 import { sql } from "slonik";
 import express from "express";
 import jwt from "jsonwebtoken";
-import { User } from "../../types";
+import { User } from "../../@types";
 import slonik from "../../db/slonik";
 const { JWT_PRIVATE_KEY } = process.env;
 

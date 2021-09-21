@@ -2,7 +2,7 @@ import { sql } from "slonik";
 import express from "express";
 import jwt from "jsonwebtoken";
 import slonik from "../db/slonik";
-import { Token, User } from "../types";
+import { Token, User } from "../@types";
 const { JWT_PRIVATE_KEY } = process.env;
 
 export default (authRoute = false) => {

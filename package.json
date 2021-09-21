@@ -1,9 +1,7 @@
 {
-  "main": "index.js",
   "private": true,
   "scripts": {
     "build": "tsc --project .",
-    "postinstall": "tsc --project .",
     "migrate": "node tools/migrator",
     "start": "node build/src/index.js",
     "seed": "cd tools/seeder && go run .",

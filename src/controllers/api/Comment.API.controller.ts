@@ -1,7 +1,7 @@
 import { InvalidInputError, sql } from "slonik";
 import express from "express";
 import slonik from "../../db/slonik";
-import { Comment, Post } from "../../types";
+import { Comment, Post } from "../../@types";
 import { checkStatus } from "../../helpers/helpers";
 
 // For creating a comment

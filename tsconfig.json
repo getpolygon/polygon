@@ -1,13 +1,12 @@
 {
   "compilerOptions": {
+    "strict": true,
     "target": "es6",
+    "sourceMap": true,
+    "outDir": "build/",
     "module": "commonjs",
-    "rootDir": "./",
-    "outDir": "./build",
-    "esModuleInterop": true,
-    "strict": true
+    "esModuleInterop": true
   },
-  "files": [
-    "src/types/index.d.ts"
-  ]
+  "include": ["src/**/*.ts"],
+  "exclude": ["node_modules"]
 }

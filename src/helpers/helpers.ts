@@ -1,6 +1,6 @@
 import { sql } from "slonik";
 import slonik from "../db/slonik";
-import { Relation, RelationStatus } from "../types";
+import { Relation, RelationStatus } from "../@types";
 
 // For checking if a user has blocked current user
 export const checkStatus = async ({

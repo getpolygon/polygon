@@ -1,18 +1,22 @@
-require("dotenv").config();
-
+import path from "path";
 import http from "http";
 import cors from "cors";
 import morgan from "morgan";
 import helmet from "helmet";
 import routes from "./routes";
 import express from "express";
+import * as dotenv from "dotenv";
 import compression from "compression";
 import cookieParser from "cookie-parser";
+
+dotenv.config({ path: path.resolve(".env") });
 
 const port = Number(process.env.PORT) || 3001;
 const isDev = process.env.NODE_ENV === "development";
 // Allowing only certain origins in production
-const origins = isDev ? true : JSON.parse(process.env.ORIGINS!!) || false;
+const origins = isDev
+  ? true
+  : JSON.parse((process.env.ORIGINS as any) || null) || false;
 
 const app = express();
 

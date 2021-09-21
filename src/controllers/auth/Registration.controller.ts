@@ -5,10 +5,11 @@ import jwt from "jsonwebtoken";
 import { nanoid } from "nanoid";
 import redis from "../../db/redis";
 import handlebars from "handlebars";
-import slonik from "../../db/slonik";
 const { BASE_FRONTEND_URL } = process.env;
 import readTemplate from "../../utils/readTemplate";
 import { send as SendMail } from "../../helpers/mailer";
+import getFirst from "../../utils/db/getFirst";
+import { User } from "../../@types";
 
 const { JWT_PRIVATE_KEY, SALT_ROUNDS } = process.env;
 
@@ -86,24 +87,15 @@ export const verify = (req: express.Request, res: express.Response) => {
 
         // If passwords match
         if (same) {
-          const {
-            rows: { 0: user },
-          } = await slonik.query(sql`
+          const user = await getFirst<Partial<User>>(
+            `
             INSERT INTO users (
               email, 
               password, 
               username,
               last_name, 
               first_name
-            )
-
-            VALUES (
-              ${payload.email},
-              ${payload.password},
-              ${payload.username},
-              ${payload.lastName},
-              ${payload.firstName}
-            )
+            ) VALUES ($1, $2, $3, $4, $5)
 
             RETURNING 
               id,
@@ -113,10 +105,18 @@ export const verify = (req: express.Request, res: express.Response) => {
               username,
               last_name,
               first_name;
-          `);
+            `,
+            [
+              payload.email,
+              payload.password,
+              payload.username,
+              payload.lastName,
+              payload.firstName,
+            ]
+          );
 
           jwt.sign(
-            { id: user.id },
+            { id: user?.id },
             JWT_PRIVATE_KEY!!,
             {
               expiresIn: "7 days",

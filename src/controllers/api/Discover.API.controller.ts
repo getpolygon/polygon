@@ -114,5 +114,6 @@ export const posts = async (req: Request, res: Response) => {
 };
 
 // For discovering popular accounts
-// TODO: Implement
-export const accounts = async (req: Request, res: Response) => {};
+export const accounts = async (req: Request, res: Response) => {
+  // TODO: Implement
+};

@@ -1,4 +1,9 @@
 import { Pool } from "pg";
-export default new Pool({
-  connectionString: process.env.DATABASE_URL!!,
+
+const { DATABASE_URL } = process.env;
+
+const pg = new Pool({
+  connectionString: DATABASE_URL!!,
 });
+
+export default pg;

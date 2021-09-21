@@ -1,22 +1,19 @@
-import { InvalidInputError, sql } from "slonik";
+import pg from "../../db/pg";
 import express from "express";
-import slonik from "../../db/slonik";
-import { Comment, Post } from "../../@types";
+import getFirst from "../../utils/db/getFirst";
+import type { Comment, Post } from "../../@types";
 import { checkStatus } from "../../helpers/helpers";
 
 // For creating a comment
 export const create = async (req: express.Request, res: express.Response) => {
   // Post content
   const { body } = req.body;
-  // The id of the post
   const { post: postId } = req.params;
 
-  // Get the post
-  const post = await slonik.maybeOne(sql<Partial<Post>>`
-    SELECT * FROM posts WHERE id = ${postId};
-  `);
+  const post = await getFirst<Post>("SELECT * FROM posts WHERE id = $1;", [
+    postId,
+  ]);
 
-  // If post exists
   if (post) {
     // Checking if the other user has blocked current user
     const status = await checkStatus({
@@ -27,11 +24,15 @@ export const create = async (req: express.Request, res: express.Response) => {
     // Not letting current user to comment on that post
     if (status === "BLOCKED") return res.status(403).json();
     else {
-      const comment = await slonik.maybeOne(sql`
-        INSERT INTO comments (body, post_id, user_id)
-        VALUES (${body}, ${postId}, ${req.user?.id!!})
+      // Creating a comment and returning it afterwards
+      const comment = await getFirst<Partial<Comment>>(
+        `
+        INSERT INTO comments (body, post_id, user_id) 
+        VALUES ($1, $2, $3)
         RETURNING created_at, body, id;
-      `);
+        `,
+        [body, postId, req.user?.id]
+      );
 
       return res.json(comment);
     }
@@ -46,11 +47,10 @@ export const update = async (req: express.Request, res: express.Response) => {
   const { post: postId, comment: commentId } = req.params;
 
   // Checking if the post exists
-  const post = await slonik.maybeOne(sql<Partial<Post>>`
-    SELECT * FROM posts WHERE id = ${postId};
-  `);
+  const post = await getFirst<Post>("SELECT * FROM posts WHERE id = $1", [
+    postId,
+  ]);
 
-  // Post exists
   if (post) {
     // Checking if the other user has blocked current user
     const status = await checkStatus({
@@ -60,22 +60,22 @@ export const update = async (req: express.Request, res: express.Response) => {
 
     if (status === "BLOCKED") return res.status(403).json();
     else {
+      const { rows: comments } = (await pg.query(
+        "SELECT * FROM comments WHERE id = $1"
+      )) as { rows: Comment[] };
+
       // Getting the comment
-      const comment = await slonik.maybeOne(sql<Partial<Comment>>`
-        SELECT * FROM comments WHERE id = ${commentId};
-      `);
+      const comment = comments.at(0);
 
       // If comment exists
       if (comment) {
         // If the author of the comment is the same as current user
         if (comment.user_id === req.user?.id!!) {
           // Update the comment
-          const comment = await slonik.maybeOne(sql<Partial<Comment>>`
-            UPDATE comments 
-            SET body = ${body} 
-            WHERE id = ${commentId}
-            RETURNING *;
-          `);
+          const comment = await getFirst<Partial<Comment>>(
+            "UPDATE comments SET body = $1WHERE id = $2 RETURNING *",
+            [body, commentId]
+          );
 
           // Send the updated comment
           return res.json(comment);
@@ -93,46 +93,52 @@ export const update = async (req: express.Request, res: express.Response) => {
 
 // For deleting a comment
 export const remove = async (req: express.Request, res: express.Response) => {
-  // Getting some params
   const { post: postId, comment: commentId } = req.params;
 
-  // Find the post
-  const post = await slonik.maybeOne(sql<Partial<Post>>`
-    SELECT * FROM posts WHERE id = ${postId};
-  `);
+  try {
+    // Find the post
+    const post = await getFirst<Post>("SELECT * FROM posts WHERE id = $1", [
+      postId,
+    ]);
 
-  // If post exists
-  if (post) {
-    // Checking the relation between accounts
-    const status = await checkStatus({
-      other: post?.user_id!!,
-      current: req.user?.id!!,
-    });
+    // If post exists
+    if (post) {
+      // Checking the relation between accounts
+      const status = await checkStatus({
+        other: post?.user_id!!,
+        current: req.user?.id!!,
+      });
 
-    // If the other user has blocked current account
-    if (status === "BLOCKED") return res.status(403).json();
-    else {
-      // Find the comment
-      const comment = await slonik.maybeOne(sql<Partial<Comment>>`
-        SELECT * FROM comments WHERE id = ${commentId};
-      `);
+      // If the other user has blocked current account
+      if (status === "BLOCKED") return res.status(403).json();
+      else {
+        try {
+          // Find the comment
+          const comment = await getFirst<Comment>(
+            "SELECT * FROM comments WHERE id = $1",
+            [commentId]
+          );
 
-      // If comment exists
-      if (comment) {
-        // If the author of the post is the same
-        if (comment.user_id === req.user?.id!!) {
-          // Delete the comment
-          await slonik.query(sql`
-            DELETE FROM comments WHERE id = ${commentId};
-          `);
-          return res.status(204).json();
+          // If comment exists
+          if (comment) {
+            // If the author of the post is the same
+            if (comment.user_id === req.user?.id!!) {
+              // Delete the comment
+              await pg.query("DELETE FROM comments WHERE id = $1", [commentId]);
+              return res.status(204).json();
+            }
+            // If the author is different
+            else return res.status(403).json();
+          }
+          // If the comment doesn't exist
+          else return res.status(404).json();
+        } catch (error) {
+          // TODO: Handle invalid comment UUID errors
         }
-        // If the author is different
-        else return res.status(403).json();
       }
-      // If the comment doesn't exist
-      else return res.status(404).json();
     }
+  } catch (error) {
+    // TODO: Handle invalid post UUID errors
   }
 };
 
@@ -145,9 +151,9 @@ export const fetch = async (req: express.Request, res: express.Response) => {
 
   try {
     // Finding the post
-    const post = await slonik.maybeOne(sql<Partial<Post>>`
-      SELECT * FROM posts WHERE id = ${postId};
-    `);
+    const post = await getFirst<Post>("SELECT * FROM posts WHERE id = $1", [
+      postId,
+    ]);
 
     // If post doesn't exist
     if (!post) return res.status(404).json();
@@ -164,38 +170,46 @@ export const fetch = async (req: express.Request, res: express.Response) => {
         // If no comment cursor was supplied
         if (!next) {
           // Fetching the comments
-          const { rows: comments } = await slonik.query(sql<Partial<Comment>>`
-            SELECT * FROM comments WHERE post_id = ${post.id!!}
-            ORDER BY created_at DESC
-            LIMIT ${Number(limit) || 2}
-          `);
+          const { rows: comments } = (await pg.query(
+            `
+            SELECT * FROM comments WHERE post_id = $1
+            ORDER BY created_at DESC LIMIT $2
+            `,
+            [post.id, Number(limit) || 2]
+          )) as { rows: Comment[] };
 
           // Getting next cursor
-          const next =
-            comments?.length === 0
-              ? null
-              : await slonik.maybeOne(sql<Partial<Comment>>`
-            SELECT * FROM comments WHERE post_id = ${post.id!!}
-            AND id > ${comments[comments.length - 1].id!!}
-            AND created_at > ${comments[comments.length - 1].created_at!!}
-            ORDER BY created_at DESC
-            LIMIT 1;
-          `);
+          const next = (await (async () => {
+            if (comments.length === 0) return null;
+
+            const nextComment = await getFirst(
+              `
+              SELECT * FROM comments WHERE post_id = $1
+              AND id > $2 AND created_at > $3
+              ORDER BY created_at DESC LIMIT 1;
+              `,
+              [
+                post.id,
+                comments[comments.length - 1].id,
+                comments[comments.length - 1].created_at,
+              ]
+            );
+            return nextComment;
+          })()) as Comment | null;
 
           return res.json({
             data: comments,
             next: next?.id,
           });
-        } else {
-          return res.json("not implemented");
-        }
+        } else return res.json("not implemented");
       }
     }
   } catch (error) {
-    if (error instanceof InvalidInputError) return res.status(400).json();
-    else {
-      console.error(error);
-      return res.status(500).json();
-    }
+    // TODO: Handle invalid comment UUID errors
+    // if (error instanceof InvalidInputError) return res.status(400).json();
+    // else {
+    //   console.error(error);
+    //   return res.status(500).json();
+    // }
   }
 };

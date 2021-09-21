@@ -1,11 +1,7 @@
 import pg from "../../db/pg";
 import express from "express";
-import slonik from "../../db/slonik";
-import {
-  sql,
-  InvalidInputError,
-  UniqueIntegrityConstraintViolationError,
-} from "slonik";
+import type { Post, User } from "../../@types";
+import getFirst from "../../utils/db/getFirst";
 import { checkStatus } from "../../helpers/helpers";
 
 // For fetching one post
@@ -15,7 +11,8 @@ export const fetchOne = async (req: express.Request, res: express.Response) => {
 
   try {
     // Getting the post
-    const post = await slonik.maybeOne(sql`
+    const post = await getFirst<Partial<Post>>(
+      `
       SELECT
         Post.id,
         Post.body,
@@ -26,20 +23,22 @@ export const fetchOne = async (req: express.Request, res: express.Response) => {
       FROM posts Post
 
       INNER JOIN (
-        SELECT 
-            id, 
+        SELECT
+            id,
             avatar,
             username
-            last_name, 
+            last_name,
             first_name
 
         FROM users
       ) Author ON Post.user_id = Author.id
 
-      WHERE Post.id = ${id!!} 
-      GROUP BY Post.id, Author.* 
+      WHERE Post.id = $1
+      GROUP BY Post.id, Author.*
       ORDER BY Post.created_at DESC;
-    `);
+      `,
+      [id]
+    );
 
     // Fetching the relation status between users
     const status = await checkStatus({
@@ -55,25 +54,26 @@ export const fetchOne = async (req: express.Request, res: express.Response) => {
       else return res.json(post);
     }
   } catch (error) {
-    if (error instanceof InvalidInputError) return res.status(400).json();
-    else {
-      console.error(error);
-      return res.status(500).json();
-    }
+    // TODO: Handle invalid post UUID errors
+    // if (error instanceof InvalidInputError) return res.status(400).json();
+    // else {
+    //   console.error(error);
+    //   return res.status(500).json();
+    // }
   }
 };
 
 // For fetching one user's post
 export const fetch = async (req: express.Request, res: express.Response) => {
-  // Cursor for next page
+  // Optional cursor for next page
   const { cursor } = req.query;
-  // Account's username to fetch posts
+  // The username of the user to fetch posts from
   const { username } = req.params;
 
   // Getting post author
-  const user = await slonik.maybeOne(sql`
-    SELECT * FROM users WHERE username = ${username!!};
-  `);
+  const user = await getFirst<User>("SELECT * FROM users WHERE username = $1", [
+    username,
+  ]);
 
   // Checking the relation between this and author account
   const status = await checkStatus({
@@ -108,28 +108,8 @@ export const fetch = async (req: express.Request, res: express.Response) => {
         WHERE Post.user_id = $1
         ORDER BY Post.created_at DESC LIMIT 2;
         `,
-        [user?.id!!]
+        [user?.id]
       );
-
-      // Fetching next page
-      // const next = await new Promise(async (resolve, _) => {
-      //   if (posts.length === 0) return resolve(null);
-      //   else {
-      //     const lastPost = posts[posts.length - 1];
-      //     const { rows } = await pg.query(
-      //       `
-      //       SELECT * FROM posts
-      //       WHERE user_id = $1
-      //       AND created_at <= $2
-      //       AND (created_at < $2 OR id < $3)
-      //       ORDER BY created_at DESC, id DESC LIMIT 1;
-      //     `,
-      //       [user?.id!!, lastPost?.created_at!!, lastPost?.id!!]
-      //     );
-
-      //     return resolve(rows[0]?.id!! || null);
-      //   }
-      // });
 
       return res.json({
         data: posts,
@@ -140,11 +120,9 @@ export const fetch = async (req: express.Request, res: express.Response) => {
     else {
       try {
         // Fetching the post with the supplied cursor
-        const {
-          rows: { 0: cursorPost },
-        } = await pg.query(
-          `SELECT * FROM posts WHERE id = $1 AND user_id = $2`,
-          [cursor, user?.id!!]
+        const cursorPost = await getFirst<Post>(
+          "SELECT * FROM posts WHERE id = $1 AND user_id = $2",
+          [cursor, user?.id]
         );
 
         // Fetching the posts on current page
@@ -168,33 +146,17 @@ export const fetch = async (req: express.Request, res: express.Response) => {
             FROM users
           ) Author ON Post.user_id = Author.id
 
-          WHERE Post.created_at < $1 OR (Post.created_at = $1 AND Post.id < $2) AND Post.user_id = $3
-          ORDER BY Post.created_at DESC, Post.id DESC LIMIT 2;
-        `,
+          WHERE Post.created_at < $1 OR 
+          (Post.created_at = $1 AND Post.id < $2) AND 
+          Post.user_id = $3 ORDER BY Post.created_at DESC, Post.id DESC 
+          LIMIT 2;
+          `,
           [cursorPost?.created_at!!, cursor, user?.id!!]
         );
 
-        // Fetching next page
-        // const next = await new Promise(async (resolve, _) => {
-        //   if (posts.length === 0) return resolve(null);
-        //   else {
-        //     const lastPost = posts[posts.length - 1];
-        //     const { rows } = await pg.query(
-        //       `
-        //       SELECT * FROM posts WHERE user_id = $1
-        //       AND created_at <= $2 AND (created_at < $2 OR id < $3)
-        //       ORDER BY created_at DESC, id DESC LIMIT 1;
-        //     `,
-        //       [user?.id!!, lastPost?.created_at!!, lastPost?.id!!]
-        //     );
-
-        //     return resolve(rows[0]?.id!! || null);
-        //   }
-        // });
-
         return res.json({
           data: posts,
-          next: posts[posts.length - 1]?.id || null,
+          next: posts.at(posts.length - 1)?.id || null,
         });
       } catch (error: any) {
         // Invalid cursor ID
@@ -210,21 +172,16 @@ export const fetch = async (req: express.Request, res: express.Response) => {
 
 // For creating a post
 export const create = async (req: express.Request, res: express.Response) => {
-  // Post body
   const { body } = req.body;
 
   try {
-    // Create new post
-    const created = await slonik.maybeOne(sql`
-        INSERT INTO posts (body, user_id) 
-        VALUES (${body}, ${req.user?.id!!}) 
-        RETURNING id;
-    `);
+    const created = await getFirst<Partial<Post>>(
+      "INSERT INTO posts (body, user_id) VALUES ($1, $2) RETURNING id",
+      [body, req.user?.id]
+    );
 
-    // Getting the post
-    const {
-      rows: { 0: post },
-    } = await pg.query(
+    // Getting newly created post with the auther
+    const post = await getFirst(
       `
       SELECT Post.id, Post.body, Post.created_at, to_json(Author) AS user
 
@@ -246,7 +203,7 @@ export const create = async (req: express.Request, res: express.Response) => {
       GROUP BY Post.id, Author.* 
       ORDER BY Post.created_at DESC;
     `,
-      [created?.id!!]
+      [created?.id]
     );
 
     // Sending the response
@@ -259,35 +216,29 @@ export const create = async (req: express.Request, res: express.Response) => {
 
 // For removing a post
 export const remove = async (req: express.Request, res: express.Response) => {
+  const { id } = req.params;
+
   try {
-    // Getting post id from the query
-    const { id } = req.params;
+    const post = await getFirst<Post>("SELECT * FROM posts WHERE id = $1", [
+      id,
+    ]);
 
-    // Deleting from the database
-    const post = await slonik.maybeOne(sql`
-      SELECT * FROM posts WHERE id = ${id!!};
-    `);
-
-    // Checking if the post exists
     if (post) {
       // If the author of the post is the same as current user
       if (post?.user_id === req.user?.id) {
         // Deleting the post
-        await slonik.query(sql`
-          DELETE FROM posts WHERE id = ${id.toString()};
-        `);
-
-        // Returing the response
+        await pg.query("DELETE FROM posts WHERE id = $1", [id]);
         return res.status(204).json();
       } else return res.status(403).json();
     } else return res.status(404).json();
   } catch (error) {
+    // TODO: Handle invalid post UUID errors
     // If the ID of the post is invalid
-    if (error instanceof InvalidInputError) return res.status(400).json();
-    else {
-      console.error(error);
-      return res.status(500).json();
-    }
+    // if (error instanceof InvalidInputError) return res.status(400).json();
+    // else {
+    //   console.error(error);
+    //   return res.status(500).json();
+    // }
   }
 };
 
@@ -299,12 +250,13 @@ export const heart = async (req: express.Request, res: express.Response) => {
   try {
     // TODO
   } catch (error) {
-    if (error instanceof InvalidInputError) return res.status(400).json();
-    else if (error instanceof UniqueIntegrityConstraintViolationError) {
-    } else {
-      console.error(error);
-      return res.status(500).json();
-    }
+    // TODO: Handle invalid post UUID errors
+    // if (error instanceof InvalidInputError) return res.status(400).json();
+    // else if (error instanceof UniqueIntegrityConstraintViolationError) {
+    // } else {
+    //   console.error(error);
+    //   return res.status(500).json();
+    // }
   }
 };
 
@@ -315,11 +267,12 @@ export const unheart = async (req: express.Request, res: express.Response) => {
   try {
     // TODO
   } catch (error) {
-    if (error instanceof InvalidInputError) return res.status(400).json();
-    else if (error instanceof UniqueIntegrityConstraintViolationError) {
-    } else {
-      console.error(error);
-      return res.status(500).json();
-    }
+    // TODO: Handle invalid post UUID errors
+    // if (error instanceof InvalidInputError) return res.status(400).json();
+    // else if (error instanceof UniqueIntegrityConstraintViolationError) {
+    // } else {
+    //   console.error(error);
+    //   return res.status(500).json();
+    // }
   }
 };

@@ -1,30 +1,32 @@
-import { sql } from "slonik";
+import pg from "../../db/pg";
 import express from "express";
-import slonik from "../../db/slonik";
-import { User } from "../../@types/index";
+import type { User } from "../../@types/index";
 import { checkStatus } from "../../helpers/helpers";
 
 // For fetching current account details
 export const me = async (req: express.Request, res: express.Response) => {
   try {
     // Getting the account
-    const user = await slonik.maybeOne(sql<Partial<User>>`
-      SELECT 
+    const { rows } = (await pg.query(
+      `
+      SELECT
         id,
         bio,
         cover,
         avatar,
-        private,
+        is_private,
         username,
         last_name,
         first_name,
         created_at
 
-        FROM users WHERE id = ${req.user?.id!!};
-    `);
+      FROM users WHERE id = $1;
+    `,
+      [req.user?.id]
+    )) as { rows: User[] };
 
     // Sending the response
-    return res.json(user);
+    return res.json(rows.at(0));
   } catch (error) {
     console.error(error);
     return res.status(500).json();
@@ -38,7 +40,8 @@ export const fetch = async (req: express.Request, res: express.Response) => {
 
   try {
     // Getting the account
-    const user = await slonik.maybeOne(sql<Partial<User>>`
+    const { rows } = (await pg.query(
+      `
       SELECT 
         id,
         bio,
@@ -51,8 +54,12 @@ export const fetch = async (req: express.Request, res: express.Response) => {
         created_at
 
         FROM users
-        WHERE username = ${username!!};
-    `);
+        WHERE username = $1;
+    `,
+      [username]
+    )) as { rows: User[] };
+
+    const user = rows.at(0);
 
     // If the user doesn't exist
     if (!user) return res.status(404).json();
@@ -79,49 +86,10 @@ export const deleteAccount = async (
   req: express.Request,
   res: express.Response
 ) => {
-  const { id } = req?.user!!;
-
-  try {
-    // TODO
-  } catch (error) {
-    console.error(error);
-    return res.status(500).json();
-  }
+  // TODO
 };
 
 // For updating account
 export const update = async (req: express.Request, res: express.Response) => {
-  const { body } = req;
-
-  for (const field in body) {
-    const value = body[field];
-
-    try {
-      switch (field) {
-        case "firstName": {
-          await slonik.query(sql`
-            UPDATE users SET first_name = ${value} 
-            WHERE id = ${req.user?.id!!}
-          `);
-          break;
-        }
-        case "lastName": {
-          await slonik.query(sql`
-            UPDATE users SET last_name = ${value} 
-            WHERE id = ${req.user?.id!!}
-          `);
-          break;
-        }
-        default: {
-          res.status(304).json();
-          break;
-        }
-      }
-
-      return res.status(204).json();
-    } catch (error) {
-      console.error({ error });
-      return res.status(304).json();
-    }
-  }
+  // TODO
 };

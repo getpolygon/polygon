@@ -1,7 +1,7 @@
 import { sql } from "slonik";
 import { User } from "../../@types";
-import slonik from "../../db/slonik";
 import emailValidator from "deep-email-validator-extended";
+import getFirst from "../../utils/db/getFirst";
 
 // Middleware function for express-validator for validating user emails
 export const validateEmail = async (value: string) => {
@@ -19,9 +19,10 @@ export const validateEmail = async (value: string) => {
   // If the email is valid
   if (valid) {
     // Checking for existing users with that email
-    const existingUser = await slonik.maybeOne(sql<User>`
-      SELECT * FROM users WHERE email = ${value};
-    `);
+    const existingUser = await getFirst<User>(
+      "SELECT * FROM users WHERE email = $1",
+      [value]
+    );
 
     // If there is no user with that email
     if (!existingUser) return Promise.resolve(valid);
@@ -38,9 +39,10 @@ export const validateUsername = async (value: string) => {
   if (!validRegex) return Promise.reject("Invalid username");
   else {
     // Finding another user with the same username if it exists
-    const existingUser = await slonik.maybeOne(sql<User>`
-      SELECT * FROM users WHERE username = ${value};
-    `);
+    const existingUser = await getFirst<User>(
+      "SELECT * FROM users WHERE username = $1;",
+      [value]
+    );
 
     // If there are no accounts with that username, make the field valid
     if (!existingUser) return Promise.resolve(validRegex);

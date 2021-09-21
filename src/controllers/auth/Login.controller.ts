@@ -1,23 +1,18 @@
 import bcrypt from "bcrypt";
-import { sql } from "slonik";
 import express from "express";
 import jwt from "jsonwebtoken";
-import { User } from "../../@types";
-import slonik from "../../db/slonik";
+import type { User } from "../../@types";
+import getFirst from "../../utils/db/getFirst";
+
 const { JWT_PRIVATE_KEY } = process.env;
 
 export default async (req: express.Request, res: express.Response) => {
-  // Get the email and the password
   const { password, email } = req.body;
 
-  // Find the user with specified parameters
-  const {
-    rows: { 0: user },
-  } = await slonik.query(sql<User>`
-      SELECT * FROM users WHERE email = ${email};
-  `);
+  const user = await getFirst<User>("SELECT * FROM users WHERE email = $1", [
+    email,
+  ]);
 
-  // If user exists
   if (user) {
     // Comparing passwords
     const same = await bcrypt.compare(password, user.password);

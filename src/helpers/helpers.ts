@@ -1,6 +1,5 @@
-import { sql } from "slonik";
-import slonik from "../db/slonik";
-import { Relation, RelationStatus } from "../@types";
+import getFirst from "../utils/db/getFirst";
+import type { Relation, RelationStatus } from "../@types";
 
 // For checking if a user has blocked current user
 export const checkStatus = async ({
@@ -12,10 +11,13 @@ export const checkStatus = async ({
   // Current user's ID
   current: string;
 }): Promise<RelationStatus> => {
-  const relation = await slonik.maybeOne!!(sql<Relation>`
-    SELECT * FROM relations WHERE to_user = ${current} 
-    AND from_user = ${other} AND status = 'BLOCKED';
-  `);
+  const relation = await getFirst<Relation>(
+    `
+    SELECT * FROM relations WHERE to_user = $1
+    AND from_user = $2 AND status = 'BLOCKED';
+    `,
+    [current, other]
+  );
 
   return relation?.status!!;
 };

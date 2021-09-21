@@ -1,4 +1,5 @@
 import { Client } from "minio";
+
 const {
   MINIO_ENDPOINT,
   MINIO_BUCKET,
@@ -7,7 +8,8 @@ const {
   MINIO_SECKEY,
   MINIO_USESSL,
 } = process.env;
-const config = {
+
+export const config = {
   MINIO_ENDPOINT,
   MINIO_BUCKET,
   MINIO_PORT,
@@ -15,20 +17,11 @@ const config = {
   MINIO_SECKEY,
   MINIO_USESSL,
 };
-const client = new Client({
+
+export const client = new Client({
   endPoint: MINIO_ENDPOINT!!,
   port: parseInt(MINIO_PORT!!),
   accessKey: MINIO_ACCKEY!!,
   secretKey: MINIO_SECKEY!!,
   useSSL: JSON.parse(MINIO_USESSL!!),
 });
-
-export default {
-  client,
-  config,
-};
-
-module.exports = {
-  client,
-  config,
-};

@@ -2,8 +2,8 @@
   "private": true,
   "scripts": {
     "build": "tsc --project .",
+    "start": "node build/index.js",
     "migrate": "node tools/migrator",
-    "start": "node build/src/index.js",
     "seed": "cd tools/seeder && go run .",
     "dev": "ts-node-dev --rs --deps src/index"
   },

@@ -196,7 +196,7 @@ export const fetch = async (req: express.Request, res: express.Response) => {
           data: posts,
           next: posts[posts.length - 1]?.id || null,
         });
-      } catch (error) {
+      } catch (error: any) {
         // Invalid cursor ID
         if (error?.code === "22P02") return res.status(400).json();
         else {

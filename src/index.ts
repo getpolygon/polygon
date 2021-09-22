@@ -9,7 +9,7 @@ import express from "express";
 import compression from "compression";
 import cookieParser from "cookie-parser";
 
-const port = Number(process.env.PORT) || 3001;
+const port = process.env.PORT || 3001;
 const isDev = process.env.NODE_ENV === "development";
 // Allowing only certain origins in production
 const origins = isDev

@@ -1,14 +1,15 @@
 import nodemailer from "nodemailer";
 
-const { MAILER_HOST, MAILER_USER, MAILER_PASS, MAILER_PORT, NODE_ENV } =
+const { NODE_ENV, MAILER_HOST, MAILER_USER, MAILER_PASS, MAILER_PORT } =
   process.env;
-const isDev = NODE_ENV !== "production";
 
-// Creating a mail transport
+const isProd = NODE_ENV === "production";
+const isDev = NODE_ENV === "development";
+
 const mailer = nodemailer.createTransport({
+  secure: isProd,
   host: MAILER_HOST!!,
   port: JSON.parse(MAILER_PORT!!),
-  secure: isDev ? false : true,
   auth: {
     user: MAILER_USER!!,
     pass: MAILER_PASS!!,
@@ -21,16 +22,19 @@ interface MailerProps {
   receiver: string;
 }
 
-export const send = async ({ receiver, subject, html }: MailerProps) => {
-  if (!receiver) throw new Error("Receiver not specified");
+export const send = async ({ receiver: to, subject, html }: MailerProps) => {
+  if (!to) throw new Error("Receiver not specified");
   else {
-    const data = await mailer.sendMail({
-      html: html,
-      to: receiver,
-      subject: subject,
-      from: MAILER_USER!!,
-    });
+    try {
+      const data = await mailer.sendMail({
+        to,
+        html,
+        subject,
+      });
 
-    return data;
+      return data;
+    } catch (error) {
+      // Do nothing
+    }
   }
 };

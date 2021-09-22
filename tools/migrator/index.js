@@ -1,8 +1,8 @@
-const path = require("path");
+require("dotenv").config();
+
 const { createPool } = require("slonik");
 const { SlonikMigrator } = require("@slonik/migrator");
 
-require("dotenv").config({ path: path.resolve(".env") });
 const { DATABASE_URL } = process.env;
 
 const slonik = createPool(DATABASE_URL);

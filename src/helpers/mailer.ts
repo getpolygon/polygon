@@ -2,9 +2,7 @@ import nodemailer from "nodemailer";
 
 const { MAILER_HOST, MAILER_USER, MAILER_PASS, MAILER_PORT, NODE_ENV } =
   process.env;
-const isDev = NODE_ENV === "development";
-
-console.log(MAILER_PORT, MAILER_USER, MAILER_PASS, MAILER_HOST);
+const isDev = NODE_ENV !== "production";
 
 // Creating a mail transport
 const mailer = nodemailer.createTransport({

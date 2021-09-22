@@ -3,16 +3,17 @@
   "scripts": {
     "build": "tsc --project .",
     "prestart": "yarn migrate up",
-    "start": "node build/index.js",
     "migrate": "node tools/migrator",
     "seed": "cd tools/seeder && go run .",
-    "dev": "ts-node-dev --rs --deps src/index"
+    "start": "cross-env NODE_ENV=production node build/index.js",
+    "dev": "cross-env NODE_ENV=development ts-node-dev --cache-directory --exit-child --rs --deps ./src/index.ts"
   },
   "dependencies": {
     "bcrypt": "^5.0.0",
     "compression": "^1.7.4",
     "cookie-parser": "^1.4.5",
     "cors": "^2.8.5",
+    "cross-env": "^7.0.3",
     "date-fns": "^2.22.1",
     "deep-email-validator-extended": "^0.2.0",
     "dotenv": "^10.0.0",

@@ -30,4 +30,7 @@ isDev && app.use(morgan("dev"));
 app.use(routes);
 
 const httpServer = http.createServer(app);
-httpServer.listen(port, () => console.log(`> Backend started at port ${port}`));
+httpServer.listen(
+  process.env.NODE_ENV === "development" ? port : `0.0.0.0:${port}`,
+  () => console.log(`> Backend started at port ${port}`)
+);

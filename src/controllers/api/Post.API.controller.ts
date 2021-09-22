@@ -156,7 +156,7 @@ export const fetch = async (req: express.Request, res: express.Response) => {
 
         return res.json({
           data: posts,
-          next: posts.at(posts.length - 1)?.id || null,
+          next: posts[posts.length - 1]?.id || null,
         });
       } catch (error: any) {
         // Invalid cursor ID

@@ -60,12 +60,10 @@ export const update = async (req: express.Request, res: express.Response) => {
 
     if (status === "BLOCKED") return res.status(403).json();
     else {
-      const { rows: comments } = (await pg.query(
-        "SELECT * FROM comments WHERE id = $1"
-      )) as { rows: Comment[] };
-
-      // Getting the comment
-      const comment = comments.at(0);
+      const comment = await getFirst<Comment>(
+        "SELECT * FROM comments WHERE id = $1",
+        [commentId]
+      );
 
       // If comment exists
       if (comment) {

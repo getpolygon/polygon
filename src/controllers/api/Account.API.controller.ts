@@ -2,12 +2,13 @@ import pg from "../../db/pg";
 import express from "express";
 import type { User } from "../../@types/index";
 import { checkStatus } from "../../helpers/helpers";
+import getFirst from "../../utils/db/getFirst";
 
 // For fetching current account details
 export const me = async (req: express.Request, res: express.Response) => {
   try {
     // Getting the account
-    const { rows } = (await pg.query(
+    const user = await getFirst<Partial<User>>(
       `
       SELECT
         id,
@@ -23,10 +24,10 @@ export const me = async (req: express.Request, res: express.Response) => {
       FROM users WHERE id = $1;
     `,
       [req.user?.id]
-    )) as { rows: User[] };
+    );
 
     // Sending the response
-    return res.json(rows.at(0));
+    return res.json(user);
   } catch (error) {
     console.error(error);
     return res.status(500).json();
@@ -40,7 +41,7 @@ export const fetch = async (req: express.Request, res: express.Response) => {
 
   try {
     // Getting the account
-    const { rows } = (await pg.query(
+    const user = await getFirst<Partial<User>>(
       `
       SELECT 
         id,
@@ -57,9 +58,7 @@ export const fetch = async (req: express.Request, res: express.Response) => {
         WHERE username = $1;
     `,
       [username]
-    )) as { rows: User[] };
-
-    const user = rows.at(0);
+    );
 
     // If the user doesn't exist
     if (!user) return res.status(404).json();

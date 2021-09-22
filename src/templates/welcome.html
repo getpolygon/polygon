@@ -1,203 +1,213 @@
 <!DOCTYPE html>
 <html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  </head>
 
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <link href="https://unpkg.com/tailwindcss@^2/dist/tailwind.min.css" rel="stylesheet" />
-  <link href="https://allfont.net/allfont.css?fonts=montserrat-bold" rel="stylesheet" type="text/css" />
-  <link href="https://cdn.jsdelivr.net/npm/daisyui@1.11.1/dist/full.css" rel="stylesheet" type="text/css" />
-  <style>
-    body {
-      font-family: "Montserrat Bold", sans-serif;
-    }
-  </style>
-</head>
+  <body>
+    <div class="flex justify-center align-middle">
+      <!-- Section: Main -->
+      <main class="max-w-3xl p-2">
+        <div class="mt-7">
+          <!-- Section: Heading -->
+          <h1 class="text-3xl font-bold text-center">
+            Welcome to <span class="text-purple-400 font-bold">Polygon</span>,
+            {{name}}!
+          </h1>
+          <!-- Section: Subheading -->
+          <h4 class="md:text-md sm:text-lg font-semibold text-center mt-2">
+            You have just become one of our
+            <span class="md:text-2xl sm:text-xl underline">FIRST</span> members,
+            congrats! 🎉
+          </h4>
+        </div>
 
-<body>
-  <div class="flex justify-center align-middle">
-    <!-- Section: Main -->
-    <main class="max-w-3xl p-2">
-      <div class="mt-7">
-        <!-- Section: Heading -->
-        <h1 class="text-3xl font-bold text-center">
-          Welcome to <span class="text-purple-400 font-bold">Polygon</span>,
-          {{name}}!
-        </h1>
-        <!-- Section: Subheading -->
-        <h4 class="md:text-md sm:text-lg font-semibold text-center mt-2">
-          You have just become one of our
-          <span class="md:text-2xl sm:text-xl underline">FIRST</span> members,
-          congrats! 🎉
-        </h4>
-      </div>
+        <!-- Section: Actions -->
+        <div class="mt-14 max-w-3xl px-8">
+          <h1 class="text-3xl font-bold text-left">What to do now?</h1>
+          <p class="text-md mt-2 font-extralight text-left">
+            Here are some things you can do at Polygon
+          </p>
 
-      <!-- Section: Actions -->
-      <div class="mt-14 max-w-3xl px-8">
-        <h1 class="text-3xl font-bold text-left">What to do now?</h1>
-        <p class="text-md mt-2 font-extralight text-left">
-          Here are some things you can do at Polygon
-        </p>
-
-        <!-- Section: Cards -->
-        <div class="mt-4">
-          <!-- Section: Create -->
-          <div>
-            <a href="#" target="_blank" rel="noreferrer noopener">
-              <div class="
-                    w-full
-                    p-5
-                    max-w-2xl
-                    rounded-lg
-                    bg-purple-400
-                  ">
-                <div class="flex align-middle justify-between">
-                  <!-- Section: Card title -->
-                  <h3 class="text-lg text-white">Create a post</h3>
-
-                  <!-- Section: Card icon -->
-                  <svg width="28" height="28" fill="currentColor" viewBox="0 0 16 16" class="bi bi-arrow-right"
-                    xmlns="http://www.w3.org/2000/svg">
-                    <path class="text-white" fill-rule="evenodd"
-                      d="M1 8a.5.5 0 0 1 .5-.5h11.793l-3.147-3.146a.5.5 0 0 1 .708-.708l4 4a.5.5 0 0 1 0 .708l-4 4a.5.5 0 0 1-.708-.708L13.293 8.5H1.5A.5.5 0 0 1 1 8z" />
-                  </svg>
-                </div>
-              </div>
-            </a>
-          </div>
-
-          <!-- Section: Comment -->
+          <!-- Section: Cards -->
           <div class="mt-4">
-            <a href="https://polygon.am/posts/" target="_blank" rel="noreferrer noopener">
-              <div class="
-                    w-full
-                    p-5
-                    max-w-2xl
-                    rounded-lg
-                    bg-blue-400
-                  ">
-                <div class="flex align-middle justify-between">
-                  <!-- Section: Card title -->
-                  <h3 class="text-lg text-white">Create a comment</h3>
+            <!-- Section: Create -->
+            <div>
+              <a href="#" target="_blank" rel="noreferrer noopener">
+                <div class="w-full p-5 max-w-2xl rounded-lg bg-purple-400">
+                  <div class="flex align-middle justify-between">
+                    <!-- Section: Card title -->
+                    <h3 class="text-lg text-white">Create a post</h3>
 
-                  <!-- Section: Card icon -->
-                  <svg width="28" height="28" fill="currentColor" viewBox="0 0 16 16" class="bi bi-arrow-right"
-                    xmlns="http://www.w3.org/2000/svg">
-                    <path class="text-white" fill-rule="evenodd"
-                      d="M1 8a.5.5 0 0 1 .5-.5h11.793l-3.147-3.146a.5.5 0 0 1 .708-.708l4 4a.5.5 0 0 1 0 .708l-4 4a.5.5 0 0 1-.708-.708L13.293 8.5H1.5A.5.5 0 0 1 1 8z" />
-                  </svg>
+                    <!-- Section: Card icon -->
+                    <svg
+                      width="28"
+                      height="28"
+                      fill="currentColor"
+                      viewBox="0 0 16 16"
+                      class="bi bi-arrow-right"
+                      xmlns="http://www.w3.org/2000/svg"
+                    >
+                      <path
+                        class="text-white"
+                        fill-rule="evenodd"
+                        d="M1 8a.5.5 0 0 1 .5-.5h11.793l-3.147-3.146a.5.5 0 0 1 .708-.708l4 4a.5.5 0 0 1 0 .708l-4 4a.5.5 0 0 1-.708-.708L13.293 8.5H1.5A.5.5 0 0 1 1 8z"
+                      />
+                    </svg>
+                  </div>
                 </div>
-              </div>
-            </a>
-          </div>
+              </a>
+            </div>
 
-          <!-- Section: Profile -->
-          <div class="mt-4">
-            <a href="https://polygon.am/settings#cover" target="_blank" rel="noreferrer noopener">
-              <div class="
-                    w-full
-                    p-5
-                    max-w-2xl
-                    rounded-lg
-                    bg-green-400
-                  ">
-                <div class="flex align-middle justify-between">
-                  <!-- Section: Card title -->
-                  <h3 class="text-lg text-white">Change your profile cover</h3>
+            <!-- Section: Comment -->
+            <div class="mt-4">
+              <a
+                href="https://polygon.am/posts/"
+                target="_blank"
+                rel="noreferrer noopener"
+              >
+                <div class="w-full p-5 max-w-2xl rounded-lg bg-blue-400">
+                  <div class="flex align-middle justify-between">
+                    <!-- Section: Card title -->
+                    <h3 class="text-lg text-white">Create a comment</h3>
 
-                  <!-- Section: Card icon -->
-                  <svg width="28" height="28" fill="currentColor" viewBox="0 0 16 16" class="bi bi-arrow-right"
-                    xmlns="http://www.w3.org/2000/svg">
-                    <path class="text-white" fill-rule="evenodd"
-                      d="M1 8a.5.5 0 0 1 .5-.5h11.793l-3.147-3.146a.5.5 0 0 1 .708-.708l4 4a.5.5 0 0 1 0 .708l-4 4a.5.5 0 0 1-.708-.708L13.293 8.5H1.5A.5.5 0 0 1 1 8z" />
-                  </svg>
+                    <!-- Section: Card icon -->
+                    <svg
+                      width="28"
+                      height="28"
+                      fill="currentColor"
+                      viewBox="0 0 16 16"
+                      class="bi bi-arrow-right"
+                      xmlns="http://www.w3.org/2000/svg"
+                    >
+                      <path
+                        class="text-white"
+                        fill-rule="evenodd"
+                        d="M1 8a.5.5 0 0 1 .5-.5h11.793l-3.147-3.146a.5.5 0 0 1 .708-.708l4 4a.5.5 0 0 1 0 .708l-4 4a.5.5 0 0 1-.708-.708L13.293 8.5H1.5A.5.5 0 0 1 1 8z"
+                      />
+                    </svg>
+                  </div>
                 </div>
-              </div>
-            </a>
-          </div>
+              </a>
+            </div>
 
-          <!-- Section: Follow -->
-          <div class="mt-4">
-            <a href="#" target="_blank" rel="noreferrer noopener">
-              <div class="
-                    w-full
-                    p-5
-                    max-w-2xl
-                    rounded-lg
-                    bg-yellow-400
-                  ">
-                <div class="flex align-middle justify-between">
-                  <!-- Section: Card title -->
-                  <h3 class="text-lg text-white">Follow a user</h3>
+            <!-- Section: Profile -->
+            <div class="mt-4">
+              <a
+                href="https://polygon.am/settings#cover"
+                target="_blank"
+                rel="noreferrer noopener"
+              >
+                <div class="w-full p-5 max-w-2xl rounded-lg bg-green-400">
+                  <div class="flex align-middle justify-between">
+                    <!-- Section: Card title -->
+                    <h3 class="text-lg text-white">
+                      Change your profile cover
+                    </h3>
 
-                  <!-- Section: Card icon -->
-                  <svg width="28" height="28" fill="currentColor" viewBox="0 0 16 16" class="bi bi-arrow-right"
-                    xmlns="http://www.w3.org/2000/svg">
-                    <path class="text-white" fill-rule="evenodd"
-                      d="M1 8a.5.5 0 0 1 .5-.5h11.793l-3.147-3.146a.5.5 0 0 1 .708-.708l4 4a.5.5 0 0 1 0 .708l-4 4a.5.5 0 0 1-.708-.708L13.293 8.5H1.5A.5.5 0 0 1 1 8z" />
-                  </svg>
+                    <!-- Section: Card icon -->
+                    <svg
+                      width="28"
+                      height="28"
+                      fill="currentColor"
+                      viewBox="0 0 16 16"
+                      class="bi bi-arrow-right"
+                      xmlns="http://www.w3.org/2000/svg"
+                    >
+                      <path
+                        class="text-white"
+                        fill-rule="evenodd"
+                        d="M1 8a.5.5 0 0 1 .5-.5h11.793l-3.147-3.146a.5.5 0 0 1 .708-.708l4 4a.5.5 0 0 1 0 .708l-4 4a.5.5 0 0 1-.708-.708L13.293 8.5H1.5A.5.5 0 0 1 1 8z"
+                      />
+                    </svg>
+                  </div>
                 </div>
-              </div>
-            </a>
-          </div>
+              </a>
+            </div>
 
-          <!-- Section: Picture -->
-          <div class="mt-4">
-            <a href="https://polygon.am/settings#avatar" target="_blank" rel="noreferrer noopener">
-              <div class="
-                    w-full
-                    p-5
-                    max-w-2xl
-                    rounded-lg
-                    bg-red-500
-                  ">
-                <div class="flex align-middle justify-between">
-                  <!-- Section: Card title -->
-                  <h3 class="text-lg text-white">Add a profile picture</h3>
+            <!-- Section: Follow -->
+            <div class="mt-4">
+              <a href="#" target="_blank" rel="noreferrer noopener">
+                <div class="w-full p-5 max-w-2xl rounded-lg bg-yellow-400">
+                  <div class="flex align-middle justify-between">
+                    <!-- Section: Card title -->
+                    <h3 class="text-lg text-white">Follow a user</h3>
 
-                  <!-- Section: Card icon -->
-                  <svg width="28" height="28" fill="currentColor" viewBox="0 0 16 16" class="bi bi-arrow-right"
-                    xmlns="http://www.w3.org/2000/svg">
-                    <path class="text-white" fill-rule="evenodd"
-                      d="M1 8a.5.5 0 0 1 .5-.5h11.793l-3.147-3.146a.5.5 0 0 1 .708-.708l4 4a.5.5 0 0 1 0 .708l-4 4a.5.5 0 0 1-.708-.708L13.293 8.5H1.5A.5.5 0 0 1 1 8z" />
-                  </svg>
+                    <!-- Section: Card icon -->
+                    <svg
+                      width="28"
+                      height="28"
+                      fill="currentColor"
+                      viewBox="0 0 16 16"
+                      class="bi bi-arrow-right"
+                      xmlns="http://www.w3.org/2000/svg"
+                    >
+                      <path
+                        class="text-white"
+                        fill-rule="evenodd"
+                        d="M1 8a.5.5 0 0 1 .5-.5h11.793l-3.147-3.146a.5.5 0 0 1 .708-.708l4 4a.5.5 0 0 1 0 .708l-4 4a.5.5 0 0 1-.708-.708L13.293 8.5H1.5A.5.5 0 0 1 1 8z"
+                      />
+                    </svg>
+                  </div>
                 </div>
-              </div>
-            </a>
+              </a>
+            </div>
+
+            <!-- Section: Picture -->
+            <div class="mt-4">
+              <a
+                href="https://polygon.am/settings#avatar"
+                target="_blank"
+                rel="noreferrer noopener"
+              >
+                <div class="w-full p-5 max-w-2xl rounded-lg bg-red-500">
+                  <div class="flex align-middle justify-between">
+                    <!-- Section: Card title -->
+                    <h3 class="text-lg text-white">Add a profile picture</h3>
+
+                    <!-- Section: Card icon -->
+                    <svg
+                      width="28"
+                      height="28"
+                      fill="currentColor"
+                      viewBox="0 0 16 16"
+                      class="bi bi-arrow-right"
+                      xmlns="http://www.w3.org/2000/svg"
+                    >
+                      <path
+                        class="text-white"
+                        fill-rule="evenodd"
+                        d="M1 8a.5.5 0 0 1 .5-.5h11.793l-3.147-3.146a.5.5 0 0 1 .708-.708l4 4a.5.5 0 0 1 0 .708l-4 4a.5.5 0 0 1-.708-.708L13.293 8.5H1.5A.5.5 0 0 1 1 8z"
+                      />
+                    </svg>
+                  </div>
+                </div>
+              </a>
+            </div>
           </div>
         </div>
-      </div>
 
-      <!-- Section: Footer -->
-      <footer class="bottom-0 max-w-3xl mb-7 mt-14">
-        <div>
-          <div class="mb-4">
-            <!-- Section: Footer thank you -->
-            <p class="text-md text-center italic font-bold">
-              Thanks for being with us, {{name}}.
-            </p>
-          </div>
-
+        <!-- Section: Footer -->
+        <footer class="bottom-0 max-w-3xl mb-7 mt-14">
           <div>
-            <!-- Section: Footer Text -->
-            <p class="text-sm text-center">
-              Polygon
-              <!-- This field is set automatically -->
-              <span id="current-year"></span>
-            </p>
-            <p class="text-sm text-center">
-              &copy; Polygon Networks Incorporated
-            </p>
+            <div class="mb-4">
+              <!-- Section: Footer thank you -->
+              <p class="text-md text-center italic font-bold">
+                Thanks for being with us, {{name}}.
+              </p>
+            </div>
+
+            <div>
+              <!-- Section: Footer Text -->
+              <p class="text-sm text-center">Polygon 2021</p>
+              <p class="text-sm text-center">
+                &copy; Polygon Networks Incorporated
+              </p>
+            </div>
           </div>
-        </div>
-      </footer>
-    </main>
-  </div>
-
-  <script>
-    const currentYear = document.getElementById("current-year");
-    currentYear.innerText = new Date().getFullYear();
-  </script>
-</body>
-
+        </footer>
+      </main>
+    </div>
+  </body>
 </html>

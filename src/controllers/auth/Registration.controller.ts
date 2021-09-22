@@ -1,17 +1,15 @@
 import bcrypt from "bcrypt";
-import { sql } from "slonik";
 import express from "express";
 import jwt from "jsonwebtoken";
 import { nanoid } from "nanoid";
 import redis from "../../db/redis";
 import handlebars from "handlebars";
-const { BASE_FRONTEND_URL } = process.env;
+import type { User } from "../../@types/user";
+import getFirst from "../../utils/db/getFirst";
 import readTemplate from "../../utils/readTemplate";
 import { send as SendMail } from "../../helpers/mailer";
-import getFirst from "../../utils/db/getFirst";
-import { User } from "../../@types";
 
-const { JWT_PRIVATE_KEY, SALT_ROUNDS } = process.env;
+const { JWT_PRIVATE_KEY, SALT_ROUNDS, BASE_FRONTEND_URL } = process.env;
 
 // Will be used for temporary registration
 export const register = async (req: express.Request, res: express.Response) => {

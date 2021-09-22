@@ -1,7 +1,6 @@
-import { sql } from "slonik";
-import { User } from "../../@types";
-import emailValidator from "deep-email-validator-extended";
+import { User } from "../../@types/user";
 import getFirst from "../../utils/db/getFirst";
+import emailValidator from "deep-email-validator-extended";
 
 // Middleware function for express-validator for validating user emails
 export const validateEmail = async (value: string) => {

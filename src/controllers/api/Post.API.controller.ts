@@ -1,6 +1,7 @@
 import pg from "../../db/pg";
 import express from "express";
-import type { Post, User } from "../../@types";
+import type { Post } from "../../@types/post";
+import type { User } from "../../@types/user";
 import getFirst from "../../utils/db/getFirst";
 import { checkStatus } from "../../helpers/helpers";
 

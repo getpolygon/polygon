@@ -6,7 +6,8 @@
     "outDir": "build/",
     "alwaysStrict": true,
     "module": "commonjs",
-    "esModuleInterop": true
+    "esModuleInterop": true,
+    "typeRoots": ["src/@types"]
   },
   "include": ["src/**/*.ts"],
   "exclude": ["node_modules", "build"]

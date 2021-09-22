@@ -1,8 +1,9 @@
 import pg from "../../db/pg";
 import express from "express";
+import type { Post } from "../../@types/post";
 import getFirst from "../../utils/db/getFirst";
-import type { Comment, Post } from "../../@types";
 import { checkStatus } from "../../helpers/helpers";
+import type { Comment } from "../../@types/comment";
 
 // For creating a comment
 export const create = async (req: express.Request, res: express.Response) => {

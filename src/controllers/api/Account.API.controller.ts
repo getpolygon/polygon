@@ -1,8 +1,7 @@
-import pg from "../../db/pg";
 import express from "express";
-import type { User } from "../../@types/index";
-import { checkStatus } from "../../helpers/helpers";
+import type { User } from "../../@types/user";
 import getFirst from "../../utils/db/getFirst";
+import { checkStatus } from "../../helpers/helpers";
 
 // For fetching current account details
 export const me = async (req: express.Request, res: express.Response) => {

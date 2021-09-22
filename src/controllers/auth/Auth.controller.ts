@@ -1,7 +1,8 @@
 import express from "express";
 import jwt from "jsonwebtoken";
+import type { Token } from "../../@types";
+import type { User } from "../../@types/user";
 import getFirst from "../../utils/db/getFirst";
-import type { Token, User } from "../../@types";
 
 const { JWT_PRIVATE_KEY } = process.env;
 

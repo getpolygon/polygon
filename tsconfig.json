@@ -6,7 +6,10 @@
     "outDir": "build/",
     "alwaysStrict": true,
     "module": "commonjs",
+    "removeComments": true,
     "esModuleInterop": true,
+    "strictNullChecks": true,
+    "disableSizeLimit": true,
     "typeRoots": ["src/@types"]
   },
   "include": ["src/**/*.ts"],

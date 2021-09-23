@@ -4,7 +4,6 @@ const { NODE_ENV, MAILER_HOST, MAILER_USER, MAILER_PASS, MAILER_PORT } =
   process.env;
 
 const isProd = NODE_ENV === "production";
-const isDev = NODE_ENV === "development";
 
 const mailer = nodemailer.createTransport({
   secure: isProd,

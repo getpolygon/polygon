@@ -1,12 +1,15 @@
 {
   "compilerOptions": {
+    "pretty": true,
     "strict": true,
     "target": "es6",
     "sourceMap": true,
     "outDir": "build/",
+    "declaration": true,
     "alwaysStrict": true,
     "module": "commonjs",
     "removeComments": true,
+    "noUnusedLocals": true,
     "esModuleInterop": true,
     "strictNullChecks": true,
     "disableSizeLimit": true,

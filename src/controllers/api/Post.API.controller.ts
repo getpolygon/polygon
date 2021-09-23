@@ -246,7 +246,7 @@ export const remove = async (req: express.Request, res: express.Response) => {
 // For hearting a post
 export const heart = async (req: express.Request, res: express.Response) => {
   // Getting post id from params
-  const { id } = req.params;
+  // const { id } = req.params;
 
   try {
     // TODO
@@ -263,7 +263,7 @@ export const heart = async (req: express.Request, res: express.Response) => {
 
 // For unhearting a post
 export const unheart = async (req: express.Request, res: express.Response) => {
-  const { id } = req.params;
+  // const { id } = req.params;
 
   try {
     // TODO

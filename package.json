@@ -30,7 +30,7 @@
     "nodemailer": "^6.4.17",
     "pg": "^8.7.1",
     "redis": "^3.0.2",
-    "slonik": "23.9.0"
+    "slonik": "^24.1.0"
   },
   "devDependencies": {
     "@slonik/migrator": "^0.8.5",

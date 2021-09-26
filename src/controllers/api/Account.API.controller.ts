@@ -1,5 +1,5 @@
 import express from "express";
-import type { User } from "../../@types/user";
+import type { User } from "../../types/user";
 import getFirst from "../../utils/db/getFirst";
 import { checkStatus } from "../../helpers/helpers";
 
@@ -84,10 +84,10 @@ export const deleteAccount = async (
   req: express.Request,
   res: express.Response
 ) => {
-  // TODO
+  // TODO: Implement
 };
 
 // For updating account
 export const update = async (req: express.Request, res: express.Response) => {
-  // TODO
+  // TODO: Implement
 };

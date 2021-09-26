@@ -1,5 +1,5 @@
 import getFirst from "../utils/db/getFirst";
-import type { Relation } from "../@types/relation";
+import type { Relation } from "../types/relation";
 
 // For checking if a user has blocked current user
 export const checkStatus = async ({

@@ -4,7 +4,7 @@ import jwt from "jsonwebtoken";
 import { nanoid } from "nanoid";
 import redis from "../../db/redis";
 import handlebars from "handlebars";
-import type { User } from "../../@types/user";
+import type { User } from "../../types/user";
 import getFirst from "../../utils/db/getFirst";
 import readTemplate from "../../utils/readTemplate";
 import { send as SendMail } from "../../helpers/mailer";

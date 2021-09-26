@@ -1,4 +1,4 @@
-import { User } from "../../@types/user";
+import { User } from "../../types/user";
 import getFirst from "../../utils/db/getFirst";
 import emailValidator from "deep-email-validator-extended";
 

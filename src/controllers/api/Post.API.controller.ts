@@ -1,7 +1,7 @@
 import pg from "../../db/pg";
 import express from "express";
-import type { Post } from "../../@types/post";
-import type { User } from "../../@types/user";
+import type { Post } from "../../types/post";
+import type { User } from "../../types/user";
 import getFirst from "../../utils/db/getFirst";
 import { checkStatus } from "../../helpers/helpers";
 
@@ -17,7 +17,6 @@ export const fetchOne = async (req: express.Request, res: express.Response) => {
       SELECT
         Post.id,
         Post.body,
-        Post.privacy,
         Post.created_at,
         row_to_json(Author) AS user,
 
@@ -192,10 +191,10 @@ export const create = async (req: express.Request, res: express.Response) => {
         SELECT 
           id,
           avatar,
-          private,
           username,
           last_name,
-          first_name
+          first_name,
+          is_private
 
         FROM users
       ) Author ON Author.id = Post.user_id

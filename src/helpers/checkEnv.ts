@@ -10,7 +10,6 @@ const {
   MAILER_USER,
   MAILER_PASS,
   MAILER_PORT,
-  SALT_ROUNDS,
   DATABASE_URL,
   COOKIE_SECRET,
   JWT_PRIVATE_KEY,
@@ -37,7 +36,6 @@ const checkEnv = () => {
   if (!MAILER_PORT) logger.warn(envVarMissing(nameOf({ MAILER_PORT })));
   if (!MAILER_PASS) logger.warn(envVarMissing(nameOf({ MAILER_PASS })));
   if (!MAILER_USER) logger.warn(envVarMissing(nameOf({ MAILER_USER })));
-  if (!SALT_ROUNDS) logger.warn(envVarMissing(nameOf({ SALT_ROUNDS })));
   if (!DATABASE_URL) logger.warn(envVarMissing(nameOf({ DATABASE_URL })));
   if (!ORIGINS && !isDev) logger.warn(envVarMissing(nameOf({ ORIGINS })));
   if (!COOKIE_SECRET) logger.warn(envVarMissing(nameOf({ COOKIE_SECRET })));

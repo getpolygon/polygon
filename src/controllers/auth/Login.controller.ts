@@ -6,7 +6,7 @@ import getFirst from "../../utils/db/getFirst";
 
 const { JWT_PRIVATE_KEY } = process.env;
 
-export default async (req: express.Request, res: express.Response) => {
+export default async (req: express.Request, res: express.Response) => {  
   const { password, email } = req.body;
 
   const user = await getFirst<User>("SELECT * FROM users WHERE email = $1", [

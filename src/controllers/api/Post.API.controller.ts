@@ -18,7 +18,7 @@ export const fetchOne = async (req: express.Request, res: express.Response) => {
         Post.id,
         Post.body,
         Post.created_at,
-        row_to_json(Author) AS user,
+        row_to_json(Author) AS user
 
       FROM posts Post
 
@@ -53,13 +53,12 @@ export const fetchOne = async (req: express.Request, res: express.Response) => {
       if (status === "BLOCKED") return res.status(403).json();
       else return res.json(post);
     }
-  } catch (error) {
-    // TODO: Handle invalid post UUID errors
-    // if (error instanceof InvalidInputError) return res.status(400).json();
-    // else {
-    //   console.error(error);
-    //   return res.status(500).json();
-    // }
+  } catch (error: any) {
+    if (error?.code === "22P02") return res.status(400).json();
+    else {
+      console.error(error);
+      return res.status(500).json();
+    }
   }
 };
 

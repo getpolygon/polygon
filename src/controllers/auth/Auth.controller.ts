@@ -18,10 +18,10 @@ export default async (req: express.Request, res: express.Response) => {
         id,
         cover,
         avatar,
-        private,
         username, 
         last_name,
         first_name,
+        is_private,
         created_at
 
       FROM users WHERE id = $1;

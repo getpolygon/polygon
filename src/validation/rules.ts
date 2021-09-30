@@ -7,8 +7,8 @@ export const registrationValidationRules = () => {
     body("password").isLength({ min: 8 }),
     body("lastName").trim().escape().notEmpty(),
     body("firstName").trim().escape().notEmpty(),
-    body("email").normalizeEmail().custom(validateEmail),
     body("username").toLowerCase().custom(validateUsername),
+    body("email").normalizeEmail().toLowerCase().custom(validateEmail),
   ];
 };
 
@@ -21,7 +21,7 @@ export const verificationValidationRules = () => {
 export const loginValidationRules = () => {
   return [
     body("password").isLength({ min: 8 }),
-    body("email").normalizeEmail().isEmail(),
+    body("email").normalizeEmail().toLowerCase().isEmail(),
   ];
 };
 

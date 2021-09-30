@@ -9,7 +9,8 @@ import getFirst from "../../utils/db/getFirst";
 import readTemplate from "../../utils/readTemplate";
 import { send as SendMail } from "../../helpers/mailer";
 
-const { JWT_PRIVATE_KEY, SALT_ROUNDS, BASE_FRONTEND_URL } = process.env;
+const { JWT_PRIVATE_KEY, BASE_FRONTEND_URL, NODE_ENV } = process.env;
+const isDev = NODE_ENV === "development";
 
 // Will be used for temporary registration
 export const register = async (req: express.Request, res: express.Response) => {
@@ -44,7 +45,10 @@ export const register = async (req: express.Request, res: express.Response) => {
     username,
     lastName,
     firstName,
-    password: bcrypt.hashSync(password, parseInt(SALT_ROUNDS!!)),
+    password: bcrypt.hashSync(
+      password,
+      bcrypt.genSaltSync(Math.floor(Math.random()))
+    ),
   };
 
   // Setting a random key with initial, stringified values
@@ -57,7 +61,7 @@ export const register = async (req: express.Request, res: express.Response) => {
         // Sending an error on error
         if (error) return res.status(500).json();
         // Sending a "No Content" response on success
-        else return res.status(204).json();
+        else return res.status(204).json(isDev && sid);
       });
     }
   });

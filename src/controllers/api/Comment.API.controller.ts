@@ -11,33 +11,41 @@ export const create = async (req: express.Request, res: express.Response) => {
   const { body } = req.body;
   const { post: postId } = req.params;
 
-  const post = await getFirst<Post>("SELECT * FROM posts WHERE id = $1;", [
-    postId,
-  ]);
+  try {
+    const post = await getFirst<Post>("SELECT * FROM posts WHERE id = $1;", [
+      postId,
+    ]);
 
-  if (post) {
-    // Checking if the other user has blocked current user
-    const status = await checkStatus({
-      other: post?.user_id!!,
-      current: req.user?.id!!,
-    });
+    if (post) {
+      // Checking if the other user has blocked current user
+      const status = await checkStatus({
+        other: post?.user_id!!,
+        current: req.user?.id!!,
+      });
 
-    // Not letting current user to comment on that post
-    if (status === "BLOCKED") return res.status(403).json();
+      // Not letting current user to comment on that post
+      if (status === "BLOCKED") return res.status(403).json();
+      else {
+        // Creating a comment and returning it afterwards
+        const comment = await getFirst<Partial<Comment>>(
+          `
+          INSERT INTO comments (body, post_id, user_id) 
+          VALUES ($1, $2, $3)
+          RETURNING created_at, body, id;
+          `,
+          [body, postId, req.user?.id]
+        );
+
+        return res.json(comment);
+      }
+    } else return res.status(404).json();
+  } catch (error: any) {
+    if (error?.code === "22P02") return res.status(400).json();
     else {
-      // Creating a comment and returning it afterwards
-      const comment = await getFirst<Partial<Comment>>(
-        `
-        INSERT INTO comments (body, post_id, user_id) 
-        VALUES ($1, $2, $3)
-        RETURNING created_at, body, id;
-        `,
-        [body, postId, req.user?.id]
-      );
-
-      return res.json(comment);
+      console.error(error);
+      return res.status(500).json();
     }
-  } else return res.status(404).json();
+  }
 };
 
 // For updating a comment
@@ -134,13 +142,20 @@ export const remove = async (req: express.Request, res: express.Response) => {
         } catch (error: any) {
           console.error(error);
           // TODO: Handle invalid comment UUID errors
-          if (error?.code === "") {
+          if (error?.code === "22P02") return res.status(400).json();
+          else {
+            console.error(error);
+            return res.status(500).json();
           }
         }
       }
     }
-  } catch (error) {
-    // TODO: Handle invalid post UUID errors
+  } catch (error: any) {
+    if (error?.code === "22P02") return res.status(400).json();
+    else {
+      console.error(error);
+      return res.status(500).json();
+    }
   }
 };
 
@@ -206,12 +221,11 @@ export const fetch = async (req: express.Request, res: express.Response) => {
         } else return res.json("not implemented");
       }
     }
-  } catch (error) {
-    // TODO: Handle invalid comment UUID errors
-    // if (error instanceof InvalidInputError) return res.status(400).json();
-    // else {
-    //   console.error(error);
-    //   return res.status(500).json();
-    // }
+  } catch (error: any) {
+    if (error?.code === "22P02") return res.status(400).json();
+    else {
+      console.error(error);
+      return res.status(500).json();
+    }
   }
 };

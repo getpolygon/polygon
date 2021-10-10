@@ -1,9 +1,9 @@
-import pg from "../db/pg";
+import pg from "../../db/pg";
 import { Request, Response } from "express";
-import { checkStatus } from "../helpers/helpers";
+import { checkStatus } from "../../helpers/helpers";
 
 // For post discovery
-export const posts = async (req: Request, res: Response) => {
+const posts = async (req: Request, res: Response) => {
   // Getting next page cursor and post limit per page
   let { cursor, limit = 2 } = req.query;
 
@@ -112,8 +112,4 @@ export const posts = async (req: Request, res: Response) => {
     }
   }
 };
-
-// For discovering popular accounts
-export const accounts = async (req: Request, res: Response) => {
-  // TODO: Implement
-};
+export default posts;

@@ -1,5 +1,5 @@
 import express from "express";
-import { status, heartbeat } from "../../controllers/Network.API.controller";
+import { status, heartbeat } from "../../controllers/network";
 
 const router = express.Router();
 

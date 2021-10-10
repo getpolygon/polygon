@@ -5,7 +5,7 @@
     "prestart": "yarn migrate up",
     "migrate": "node tools/migrator",
     "seed": "cd tools/seeder && go run .",
-    "start": "cross-env NODE_ENV=production node build/index.js",
+    "start": "cross-env NODE_ENV=production node ./build/index.js",
     "express-graph": "express-router-dependency-graph --rootDir=./src/ --format=markdown",
     "dev": "cross-env NODE_ENV=development ts-node-dev --cache-directory --exit-child --rs --deps ./src/index.ts"
   },

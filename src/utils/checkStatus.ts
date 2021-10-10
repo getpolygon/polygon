@@ -1,8 +1,8 @@
-import getFirst from "../utils/getFirst";
+import getFirst from "./getFirst";
 import type { Relation } from "../types/relation";
 
 // For checking if a user has blocked current user
-export const checkStatus = async ({
+const checkStatus = async ({
   other,
   current,
 }: {
@@ -21,3 +21,5 @@ export const checkStatus = async ({
 
   return relation?.status!!;
 };
+
+export default checkStatus;

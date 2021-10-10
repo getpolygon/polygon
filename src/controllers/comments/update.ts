@@ -1,8 +1,8 @@
 import express from "express";
 import getFirst from "../../utils/getFirst";
 import type { Post } from "../../types/post";
-import { checkStatus } from "../../helpers/helpers";
 import { Comment } from "../../types/comment";
+import checkStatus from "../../utils/checkStatus";
 
 // For updating a comment
 const update = async (req: express.Request, res: express.Response) => {

@@ -5,7 +5,7 @@ import { nanoid } from "nanoid";
 import redis from "../../db/redis";
 import handlebars from "handlebars";
 import getFirst from "../../utils/getFirst";
-import { Mail } from "../../helpers/mailer";
+import { Mail } from "../../utils/mailer";
 import type { User } from "../../types/user";
 import readTemplate from "../../utils/readTemplate";
 

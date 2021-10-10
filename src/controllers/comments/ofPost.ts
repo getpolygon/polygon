@@ -3,7 +3,7 @@ import express from "express";
 import getFirst from "../../utils/getFirst";
 import type { Post } from "../../types/post";
 import type { Comment } from "../../types/comment";
-import { checkStatus } from "../../helpers/helpers";
+import checkStatus from "../../utils/checkStatus";
 
 // For fetching comments of a post
 const ofPost = async (req: express.Request, res: express.Response) => {

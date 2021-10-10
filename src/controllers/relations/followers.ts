@@ -1,6 +1,6 @@
 import pg from "../../db/pg";
 import express from "express";
-import { checkStatus } from "../../helpers/helpers";
+import checkStatus from "../../utils/checkStatus";
 
 // For getting the followers of an account
 const followers = async (req: express.Request, res: express.Response) => {

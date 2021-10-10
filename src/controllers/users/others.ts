@@ -1,7 +1,7 @@
 import express from "express";
 import getFirst from "../../utils/getFirst";
 import type { User } from "../../types/user";
-import { checkStatus } from "../../helpers/helpers";
+import checkStatus from "../../utils/checkStatus";
 
 // For fetching other accounts
 const others = async (req: express.Request, res: express.Response) => {

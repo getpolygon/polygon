@@ -1,7 +1,7 @@
 import express from "express";
 import getFirst from "../../utils/getFirst";
-import { checkStatus } from "../../helpers/helpers";
 import type { Relation } from "../../types/relation";
+import checkStatus from "../../utils/checkStatus";
 
 // For following another user
 const follow = async (req: express.Request, res: express.Response) => {

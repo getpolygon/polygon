@@ -6,6 +6,7 @@
     "migrate": "node tools/migrator",
     "seed": "cd tools/seeder && go run .",
     "start": "cross-env NODE_ENV=production node build/index.js",
+    "depgraph": "express-router-dependency-graph --rootDir=./src/ --format=markdown",
     "dev": "cross-env NODE_ENV=development ts-node-dev --cache-directory --exit-child --rs --deps ./src/index.ts"
   },
   "dependencies": {
@@ -51,6 +52,7 @@
     "@types/redis": "^2.8.31",
     "babel-eslint": "^10.1.0",
     "eslint": "8.0.0",
+    "express-router-dependency-graph": "^1.1.1",
     "ts-node-dev": "^1.1.6",
     "typescript": "^4.3.4"
   }

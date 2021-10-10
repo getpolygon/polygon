@@ -13,7 +13,9 @@
     "esModuleInterop": true,
     "strictNullChecks": true,
     "disableSizeLimit": true,
-    "typeRoots": ["src/types"]
+    "typeRoots": ["src/types"],
+    "emitDecoratorMetadata": true,
+    "experimentalDecorators": true
   },
   "include": ["src/**/*.ts"],
   "exclude": ["node_modules", "build"]

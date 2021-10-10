@@ -1,5 +1,5 @@
 import chalk from "chalk";
-import Logger from "./Logger";
+import logger from "./Logger";
 
 const {
   PORT,
@@ -28,8 +28,6 @@ const nameOf = (v: object) => Object.keys(v)[0];
 
 // Function for checking the presence of required environment variables
 const checkEnv = () => {
-  const logger = new Logger();
-
   if (!REDIS_URL) logger.warn(envVarMissing(nameOf({ REDIS_URL })));
   if (!PORT && !isDev) logger.warn(envVarMissing(nameOf({ PORT })));
   if (!MAILER_HOST) logger.warn(envVarMissing(nameOf({ MAILER_HOST })));

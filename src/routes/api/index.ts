@@ -1,9 +1,9 @@
 import AuthAPI from "./auth";
 import express from "express";
 import PostAPI from "./Post.API";
-import CommentAPI from "./Comment.API";
+import CommentAPI from "./comments";
 import NetworkAPI from "./Network.API";
-import AccountAPI from "./Account.API";
+import AccountAPI from "./accounts";
 import DiscoverAPI from "./Discover.API";
 import RelationAPI from "./Relation.API";
 

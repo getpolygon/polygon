@@ -6,12 +6,10 @@ import morgan from "morgan";
 import helmet from "helmet";
 import routes from "./routes";
 import express from "express";
-import Logger from "./helpers/Logger";
+import logger from "./helpers/Logger";
 import compression from "compression";
 import cookieParser from "cookie-parser";
 import checkEnv from "./helpers/checkEnv";
-
-const logger = new Logger();
 
 // Checking the presence of required environment variables
 checkEnv();

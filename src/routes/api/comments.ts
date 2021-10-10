@@ -1,14 +1,9 @@
 import express from "express";
-import {
-  create,
-  fetch,
-  remove,
-  update,
-} from "../../controllers/Comment.API.controller";
+import { create, ofPost, remove, update } from "../../controllers/comments";
 
 const router = express.Router();
 
-router.get("/:post", fetch);
+router.get("/:post", ofPost);
 router.post("/:post/create", create);
 router.patch("/:post/:comment/update", update);
 router.delete("/:post/:comment/remove", remove);

@@ -1,8 +1,8 @@
 import express from "express";
 import jwt from "jsonwebtoken";
 import type { Token } from "../../types";
+import getFirst from "../../utils/getFirst";
 import type { User } from "../../types/user";
-import getFirst from "../../utils/db/getFirst";
 
 const { JWT_PRIVATE_KEY } = process.env;
 
@@ -14,11 +14,11 @@ export default async (req: express.Request, res: express.Response) => {
     const data = jwt.verify(token, JWT_PRIVATE_KEY!!) as Token;
     const user = await getFirst<Partial<User>>(
       `
-      SELECT 
+      SELECT
         id,
         cover,
         avatar,
-        username, 
+        username,
         last_name,
         first_name,
         is_private,

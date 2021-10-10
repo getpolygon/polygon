@@ -15,25 +15,35 @@ const mailer = nodemailer.createTransport({
   },
 });
 
-interface MailerProps {
+interface MailProps {
   html: string;
   subject: string;
   receiver: string;
 }
 
-export const send = async ({ receiver: to, subject, html }: MailerProps) => {
-  if (!to) throw new Error("Receiver not specified");
-  else {
-    try {
-      const data = await mailer.sendMail({
-        to,
-        html,
-        subject,
-      });
+export class Mail {
+  private html: string;
+  private subject: string;
+  private receiver: string;
 
-      return data;
-    } catch (error) {
-      // Do nothing
+  constructor({ receiver, subject, html }: MailProps) {
+    this.html = html;
+    this.subject = subject;
+    this.receiver = receiver;
+  }
+
+  async send() {
+    if (!this.receiver) throw new Error("Receiver not specified");
+    else {
+      try {
+        const response = await mailer.sendMail({
+          html: this.html,
+          to: this.receiver,
+          subject: this.subject,
+        });
+
+        return response;
+      } catch (error) {}
     }
   }
-};
+}

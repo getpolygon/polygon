@@ -1,5 +1,5 @@
 import express from "express";
-import redis from "../../db/redis";
+import redis from "../db/redis";
 
 /**
  * For storing user status

@@ -1,26 +1,22 @@
 import express from "express";
 import jwt from "jsonwebtoken";
 import type { Token } from "../types";
+import getFirst from "../utils/getFirst";
 import type { User } from "../types/user";
-import getFirst from "../utils/db/getFirst";
 
 const { JWT_PRIVATE_KEY } = process.env;
 
-export default (authRoute = false) => {
+export default () => {
   return async (
     req: express.Request,
     res: express.Response,
     next: express.NextFunction
   ) => {
-    // Getting the `jwt` cookie
     const { jwt: token } = req.signedCookies;
 
     // Checking if the token exists
-    if (!token) {
-      // If the request was from an auth endpoint
-      if (authRoute) return next();
-      else return res.status(401).json();
-    } else {
+    if (!token) res.status(401).json();
+    else {
       // Getting the ID from the token
       const data = jwt.verify(token, JWT_PRIVATE_KEY!!) as Token;
       // Finding the user with the ID
@@ -29,17 +25,11 @@ export default (authRoute = false) => {
       ]);
 
       // If the account does not exist
-      if (!user) {
-        // If the request was from auth endpoint
-        if (authRoute) return next();
-        else return res.status(401).json();
-      } else {
+      if (!user) return res.status(401).json();
+      else {
         // Setting the user
         req.user = user;
-
-        // If the request was from auth endpoint
-        if (authRoute) return res.status(403).json();
-        else return next();
+        return next();
       }
     }
   };

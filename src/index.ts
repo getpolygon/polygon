@@ -11,6 +11,8 @@ import compression from "compression";
 import cookieParser from "cookie-parser";
 import checkEnv from "./helpers/checkEnv";
 
+const logger = new Logger();
+
 // Checking the presence of required environment variables
 checkEnv();
 
@@ -33,7 +35,4 @@ isDev && app.use(morgan("dev"));
 app.use(routes);
 
 const httpServer = http.createServer(app);
-httpServer.listen(port, () => {
-  const logger = new Logger();
-  logger.info(`Backend started at port ${port}`);
-});
+httpServer.listen(port, () => logger.info(`Backend started at port ${port}`));

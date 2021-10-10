@@ -4,7 +4,7 @@ import {
   fetch,
   remove,
   update,
-} from "../../controllers/api/Comment.API.controller";
+} from "../../controllers/Comment.API.controller";
 
 const router = express.Router();
 

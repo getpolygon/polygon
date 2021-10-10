@@ -1,5 +1,5 @@
 import express from "express";
-import { accounts, posts } from "../../controllers/api/Discover.API.controller";
+import { accounts, posts } from "../../controllers/Discover.API.controller";
 
 const router = express.Router();
 

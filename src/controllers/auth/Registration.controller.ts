@@ -4,10 +4,10 @@ import jwt from "jsonwebtoken";
 import { nanoid } from "nanoid";
 import redis from "../../db/redis";
 import handlebars from "handlebars";
+import getFirst from "../../utils/getFirst";
+import { Mail } from "../../helpers/mailer";
 import type { User } from "../../types/user";
-import getFirst from "../../utils/db/getFirst";
 import readTemplate from "../../utils/readTemplate";
-import { send as SendMail } from "../../helpers/mailer";
 
 const { JWT_PRIVATE_KEY, BASE_FRONTEND_URL, NODE_ENV } = process.env;
 const isDev = NODE_ENV === "development";
@@ -33,11 +33,13 @@ export const register = async (req: express.Request, res: express.Response) => {
   });
 
   // Sending an email for verification
-  SendMail({
+  const mail = new Mail({
     html: rendered,
     receiver: email,
     subject: "Polygon email verification",
   });
+
+  await mail.send();
 
   // Creating a payload
   const payload = {
@@ -51,16 +53,13 @@ export const register = async (req: express.Request, res: express.Response) => {
     ),
   };
 
-  // Setting a random key with initial, stringified values
+  // Setting a random key with initial, stringified values for email verification
   redis.set(sid, JSON.stringify(payload), (error, _) => {
-    // Sending an error on error
     if (error) return res.status(500).json();
     else {
-      // Set an expiration date on the key
       redis.expire(sid, 60 * 5, (error, _) => {
-        // Sending an error on error
         if (error) return res.status(500).json();
-        // Sending a "No Content" response on success
+        // Only sending the sid of the verification token in development
         else return res.status(204).json(isDev && sid);
       });
     }
@@ -71,12 +70,9 @@ export const register = async (req: express.Request, res: express.Response) => {
 export const verify = (req: express.Request, res: express.Response) => {
   // Getting the token
   const { sid } = req.params;
-  // Getting the password
   const { password } = req.body;
 
-  // Getting the token
   redis.get(sid, async (error, value) => {
-    // If there was an error
     if (error) return res.status(500).json();
     else {
       // If there's no such key

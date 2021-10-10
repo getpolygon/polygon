@@ -1,8 +1,8 @@
-import pg from "../../db/pg";
+import pg from "../db/pg";
 import express from "express";
-import getFirst from "../../utils/db/getFirst";
-import { checkStatus } from "../../helpers/helpers";
-import type { Relation } from "../../types/relation";
+import getFirst from "../utils/getFirst";
+import { checkStatus } from "../helpers/helpers";
+import type { Relation } from "../types/relation";
 
 // For getting the people whom the account follows
 export const following = async (

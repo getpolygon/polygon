@@ -1,5 +1,4 @@
 import express from "express";
-import validate from "../../validation";
 import {
   fetch,
   create,
@@ -7,8 +6,9 @@ import {
   fetchOne,
   heart,
   unheart,
-} from "../../controllers/api/Post.API.controller";
-import { createPostValidationRules } from "../../validation/rules";
+} from "../../controllers/Post.API.controller";
+import validate from "../../validation/middleware";
+import createPostValidationRules from "../../validation/rules/createPostValidationRules";
 
 const router = express.Router();
 

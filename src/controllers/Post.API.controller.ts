@@ -1,9 +1,9 @@
-import pg from "../../db/pg";
+import pg from "../db/pg";
 import express from "express";
-import type { Post } from "../../types/post";
-import type { User } from "../../types/user";
-import getFirst from "../../utils/db/getFirst";
-import { checkStatus } from "../../helpers/helpers";
+import type { Post } from "../types/post";
+import type { User } from "../types/user";
+import getFirst from "../utils/getFirst";
+import { checkStatus } from "../helpers/helpers";
 
 // For fetching one post
 export const fetchOne = async (req: express.Request, res: express.Response) => {
@@ -28,7 +28,8 @@ export const fetchOne = async (req: express.Request, res: express.Response) => {
             avatar,
             username
             last_name,
-            first_name
+            first_name,
+            username
 
         FROM users
       ) Author ON Post.user_id = Author.id
@@ -101,6 +102,7 @@ export const fetch = async (req: express.Request, res: express.Response) => {
             last_name,
             first_name,
             created_at
+
           FROM users
         ) Author ON Post.user_id = Author.id
 

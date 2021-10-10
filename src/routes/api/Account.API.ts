@@ -4,7 +4,7 @@ import {
   fetch,
   update,
   deleteAccount,
-} from "../../controllers/api/Account.API.controller";
+} from "../../controllers/Account.API.controller";
 
 const router = express.Router();
 

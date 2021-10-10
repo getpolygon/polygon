@@ -9,6 +9,7 @@
     "dev": "cross-env NODE_ENV=development ts-node-dev --cache-directory --exit-child --rs --deps ./src/index.ts"
   },
   "dependencies": {
+    "@trycourier/courier": "^2.6.0",
     "bcrypt": "^5.0.0",
     "chalk": "^4.1.2",
     "compression": "^1.7.4",
@@ -44,7 +45,7 @@
     "@types/minio": "^7.0.10",
     "@types/morgan": "^1.9.3",
     "@types/multer": "^1.4.7",
-    "@types/node": "^16.10.1",
+    "@types/node": "^16.10.2",
     "@types/nodemailer": "^6.4.4",
     "@types/pg": "^8.6.1",
     "@types/redis": "^2.8.31",

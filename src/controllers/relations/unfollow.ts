@@ -27,15 +27,12 @@ const unfollow = async (req: express.Request, res: express.Response) => {
 
       return res.json(null);
     }
-  } catch (error) {
-    // TODO: Handle invalid user UUID errors
-    // // Invalid user id
-    // if (error instanceof InvalidInputError) return res.status(400).json();
-    // // Undefined behaviour
-    // else {
-    //   console.error(error);
-    //   return res.status(500).json();
-    // }
+  } catch (error: any) {
+    if (error?.code === "22P02") return res.status(400).json();
+    else {
+      console.error(error);
+      return res.status(500).json();
+    }
   }
 };
 

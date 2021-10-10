@@ -6,7 +6,7 @@
     "migrate": "node tools/migrator",
     "seed": "cd tools/seeder && go run .",
     "start": "cross-env NODE_ENV=production node build/index.js",
-    "depgraph": "express-router-dependency-graph --rootDir=./src/ --format=markdown",
+    "express-graph": "express-router-dependency-graph --rootDir=./src/ --format=markdown",
     "dev": "cross-env NODE_ENV=development ts-node-dev --cache-directory --exit-child --rs --deps ./src/index.ts"
   },
   "dependencies": {

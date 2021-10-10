@@ -32,8 +32,14 @@ const follow = async (req: express.Request, res: express.Response) => {
         return res.json(response?.status || null);
       } else return res.status(403).json();
     }
-  } catch (error) {
+  } catch (error: any) {
     // TODO: Handle all error cases
+    // Invalid UUID
+    if (error?.code === "22P02") return res.status(400).json();
+    else {
+      console.error(error);
+      return res.status(500).json();
+    }
     // // When other user doesn't exist
     // if (error instanceof ForeignKeyIntegrityConstraintViolationError) {
     //   return res.status(404).json();
@@ -41,15 +47,6 @@ const follow = async (req: express.Request, res: express.Response) => {
     // // When same user tries to follow himself
     // else if (error instanceof UniqueIntegrityConstraintViolationError) {
     //   return res.status(409).json();
-    // }
-    // // When user id is invalid
-    // else if (error instanceof InvalidInputError) {
-    //   return res.status(400).json();
-    // }
-    // // Undefined behaviour
-    // else {
-    //   console.error(error);
-    //   return res.status(500);
     // }
   }
 };

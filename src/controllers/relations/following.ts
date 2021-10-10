@@ -37,11 +37,12 @@ const following = async (req: express.Request, res: express.Response) => {
 
       return res.json(following);
     } else return res.status(403).json();
-  } catch (error) {
-    // TODO: Handle invalid user UUID errors
-    // // Undefined behaviour
-    // console.error(error);
-    // return res.status(500).json();
+  } catch (error: any) {
+    if (error?.code === "22P02") return res.status(400).json();
+    else {
+      console.error(error);
+      return res.status(500).json();
+    }
   }
 };
 

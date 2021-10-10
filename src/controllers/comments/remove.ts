@@ -48,7 +48,6 @@ const remove = async (req: express.Request, res: express.Response) => {
           else return res.status(404).json();
         } catch (error: any) {
           console.error(error);
-          // TODO: Handle invalid comment UUID errors
           if (error?.code === "22P02") return res.status(400).json();
           else {
             console.error(error);

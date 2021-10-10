@@ -27,13 +27,12 @@ const block = async (req: express.Request, res: express.Response) => {
 
       return res.json(relation?.status);
     }
-  } catch (error) {
-    // TODO: Handle invalid user UUID errors
-    // if (error instanceof InvalidInputError) return res.status(400).json();
-    // else {
-    //   console.error(error);
-    //   return res.status(500).json();
-    // }
+  } catch (error: any) {
+    if (error?.code === "22P02") return res.status(400).json();
+    else {
+      console.error(error);
+      return res.status(500).json();
+    }
   }
 };
 

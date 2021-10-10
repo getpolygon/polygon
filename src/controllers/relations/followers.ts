@@ -37,15 +37,12 @@ const followers = async (req: express.Request, res: express.Response) => {
 
       return res.json(followers);
     } else return res.status(403).json();
-  } catch (error) {
-    // TODO: Handle invalid user UUID errors
-    // // If the id of the user is invalid
-    // if (error instanceof InvalidInputError) return res.status(400).json();
-    // // Undefined behaviour
-    // else {
-    //   console.error(error);
-    //   return res.status(500).json();
-    // }
+  } catch (error: any) {
+    if (error?.code === "22P02") return res.status(400).json();
+    else {
+      console.error(error);
+      return res.status(500).json();
+    }
   }
 };
 

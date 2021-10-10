@@ -1,9 +1,10 @@
 import express from "express";
-const router = express.Router();
+import { login } from "../../../controllers/auth";
 import validate from "../../../validation/middleware";
-import LoginController from "../../../controllers/auth/login";
 import loginValidationRules from "../../../validation/rules/loginValidationRules";
 
-router.post("/", loginValidationRules(), validate(), LoginController);
+const router = express.Router();
+
+router.post("/", loginValidationRules(), validate(), login);
 
 export default router;

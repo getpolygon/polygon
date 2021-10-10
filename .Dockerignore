@@ -1,9 +1,9 @@
-/tools
-/examples
-/node_modules
-/.pnp
+**/tools
+**/examples
+**/node_modules
+**/.pnp
 .pnp.js
-/build
+**/build
 .DS_Store
 *.pem
 npm-debug.log*

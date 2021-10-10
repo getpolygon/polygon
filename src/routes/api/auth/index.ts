@@ -1,6 +1,6 @@
-import login from "./login";
+import login from "./Login";
 import express from "express";
-import register from "./register";
+import register from "./Register";
 import { logout } from "../../../controllers/auth";
 
 const router = express.Router();

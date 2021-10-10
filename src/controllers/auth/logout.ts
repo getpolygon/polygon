@@ -1,6 +1,6 @@
 import express from "express";
 
-export default (req: express.Request, res: express.Response) => {
+const logout = (req: express.Request, res: express.Response) => {
   const { jwt: token } = req.signedCookies;
 
   if (token) {
@@ -14,3 +14,5 @@ export default (req: express.Request, res: express.Response) => {
 
   return res.status(403).json();
 };
+
+export default logout;

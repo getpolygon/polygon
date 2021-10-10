@@ -25,10 +25,10 @@ const origins = isDev
 app.use(helmet());
 app.use(compression());
 app.use(express.json());
+isDev && app.use(morgan("dev"));
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser(process.env.COOKIE_SECRET));
 app.use(cors({ origin: origins, credentials: true }));
-isDev && app.use(morgan("dev"));
 
 app.use(routes);
 

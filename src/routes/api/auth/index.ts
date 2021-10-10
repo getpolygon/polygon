@@ -1,14 +1,12 @@
+import login from "./login";
+import logout from "./logout";
 import express from "express";
-import LoginHandler from "./Login";
-import LogoutHandler from "./Logout";
-import RegistrationHandler from "./Register";
-import AuthController from "../../../controllers/auth/Auth.controller";
+import register from "./register";
 
 const router = express.Router();
 
-router.get("/", AuthController);
-router.use("/login", LoginHandler);
-router.use("/logout", LogoutHandler);
-router.use("/register", RegistrationHandler);
+router.use("/login", login);
+router.use("/logout", logout);
+router.use("/register", register);
 
 export default router;

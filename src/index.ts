@@ -8,8 +8,8 @@ import routes from "./routes";
 import express from "express";
 import logger from "./utils/Logger";
 import compression from "compression";
-import cookieParser from "cookie-parser";
 import checkEnv from "./utils/checkEnv";
+import cookieParser from "cookie-parser";
 
 // Checking the presence of required environment variables
 checkEnv();

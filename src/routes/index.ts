@@ -1,11 +1,9 @@
 import express from "express";
-import ApiRoutes from "./api/index";
-import NotFoundRoute from "./misc/404";
+import api from "./api/index";
 
 const router = express.Router();
 
-router.use("/api", ApiRoutes);
-// 404
-router.use(NotFoundRoute);
+router.use("/api", api);
+router.all("*", (_, res) => res.status(404).send("Not Found"));
 
 export default router;

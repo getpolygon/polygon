@@ -4,8 +4,8 @@ import PostAPI from "./posts";
 import CommentAPI from "./comments";
 import NetworkAPI from "./network";
 import AccountAPI from "./accounts";
-import DiscoverAPI from "./Discover.API";
-import RelationAPI from "./Relation.API";
+import DiscoverAPI from "./discover";
+import RelationAPI from "./relations";
 
 const router = express.Router();
 

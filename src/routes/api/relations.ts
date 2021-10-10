@@ -1,18 +1,18 @@
 import express from "express";
 import {
-  check,
+  status,
   block,
   follow,
   unblock,
   unfollow,
   followers,
   following,
-} from "../../controllers/Relation.API.controller";
+} from "../../controllers/relations";
 
 const router = express.Router();
 
 // For checking the relationship between current account and another account
-router.get("/:id", check);
+router.get("/:id", status);
 // For blocking an account
 router.post("/:id/block", block);
 // For following an account

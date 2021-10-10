@@ -1,6 +1,6 @@
 import AuthAPI from "./auth";
 import express from "express";
-import PostAPI from "./Post.API";
+import PostAPI from "./posts";
 import CommentAPI from "./comments";
 import NetworkAPI from "./network";
 import AccountAPI from "./accounts";

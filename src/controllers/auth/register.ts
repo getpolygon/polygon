@@ -1,45 +1,78 @@
+import crypto from "crypto";
+import bcrypt from "bcrypt";
 import express from "express";
+import redis from "../../db/redis";
+import courier, { config } from "../../utils/courier";
 
-const register = (req: express.Request, res: express.Response) => {
-  // Getting the properties from the body
-  // const { firstName, lastName, email, password, username } = req.body;
-  // // Rendering the email template
-  // const rendered = handlebars.compile(template)({
-  //   ip,
-  //   token: sid,
-  //   name: firstName,
-  //   time: new Date(),
-  //   frontendUrl: BASE_FRONTEND_URL,
-  // });
-  // // Sending an email for verification
-  // const mail = new Mail({
-  //   html: rendered,
-  //   receiver: email,
-  //   subject: "Polygon email verification",
-  // });
-  // await mail.send();
-  // Creating a payload
-  // const payload = {
-  //   email,
-  //   username,
-  //   lastName,
-  //   firstName,
-  //   password: bcrypt.hashSync(
-  //     password,
-  //     bcrypt.genSaltSync(Math.floor(Math.random()))
-  //   ),
-  // };
-  // // Setting a random key with initial, stringified values for email verification
-  // redis.set(sid, JSON.stringify(payload), (error, _) => {
-  //   if (error) return res.status(500).json();
-  //   else {
-  //     redis.expire(sid, 60 * 5, (error, _) => {
-  //       if (error) return res.status(500).json();
-  //       // Only sending the sid of the verification token in development
-  //       else return res.status(204).json(isDev && sid);
-  //     });
-  //   }
-  // });
+// Token expiration time
+// Default: 5 minutes
+const expireAfter =
+  Number(process.env.POLYGON_EXPIRE_VERIFICATION_AFTER) || 60 * 5;
+
+// Front-end token verification endpoint
+// Default: http://localhost:3000/
+const verificationUrl =
+  process.env.POLYGON_EMAIL_VERIFICATION_URL || "http://localhost:3000/";
+
+const register = async (req: express.Request, res: express.Response) => {
+  // Generating a random token
+  const token = crypto.randomBytes(12).toString("hex");
+  const { firstName, lastName, email, password, username } = req.body;
+
+  try {
+    // Sending a verification email to the specified email address
+    await courier.send({
+      profile: {
+        email,
+      },
+      data: {
+        email,
+        token,
+        firstName,
+        verificationUrl,
+      },
+      recipientId: email,
+      eventId: config.events.verificationEventId!!,
+      override: {
+        smtp: {
+          config: {
+            auth: {
+              user: config.smtp.user,
+              pass: config.smtp.pass,
+            },
+            host: config.smtp.host,
+            port: config.smtp.port,
+            secure: true,
+          },
+        },
+      },
+    });
+  } catch (error) {
+    console.error(error);
+  }
+
+  // Creating a JSON payload with the specified information and converting it to a base64 string
+  const payload = JSON.stringify({
+    email,
+    username,
+    lastName,
+    firstName,
+    password: bcrypt.hashSync(
+      password,
+      bcrypt.genSaltSync(Math.floor(Math.random()))
+    ),
+  });
+
+  // Setting a token
+  redis.set(token, payload, (error, _) => {
+    if (error) return res.sendStatus(500);
+
+    // Setting an expiration time on the key
+    redis.expire(token, expireAfter, (error, _) => {
+      if (error) return res.sendStatus(500);
+      return res.sendStatus(204);
+    });
+  });
 };
 
 export default register;

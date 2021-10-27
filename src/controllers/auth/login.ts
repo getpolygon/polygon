@@ -11,23 +11,31 @@ const login = async (req: express.Request, res: express.Response) => {
   ]);
 
   if (user) {
+    // If passwords match
     const same = await bcrypt.compare(password, user.password);
 
-    // If passwords match
     if (same) {
       // Create a JWT
       const payload = { id: user.id };
       const token = createJwt(payload);
 
       // Send a signed cookie
-      return res.status(204).cookie("jwt", token, {
-        signed: true,
-        secure: true,
-        httpOnly: true,
-        sameSite: "none",
-      });
-    } else return res.status(403).json();
-  } else return res.status(404).json();
+      return res
+        .cookie("jwt", token, {
+          signed: true,
+          secure: true,
+          httpOnly: true,
+          sameSite: "none",
+        })
+        .sendStatus(204);
+    }
+
+    // Passwords do not match
+    return res.sendStatus(403);
+  }
+
+  // User does not exist
+  return res.sendStatus(404);
 };
 
 export default login;

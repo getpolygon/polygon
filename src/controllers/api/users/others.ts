@@ -30,22 +30,20 @@ const others = async (req: express.Request, res: express.Response) => {
     );
 
     // If the user doesn't exist
-    if (!user) return res.status(404).json();
-    // Sending the user
-    else {
-      // Checking if that user has blocked current user
-      const status = await checkStatus({
-        other: user?.id!!,
-        current: req?.user?.id!!,
-      });
+    if (!user) return res.sendStatus(404);
 
-      // If the other user has blocked current user don't send a response
-      if (status === "BLOCKED") return res.status(403).json();
-      else return res.json(user);
-    }
+    // Checking if that user has blocked current user
+    const status = await checkStatus({
+      other: user?.id!!,
+      current: req?.user?.id!!,
+    });
+
+    // If the other user has blocked current user don't send a response
+    if (status === "BLOCKED") return res.sendStatus(403);
+    return res.json(user);
   } catch (error) {
     console.error(error);
-    return res.status(500).json();
+    return res.sendStatus(500);
   }
 };
 

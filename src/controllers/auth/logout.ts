@@ -1,18 +1,19 @@
 import express from "express";
 
 const logout = (req: express.Request, res: express.Response) => {
-  const { jwt: token } = req.signedCookies;
-
-  if (token) {
-    return res.status(204).clearCookie("jwt", {
-      signed: true,
-      secure: true,
-      httpOnly: true,
-      sameSite: "none",
-    });
+  if (req.user) {
+    return res
+      .clearCookie("jwt", {
+        signed: true,
+        secure: true,
+        httpOnly: true,
+        sameSite: "none",
+      })
+      .sendStatus(204);
   }
 
-  return res.status(403).json();
+  // If the user is not signed in
+  return res.sendStatus(403);
 };
 
 export default logout;

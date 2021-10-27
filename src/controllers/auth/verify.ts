@@ -7,65 +7,69 @@ import type { User } from "../../types/user";
 
 const verify = (req: express.Request, res: express.Response) => {
   // Getting the token
-  const { sid } = req.params;
+  const { token } = req.params;
   const { password } = req.body;
 
-  redis.get(sid, async (error, value) => {
-    if (error) return res.status(500).json();
-    else {
-      // If the verification token has expired
-      if (!value) return res.status(404).json();
-      else {
-        const redisPayload = JSON.parse(value);
-        const same = bcrypt.compareSync(password, redisPayload.password);
+  redis.get(token, async (error, __payload) => {
+    if (error) console.error(error);
 
-        // If passwords match
-        if (same) {
-          const user = await getFirst<Partial<User>>(
-            `
-            INSERT INTO users (
-              email, 
-              password, 
-              username,
-              last_name, 
-              first_name
-            ) VALUES ($1, $2, $3, $4, $5)
+    // If the verification token has expired or does not exist
+    if (!__payload) return res.sendStatus(404);
 
-            RETURNING 
-              id,
-              bio,
-              cover,
-              avatar,
-              username,
-              last_name,
-              first_name;
-            `,
-            [
-              redisPayload.email,
-              redisPayload.password,
-              redisPayload.username,
-              redisPayload.lastName,
-              redisPayload.firstName,
-            ]
-          );
+    // Converting the base64 string to an object
+    const payload = JSON.parse(__payload);
+    // Checking if the passwords are the same
+    const same = bcrypt.compareSync(password, payload.password);
 
-          const tokenPayload = { id: user?.id };
-          const token = createJwt(tokenPayload);
+    // Passwords match
+    if (same) {
+      const user = await getFirst<Partial<User>>(
+        `
+          INSERT INTO users (
+            email, 
+            password, 
+            username,
+            last_name, 
+            first_name
+          ) VALUES ($1, $2, $3, $4, $5)
+  
+          RETURNING 
+            id,
+            bio,
+            cover,
+            avatar,
+            username,
+            last_name,
+            first_name;
+          `,
+        [
+          payload.email,
+          payload.password,
+          payload.username,
+          payload.lastName,
+          payload.firstName,
+        ]
+      );
 
-          redis.del(sid, () => {
-            return res
-              .status(201)
-              .cookie("jwt", token!!, {
-                secure: true,
-                signed: true,
-                httpOnly: true,
-                sameSite: "none",
-              })
-              .json(user);
-          });
-        } else return res.status(401).json();
-      }
+      // Creating a JWT
+      const token = createJwt({ id: user?.id });
+
+      // Deleting the verification token from Redis
+      redis.del(token, () => {
+        return res
+          .status(201)
+          .cookie("jwt", token, {
+            secure: true,
+            signed: true,
+            httpOnly: true,
+            sameSite: "none",
+          })
+          .json({ ...user, token });
+      });
     }
+
+    // Passwords do not match
+    return res.sendStatus(401);
   });
 };
 

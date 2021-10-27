@@ -6,14 +6,13 @@ const {
   ORIGINS,
   NODE_ENV,
   REDIS_URL,
-  MAILER_HOST,
-  MAILER_USER,
-  MAILER_PASS,
-  MAILER_PORT,
+  SMTP_HOST,
+  SMTP_USER,
+  SMTP_PASS,
+  SMTP_PORT,
   DATABASE_URL,
   COOKIE_SECRET,
   JWT_PRIVATE_KEY,
-  BASE_FRONTEND_URL,
 } = process.env;
 
 // Dev env
@@ -30,15 +29,14 @@ const nameOf = (v: object) => Object.keys(v)[0];
 const checkEnv = () => {
   if (!REDIS_URL) logger.warn(envVarMissing(nameOf({ REDIS_URL })));
   if (!PORT && !isDev) logger.warn(envVarMissing(nameOf({ PORT })));
-  if (!MAILER_HOST) logger.warn(envVarMissing(nameOf({ MAILER_HOST })));
-  if (!MAILER_PORT) logger.warn(envVarMissing(nameOf({ MAILER_PORT })));
-  if (!MAILER_PASS) logger.warn(envVarMissing(nameOf({ MAILER_PASS })));
-  if (!MAILER_USER) logger.warn(envVarMissing(nameOf({ MAILER_USER })));
+  if (!SMTP_HOST) logger.warn(envVarMissing(nameOf({ SMTP_HOST })));
+  if (!SMTP_USER) logger.warn(envVarMissing(nameOf({ SMTP_USER })));
+  if (!SMTP_PASS) logger.warn(envVarMissing(nameOf({ SMTP_PASS })));
+  if (!SMTP_PORT) logger.warn(envVarMissing(nameOf({ SMTP_PORT })));
   if (!DATABASE_URL) logger.warn(envVarMissing(nameOf({ DATABASE_URL })));
   if (!ORIGINS && !isDev) logger.warn(envVarMissing(nameOf({ ORIGINS })));
   if (!COOKIE_SECRET) logger.warn(envVarMissing(nameOf({ COOKIE_SECRET })));
   if (!JWT_PRIVATE_KEY) logger.warn(envVarMissing(nameOf({ JWT_PRIVATE_KEY })));
-  if (!BASE_FRONTEND_URL) logger.warn(envVarMissing(nameOf({ BASE_FRONTEND_URL })));
 };
 
 export default checkEnv;

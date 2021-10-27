@@ -1,4 +1,3 @@
-import AuthAPI from "./auth";
 import express from "express";
 import PostAPI from "./posts";
 import CommentAPI from "./comments";
@@ -9,7 +8,6 @@ import RelationAPI from "./relations";
 
 const router = express.Router();
 
-router.use("/auth", AuthAPI);
 router.use("/posts", PostAPI);
 router.use("/network", NetworkAPI);
 router.use("/accounts", AccountAPI);

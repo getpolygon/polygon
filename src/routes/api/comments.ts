@@ -1,5 +1,5 @@
 import express from "express";
-import { create, ofPost, remove, update } from "../../controllers/comments";
+import { create, ofPost, remove, update } from "../../controllers/api/comments";
 
 const router = express.Router();
 

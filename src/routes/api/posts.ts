@@ -1,6 +1,6 @@
 import express from "express";
 import validate from "../../validation/middleware";
-import { one, create, remove, ofUser } from "../../controllers/posts";
+import { one, create, remove, ofUser } from "../../controllers/api/posts";
 import createPostValidationRules from "../../validation/rules/createPostValidationRules";
 
 const router = express.Router();

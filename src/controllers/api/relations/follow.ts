@@ -9,7 +9,7 @@ const follow = async (req: express.Request, res: express.Response) => {
 
   try {
     // If the user tries to follow himself
-    if (id === req.user?.id) return res.status(406).json();
+    if (id === req.user?.id) return res.sendStatus(406);
     else {
       // Checking if the other user has blocked current user
       const status = await checkStatus({
@@ -30,15 +30,17 @@ const follow = async (req: express.Request, res: express.Response) => {
 
         // Sending the status
         return res.json(response?.status || null);
-      } else return res.status(403).json();
+      }
+
+      return res.sendStatus(403);
     }
   } catch (error: any) {
     // TODO: Handle all error cases
     // Invalid UUID
-    if (error?.code === "22P02") return res.status(400).json();
+    if (error?.code === "22P02") return res.sendStatus(400);
     else {
       console.error(error);
-      return res.status(500).json();
+      return res.sendStatus(500);
     }
     // // When other user doesn't exist
     // if (error instanceof ForeignKeyIntegrityConstraintViolationError) {

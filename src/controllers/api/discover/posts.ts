@@ -105,11 +105,10 @@ const posts = async (req: Request, res: Response) => {
     }
   } catch (error: any) {
     // Invalid cursor ID
-    if (error?.code === "22P02") return res.status(400).json();
-    else {
-      console.error(error);
-      return res.status(500).json();
-    }
+    if (error?.code === "22P02") return res.sendStatus(400);
+
+    console.error(error);
+    return res.sendStatus(500);
   }
 };
 export default posts;

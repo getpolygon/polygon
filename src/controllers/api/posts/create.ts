@@ -42,7 +42,7 @@ const create = async (req: express.Request, res: express.Response) => {
     return res.json(post);
   } catch (error) {
     console.error(error);
-    return res.status(500).json();
+    return res.sendStatus(500);
   }
 };
 

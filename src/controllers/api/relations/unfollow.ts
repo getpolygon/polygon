@@ -6,14 +6,13 @@ const unfollow = async (req: express.Request, res: express.Response) => {
   const { id } = req.params;
 
   try {
-    if (id === req?.user?.id!!) return res.status(406).json();
-    else {
-      // Deleting the relation
-      await pg.query(
-        `
-        DELETE 
-            FROM 
-                relations 
+    if (id === req?.user?.id!!) return res.sendStatus(406);
+
+    // Deleting the relation
+    await pg.query(
+      `
+        DELETE FROM 
+          relations 
         
         WHERE 
             to_user = $1 
@@ -22,17 +21,15 @@ const unfollow = async (req: express.Request, res: express.Response) => {
             AND
             status = 'FOLLOWING'
         `,
-        [id, req?.user?.id]
-      );
+      [id, req?.user?.id]
+    );
 
-      return res.json(null);
-    }
+    return res.json(null);
   } catch (error: any) {
-    if (error?.code === "22P02") return res.status(400).json();
-    else {
-      console.error(error);
-      return res.status(500).json();
-    }
+    if (error?.code === "22P02") return res.sendStatus(400);
+
+    console.error(error);
+    return res.sendStatus(500);
   }
 };
 

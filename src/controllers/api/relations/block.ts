@@ -9,7 +9,7 @@ const block = async (req: express.Request, res: express.Response) => {
 
   try {
     // If the user tries to block himself
-    if (id === req?.user?.id!!) return res.status(406).json();
+    if (id === req?.user?.id!!) return res.sendStatus(406);
     else {
       /**
        * If there's an existing relation between these users
@@ -28,11 +28,10 @@ const block = async (req: express.Request, res: express.Response) => {
       return res.json(relation?.status);
     }
   } catch (error: any) {
-    if (error?.code === "22P02") return res.status(400).json();
-    else {
-      console.error(error);
-      return res.status(500).json();
-    }
+    if (error?.code === "22P02") return res.sendStatus(400);
+
+    console.error(error);
+    return res.sendStatus(500);
   }
 };
 

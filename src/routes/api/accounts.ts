@@ -8,7 +8,7 @@ router.get("/me", me);
 // For fetching account details
 router.get("/:username", others);
 // // For updating account
-// router.patch("/update", update);
+// router.put("/update", update);
 // // For deleting account
 // router.delete("/delete", deleteAccount);
 

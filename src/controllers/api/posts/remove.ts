@@ -17,16 +17,19 @@ const remove = async (req: express.Request, res: express.Response) => {
       if (post?.user_id === req.user?.id) {
         // Deleting the post
         await pg.query("DELETE FROM posts WHERE id = $1", [id]);
-        return res.status(204).json();
-      } else return res.status(403).json();
-    } else return res.status(404).json();
+        return res.sendStatus(204);
+      }
+
+      return res.sendStatus(403);
+    }
+
+    return res.sendStatus(404);
   } catch (error: any) {
     // Invalid cursor ID
-    if (error?.code === "22P02") return res.status(400).json();
-    else {
-      console.error(error);
-      return res.status(500).json();
-    }
+    if (error?.code === "22P02") return res.sendStatus(400);
+
+    console.error(error);
+    return res.sendStatus(500);
   }
 };
 

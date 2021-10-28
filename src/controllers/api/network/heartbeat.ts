@@ -13,13 +13,10 @@ const heartbeat = (req: express.Request, res: express.Response) => {
   // Setting a TTL on the key to delete it after 10 minutes
   redis.expire(username!!, 10 * 60);
   redis.get(username!!, (error, reply) => {
-    if (error) {
-      console.error(error);
-      return res.status(500).json({ connected: false });
-    } else {
-      if (reply) res.json(JSON.parse(reply));
-      else return res.json({ connected: false });
-    }
+    if (error) console.error(error);
+
+    if (reply) res.json(JSON.parse(reply));
+    return res.json({ connected: false });
   });
 };
 

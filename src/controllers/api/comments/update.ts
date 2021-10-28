@@ -23,35 +23,36 @@ const update = async (req: express.Request, res: express.Response) => {
       current: req.user?.id!!,
     });
 
-    if (status === "BLOCKED") return res.status(403).json();
-    else {
-      const comment = await getFirst<Comment>(
-        "SELECT * FROM comments WHERE id = $1",
-        [commentId]
-      );
+    if (status === "BLOCKED") return res.sendStatus(403);
+    const comment = await getFirst<Comment>(
+      "SELECT * FROM comments WHERE id = $1",
+      [commentId]
+    );
 
-      // If comment exists
-      if (comment) {
-        // If the author of the comment is the same as current user
-        if (comment.user_id === req.user?.id!!) {
-          // Update the comment
-          const comment = await getFirst<Partial<Comment>>(
-            "UPDATE comments SET body = $1WHERE id = $2 RETURNING *",
-            [body, commentId]
-          );
+    // If comment exists
+    if (comment) {
+      // If the author of the comment is the same as current user
+      if (comment.user_id === req.user?.id!!) {
+        // Update the comment
+        const comment = await getFirst<Partial<Comment>>(
+          "UPDATE comments SET body = $1WHERE id = $2 RETURNING *",
+          [body, commentId]
+        );
 
-          // Send the updated comment
-          return res.json(comment);
-        }
-        // If the author is not the same
-        else return res.status(403).json();
+        // Send the updated comment
+        return res.json(comment);
       }
-      // If the comment doesn't exist
-      else return res.status(404).json();
+
+      // If the author is not the same
+      return res.sendStatus(403);
     }
+
+    // If the comment doesn't exist
+    return res.sendStatus(404);
   }
+
   // If the post doesn't exist
-  else return res.status(404).json();
+  return res.sendStatus(404);
 };
 
 export default update;

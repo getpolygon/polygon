@@ -24,44 +24,35 @@ const remove = async (req: express.Request, res: express.Response) => {
       });
 
       // If the other user has blocked current account
-      if (status === "BLOCKED") return res.status(403).json();
-      else {
-        try {
-          // Find the comment
-          const comment = await getFirst<Comment>(
-            "SELECT * FROM comments WHERE id = $1",
-            [commentId]
-          );
+      if (status === "BLOCKED") return res.sendStatus(403);
 
-          // If comment exists
-          if (comment) {
-            // If the author of the post is the same
-            if (comment.user_id === req.user?.id!!) {
-              // Delete the comment
-              await pg.query("DELETE FROM comments WHERE id = $1", [commentId]);
-              return res.status(204).json();
-            }
-            // If the author is different
-            else return res.status(403).json();
-          }
-          // If the comment doesn't exist
-          else return res.status(404).json();
-        } catch (error: any) {
-          console.error(error);
-          if (error?.code === "22P02") return res.status(400).json();
-          else {
-            console.error(error);
-            return res.status(500).json();
-          }
+      // Find the comment
+      const comment = await getFirst<Comment>(
+        "SELECT * FROM comments WHERE id = $1",
+        [commentId]
+      );
+
+      // If comment exists
+      if (comment) {
+        // If the author of the post is the same
+        if (comment.user_id === req.user?.id!!) {
+          // Delete the comment
+          await pg.query("DELETE FROM comments WHERE id = $1", [commentId]);
+          return res.sendStatus(204);
         }
+
+        // If the author is different
+        return res.sendStatus(403);
       }
+
+      // If the comment doesn't exist
+      return res.sendStatus(404);
     }
   } catch (error: any) {
-    if (error?.code === "22P02") return res.status(400).json();
-    else {
-      console.error(error);
-      return res.status(500).json();
-    }
+    if (error?.code === "22P02") return res.sendStatus(400);
+
+    console.error(error);
+    return res.status(500).json();
   }
 };
 

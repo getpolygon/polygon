@@ -1,5 +1,5 @@
 import chalk from "chalk";
-import logger from "./Logger";
+import logger from "./logger";
 
 const {
   PORT,

@@ -7,6 +7,6 @@ const router = express.Router();
 router.use("/api", api);
 router.use("/auth", auth);
 
-router.all("*", (_, res) => res.status(404).send("Not Found"));
+router.all("*", (_, res) => res.sendStatus(404));
 
 export default router;

@@ -16,8 +16,7 @@ const login = async (req: express.Request, res: express.Response) => {
 
     if (same) {
       // Create a JWT
-      const payload = { id: user.id };
-      const token = createJwt(payload);
+      const token = createJwt({ id: user.id });
 
       // Send a signed cookie
       return res

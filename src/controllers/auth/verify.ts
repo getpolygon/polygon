@@ -55,16 +55,20 @@ const verify = (req: express.Request, res: express.Response) => {
       const token = createJwt({ id: user?.id });
 
       // Deleting the verification token from Redis
-      redis.del(token, () => {
-        return res
-          .status(201)
-          .cookie("jwt", token, {
-            secure: true,
-            signed: true,
-            httpOnly: true,
-            sameSite: "none",
-          })
-          .json({ ...user, token });
+      redis.del(token, (error, _) => {
+        if (error) console.error(error);
+
+        return (
+          res
+            .status(201)
+            // .cookie("jwt", token, {
+            //   secure: true,
+            //   signed: true,
+            //   httpOnly: true,
+            //   sameSite: "none",
+            // })
+            .json({ ...user, token })
+        );
       });
     }
 

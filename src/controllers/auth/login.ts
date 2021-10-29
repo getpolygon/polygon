@@ -18,15 +18,17 @@ const login = async (req: express.Request, res: express.Response) => {
       // Create a JWT
       const token = createJwt({ id: user.id });
 
-      // Send a signed cookie
-      return res
-        .cookie("jwt", token, {
-          signed: true,
-          secure: true,
-          httpOnly: true,
-          sameSite: "none",
-        })
-        .sendStatus(204);
+      // Send the token
+      return (
+        res
+          // .cookie("jwt", token, {
+          //   signed: true,
+          //   secure: true,
+          //   httpOnly: true,
+          //   sameSite: "none",
+          // })
+          .json({ token })
+      );
     }
 
     // Passwords do not match

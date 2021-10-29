@@ -1,12 +1,12 @@
 import express from "express";
 import validate from "../../validation/middleware";
 import { verify, register } from "../../controllers/auth";
-import registrationValidationRules from "../../validation/rules/registrationValidationRules";
-import verificationValidationRules from "../../validation/rules/verificationValidationRules";
+import registrationRules from "../../validation/rules/registrationValidationRules";
+import verificationRules from "../../validation/rules/verificationValidationRules";
 
 const router = express.Router();
 
-router.post("/", registrationValidationRules(), validate(), register);
-router.post("/verify/:sid", verificationValidationRules(), validate(), verify);
+router.post("/", registrationRules(), validate(), register);
+router.post("/verify/:token", verificationRules(), validate(), verify);
 
 export default router;

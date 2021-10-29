@@ -3,11 +3,15 @@ import redis from "../../../db/redis";
 
 // For getting the status of a certain user
 const status = (req: express.Request, res: express.Response) => {
-  const { username } = req.query;
+  const { id } = req.params;
 
-  redis.get(String(username), (error, reply) => {
+  if (!id) return res.sendStatus(400);
+
+  redis.get(String(id), (error, reply) => {
     if (error) console.error(error);
-    return res.json(JSON.parse(reply!!));
+
+    const parsed = JSON.parse(reply!!) || { connected: false };
+    return res.json(parsed);
   });
 };
 

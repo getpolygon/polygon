@@ -10,7 +10,8 @@ export default () => {
     res: express.Response,
     next: express.NextFunction
   ) => {
-    const token = req.signedCookies.jwt;
+    const authorization = req.headers["authorization"];
+    const [_, token] = authorization?.trim().split(" ")!!;
 
     // Checking if the token exists
     if (!token) res.sendStatus(401);

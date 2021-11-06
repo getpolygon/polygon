@@ -3,8 +3,8 @@
   "scripts": {
     "build": "tsc --project .",
     "prestart": "yarn migrate up",
-    "migrate": "node tools/migrator",
     "seed": "cd tools/seeder && go run .",
+    "migrate": "./bin/goose -dir='migrations'",
     "start": "cross-env NODE_ENV=production node ./build/index.js",
     "dev": "cross-env NODE_ENV=development nodemon ./src/index.ts",
     "express-graph": "express-router-dependency-graph --rootDir=./src/ --format=markdown"

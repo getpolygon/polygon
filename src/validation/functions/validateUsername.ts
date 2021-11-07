@@ -1,5 +1,5 @@
 import type { User } from "../../types/user";
-import getFirst from "../../utils/getFirst";
+import getFirst from "../../util/getFirst";
 
 // Middleware function for express-validator for validating user usernames
 export default async (value: string) => {

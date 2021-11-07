@@ -1,5 +1,5 @@
 import express from "express";
-import getFirst from "../../../utils/getFirst";
+import getFirst from "../../../util/getFirst";
 import { Relation } from "../../../types/relation";
 
 // For checking relation status

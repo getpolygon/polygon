@@ -6,7 +6,7 @@ import morgan from "morgan";
 import helmet from "helmet";
 import routes from "./routes";
 import express from "express";
-import logger from "./utils/Logger";
+import logger from "./util/Logger";
 import compression from "compression";
 import cookieParser from "cookie-parser";
 

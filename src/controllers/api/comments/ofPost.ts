@@ -1,9 +1,9 @@
 import pg from "../../../db/pg";
 import express from "express";
-import getFirst from "../../../utils/getFirst";
+import getFirst from "../../../util/getFirst";
 import type { Post } from "../../../types/post";
 import type { Comment } from "../../../types/comment";
-import checkStatus from "../../../utils/checkStatus";
+import checkStatus from "../../../util/checkStatus";
 
 // For fetching comments of a post
 const ofPost = async (req: express.Request, res: express.Response) => {

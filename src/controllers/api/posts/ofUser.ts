@@ -1,9 +1,9 @@
 import pg from "../../../db/pg";
 import express from "express";
-import getFirst from "../../../utils/getFirst";
+import getFirst from "../../../util/getFirst";
 import type { User } from "../../../types/user";
 import type { Post } from "../../../types/post";
-import checkStatus from "../../../utils/checkStatus";
+import checkStatus from "../../../util/checkStatus";
 
 // For fetching one user's post
 const ofUser = async (req: express.Request, res: express.Response) => {

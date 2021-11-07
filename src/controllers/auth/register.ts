@@ -2,7 +2,7 @@ import crypto from "crypto";
 import bcrypt from "bcrypt";
 import express from "express";
 import redis from "../../db/redis";
-import courier, { config } from "../../utils/courier";
+import courier, { config } from "../../util/courier";
 
 // Token expiration time
 // Default: 5 minutes

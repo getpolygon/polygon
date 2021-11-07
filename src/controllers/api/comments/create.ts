@@ -1,7 +1,7 @@
 import express from "express";
-import getFirst from "../../../utils/getFirst";
+import getFirst from "../../../util/getFirst";
 import type { Post } from "../../../types/post";
-import checkStatus from "../../../utils/checkStatus";
+import checkStatus from "../../../util/checkStatus";
 import type { Comment } from "../../../types/comment";
 
 // For creating a comment

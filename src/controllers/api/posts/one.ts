@@ -1,7 +1,7 @@
 import express from "express";
-import getFirst from "../../../utils/getFirst";
+import getFirst from "../../../util/getFirst";
 import type { Post } from "../../../types/post";
-import checkStatus from "../../../utils/checkStatus";
+import checkStatus from "../../../util/checkStatus";
 
 // For fetching one post
 const one = async (req: express.Request, res: express.Response) => {

@@ -1,7 +1,7 @@
 import express from "express";
 import type { Token } from "../types";
-import getFirst from "../utils/getFirst";
-import { verifyJwt } from "../utils/jwt";
+import getFirst from "../util/getFirst";
+import { verifyJwt } from "../util/jwt";
 import type { User } from "../types/user";
 
 export default () => {

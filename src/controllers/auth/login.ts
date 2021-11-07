@@ -1,7 +1,7 @@
 import bcrypt from "bcrypt";
 import express from "express";
-import getFirst from "../../utils/getFirst";
-import { createJwt } from "../../utils/jwt";
+import getFirst from "../../util/getFirst";
+import { createJwt } from "../../util/jwt";
 import type { User } from "../../types/user";
 
 const login = async (req: express.Request, res: express.Response) => {

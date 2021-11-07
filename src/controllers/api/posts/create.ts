@@ -1,5 +1,5 @@
 import express from "express";
-import getFirst from "../../../utils/getFirst";
+import getFirst from "../../../util/getFirst";
 import type { Post } from "../../../types/post";
 
 // For creating a post

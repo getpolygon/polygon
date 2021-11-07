@@ -1,6 +1,6 @@
 import pg from "../../../db/pg";
 import express from "express";
-import getFirst from "../../../utils/getFirst";
+import getFirst from "../../../util/getFirst";
 import type { Post } from "../../../types/post";
 
 // For removing a post

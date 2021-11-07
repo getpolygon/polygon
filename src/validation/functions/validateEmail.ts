@@ -1,5 +1,5 @@
 import { User } from "../../types/user";
-import getFirst from "../../utils/getFirst";
+import getFirst from "../../util/getFirst";
 import emailValidator from "deep-email-validator-extended";
 
 // Middleware function for express-validator for validating user emails

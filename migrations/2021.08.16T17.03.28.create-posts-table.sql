@@ -1,7 +1,0 @@
-CREATE TABLE posts (
-  id UUID NOT NULL PRIMARY KEY DEFAULT gen_random_uuid(),
-  body TEXT NOT NULL,
-  user_id UUID NOT NULL REFERENCES users(id),
-  privacy VARCHAR NOT NULL CHECK (privacy IN ('PUBLIC', 'PRIVATE')) DEFAULT 'PUBLIC',
-  created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
-)

@@ -8,11 +8,7 @@ import routes from "./routes";
 import express from "express";
 import logger from "./utils/logger";
 import compression from "compression";
-import checkEnv from "./utils/checkEnv";
 import cookieParser from "cookie-parser";
-
-// Checking the presence of required environment variables
-checkEnv();
 
 const app = express();
 const port = process.env.PORT || 3001;

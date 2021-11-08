@@ -1,6 +1,6 @@
 import login from "./login";
 import logout from "./logout";
-import verify from "./verify";
 import register from "./register";
+import verify from "./register/verify";
 
 export { login, logout, verify, register };

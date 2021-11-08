@@ -4,12 +4,16 @@ import type { Post } from "../../../types/post";
 
 // For creating a post
 const create = async (req: express.Request, res: express.Response) => {
-  const { body } = req.body;
+  // Getting the title of the post and optional body
+  const { title, body } = req.body;
 
   try {
     const created = await getFirst<Partial<Post>>(
-      "INSERT INTO posts (body, user_id) VALUES ($1, $2) RETURNING id",
-      [body, req.user?.id]
+      `
+      INSERT INTO posts (title, content, user_id)
+      VALUES ($1, $2, $3) RETURNING id
+      `,
+      [title, body, req.user?.id]
     );
 
     // Getting newly created post with the auther
@@ -17,9 +21,14 @@ const create = async (req: express.Request, res: express.Response) => {
       `
         SELECT 
           post.id, 
-          post.body, 
+          post.title,
+          post.content,
           post.created_at, 
-          TO_JSON(author) AS user
+          TO_JSON(author) AS user,
+          (
+            SELECT COUNT(*) FROM upvotes 
+            WHERE upvotes.post_id = post.id
+          )::INT as upvotes
   
         FROM posts post
   
@@ -42,7 +51,7 @@ const create = async (req: express.Request, res: express.Response) => {
     );
 
     // Sending the response
-    return res.json(post);
+    return res.status(201).json(post);
   } catch (error) {
     console.error(error);
     return res.sendStatus(500);

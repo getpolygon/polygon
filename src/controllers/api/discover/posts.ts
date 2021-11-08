@@ -14,10 +14,11 @@ const posts = async (req: Request, res: Response) => {
     if (!cursor) {
       const { rows: posts } = await pg.query(`
         SELECT
-          Post.id,
-          Post.body,
-          Post.created_at,
-          TO_JSON(Author) as user
+          post.id,
+          post.title,
+          post.content,
+          post.created_at,
+          TO_JSON(author) as user
         FROM posts Post
 
         INNER JOIN (
@@ -29,9 +30,9 @@ const posts = async (req: Request, res: Response) => {
             first_name,
             created_at
           FROM users
-        ) Author ON Post.user_id = Author.id
+        ) author ON post.user_id = author.id
         
-        ORDER BY Post.created_at DESC LIMIT 2;
+        ORDER BY post.created_at DESC LIMIT 2;
       `);
 
       // Filtering out posts from blocked users
@@ -53,21 +54,17 @@ const posts = async (req: Request, res: Response) => {
     } else {
       const {
         rows: { 0: cursorPost },
-      } = await pg.query(
-        `
-        SELECT * FROM posts WHERE id = $1;
-      `,
-        [cursor]
-      );
+      } = await pg.query("SELECT * FROM posts WHERE id = $1", [cursor]);
 
       const { rows: posts } = await pg.query(
         `
         SELECT
-          Post.id,
-          Post.body,
-          Post.created_at,
-          TO_JSON(Author) as user
-        FROM posts Post
+          post.id,
+          post.title,
+          post.content,
+          post.created_at,
+          TO_JSON(author) as user
+        FROM posts post
 
         INNER JOIN (
           SELECT
@@ -78,10 +75,10 @@ const posts = async (req: Request, res: Response) => {
             first_name,
             created_at
           FROM users
-        ) Author ON Post.user_id = Author.id
+        ) author ON post.user_id = author.id
         
-        WHERE Post.created_at < $1 OR (Post.created_at = $1 AND Post.id < $2)
-        ORDER BY Post.created_at DESC, Post.id DESC LIMIT 2;
+        WHERE post.created_at < $1 OR (post.created_at = $1 AND post.id < $2)
+        ORDER BY post.created_at DESC, post.id DESC LIMIT 2;
       `,
         [cursorPost?.created_at!!, cursorPost?.id]
       );

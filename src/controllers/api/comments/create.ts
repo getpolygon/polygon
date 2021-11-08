@@ -38,6 +38,7 @@ const create = async (req: express.Request, res: express.Response) => {
       return res.json(comment);
     }
 
+    // Post was not found
     return res.sendStatus(404);
   } catch (error: any) {
     if (error?.code === "22P02") return res.sendStatus(400);

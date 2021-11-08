@@ -2,5 +2,8 @@ import { body } from "express-validator";
 
 // Rules for post creation
 export default () => {
-  return [body("body").notEmpty().isLength({ max: 700 })];
+  return [
+    body("title").notEmpty().isLength({ max: 300 }),
+    body("body").optional(),
+  ];
 };

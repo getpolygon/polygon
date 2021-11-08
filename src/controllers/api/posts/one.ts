@@ -13,12 +13,13 @@ const one = async (req: express.Request, res: express.Response) => {
     const post = await getFirst<Partial<Post>>(
       `
       SELECT
-        Post.id,
-        Post.body,
-        Post.created_at,
-        row_to_json(Author) AS user
+        post.id,
+        post.title,
+        post.content,
+        post.created_at,
+        TO_JSON(author) AS user
 
-      FROM posts Post
+      FROM posts post
 
       INNER JOIN (
         SELECT
@@ -30,11 +31,11 @@ const one = async (req: express.Request, res: express.Response) => {
             username
 
         FROM users
-      ) Author ON Post.user_id = Author.id
+      ) author ON post.user_id = author.id
 
-      WHERE Post.id = $1
-      GROUP BY Post.id, Author.*
-      ORDER BY Post.created_at DESC;
+      WHERE post.id = $1
+      GROUP BY post.id, author.*
+      ORDER BY post.created_at DESC;
       `,
       [id]
     );

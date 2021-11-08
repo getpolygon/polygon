@@ -9,7 +9,7 @@
     "express-graph": "express-router-dependency-graph --rootDir=./src/ --format=markdown"
   },
   "dependencies": {
-    "@trycourier/courier": "^2.7.0",
+    "@trycourier/courier": "^3.0.0",
     "bcrypt": "^5.0.0",
     "chalk": "^4.1.2",
     "compression": "^1.7.4",

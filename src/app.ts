@@ -6,7 +6,8 @@ import compression from "compression";
 import cookieParser from "cookie-parser";
 
 const app = express();
-const origins = JSON.parse(process.env.POLYGON_ORIGINS!!) || true;
+const origins =
+  JSON.parse((process.env.POLYGON_ORIGINS as any) || null) || true;
 
 // Middleware
 app.use(helmet());

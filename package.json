@@ -4,8 +4,8 @@
     "build": "tsc --project .",
     "prestart": "yarn migrate up",
     "migrate": "./bin/goose -dir=migrations",
-    "dev": "cross-env NODE_ENV=development nodemon ./src/index.ts",
     "start": "cross-env NODE_ENV=production node ./build/server.js",
+    "dev": "cross-env NODE_ENV=development nodemon --files ./src/server.ts",
     "express-graph": "express-router-dependency-graph --rootDir=./src/ --format=markdown"
   },
   "dependencies": {

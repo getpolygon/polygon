@@ -3,7 +3,7 @@ require("dotenv").config();
 import app from "./app";
 import http from "http";
 import morgan from "morgan";
-import logger from "./util/Logger";
+import logger from "./util/logger";
 import errorHandler from "errorhandler";
 
 // Port for Polygon to bind to

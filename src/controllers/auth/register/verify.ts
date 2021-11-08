@@ -1,9 +1,9 @@
 import bcrypt from "bcrypt";
 import express from "express";
-import redis from "../../db/redis";
-import getFirst from "../../util/getFirst";
-import { createJwt } from "../../util/jwt";
-import type { User } from "../../types/user";
+import redis from "../../../db/redis";
+import getFirst from "../../../util/getFirst";
+import { createJwt } from "../../../util/jwt";
+import type { User } from "../../../types/user";
 
 const verify = (req: express.Request, res: express.Response) => {
   // Getting the token

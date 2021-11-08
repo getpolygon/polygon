@@ -2,7 +2,8 @@
 -- +goose StatementBegin
 CREATE TABLE posts (
   id UUID NOT NULL PRIMARY KEY DEFAULT gen_random_uuid(),
-  body TEXT NOT NULL,
+  content TEXT NULL,
+  title TEXT NOT NULL,
   user_id UUID NOT NULL REFERENCES users(id),
   created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
 );

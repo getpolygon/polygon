@@ -3,6 +3,7 @@ import type { Token } from "../types";
 import getFirst from "../util/getFirst";
 import { verifyJwt } from "../util/jwt";
 import type { User } from "../types/user";
+import { JsonWebTokenError } from "jsonwebtoken";
 
 export default () => {
   return async (
@@ -16,18 +17,27 @@ export default () => {
     // Checking if the token exists
     if (!token) res.sendStatus(401);
 
-    // Getting the ID from the token
-    const data = verifyJwt<Token>(token!!);
-    // Finding the user with the ID
-    const user = await getFirst<User>("SELECT * FROM users WHERE id = $1", [
-      data.id,
-    ]);
+    // Validating the token
+    try {
+      const data = verifyJwt<Token>(token!!);
+      // Finding the user with the ID
+      const user = await getFirst<User>("SELECT * FROM users WHERE id = $1", [
+        data.id,
+      ]);
 
-    // If the account does not exist
-    if (!user) return res.sendStatus(401);
+      // If the account does not exist
+      if (!user) return res.sendStatus(401);
 
-    // Setting the user
-    req.user = user;
-    return next();
+      // Setting the user
+      req.user = user;
+
+      return next();
+    } catch (error) {
+      // If token is invalid
+      if (error instanceof JsonWebTokenError) return res.sendStatus(400);
+
+      console.error(error);
+      return res.sendStatus(500);
+    }
   };
 };

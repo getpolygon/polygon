@@ -10,7 +10,6 @@ CREATE TABLE users (
   first_name VARCHAR NOT NULL,
   email VARCHAR NOT NULL UNIQUE,
   username VARCHAR NOT NULL UNIQUE,
-  private BOOLEAN NOT NULL DEFAULT false,
   created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
 );
 -- +goose StatementEnd

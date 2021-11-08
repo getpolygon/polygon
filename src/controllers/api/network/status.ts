@@ -7,7 +7,7 @@ const status = (req: express.Request, res: express.Response) => {
 
   if (!id) return res.sendStatus(400);
 
-  redis.get(String(id), (error, reply) => {
+  redis.get(id, (error, reply) => {
     if (error) console.error(error);
 
     const parsed = JSON.parse(reply!!) || { connected: false };

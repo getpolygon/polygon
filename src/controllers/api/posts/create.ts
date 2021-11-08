@@ -15,9 +15,13 @@ const create = async (req: express.Request, res: express.Response) => {
     // Getting newly created post with the auther
     const post = await getFirst(
       `
-        SELECT Post.id, Post.body, Post.created_at, to_json(Author) AS user
+        SELECT 
+          post.id, 
+          post.body, 
+          post.created_at, 
+          TO_JSON(author) AS user
   
-        FROM posts Post
+        FROM posts post
   
         INNER JOIN (
           SELECT 
@@ -25,15 +29,14 @@ const create = async (req: express.Request, res: express.Response) => {
             avatar,
             username,
             last_name,
-            first_name,
-            is_private
+            first_name
   
           FROM users
-        ) Author ON Author.id = Post.user_id
+        ) author ON author.id = post.user_id
   
-        WHERE Post.id = $1
-        GROUP BY Post.id, Author.* 
-        ORDER BY Post.created_at DESC;
+        WHERE post.id = $1
+        GROUP BY post.id, author.* 
+        ORDER BY post.created_at DESC;
       `,
       [created?.id]
     );

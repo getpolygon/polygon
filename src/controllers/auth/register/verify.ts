@@ -57,18 +57,7 @@ const verify = (req: express.Request, res: express.Response) => {
       // Deleting the verification token from Redis
       redis.del(token, (error, _) => {
         if (error) console.error(error);
-
-        return (
-          res
-            .status(201)
-            // .cookie("jwt", token, {
-            //   secure: true,
-            //   signed: true,
-            //   httpOnly: true,
-            //   sameSite: "none",
-            // })
-            .json({ ...user, token })
-        );
+        return res.status(201).json({ ...user, token });
       });
     }
 

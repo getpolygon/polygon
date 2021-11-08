@@ -13,7 +13,6 @@ const me = async (req: express.Request, res: express.Response) => {
         bio,
         cover,
         avatar,
-        is_private,
         username,
         last_name,
         first_name,

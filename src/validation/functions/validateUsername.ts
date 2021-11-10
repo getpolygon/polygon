@@ -9,8 +9,8 @@ export default async (value: string) => {
   if (!validRegex) return Promise.reject("Invalid username");
   else {
     // Finding another user with the same username if it exists
-    const existingUser = await getFirst(
-      "SELECT * FROM users WHERE username = $1;",
+    const existingUser = await getFirst<{ id: string }>(
+      "SELECT id FROM users WHERE username = $1;",
       [value]
     );
 

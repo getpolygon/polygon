@@ -7,9 +7,10 @@ const remove = async (req: Request, res: Response) => {
   const { id } = req.params;
 
   try {
-    const post = await getFirst<any>("SELECT * FROM posts WHERE id = $1", [
-      id,
-    ]);
+    const post = await getFirst<{ user_id: string }>(
+      "SELECT user_id FROM posts WHERE id = $1",
+      [id]
+    );
 
     if (post) {
       // If the author of the post is the same as current user

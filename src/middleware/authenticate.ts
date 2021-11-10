@@ -1,5 +1,5 @@
-import getFirst from "../util/getFirst";
 import { verifyJwt } from "../util/jwt";
+import getFirst from "../util/getFirst";
 import { JsonWebTokenError } from "jsonwebtoken";
 import type { Request, Response, NextFunction } from "express";
 

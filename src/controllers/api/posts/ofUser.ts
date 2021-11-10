@@ -11,9 +11,10 @@ const ofUser = async (req: Request, res: Response) => {
   const { username } = req.params;
 
   // Getting post author
-  const user = await getFirst<any>("SELECT * FROM users WHERE username = $1", [
-    username,
-  ]);
+  const user = await getFirst<{ id: string }>(
+    "SELECT id FROM users WHERE username = $1",
+    [username]
+  );
 
   // Checking the relation between this and author account
   const status = await checkStatus({
@@ -67,8 +68,8 @@ const ofUser = async (req: Request, res: Response) => {
     else {
       try {
         // Fetching the post with the supplied cursor
-        const cursorPost = await getFirst<any>(
-          "SELECT * FROM posts WHERE id = $1 AND user_id = $2",
+        const cursorPost = await getFirst<{ created_at: Date }>(
+          "SELECT created_at FROM posts WHERE id = $1 AND user_id = $2",
           [cursor, user?.id]
         );
 

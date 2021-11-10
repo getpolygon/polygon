@@ -54,7 +54,9 @@ const posts = async (req: Request, res: Response) => {
     } else {
       const {
         rows: { 0: cursorPost },
-      } = await pg.query("SELECT * FROM posts WHERE id = $1", [cursor]);
+      } = (await pg.query("SELECT id, created_at FROM posts WHERE id = $1", [
+        cursor,
+      ])) as { rows: { created_at: Date; id: string }[] };
 
       const { rows: posts } = await pg.query(
         `

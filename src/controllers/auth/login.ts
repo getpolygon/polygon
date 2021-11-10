@@ -5,9 +5,10 @@ import type { Request, Response } from "express";
 
 const login = async (req: Request, res: Response) => {
   const { password, email } = req.body;
-  const user = await getFirst<any>("SELECT * FROM users WHERE email = $1", [
-    email,
-  ]);
+  const user = await getFirst<{ id: string; password: string }>(
+    "SELECT id, password FROM users WHERE email = $1",
+    [email]
+  );
 
   if (user) {
     // If passwords match

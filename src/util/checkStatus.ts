@@ -12,9 +12,9 @@ const checkStatus = async ({
   // Current user's ID
   current: string;
 }): Promise<RelationStatus> => {
-  const relation = await getFirst<any>(
+  const relation = await getFirst<{ status: RelationStatus }>(
     `
-    SELECT * FROM relations WHERE to_user = $1
+    SELECT status FROM relations WHERE to_user = $1
     AND from_user = $2 AND status = 'BLOCKED';
     `,
     [current, other]

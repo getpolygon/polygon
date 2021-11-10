@@ -17,8 +17,8 @@ export default async (value: string) => {
   // If the email is valid
   if (valid) {
     // Checking for existing users with that email
-    const existingUser = await getFirst(
-      "SELECT * FROM users WHERE email = $1",
+    const existingUser = await getFirst<{ id: string }>(
+      "SELECT id FROM users WHERE email = $1",
       [value]
     );
 

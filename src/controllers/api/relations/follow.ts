@@ -8,12 +8,12 @@ const follow = async (req: Request, res: Response) => {
 
   try {
     // If the user tries to follow himself
-    if (id === (req.user as any)?.id) return res.sendStatus(406);
+    if (id === req.user?.id) return res.sendStatus(406);
 
     // Checking if the other user has blocked current user
     const status = await checkStatus({
       other: id!!,
-      current: (req.user as any)?.id!!,
+      current: req.user?.id!!,
     });
 
     // Not blocked
@@ -24,7 +24,7 @@ const follow = async (req: Request, res: Response) => {
           INSERT INTO relations (status, to_user, from_user) 
           VALUES ('FOLLOWING', $1, $2) RETURNING status;
           `,
-        [id, (req.user as any)?.id]
+        [id, req.user?.id]
       );
 
       // Sending the status

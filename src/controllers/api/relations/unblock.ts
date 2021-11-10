@@ -12,7 +12,7 @@ const unblock = async (req: Request, res: Response) => {
 
     await pg.query(
       "DELETE FROM relations WHERE from_user = $1 AND to_user = $2 AND status = 'BLOCKED'",
-      [(req.user as any)?.id, id]
+      [req.user?.id, id]
     );
 
     return res.sendStatus(200);

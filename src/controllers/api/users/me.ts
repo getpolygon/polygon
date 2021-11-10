@@ -19,7 +19,7 @@ const me = async (req: Request, res: Response) => {
 
       FROM users WHERE id = $1;
     `,
-      [(req.user as any)?.id]
+      [req.user?.id]
     );
 
     // Sending the response

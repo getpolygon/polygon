@@ -19,7 +19,7 @@ const status = async (req: Request, res: Response) => {
         AND 
         from_user IN ($1, $2)
       `,
-      [id, (req.user as any)?.id]
+      [id, req.user?.id]
     );
 
     return res.json(relation?.status || null);

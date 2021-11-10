@@ -11,7 +11,7 @@ const followers = async (req: Request, res: Response) => {
     // Checking the status between 2 users
     const status = await checkStatus({
       other: id,
-      current: (req.user as any)?.id!!,
+      current: req.user?.id!!,
     });
 
     // If current user is blocked by the other one

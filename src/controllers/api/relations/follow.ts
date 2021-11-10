@@ -1,7 +1,6 @@
 import { Request, Response } from "express";
 import getFirst from "../../../util/getFirst";
 import checkStatus from "../../../util/checkStatus";
-import type { Relation } from "../../../types/relation";
 
 // For following another user
 const follow = async (req: Request, res: Response) => {
@@ -9,23 +8,23 @@ const follow = async (req: Request, res: Response) => {
 
   try {
     // If the user tries to follow himself
-    if (id === req.user?.id) return res.sendStatus(406);
+    if (id === (req.user as any)?.id) return res.sendStatus(406);
 
     // Checking if the other user has blocked current user
     const status = await checkStatus({
       other: id!!,
-      current: req.user?.id!!,
+      current: (req.user as any)?.id!!,
     });
 
     // Not blocked
     if (status !== "BLOCKED") {
       // Creating the relation
-      const response = await getFirst<Partial<Relation>>(
+      const response = await getFirst<any>(
         `
           INSERT INTO relations (status, to_user, from_user) 
           VALUES ('FOLLOWING', $1, $2) RETURNING status;
           `,
-        [id, req.user?.id]
+        [id, (req.user as any)?.id]
       );
 
       // Sending the status

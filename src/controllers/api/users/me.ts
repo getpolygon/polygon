@@ -1,12 +1,11 @@
 import getFirst from "../../../util/getFirst";
-import type { User } from "../../../types/user";
 import type { Request, Response } from "express";
 
 // For fetching current account details
 const me = async (req: Request, res: Response) => {
   try {
     // Getting the account
-    const user = await getFirst<Partial<User>>(
+    const user = await getFirst<any>(
       `
       SELECT
         id,
@@ -20,7 +19,7 @@ const me = async (req: Request, res: Response) => {
 
       FROM users WHERE id = $1;
     `,
-      [req.user?.id]
+      [(req.user as any)?.id]
     );
 
     // Sending the response

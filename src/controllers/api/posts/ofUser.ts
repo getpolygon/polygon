@@ -1,7 +1,5 @@
 import pg from "../../../db/pg";
 import getFirst from "../../../util/getFirst";
-import type { User } from "../../../types/user";
-import type { Post } from "../../../types/post";
 import type { Request, Response } from "express";
 import checkStatus from "../../../util/checkStatus";
 
@@ -13,14 +11,14 @@ const ofUser = async (req: Request, res: Response) => {
   const { username } = req.params;
 
   // Getting post author
-  const user = await getFirst<User>("SELECT * FROM users WHERE username = $1", [
+  const user = await getFirst<any>("SELECT * FROM users WHERE username = $1", [
     username,
   ]);
 
   // Checking the relation between this and author account
   const status = await checkStatus({
+    other: user?.id!!,
     current: req?.user?.id!!,
-    other: user?.id!! as string,
   });
 
   // If other account has blocked this one
@@ -69,7 +67,7 @@ const ofUser = async (req: Request, res: Response) => {
     else {
       try {
         // Fetching the post with the supplied cursor
-        const cursorPost = await getFirst<Post>(
+        const cursorPost = await getFirst<any>(
           "SELECT * FROM posts WHERE id = $1 AND user_id = $2",
           [cursor, user?.id]
         );

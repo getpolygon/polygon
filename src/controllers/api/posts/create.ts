@@ -1,5 +1,4 @@
 import getFirst from "../../../util/getFirst";
-import type { Post } from "../../../types/post";
 import type { Request, Response } from "express";
 
 // For creating a post
@@ -8,7 +7,7 @@ const create = async (req: Request, res: Response) => {
   const { title, body } = req.body;
 
   try {
-    const created = await getFirst<Partial<Post>>(
+    const created = await getFirst<any>(
       `
       INSERT INTO posts (title, content, user_id)
       VALUES ($1, $2, $3) RETURNING id

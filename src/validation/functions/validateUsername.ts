@@ -1,4 +1,3 @@
-import type { User } from "../../types/user";
 import getFirst from "../../util/getFirst";
 
 // Middleware function for express-validator for validating user usernames
@@ -10,7 +9,7 @@ export default async (value: string) => {
   if (!validRegex) return Promise.reject("Invalid username");
   else {
     // Finding another user with the same username if it exists
-    const existingUser = await getFirst<User>(
+    const existingUser = await getFirst(
       "SELECT * FROM users WHERE username = $1;",
       [value]
     );

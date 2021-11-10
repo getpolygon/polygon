@@ -1,11 +1,8 @@
-import type { User } from "./user";
+export type User = any;
 
 declare module "express" {
   interface Request {
     user?: Partial<User>;
-    signedCookies: {
-      jwt?: string;
-    };
   }
 
   interface Response {

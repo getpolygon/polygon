@@ -1,4 +1,3 @@
-import { User } from "../../types/user";
 import getFirst from "../../util/getFirst";
 import emailValidator from "deep-email-validator-extended";
 
@@ -18,7 +17,7 @@ export default async (value: string) => {
   // If the email is valid
   if (valid) {
     // Checking for existing users with that email
-    const existingUser = await getFirst<User>(
+    const existingUser = await getFirst(
       "SELECT * FROM users WHERE email = $1",
       [value]
     );

@@ -1,5 +1,4 @@
 import getFirst from "../../../util/getFirst";
-import type { User } from "../../../types/user";
 import type { Request, Response } from "express";
 import checkStatus from "../../../util/checkStatus";
 
@@ -10,7 +9,7 @@ const others = async (req: Request, res: Response) => {
 
   try {
     // Getting the account
-    const user = await getFirst<Partial<User>>(
+    const user = await getFirst<any>(
       `
         SELECT 
           id,
@@ -34,7 +33,7 @@ const others = async (req: Request, res: Response) => {
     // Checking if that user has blocked current user
     const status = await checkStatus({
       other: user?.id!!,
-      current: req?.user?.id!!,
+      current: (req?.user as any)?.id!!,
     });
 
     // If the other user has blocked current user don't send a response

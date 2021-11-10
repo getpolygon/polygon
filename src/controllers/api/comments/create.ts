@@ -1,8 +1,6 @@
 import getFirst from "../../../util/getFirst";
-import type { Post } from "../../../types/post";
 import type { Request, Response } from "express";
 import checkStatus from "../../../util/checkStatus";
-import type { Comment } from "../../../types/comment";
 
 // For creating a comment
 const create = async (req: Request, res: Response) => {
@@ -11,9 +9,10 @@ const create = async (req: Request, res: Response) => {
   const { post: postId } = req.params;
 
   try {
-    const post = await getFirst<Post>("SELECT * FROM posts WHERE id = $1;", [
-      postId,
-    ]);
+    const post = await getFirst<{ user_id: string }>(
+      "SELECT user_id FROM posts WHERE id = $1;",
+      [postId]
+    );
 
     if (post) {
       // Checking if the other user has blocked current user

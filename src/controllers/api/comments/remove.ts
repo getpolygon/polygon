@@ -1,9 +1,7 @@
 import pg from "../../../db/pg";
 import getFirst from "../../../util/getFirst";
-import type { Post } from "../../../types/post";
 import type { Request, Response } from "express";
 import checkStatus from "../../../util/checkStatus";
-import type { Comment } from "../../../types/comment";
 
 // For deleting a comment
 const remove = async (req: Request, res: Response) => {
@@ -11,9 +9,10 @@ const remove = async (req: Request, res: Response) => {
 
   try {
     // Find the post
-    const post = await getFirst<Post>("SELECT * FROM posts WHERE id = $1", [
-      postId,
-    ]);
+    const post = await getFirst<{ user_id: string }>(
+      "SELECT user_id FROM posts WHERE id = $1",
+      [postId]
+    );
 
     // If post exists
     if (post) {
@@ -27,8 +26,8 @@ const remove = async (req: Request, res: Response) => {
       if (status === "BLOCKED") return res.sendStatus(403);
 
       // Find the comment
-      const comment = await getFirst<Comment>(
-        "SELECT * FROM comments WHERE id = $1",
+      const comment = await getFirst<{ user_id: string }>(
+        "SELECT user_id FROM comments WHERE id = $1",
         [commentId]
       );
 

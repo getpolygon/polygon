@@ -1,7 +1,5 @@
-import type { Token } from "../types";
 import getFirst from "../util/getFirst";
 import { verifyJwt } from "../util/jwt";
-import type { User } from "../types/user";
 import { JsonWebTokenError } from "jsonwebtoken";
 import type { Request, Response, NextFunction } from "express";
 
@@ -15,9 +13,9 @@ export default () => {
 
     // Validating the token
     try {
-      const data = verifyJwt<Token>(token!!);
+      const data = verifyJwt<any>(token!!);
       // Finding the user with the ID
-      const user = await getFirst<User>("SELECT * FROM users WHERE id = $1", [
+      const user = await getFirst<any>("SELECT * FROM users WHERE id = $1", [
         data.id,
       ]);
 

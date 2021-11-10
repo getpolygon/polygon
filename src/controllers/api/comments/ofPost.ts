@@ -1,9 +1,7 @@
 import pg from "../../../db/pg";
 import getFirst from "../../../util/getFirst";
-import type { Post } from "../../../types/post";
 import type { Request, Response } from "express";
 import checkStatus from "../../../util/checkStatus";
-import type { Comment } from "../../../types/comment";
 
 // For fetching comments of a post
 const ofPost = async (req: Request, res: Response) => {
@@ -14,9 +12,10 @@ const ofPost = async (req: Request, res: Response) => {
 
   try {
     // Finding the post
-    const post = await getFirst<Post>("SELECT * FROM posts WHERE id = $1", [
-      postId,
-    ]);
+    const post = await getFirst<{ id: string; user_id: string }>(
+      "SELECT id, user_id FROM posts WHERE id = $1",
+      [postId]
+    );
 
     // If post doesn't exist
     if (!post) return res.sendStatus(404);
@@ -35,19 +34,19 @@ const ofPost = async (req: Request, res: Response) => {
         // Fetching the comments
         const { rows: comments } = (await pg.query(
           `
-            SELECT * FROM comments WHERE post_id = $1
+            SELECT id, created_at FROM comments WHERE post_id = $1
             ORDER BY created_at DESC LIMIT $2
             `,
           [post.id, Number(limit) || 2]
-        )) as { rows: Comment[] };
+        )) as { rows: { id: string; created_at: Date }[] };
 
         // Getting next cursor
-        const next = (await (async () => {
+        const next = await new Promise(async (resolve, _) => {
           if (comments.length === 0) return null;
 
-          const nextComment = await getFirst(
+          const nextComment = await getFirst<{ id: string }>(
             `
-              SELECT * FROM comments WHERE post_id = $1
+              SELECT id FROM comments WHERE post_id = $1
               AND id > $2 AND created_at > $3
               ORDER BY created_at DESC LIMIT 1;
               `,
@@ -57,12 +56,13 @@ const ofPost = async (req: Request, res: Response) => {
               comments[comments.length - 1].created_at,
             ]
           );
-          return nextComment;
-        })()) as Comment | null;
+
+          return resolve(nextComment);
+        });
 
         return res.json({
           data: comments,
-          next: next?.id,
+          next: (next as any)?.id,
         });
       }
 

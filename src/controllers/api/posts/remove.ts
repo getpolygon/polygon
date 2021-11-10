@@ -1,6 +1,5 @@
 import pg from "../../../db/pg";
 import getFirst from "../../../util/getFirst";
-import type { Post } from "../../../types/post";
 import type { Request, Response } from "express";
 
 // For removing a post
@@ -8,7 +7,7 @@ const remove = async (req: Request, res: Response) => {
   const { id } = req.params;
 
   try {
-    const post = await getFirst<Post>("SELECT * FROM posts WHERE id = $1", [
+    const post = await getFirst<any>("SELECT * FROM posts WHERE id = $1", [
       id,
     ]);
 

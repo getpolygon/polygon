@@ -1,6 +1,5 @@
 import getFirst from "../../../util/getFirst";
 import type { Request, Response } from "express";
-import { Relation } from "../../../types/relation";
 
 // For checking relation status
 const status = async (req: Request, res: Response) => {
@@ -9,7 +8,7 @@ const status = async (req: Request, res: Response) => {
 
   try {
     // Finding the relation
-    const relation = await getFirst<Partial<Relation>>(
+    const relation = await getFirst<any>(
       `
       SELECT
         status 
@@ -20,7 +19,7 @@ const status = async (req: Request, res: Response) => {
         AND 
         from_user IN ($1, $2)
       `,
-      [id, req.user?.id]
+      [id, (req.user as any)?.id]
     );
 
     return res.json(relation?.status || null);

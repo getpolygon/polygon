@@ -1,6 +1,5 @@
 import getFirst from "../../../util/getFirst";
 import type { Request, Response } from "express";
-import type { Relation } from "../../../types/relation";
 
 // For blocking users
 const block = async (req: Request, res: Response) => {
@@ -16,7 +15,7 @@ const block = async (req: Request, res: Response) => {
        * set the status of the relation to blocked, if a relation
        * doesn't exist, then create one
        */
-      const relation = await getFirst<Partial<Relation>>(
+      const relation = await getFirst<any>(
         `
         INSERT INTO relations (from_user, to_user, status)
         VALUES ($1, $2, 'BLOCKED') ON CONFLICT (status) 

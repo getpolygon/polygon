@@ -6,7 +6,7 @@ const unfollow = async (req: Request, res: Response) => {
   const { id } = req.params;
 
   try {
-    if (id === req?.user?.id!!) return res.sendStatus(406);
+    if (id === (req?.user as any)?.id!!) return res.sendStatus(406);
 
     // Deleting the relation
     await pg.query(
@@ -21,7 +21,7 @@ const unfollow = async (req: Request, res: Response) => {
             AND
             status = 'FOLLOWING'
         `,
-      [id, req?.user?.id]
+      [id, (req?.user as any).id]
     );
 
     return res.json(null);

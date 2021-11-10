@@ -1,5 +1,6 @@
 import getFirst from "./getFirst";
-import type { Relation } from "../types/relation";
+
+type RelationStatus = "BLOCKED" | "PENDING" | "FOLLOWING";
 
 // For checking if a user has blocked current user
 const checkStatus = async ({
@@ -10,8 +11,8 @@ const checkStatus = async ({
   other: string;
   // Current user's ID
   current: string;
-}): Promise<Relation["status"]> => {
-  const relation = await getFirst<Relation>(
+}): Promise<RelationStatus> => {
+  const relation = await getFirst<any>(
     `
     SELECT * FROM relations WHERE to_user = $1
     AND from_user = $2 AND status = 'BLOCKED';

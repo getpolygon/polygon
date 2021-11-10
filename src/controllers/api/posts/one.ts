@@ -1,5 +1,4 @@
 import getFirst from "../../../util/getFirst";
-import type { Post } from "../../../types/post";
 import type { Request, Response } from "express";
 import checkStatus from "../../../util/checkStatus";
 
@@ -10,7 +9,7 @@ const one = async (req: Request, res: Response) => {
 
   try {
     // Getting the post
-    const post = await getFirst<Partial<Post>>(
+    const post = await getFirst<any>(
       `
       SELECT
         post.id,

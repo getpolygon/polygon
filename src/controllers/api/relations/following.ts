@@ -8,7 +8,10 @@ const following = async (req: Request, res: Response) => {
 
   try {
     // Checking the relation between 2 users
-    const status = await checkStatus({ other: id, current: req.user?.id!! });
+    const status = await checkStatus({
+      other: id,
+      current: (req.user as any)?.id!!,
+    });
 
     // If not blocked
     if (status !== "BLOCKED") {

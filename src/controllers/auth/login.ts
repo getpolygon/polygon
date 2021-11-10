@@ -1,12 +1,11 @@
 import bcrypt from "bcrypt";
 import getFirst from "../../util/getFirst";
 import { createJwt } from "../../util/jwt";
-import type { User } from "../../types/user";
 import type { Request, Response } from "express";
 
 const login = async (req: Request, res: Response) => {
   const { password, email } = req.body;
-  const user = await getFirst<User>("SELECT * FROM users WHERE email = $1", [
+  const user = await getFirst<any>("SELECT * FROM users WHERE email = $1", [
     email,
   ]);
 

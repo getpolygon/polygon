@@ -8,11 +8,11 @@ const unblock = async (req: Request, res: Response) => {
 
   try {
     // If the user is trying to unblock himself
-    if (id === req?.user?.id) return res.sendStatus(406);
+    if (id === (req?.user as any)?.id) return res.sendStatus(406);
 
     await pg.query(
       "DELETE FROM relations WHERE from_user = $1 AND to_user = $2 AND status = 'BLOCKED'",
-      [req.user?.id, id]
+      [(req.user as any)?.id, id]
     );
 
     return res.sendStatus(200);

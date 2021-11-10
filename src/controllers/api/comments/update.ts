@@ -1,6 +1,4 @@
 import getFirst from "../../../util/getFirst";
-import type { Post } from "../../../types/post";
-import { Comment } from "../../../types/comment";
 import type { Request, Response } from "express";
 import checkStatus from "../../../util/checkStatus";
 
@@ -12,9 +10,10 @@ const update = async (req: Request, res: Response) => {
   const { post: postId, comment: commentId } = req.params;
 
   // Checking if the post exists
-  const post = await getFirst<Post>("SELECT * FROM posts WHERE id = $1", [
-    postId,
-  ]);
+  const post = await getFirst<{ user_id: string }>(
+    "SELECT user_id FROM posts WHERE id = $1",
+    [postId]
+  );
 
   if (post) {
     // Checking if the other user has blocked current user
@@ -24,8 +23,8 @@ const update = async (req: Request, res: Response) => {
     });
 
     if (status === "BLOCKED") return res.sendStatus(403);
-    const comment = await getFirst<Comment>(
-      "SELECT * FROM comments WHERE id = $1",
+    const comment = await getFirst<{ user_id: string }>(
+      "SELECT user_id FROM comments WHERE id = $1",
       [commentId]
     );
 

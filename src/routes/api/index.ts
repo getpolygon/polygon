@@ -1,18 +1,18 @@
 import express from "express";
-import PostAPI from "./posts";
-import CommentAPI from "./comments";
-import NetworkAPI from "./network";
-import AccountAPI from "./accounts";
-import DiscoverAPI from "./discover";
-import RelationAPI from "./relations";
+import posts from "./posts";
+import users from "./users";
+import network from "./network";
+import comments from "./comments";
+import discover from "./discover";
+import relations from "./relations";
 
 const router = express.Router();
 
-router.use("/posts", PostAPI);
-router.use("/network", NetworkAPI);
-router.use("/accounts", AccountAPI);
-router.use("/comments", CommentAPI);
-router.use("/discover", DiscoverAPI);
-router.use("/relations", RelationAPI);
+router.use("/posts", posts);
+router.use("/users", users);
+router.use("/network", network);
+router.use("/comments", comments);
+router.use("/discover", discover);
+router.use("/relations", relations);
 
 export default router;

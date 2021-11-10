@@ -1,7 +1,7 @@
-import express from "express";
 import pg from "../../../db/pg";
+import type { Request, Response } from "express";
 
-const unfollow = async (req: express.Request, res: express.Response) => {
+const unfollow = async (req: Request, res: Response) => {
   // Other user's ID
   const { id } = req.params;
 

@@ -1,9 +1,9 @@
-import express from "express";
 import getFirst from "../../../util/getFirst";
+import type { Request, Response } from "express";
 import { Relation } from "../../../types/relation";
 
 // For checking relation status
-const status = async (req: express.Request, res: express.Response) => {
+const status = async (req: Request, res: Response) => {
   // The ID of other user
   const { id } = req.params;
 

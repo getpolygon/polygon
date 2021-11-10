@@ -1,12 +1,12 @@
 import pg from "../../../db/pg";
-import express from "express";
 import getFirst from "../../../util/getFirst";
 import type { Post } from "../../../types/post";
-import type { Comment } from "../../../types/comment";
+import type { Request, Response } from "express";
 import checkStatus from "../../../util/checkStatus";
+import type { Comment } from "../../../types/comment";
 
 // For deleting a comment
-const remove = async (req: express.Request, res: express.Response) => {
+const remove = async (req: Request, res: Response) => {
   const { post: postId, comment: commentId } = req.params;
 
   try {

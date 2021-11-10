@@ -1,10 +1,10 @@
 import pg from "../../../db/pg";
-import express from "express";
 import getFirst from "../../../util/getFirst";
 import type { Post } from "../../../types/post";
+import type { Request, Response } from "express";
 
 // For removing a post
-const remove = async (req: express.Request, res: express.Response) => {
+const remove = async (req: Request, res: Response) => {
   const { id } = req.params;
 
   try {

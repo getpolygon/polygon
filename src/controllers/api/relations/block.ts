@@ -1,9 +1,9 @@
-import express from "express";
 import getFirst from "../../../util/getFirst";
+import type { Request, Response } from "express";
 import type { Relation } from "../../../types/relation";
 
 // For blocking users
-const block = async (req: express.Request, res: express.Response) => {
+const block = async (req: Request, res: Response) => {
   // Other user's ID
   const { id } = req.params;
 

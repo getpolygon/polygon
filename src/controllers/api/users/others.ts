@@ -1,10 +1,10 @@
-import express from "express";
 import getFirst from "../../../util/getFirst";
 import type { User } from "../../../types/user";
+import type { Request, Response } from "express";
 import checkStatus from "../../../util/checkStatus";
 
 // For fetching other accounts
-const others = async (req: express.Request, res: express.Response) => {
+const others = async (req: Request, res: Response) => {
   // Getting the username
   const { username } = req.params;
 

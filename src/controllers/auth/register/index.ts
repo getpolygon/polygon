@@ -1,7 +1,7 @@
 import crypto from "crypto";
 import bcrypt from "bcrypt";
-import express from "express";
 import redis from "../../../db/redis";
+import type { Request, Response } from "express";
 import courier, { config } from "../../../util/courier";
 
 // Token expiration time
@@ -14,7 +14,7 @@ const expireAfter =
 const verificationUrl =
   process.env.POLYGON_EMAIL_VERIFICATION_URL || "http://localhost:3000/";
 
-const register = async (req: express.Request, res: express.Response) => {
+const register = async (req: Request, res: Response) => {
   // Generating a random token
   const token = crypto.randomBytes(12).toString("hex");
   const { firstName, lastName, email, password, username } = req.body;

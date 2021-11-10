@@ -1,10 +1,10 @@
-import express from "express";
 import getFirst from "../../../util/getFirst";
 import type { Post } from "../../../types/post";
+import type { Request, Response } from "express";
 import checkStatus from "../../../util/checkStatus";
 
 // For fetching one post
-const one = async (req: express.Request, res: express.Response) => {
+const one = async (req: Request, res: Response) => {
   // The id of the post
   const { id } = req.params;
 

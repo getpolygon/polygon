@@ -1,11 +1,11 @@
-import express from "express";
 import getFirst from "../../../util/getFirst";
 import type { Post } from "../../../types/post";
 import { Comment } from "../../../types/comment";
+import type { Request, Response } from "express";
 import checkStatus from "../../../util/checkStatus";
 
 // For updating a comment
-const update = async (req: express.Request, res: express.Response) => {
+const update = async (req: Request, res: Response) => {
   // Getting the updated body
   const { body } = req.body;
   // Getting some parameters

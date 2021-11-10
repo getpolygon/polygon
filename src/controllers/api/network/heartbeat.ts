@@ -1,12 +1,12 @@
-import express from "express";
 import redis from "../../../db/redis";
+import type { Request, Response } from "express";
 
 /**
  * For storing user status
  * After sending an authenticated request to this route
  * it will make user's profile appear as "online"
  */
-const heartbeat = (req: express.Request, res: express.Response) => {
+const heartbeat = (req: Request, res: Response) => {
   const { username } = req.user!!;
 
   redis.set(username!!, JSON.stringify({ connected: true }));

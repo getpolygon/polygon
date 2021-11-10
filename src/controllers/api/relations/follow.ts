@@ -1,10 +1,10 @@
-import express from "express";
+import { Request, Response } from "express";
 import getFirst from "../../../util/getFirst";
-import type { Relation } from "../../../types/relation";
 import checkStatus from "../../../util/checkStatus";
+import type { Relation } from "../../../types/relation";
 
 // For following another user
-const follow = async (req: express.Request, res: express.Response) => {
+const follow = async (req: Request, res: Response) => {
   const { id } = req.params;
 
   try {

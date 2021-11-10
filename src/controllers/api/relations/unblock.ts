@@ -1,8 +1,8 @@
 import pg from "../../../db/pg";
-import express from "express";
+import type { Request, Response } from "express";
 
 // For unblocking users
-const unblock = async (req: express.Request, res: express.Response) => {
+const unblock = async (req: Request, res: Response) => {
   // Other user's ID
   const { id } = req.params;
 

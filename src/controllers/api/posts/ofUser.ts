@@ -1,15 +1,13 @@
 import pg from "../../../db/pg";
-import express from "express";
 import getFirst from "../../../util/getFirst";
 import type { User } from "../../../types/user";
 import type { Post } from "../../../types/post";
+import type { Request, Response } from "express";
 import checkStatus from "../../../util/checkStatus";
 
-// TODO: Refactor and optimize the code below
-
 // For fetching one user's post
-const ofUser = async (req: express.Request, res: express.Response) => {
-  // Optional cursor for next page
+const ofUser = async (req: Request, res: Response) => {
+  // Optional of last post
   const { cursor } = req.query;
   // The username of the user to fetch posts from
   const { username } = req.params;
@@ -33,7 +31,8 @@ const ofUser = async (req: express.Request, res: express.Response) => {
         `
           SELECT
             post.id,
-            post.body,
+            post.title,
+            post.content,
             post.created_at,
             TO_JSON(author) as user,
             (
@@ -42,7 +41,7 @@ const ofUser = async (req: express.Request, res: express.Response) => {
             )::INT AS upvotes
 
           FROM posts post
-  
+
           INNER JOIN (
             SELECT
               id,
@@ -51,10 +50,10 @@ const ofUser = async (req: express.Request, res: express.Response) => {
               last_name,
               first_name,
               created_at
-  
+
             FROM users
           ) author ON post.user_id = author.id
-  
+
           WHERE post.user_id = $1
           ORDER BY post.created_at DESC LIMIT 2;
           `,
@@ -80,16 +79,16 @@ const ofUser = async (req: express.Request, res: express.Response) => {
           `
             SELECT
               post.id,
-              post.body,
+              post.content,
               post.created_at,
               TO_JSON(Author) as user,
               (
                 SELECT COUNT(*) FROM upvotes
                 WHERE upvotes.post_id = post.id
               )::INT AS upvotes
-  
+
             FROM posts post
-  
+
             INNER JOIN (
               SELECT
                 id,
@@ -100,9 +99,9 @@ const ofUser = async (req: express.Request, res: express.Response) => {
                 created_at
               FROM users
             ) author ON post.user_id = author.id
-  
-            WHERE post.created_at < $1 OR 
-            (post.created_at = $1 AND post.id < $2) AND post.user_id = $3 
+
+            WHERE post.created_at < $1 OR
+            (post.created_at = $1 AND post.id < $2) AND post.user_id = $3
             ORDER BY post.created_at DESC, post.id DESC LIMIT 2;
             `,
           [cursorPost?.created_at!!, cursor, user?.id!!]

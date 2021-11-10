@@ -1,11 +1,11 @@
-import express from "express";
 import getFirst from "../../../util/getFirst";
 import type { Post } from "../../../types/post";
+import type { Request, Response } from "express";
 import checkStatus from "../../../util/checkStatus";
 import type { Comment } from "../../../types/comment";
 
 // For creating a comment
-const create = async (req: express.Request, res: express.Response) => {
+const create = async (req: Request, res: Response) => {
   // Post content
   const { body } = req.body;
   const { post: postId } = req.params;

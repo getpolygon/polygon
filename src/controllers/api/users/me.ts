@@ -1,9 +1,9 @@
-import express from "express";
 import getFirst from "../../../util/getFirst";
 import type { User } from "../../../types/user";
+import type { Request, Response } from "express";
 
 // For fetching current account details
-const me = async (req: express.Request, res: express.Response) => {
+const me = async (req: Request, res: Response) => {
   try {
     // Getting the account
     const user = await getFirst<Partial<User>>(

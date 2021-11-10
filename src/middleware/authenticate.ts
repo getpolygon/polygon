@@ -1,16 +1,12 @@
-import express from "express";
 import type { Token } from "../types";
 import getFirst from "../util/getFirst";
 import { verifyJwt } from "../util/jwt";
 import type { User } from "../types/user";
 import { JsonWebTokenError } from "jsonwebtoken";
+import type { Request, Response, NextFunction } from "express";
 
 export default () => {
-  return async (
-    req: express.Request,
-    res: express.Response,
-    next: express.NextFunction
-  ) => {
+  return async (req: Request, res: Response, next: NextFunction) => {
     const authorization = req.headers["authorization"];
     const [_, token] = authorization?.trim().split(" ")!!;
 

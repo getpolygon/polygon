@@ -1,12 +1,12 @@
 import pg from "../../../db/pg";
-import express from "express";
 import getFirst from "../../../util/getFirst";
 import type { Post } from "../../../types/post";
-import type { Comment } from "../../../types/comment";
+import type { Request, Response } from "express";
 import checkStatus from "../../../util/checkStatus";
+import type { Comment } from "../../../types/comment";
 
 // For fetching comments of a post
-const ofPost = async (req: express.Request, res: express.Response) => {
+const ofPost = async (req: Request, res: Response) => {
   // Getting the post from the query
   const { post: postId } = req.params;
   // Getting next comment cursor and limit per page

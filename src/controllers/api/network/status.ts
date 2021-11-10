@@ -7,11 +7,11 @@ const status = (req: Request, res: Response) => {
 
   if (!id) return res.sendStatus(400);
 
-  redis.get(id, (error, reply) => {
+  redis.get(id, (error, __payload) => {
     if (error) console.error(error);
 
-    const parsed = JSON.parse(reply!!) || { connected: false };
-    return res.json(parsed);
+    const payload = JSON.parse(__payload!!) || { connected: false };
+    return res.json(payload);
   });
 };
 

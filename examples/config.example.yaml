@@ -1,0 +1,43 @@
+# JWT private key (randomness)
+jwt_secret: ""
+# Base HTTP URL of the front-end
+frontend_url: ""
+# Refresh key (randomness)
+refresh_secret: ""
+
+# Email configuration
+email:
+  # Default email client
+  client: ""
+
+  # Courier configuration
+  courier:
+    # Courier API token
+    token: ""
+    # Courier brand ID
+    brand_id: ""
+
+    # Courier events with their IDs
+    events:
+      verification: ""
+
+  # Nodemailer/SMTP configuration
+  smtp:
+    port: 123
+    pass: ""
+    host: ""
+    user: ""
+
+# Polygon customization
+polygon:
+  # Email configuration
+  email:
+    # Expiration time of the email verification token
+    expire_verification: 300
+    # Enable email verification
+    enable_verification: false
+
+# Database configuration
+databases:
+  redis: ""
+  postgres: ""

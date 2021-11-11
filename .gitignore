@@ -17,5 +17,8 @@ npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
 
-# local env files
+# Local env files
 .env
+
+# Configuration file
+config.yaml

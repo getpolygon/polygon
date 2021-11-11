@@ -1,0 +1,55 @@
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Polygon email verification</title>
+  </head>
+  <body>
+    <h2>Dear {{firstName}},</h2>
+    <h3>Thank you for registering at Polygon!</h3>
+
+    <p>To keep our users
+      <b>safe</b>
+      from
+      <b>spam</b>
+      , we kindly ask you to verify your identity by clicking on the button
+      below</p>
+    <a
+      role="button"
+      style="
+        padding: 5px;
+        color: white;
+        border-radius: 1rem;
+        text-decoration: none;
+        background-color: rgb(167, 21, 167);
+      "
+      href="{{frontendUrl}}/verify/{{token}}"
+    >Verify my account</a>
+    <p>
+      Or by visiting the link below:
+    </p>
+
+    <p>
+      <a
+        rel="noopener noreferrer"
+        target="_blank"
+        href="{{frontendUrl}}/verify/{{token}}"
+      >
+        {{frontendUrl}}/verify/{{token}}
+      </a>
+    </p>
+
+    <p>
+      Regards,
+    </p>
+
+    <p>Polygon Team.</p>
+
+    <small>This email was sent to
+      <b>{{email}}</b>
+      automatically, for verification purposes at Polygon. If you
+      <b>DO NOT KNOW</b>
+      the reason of receiving this email, you can safely ignore it.</small>
+  </body>
+</html>

@@ -2,18 +2,20 @@
   "compilerOptions": {
     "pretty": true,
     "strict": true,
-    "target": "es6",
+    "target": "ES6",
     "sourceMap": true,
     "outDir": "build/",
     "declaration": false,
     "alwaysStrict": true,
-    "module": "commonjs",
+    "module": "CommonJS",
     "removeComments": true,
     "noUnusedLocals": true,
     "esModuleInterop": true,
     "strictNullChecks": true,
     "disableSizeLimit": true,
-    "typeRoots": ["./src/types", "./node_modules/@types"],
+    "noUnusedParameters": true,
+    "preserveConstEnums": true,
+    "typeRoots": ["./src/types", "./node_modules/@types"]
   },
   "include": ["src/**/*"],
   "exclude": ["node_modules", "build"]

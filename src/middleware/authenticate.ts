@@ -6,10 +6,10 @@ import type { Request, Response, NextFunction } from "express";
 export default () => {
   return async (req: Request, res: Response, next: NextFunction) => {
     const authorization = req.headers["authorization"];
-    const [_, token] = authorization?.trim().split(" ")!!;
+    const token = authorization?.trim().split(" ")!![1];
 
     // Checking if the token exists
-    if (!token) res.sendStatus(401);
+    if (!token) return res.sendStatus(401);
 
     // Validating the token
     try {
@@ -25,7 +25,7 @@ export default () => {
       // Setting the user
       req.user = user;
 
-      return next();
+      return next(null);
     } catch (error) {
       // If token is invalid
       if (error instanceof JsonWebTokenError) return res.sendStatus(400);

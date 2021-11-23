@@ -16,7 +16,15 @@ const one = async (req: Request, res: Response) => {
         post.title,
         post.content,
         post.created_at,
-        TO_JSON(author) AS user
+        TO_JSON(author) AS user,
+        (
+          SELECT COUNT(*) FROM upvotes
+          WHERE upvotes.post_id = post.id
+        )::INT AS upvote_count,
+        (
+          SELECT COUNT(*) FROM comments
+          WHERE comments.post_id = post.id
+        ):: INT AS comment_count
 
       FROM posts post
 

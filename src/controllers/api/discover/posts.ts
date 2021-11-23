@@ -12,13 +12,29 @@ const posts = async (req: Request, res: Response) => {
 
   try {
     if (!cursor) {
-      const { rows: posts } = await pg.query(`
+      const { rows: posts } = await pg.query(
+        `
         SELECT
           post.id,
           post.title,
           post.content,
           post.created_at,
-          TO_JSON(author) as user
+          TO_JSON(author) as user,
+          (
+            SELECT COUNT(*) FROM upvotes
+            WHERE upvotes.post_id = post.id
+          )::INT AS upvote_count,
+          (
+            SELECT COUNT(*) FROM comments
+            WHERE comments.post_id = post.id
+          )::INT AS comment_count,
+          (
+            SELECT CASE WHEN EXISTS (
+              SELECT 1 FROM upvotes
+              WHERE upvotes.user_id = $1
+            ) THEN TRUE ELSE FALSE END
+          ) AS upvoted
+
         FROM posts Post
 
         INNER JOIN (
@@ -33,7 +49,9 @@ const posts = async (req: Request, res: Response) => {
         ) author ON post.user_id = author.id
         
         ORDER BY post.created_at DESC LIMIT 2;
-      `);
+      `,
+        [req.user?.id]
+      );
 
       // Filtering out posts from blocked users
       for (const post of posts) {
@@ -65,7 +83,22 @@ const posts = async (req: Request, res: Response) => {
           post.title,
           post.content,
           post.created_at,
-          TO_JSON(author) as user
+          TO_JSON(author) as user,
+          (
+            SELECT COUNT(*) FROM upvotes
+            WHERE upvotes.post_id = post.id
+          )::INT AS upvote_count,
+          (
+            SELECT COUNT(*) FROM comments
+            WHERE comments.post_id = post.id
+          )::INT AS comment_count,
+          (
+            SELECT CASE WHEN EXISTS (
+              SELECT 1 FROM upvotes
+              WHERE upvotes.user_id = $3
+            ) THEN TRUE ELSE FALSE END
+          ) AS upvoted
+
         FROM posts post
 
         INNER JOIN (
@@ -82,7 +115,7 @@ const posts = async (req: Request, res: Response) => {
         WHERE post.created_at < $1 OR (post.created_at = $1 AND post.id < $2)
         ORDER BY post.created_at DESC, post.id DESC LIMIT 2;
       `,
-        [cursorPost?.created_at!!, cursorPost?.id]
+        [cursorPost?.created_at!!, cursorPost?.id, req.user?.id]
       );
 
       // Filtering out posts from blocked users

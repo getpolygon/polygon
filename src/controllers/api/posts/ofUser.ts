@@ -37,7 +37,11 @@ const ofUser = async (req: Request, res: Response) => {
             (
               SELECT COUNT(*) FROM upvotes
               WHERE upvotes.post_id = post.id
-            )::INT AS upvotes
+            )::INT AS upvote_count,
+            (
+              SELECT COUNT(*) FROM comments
+              WHERE comments.post_id = post.id
+            ):: INT AS comment_count
 
           FROM posts post
 

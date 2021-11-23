@@ -10,24 +10,25 @@ export abstract class BaseRepository<T extends Entity>
 {
   constructor(public readonly tableName: string) {}
 
-  private normalizeRows(rows: string[]) {
-    return `${isEmpty(rows) ? "*" : rows}`;
+  private normalizeCols(cols: string[]) {
+    return `${isEmpty(cols) ? "*" : cols}`;
   }
 
   /**
    * For creating records
    */
-  public async create(rows: Array<keyof T>, values: string[]): Promise<T> {
-    if (!isEqual(rows.length, values.length)) {
-      throw new Error("`rows` and `values` cannot have different sizes");
+  public async create(columns: Array<keyof T>, values: string[]): Promise<T> {
+    if (!isEqual(columns.length, values.length)) {
+      throw new Error("`columns` and `values` cannot have different sizes");
     }
 
+    // TODO: This part is untested
     const item = await getFirst<T>(
       `
-      INSERT INTO ${this.tableName} (${rows})
-      VALUES (${new Array(rows.length).map((_, index) =>
-        index < rows.length - 1 ? `$${index},` : `$${index}`
-      )})
+      INSERT INTO ${this.tableName} (${columns})
+      VALUES (${new Array(columns.length).map((_, index) =>
+        index < columns.length - 1 ? `$${index},` : `$${index}`
+      )}) 
       RETURNING *
       `,
       [...values]
@@ -40,7 +41,7 @@ export abstract class BaseRepository<T extends Entity>
    * For updating records
    */
   // prettier-ignore
-  public async update(id: string, rows: Array<keyof T>, values: string[]): Promise<T> {
+  public async update(id: string, columns: Array<keyof T>, values: string[]): Promise<T> {
     throw new Error("Method not implemented.");
   }
 
@@ -55,10 +56,10 @@ export abstract class BaseRepository<T extends Entity>
   /**
    * For getting one record
    */
-  public async findOne(id: string, rows: string[]): Promise<T> {
-    const __rows = this.normalizeRows(rows);
+  public async findOne(id: string, columns: string[]): Promise<T> {
+    const __cols = this.normalizeCols(columns);
     const item = await getFirst<T>(
-      `SELECT ${__rows} FROM ${this.tableName} WHERE id = $1`,
+      `SELECT ${__cols} FROM ${this.tableName} WHERE id = $1`,
       [id]
     );
 

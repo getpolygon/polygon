@@ -30,6 +30,12 @@ export abstract class BaseRepository<T> implements IWrite<T>, IRead<T> {
 
   // prettier-ignore
   public async update(pair: KeyValuePair<T>, columns: Array<keyof T>, values: any[]): Promise<T> {
+    if (!isEqual(columns.length, values.length)) {
+      throw new Error(
+        "`columns` and `values` cannot have different array sizes"
+      );
+    }
+
     // Calculating the index of ID in the prepared SQL query
     const idIndex = values.length + 1;
     // Preparing a SET SQL statement

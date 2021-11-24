@@ -1,6 +1,4 @@
-import { Entity } from "../common/Entity";
-
-export class User extends Entity {
+export class User {
   constructor(
     public readonly id: string,
     public readonly email: string,
@@ -13,7 +11,5 @@ export class User extends Entity {
     public readonly cover?: string,
     public readonly avatar?: string,
     public readonly created_at?: Date
-  ) {
-    super();
-  }
+  ) {}
 }

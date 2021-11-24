@@ -1,3 +1,12 @@
+import { KeyValuePair } from "../common/KeyValuePair";
+
 export interface IRead<T> {
-  findOne(id: string, columns: Array<keyof T>): Promise<T>;
+  /**
+   * For getting one record
+   *
+   * @param pair The keypair to identify the entity that needs to be removed
+   * @param columns The columns to include in the result
+   */
+
+  findOne(pair: KeyValuePair<T>, columns: Array<keyof T>): Promise<T>;
 }

@@ -1,13 +1,13 @@
 import { map, join } from "lodash";
 
 /**
- * A function for preparing **`SET`** queries
+ * A function for preparing **`SET`** statements
  *
  * @param columns The columns that need to be updated
  *
  * @example
  * ```js
- * const prepared = prepareSetQuery(["id", "name"]);
+ * const prepared = prepareSetStatement(["id", "name"]);
  * ```
  *
  * Will return a prepared SQL string to use with `pg`
@@ -16,7 +16,7 @@ import { map, join } from "lodash";
  * SET id = $1, name = $2;
  * ```
  */
-export const prepareSetStatement = (columns: string[]): string => {
+export const prepareSetStatement = <T>(columns: Array<keyof T>): string => {
   const generated: string[] = [`SET`];
 
   // Mapping all the columns

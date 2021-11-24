@@ -42,19 +42,7 @@ export abstract class BaseRepository<T extends Entity>
       );
     }
 
-    // TODO: This part is untested
-    const item = await getFirst<T>(
-      `
-      INSERT INTO ${this.tableName} (${columns})
-      VALUES (${new Array(columns.length).map((_, index) =>
-        index < columns.length - 1 ? `$${index},` : `$${index}`
-      )}) 
-      RETURNING *
-      `,
-      [...values]
-    );
-
-    return item;
+    throw new Error("Method is not implemented.");
   }
 
   /**

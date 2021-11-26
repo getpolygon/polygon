@@ -18,32 +18,32 @@ const create = async (req: Request, res: Response) => {
     // Getting newly created post with the auther
     const post = await getFirst(
       `
-        SELECT 
-          post.id, 
+        SELECT
+          post.id,
           post.title,
           post.content,
-          post.created_at, 
+          post.created_at,
           TO_JSON(author) AS user,
           (
-            SELECT COUNT(*) FROM upvotes 
+            SELECT COUNT(*) FROM upvotes
             WHERE upvotes.post_id = post.id
           )::INT as upvotes
-  
+
         FROM posts post
-  
+
         INNER JOIN (
-          SELECT 
+          SELECT
             id,
             avatar,
             username,
             last_name,
             first_name
-  
+
           FROM users
         ) author ON author.id = post.user_id
-  
+
         WHERE post.id = $1
-        GROUP BY post.id, author.* 
+        GROUP BY post.id, author.*
         ORDER BY post.created_at DESC;
       `,
       [created?.id]

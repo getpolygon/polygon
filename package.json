@@ -1,6 +1,9 @@
 {
   "private": true,
   "scripts": {
+    "prepare": "yarn build",
+    "clean": "rimraf build/",
+    "prebuild": "yarn clean",
     "build": "tsc --project .",
     "prestart": "yarn migrate up",
     "migrate": "./bin/goose -dir=migrations",
@@ -49,6 +52,7 @@
     "eslint": "^8.2.0",
     "express-router-dependency-graph": "^1.1.1",
     "nodemon": "^2.0.15",
+    "rimraf": "^3.0.2",
     "ts-node": "^10.4.0",
     "typescript": "^4.4.4"
   }

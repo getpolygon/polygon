@@ -3,6 +3,7 @@
     "pretty": true,
     "strict": true,
     "target": "ES6",
+    "baseUrl": "src",
     "sourceMap": true,
     "outDir": "build/",
     "declaration": false,
@@ -15,7 +16,24 @@
     "disableSizeLimit": true,
     "noUnusedParameters": true,
     "preserveConstEnums": true,
-    "typeRoots": ["./src/types", "./node_modules/@types"]
+    // prettier-ignore
+    "paths": {
+      "db/*"          :["db/*"],
+      "util/*"        :["util/*"],
+      "dao/*"         :["db/dao/*"],
+      "routes/*"      :["routes/*"],
+      "config/*"       :["config/*"],
+      "services/*"    :["services/*"],
+      "validation/*"  :["validation/*"],
+      "middleware/*"  :["middleware/*"],
+      "controllers/*" :["controllers/*"],
+      "templates/*"   :["../templates/*"],
+    },
+    "typeRoots": ["./src/types", "./node_modules/@types"],
+    "plugins": [
+      // Transform paths in output .js files
+      { "transform": "typescript-transform-paths" }
+    ]
   },
   "include": ["src/**/*"],
   "exclude": ["node_modules", "build"]

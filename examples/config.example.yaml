@@ -1,43 +1,32 @@
-# JWT private key (randomness)
-jwt_secret: ""
-# Base HTTP URL of the front-end
-frontend_url: ""
-# Refresh key (randomness)
-refresh_secret: ""
+# JWT configuration
+jwt:
+  secret: "secure randomness"
+  refresh: "secure randomness"
+
+# SMTP configuration
+smtp:
+  port: 123
+  pass: ""
+  host: ""
+  user: ""
 
 # Email configuration
 email:
-  # Default email client
-  client: ""
+  client: "nodemailer or courier"
 
-  # Courier configuration
-  courier:
-    # Courier API token
-    token: ""
-    # Courier brand ID
-    brand_id: ""
-
-    # Courier events with their IDs
-    events:
-      verification: ""
-
-  # Nodemailer/SMTP configuration
-  smtp:
-    port: 123
-    pass: ""
-    host: ""
-    user: ""
-
-# Polygon customization
+# Polygon variables
 polygon:
-  # Email configuration
-  email:
-    # Expiration time of the email verification token
-    expire_verification: 300
-    # Enable email verification
-    enable_verification: false
+  frontendUrl: "polygon frontend url"
+
+# Courier configuration
+courier:
+  token: "courier api token"
+  brandId: "courier brand id"
+
+  events:
+    VERIFICATION: "courier verification template event id"
 
 # Database configuration
 databases:
-  redis: ""
-  postgres: ""
+  redis: "redis connection string"
+  postgres: "postgres connection string"

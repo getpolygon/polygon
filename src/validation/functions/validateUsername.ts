@@ -1,4 +1,4 @@
-import getFirst from "../../util/getFirst";
+import getFirst from "util/sql/getFirst";
 
 // Middleware function for express-validator for validating user usernames
 export default async (value: string) => {

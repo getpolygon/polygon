@@ -1,7 +1,7 @@
 import api from "./api";
 import auth from "./auth";
 import express from "express";
-import authenticate from "../middleware/authenticate";
+import authenticate from "middleware/authenticate";
 
 const router = express.Router();
 

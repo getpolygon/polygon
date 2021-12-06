@@ -1,4 +1,4 @@
-import { KeyValuePair } from "../common/KeyValuePair";
+import { KeyValuePair } from "dao/common/KeyValuePair";
 
 export interface IWrite<T> {
   /**
@@ -23,7 +23,8 @@ export interface IWrite<T> {
    * )
    * ```
    */
-  create(columns: Array<keyof T>, values: any[]): Promise<T>;
+  // prettier-ignore
+  create(columns: Array<keyof T>, values: any[], returning: Array<keyof T | string>): Promise<T>;
 
   /**
    * For updating records
@@ -45,9 +46,6 @@ export interface IWrite<T> {
    * );
    * ```
    */
-  update(
-    pair: KeyValuePair<T>,
-    columns: Array<keyof T>,
-    values: any[]
-  ): Promise<T>;
+  // prettier-ignore
+  update(pair: KeyValuePair<T>, columns: Array<keyof T>, values: any[], returning: Array<keyof T | string>): Promise<T>;
 }

@@ -1,4 +1,4 @@
-import getFirst from "../../../util/getFirst";
+import getFirst from "util/sql/getFirst";
 import type { Request, Response } from "express";
 
 // For blocking users

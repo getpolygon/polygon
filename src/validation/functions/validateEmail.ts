@@ -1,4 +1,4 @@
-import getFirst from "../../util/getFirst";
+import getFirst from "util/sql/getFirst";
 import emailValidator from "deep-email-validator-extended";
 
 // Middleware function for express-validator for validating user emails

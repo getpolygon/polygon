@@ -1,8 +1,8 @@
 import fs from "fs";
+import config from "config/index";
 import handlebars from "handlebars";
 import { createTransport } from "nodemailer";
 import type { Transporter } from "nodemailer";
-import config, { EmailClient } from "../config";
 import { CourierClient } from "@trycourier/courier";
 import type { ICourierClient } from "@trycourier/courier";
 
@@ -59,25 +59,22 @@ class Mailer {
      * Only creating a nodemailer instance if
      * the specified transport is Courier
      */
-    if (
-      config.email?.client !== EmailClient.Courier &&
-      config.email?.client !== null
-    ) {
+    if (config.email?.client !== "courier" && config.email?.client !== null) {
       // Creating nodemailer transport with the supplied configuration
       const nodemailer = createTransport({
         auth: {
-          user: config.email?.smtp?.user,
-          pass: config.email?.smtp?.pass,
+          user: config.smtp?.user,
+          pass: config.smtp?.pass,
         },
-        host: config.email?.smtp?.host,
-        port: config.email?.smtp?.port,
+        host: config.smtp?.host,
+        port: config.smtp?.port,
       });
 
       // Setting nodemailer
       Mailer.nodemailer = nodemailer;
     } else {
       Mailer.courier = CourierClient({
-        authorizationToken: config.email.courier?.token!!,
+        authorizationToken: config.courier?.token!!,
       });
     }
   }
@@ -89,7 +86,7 @@ class Mailer {
   public static async send(
     options: Partial<IMailerConfig>
   ): Promise<{ successful: boolean }> {
-    if (config.email?.client === EmailClient.Courier) {
+    if (config.email?.client === "courier") {
       try {
         await Mailer.courier?.send({
           profile: {
@@ -104,11 +101,11 @@ class Mailer {
             smtp: {
               config: {
                 auth: {
-                  user: config.email.smtp.user,
-                  pass: config.email.smtp.pass,
+                  user: config.smtp?.user,
+                  pass: config.smtp?.pass,
                 },
-                host: config.email.smtp.host,
-                port: config.email.smtp.port,
+                host: config.smtp?.host,
+                port: config.smtp?.port,
                 secure: true,
               },
             },
@@ -117,9 +114,10 @@ class Mailer {
 
         return { successful: true };
       } catch (error) {
+        console.error(error);
         return { successful: false };
       }
-    } else if (config.email?.client === EmailClient.Nodemailer) {
+    } else if (config.email?.client === "nodemailer") {
       try {
         // Rendering the template
         const template = TemplateUtils.renderTemplate(
@@ -131,7 +129,7 @@ class Mailer {
         await Mailer.nodemailer?.sendMail({
           html: template,
           to: options.recipient,
-          from: config.email.smtp.user,
+          from: config.smtp?.user,
         });
 
         return { successful: true };

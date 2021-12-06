@@ -1,68 +1,35 @@
 import bcrypt from "bcrypt";
 import redis from "../../../db/redis";
-import getFirst from "../../../util/getFirst";
 import { createJwt } from "../../../util/jwt";
 import type { Request, Response } from "express";
+import { userRepository } from "../../../db/dao";
 
-const verify = (req: Request, res: Response) => {
-  // Getting the token
-  const { token } = req.params;
-  const { password } = req.body;
+const verify = async (req: Request, res: Response) => {
+  const { token: suppliedToken } = req.params;
+  const { password: suppliedPassword } = req.body;
 
-  redis.get(token, async (error, __payload) => {
-    if (error) console.error(error);
-
-    // If the verification token has expired or does not exist
-    if (!__payload) return res.sendStatus(404);
-
-    // Converting the base64 string to an object
-    const payload = JSON.parse(__payload);
-    // Checking if the passwords are the same
-    const same = bcrypt.compareSync(password, payload.password);
+  try {
+    const redisPayload = await redis.get(suppliedToken);
+    // prettier-ignore
+    const { email, password, username, lastName, firstName } = JSON.parse(redisPayload!!);
+    // Checking passwords
+    const same = bcrypt.compareSync(suppliedPassword, password);
 
     // Passwords match
     if (same) {
-      const user = await getFirst<any>(
-        `
-          INSERT INTO users (
-            email, 
-            password, 
-            username,
-            last_name, 
-            first_name
-          ) VALUES ($1, $2, $3, $4, $5)
-  
-          RETURNING 
-            id,
-            bio,
-            cover,
-            avatar,
-            username,
-            last_name,
-            first_name;
-          `,
-        [
-          payload.email,
-          payload.password,
-          payload.username,
-          payload.lastName,
-          payload.firstName,
-        ]
+      const user = await userRepository.create(
+        ["email", "password", "username", "last_name", "first_name"],
+        [email, password, username, lastName, firstName]
       );
 
-      // Creating a JWT
+      await redis.del(suppliedToken);
       const token = createJwt({ id: user?.id });
-
-      // Deleting the verification token from Redis
-      redis.del(token, (error, _) => {
-        if (error) console.error(error);
-        return res.status(201).json({ ...user, token });
-      });
-    }
-
-    // Passwords do not match
-    return res.sendStatus(401);
-  });
+      return res.status(201).json({ ...user, token });
+    } else return res.sendStatus(401);
+  } catch (error) {
+    console.error(error);
+    return res.sendStatus(500);
+  }
 };
 
 export default verify;

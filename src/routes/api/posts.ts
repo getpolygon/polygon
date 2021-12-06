@@ -1,7 +1,7 @@
 import express from "express";
-import validate from "../../validation/middleware";
-import { one, create, remove, ofUser } from "../../controllers/api/posts";
-import createPostValidationRules from "../../validation/rules/createPostValidationRules";
+import validate from "validation/middleware";
+import { one, create, remove, ofUser } from "controllers/api/posts";
+import createPostValidationRules from "validation/rules/createPostValidationRules";
 
 const router = express.Router();
 
@@ -13,9 +13,5 @@ router.get("/only/:id", one);
 router.delete("/:id/delete", remove);
 // To create a post
 router.post("/create", createPostValidationRules(), validate(), create);
-// // To like a post
-// router.post("/:id/heart", heart);
-// // To unheart a post
-// router.post("/:id/unheart", unheart);
 
 export default router;

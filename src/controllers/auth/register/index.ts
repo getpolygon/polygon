@@ -1,54 +1,31 @@
 import crypto from "crypto";
 import bcrypt from "bcrypt";
-import config from "../../../config";
-import redis from "../../../db/redis";
-import { createJwt } from "../../../util/jwt";
-import getFirst from "../../../util/getFirst";
+import redis from "db/redis";
+import config from "config/index";
+import { createJwt } from "util/jwt";
+import { userRepository } from "db/dao";
 import type { Request, Response } from "express";
-import Mailer, { EmailTemplate } from "../../../services/mailer";
-
-// TODO: Handle fallback values if they are not specified in the config file
-const frontendUrl = config.frontend_url;
-const enableVerification = config.polygon?.email.enable_verification;
-const expireVerification = config.polygon?.email.expire_verification || 60 * 5;
+import Mailer, { EmailTemplate } from "services/mailer";
 
 const register = async (req: Request, res: Response) => {
   const { firstName, lastName, email, password, username } = req.body;
-
-  // Encrypting the password
   const encryptedPassword = bcrypt.hashSync(password, bcrypt.genSaltSync());
 
-  if (!enableVerification) {
+  // If email verification is disabled
+  if (!config.polygon?.emailEnableVerification) {
     // Creating a user
-    const { id } = await getFirst<{ id: string }>(
-      `
-        INSERT INTO users (
-          email, 
-          password, 
-          username,
-          last_name, 
-          first_name
-        ) VALUES ($1, $2, $3, $4, $5)
-
-        RETURNING id;
-        `,
+    const { id } = await userRepository.create(
+      ["email", "password", "username", "last_name", "first_name"],
       [email, encryptedPassword, username, lastName, firstName]
     );
 
-    // Creating a token
     const token = createJwt({ id });
     return res.status(204).json({ token });
   } else {
-    // Creating a random verification request identifier
     const token = crypto.randomBytes(12).toString("hex");
+    // prettier-ignore
     // Creating a JSON payload with the specified information and converting it to a base64 string
-    const payload = JSON.stringify({
-      email,
-      username,
-      lastName,
-      firstName,
-      password: encryptedPassword,
-    });
+    const payload = JSON.stringify({ email, username, lastName, firstName, password: encryptedPassword });
 
     // Sending an email
     await Mailer.send({
@@ -57,27 +34,26 @@ const register = async (req: Request, res: Response) => {
         template: EmailTemplate.Verification,
       },
       courier: {
-        brandId: config.email?.courier.brandId!!,
-        eventId: config.email?.courier.events.verification!!,
+        brandId: config.courier?.brandId!!,
+        eventId: config.courier?.events.VERIFICATION!!,
       },
       data: {
         email,
         token,
         firstName,
-        frontendUrl,
+        frontendUrl: config.polygon?.frontendUrl,
       },
     });
 
-    // Setting a token
-    redis.set(token, payload, (error, _) => {
-      if (error) return res.sendStatus(500);
+    try {
+      await redis.set(token, payload);
+      await redis.expire(token, config.polygon?.emailExpireVerification);
 
-      // Setting an expiration time on the key
-      redis.expire(token, expireVerification, (error, _) => {
-        if (error) return res.sendStatus(500);
-        return res.sendStatus(204);
-      });
-    });
+      return res.sendStatus(204);
+    } catch (error) {
+      console.error(error);
+      return res.sendStatus(500);
+    }
   }
 };
 

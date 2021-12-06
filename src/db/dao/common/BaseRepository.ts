@@ -1,11 +1,11 @@
-import pg from "../../pg";
+import pg from "db/pg";
 import { isEqual } from "lodash";
-import { IRead } from "../interfaces/IRead";
-import { IWrite } from "../interfaces/IWrite";
-import getFirst from "../../../util/getFirst";
+import getFirst from "util/sql/getFirst";
+import { IRead } from "dao/interfaces/IRead";
 import { KeyValuePair } from "./KeyValuePair";
-import { normalizeColumns } from "../../../util/sql/normalizeColumns";
-import { prepareSetStatement } from "../../../util/sql/prepareSetStatement";
+import { IWrite } from "dao/interfaces/IWrite";
+import { normalizeColumns } from "util/sql/normalizeColumns";
+import { prepareSetStatement } from "util/sql/prepareSetStatement";
 
 /**
  * A class for implementing DAOs for database entities
@@ -18,7 +18,8 @@ export abstract class BaseRepository<T> implements IWrite<T>, IRead<T> {
     public readonly tableName: string
   ) {}
 
-  public async create(columns: Array<keyof T>, values: any[]): Promise<T> {
+  // prettier-ignore
+  public async create(columns: Array<keyof T>, values: any[], returning: Array<keyof T | string> = ["*"]): Promise<T> {
     if (!isEqual(columns.length, values.length)) {
       throw new Error(
         "`columns` and `values` cannot have different array sizes"
@@ -29,7 +30,7 @@ export abstract class BaseRepository<T> implements IWrite<T>, IRead<T> {
   }
 
   // prettier-ignore
-  public async update(pair: KeyValuePair<T>, columns: Array<keyof T>, values: any[]): Promise<T> {
+  public async update(pair: KeyValuePair<T>, columns: Array<keyof T>, values: any[], returning: Array<keyof T | string>): Promise<T> {
     if (!isEqual(columns.length, values.length)) {
       throw new Error(
         "`columns` and `values` cannot have different array sizes"
@@ -44,7 +45,7 @@ export abstract class BaseRepository<T> implements IWrite<T>, IRead<T> {
     const command = `
       UPDATE ${this.tableName} ${setStatement}
       WHERE ${pair.key} = $${idIndex} 
-      RETURNING ${columns}
+      RETURNING ${returning}
     `;
 
     const item = await getFirst<T>(command, [...values, pair.value]);

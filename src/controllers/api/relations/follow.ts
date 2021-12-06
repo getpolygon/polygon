@@ -1,6 +1,6 @@
+import getFirst from "util/sql/getFirst";
 import { Request, Response } from "express";
-import getFirst from "../../../util/getFirst";
-import checkStatus from "../../../util/checkStatus";
+import checkStatus from "util/sql/checkStatus";
 
 // For following another user
 const follow = async (req: Request, res: Response) => {

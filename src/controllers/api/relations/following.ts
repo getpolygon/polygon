@@ -1,6 +1,6 @@
-import pg from "../../../db/pg";
+import pg from "db/pg";
+import checkStatus from "util/sql/checkStatus";
 import type { Request, Response } from "express";
-import checkStatus from "../../../util/checkStatus";
 
 // For getting the people whom the account follows
 const following = async (req: Request, res: Response) => {

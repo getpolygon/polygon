@@ -1,6 +1,6 @@
-import getFirst from "../../../util/getFirst";
+import getFirst from "util/sql/getFirst";
+import checkStatus from "util/sql/checkStatus";
 import type { Request, Response } from "express";
-import checkStatus from "../../../util/checkStatus";
 
 // For creating a comment
 const create = async (req: Request, res: Response) => {

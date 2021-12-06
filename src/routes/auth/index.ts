@@ -1,7 +1,7 @@
 import login from "./login";
 import express from "express";
 import register from "./register";
-import forbidAuthenticated from "../../middleware/forbidAuthenticated";
+import forbidAuthenticated from "middleware/forbidAuthenticated";
 
 const router = express.Router();
 

@@ -1,6 +1,6 @@
-import express from "express";
 import posts from "./posts";
 import users from "./users";
+import express from "express";
 import network from "./network";
 import comments from "./comments";
 import discover from "./discover";

@@ -1,4 +1,4 @@
-import { KeyValuePair } from "../common/KeyValuePair";
+import { KeyValuePair } from "dao/common/KeyValuePair";
 
 export interface IRead<T> {
   /**

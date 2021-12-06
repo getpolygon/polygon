@@ -1,9 +1,7 @@
 import { Pool } from "pg";
 
-const { DATABASE_URL } = process.env;
-
-const pg = new Pool({
-  connectionString: DATABASE_URL!!,
-});
+const connectionString = process.env.DATABASE_URL!!;
+// prettier-ignore
+const pg = new Pool({ connectionString });
 
 export default pg;

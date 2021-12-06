@@ -4,7 +4,7 @@
 import jwt from "jsonwebtoken";
 import type { SignOptions } from "jsonwebtoken";
 
-const { JWT_SECRET: secret } = process.env;
+const secret = process.env.JWT_SECRET;
 
 export const createJwt = (payload: object, options?: SignOptions) => {
   return jwt.sign(payload, secret!!, options);

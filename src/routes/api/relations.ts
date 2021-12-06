@@ -7,7 +7,7 @@ import {
   unfollow,
   followers,
   following,
-} from "../../controllers/api/relations";
+} from "controllers/api/relations";
 
 const router = express.Router();
 

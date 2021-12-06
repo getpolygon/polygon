@@ -1,5 +1,5 @@
-import pg from "../../../db/pg";
-import getFirst from "../../../util/getFirst";
+import pg from "db/pg";
+import getFirst from "util/sql/getFirst";
 import type { Request, Response } from "express";
 
 // For removing a post

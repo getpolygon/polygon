@@ -1,7 +1,7 @@
-import pg from "../../../db/pg";
-import getFirst from "../../../util/getFirst";
+import pg from "db/pg";
+import getFirst from "util/sql/getFirst";
+import checkStatus from "util/sql/checkStatus";
 import type { Request, Response } from "express";
-import checkStatus from "../../../util/checkStatus";
 
 // For fetching one user's post
 const ofUser = async (req: Request, res: Response) => {

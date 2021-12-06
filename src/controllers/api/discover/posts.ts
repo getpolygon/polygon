@@ -1,6 +1,6 @@
-import pg from "../../../db/pg";
+import pg from "db/pg";
 import { Request, Response } from "express";
-import checkStatus from "../../../util/checkStatus";
+import checkStatus from "util/sql/checkStatus";
 
 // For post discovery
 const posts = async (req: Request, res: Response) => {

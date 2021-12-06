@@ -1,6 +1,6 @@
 import { body } from "express-validator";
-import validateEmail from "../functions/validateEmail";
-import validateUsername from "../functions/validateUsername";
+import validateEmail from "validation/functions/validateEmail";
+import validateUsername from "validation/functions/validateUsername";
 
 export default () => {
   return [

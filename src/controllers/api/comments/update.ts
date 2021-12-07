@@ -1,6 +1,7 @@
 import getFirst from "util/sql/getFirst";
 import checkStatus from "util/sql/checkStatus";
 import type { Request, Response } from "express";
+import { isEqual, isNil } from "lodash";
 
 // For updating a comment
 const update = async (req: Request, res: Response) => {
@@ -15,7 +16,7 @@ const update = async (req: Request, res: Response) => {
     [postId]
   );
 
-  if (post) {
+  if (!isNil(post)) {
     // Checking if the other user has blocked current user
     const status = await checkStatus({
       other: post?.user_id!!,
@@ -29,9 +30,9 @@ const update = async (req: Request, res: Response) => {
     );
 
     // If comment exists
-    if (comment) {
+    if (!isNil(comment)) {
       // If the author of the comment is the same as current user
-      if (comment.user_id === req.user?.id!!) {
+      if (isEqual(comment.user_id, req.user?.id)) {
         // Update the comment
         const comment = await getFirst<Partial<Comment>>(
           "UPDATE comments SET body = $1WHERE id = $2 RETURNING *",

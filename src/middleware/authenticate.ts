@@ -1,3 +1,4 @@
+import { isNil } from "lodash";
 import { verifyJwt } from "util/jwt";
 import getFirst from "util/sql/getFirst";
 import { JsonWebTokenError } from "jsonwebtoken";
@@ -9,18 +10,17 @@ export default () => {
     const token = authorization?.trim().split(" ")!![1];
 
     // Checking if the token exists
-    if (!token) return res.sendStatus(401);
+    if (isNil(token)) return res.sendStatus(401);
 
     // Validating the token
     try {
       const data = verifyJwt<any>(token!!);
       // Finding the user with the ID
-      const user = await getFirst<any>("SELECT * FROM users WHERE id = $1", [
-        data.id,
-      ]);
+      // prettier-ignore
+      const user = await getFirst<any>("SELECT * FROM users WHERE id = $1", [data.id]);
 
       // If the account does not exist
-      if (!user) return res.sendStatus(401);
+      if (isNil(user)) return res.sendStatus(401);
 
       // Setting the user
       req.user = user;

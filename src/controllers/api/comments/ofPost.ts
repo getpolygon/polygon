@@ -1,4 +1,5 @@
 import pg from "db/pg";
+import { isNil, isEmpty, nth } from "lodash";
 import getFirst from "util/sql/getFirst";
 import checkStatus from "util/sql/checkStatus";
 import type { Request, Response } from "express";
@@ -18,7 +19,7 @@ const ofPost = async (req: Request, res: Response) => {
     );
 
     // If post doesn't exist
-    if (!post) return res.sendStatus(404);
+    if (isNil(post)) return res.sendStatus(404);
     else {
       // Checking the relations between current user and post author
       const status = await checkStatus({
@@ -30,7 +31,7 @@ const ofPost = async (req: Request, res: Response) => {
       if (status === "BLOCKED") return res.sendStatus(403);
 
       // If no comment cursor was supplied
-      if (!next) {
+      if (isNil(next)) {
         // Fetching the comments
         const { rows: comments } = (await pg.query(
           `
@@ -42,7 +43,7 @@ const ofPost = async (req: Request, res: Response) => {
 
         // Getting next cursor
         const next = await new Promise(async (resolve, _) => {
-          if (comments.length === 0) return null;
+          if (isEmpty(comments)) return null;
 
           const nextComment = await getFirst<{ id: string }>(
             `
@@ -50,11 +51,7 @@ const ofPost = async (req: Request, res: Response) => {
               AND id > $2 AND created_at > $3
               ORDER BY created_at DESC LIMIT 1;
               `,
-            [
-              post.id,
-              comments[comments.length - 1].id,
-              comments[comments.length - 1].created_at,
-            ]
+            [post.id, nth(comments, -1)?.id, nth(comments, -1)?.created_at]
           );
 
           return resolve(nextComment);

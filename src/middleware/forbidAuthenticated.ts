@@ -1,8 +1,9 @@
 import { Request, Response, NextFunction } from "express";
+import { isNil } from "lodash";
 
 export default () => {
   return (req: Request, res: Response, next: NextFunction) => {
-    if (!req.user) return next();
+    if (isNil(req.user)) return next();
     return res.sendStatus(403);
   };
 };

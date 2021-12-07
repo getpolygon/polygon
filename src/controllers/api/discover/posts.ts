@@ -1,4 +1,5 @@
 import pg from "db/pg";
+import { isNil, gt, filter, nth } from "lodash";
 import { Request, Response } from "express";
 import checkStatus from "util/sql/checkStatus";
 
@@ -8,10 +9,10 @@ const posts = async (req: Request, res: Response) => {
   let { cursor, limit = 2 } = req.query;
 
   // Not letting more than 10 posts per page
-  if (limit > 10) limit = 2;
+  if (gt(limit, 10)) limit = 2;
 
   try {
-    if (!cursor) {
+    if (isNil(cursor)) {
       const { rows: posts } = await pg.query(
         `
         SELECT
@@ -62,12 +63,14 @@ const posts = async (req: Request, res: Response) => {
         });
 
         // If either of the sides has blocked one or another, remove the post from the array
-        if (status === "BLOCKED") posts.filter((p) => p.id !== post.id);
+        if (status === "BLOCKED") {
+          filter(posts, (p) => p.id !== post.id);
+        }
       }
 
       return res.json({
         data: posts,
-        next: posts[posts.length - 1]?.id || null,
+        next: nth(posts, -1)?.id || null,
       });
     } else {
       const {
@@ -127,12 +130,12 @@ const posts = async (req: Request, res: Response) => {
         });
 
         // If either of the sides has blocked one or another, remove the post from the array
-        if (status === "BLOCKED") posts.filter((p) => p.id !== post.id);
+        if (status === "BLOCKED") filter(posts, (p) => p.id !== post.id);
       }
 
       return res.json({
         data: posts,
-        next: posts[posts.length - 1]?.id || null,
+        next: nth(posts, -1)?.id || null,
       });
     }
   } catch (error: any) {

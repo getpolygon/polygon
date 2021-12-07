@@ -1,6 +1,9 @@
 import pg from "db/pg";
+import { nth } from "lodash";
 
-export default async <T>(query: string, values: any[] = []) => {
+const getFirst = async <T>(query: string, values: any[] = []) => {
   const result = await pg.query(query, values);
-  return result.rows[0] as T;
+  return nth(result.rows, 1) as T;
 };
+
+export default getFirst;

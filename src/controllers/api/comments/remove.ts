@@ -1,4 +1,5 @@
 import pg from "db/pg";
+import { isEqual, isNil } from "lodash";
 import getFirst from "util/sql/getFirst";
 import checkStatus from "util/sql/checkStatus";
 import type { Request, Response } from "express";
@@ -32,9 +33,9 @@ const remove = async (req: Request, res: Response) => {
       );
 
       // If comment exists
-      if (comment) {
+      if (!isNil(comment)) {
         // If the author of the post is the same
-        if (comment.user_id === req.user?.id!!) {
+        if (isEqual(comment.user_id, req.user?.id!!)) {
           // Delete the comment
           await pg.query("DELETE FROM comments WHERE id = $1", [commentId]);
           return res.sendStatus(204);

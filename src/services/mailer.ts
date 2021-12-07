@@ -5,6 +5,7 @@ import { createTransport } from "nodemailer";
 import type { Transporter } from "nodemailer";
 import { CourierClient } from "@trycourier/courier";
 import type { ICourierClient } from "@trycourier/courier";
+import { isEqual, isNil } from "lodash";
 
 // Email templates
 export const enum EmailTemplate {
@@ -59,7 +60,8 @@ class Mailer {
      * Only creating a nodemailer instance if
      * the specified transport is Courier
      */
-    if (config.email?.client !== "courier" && config.email?.client !== null) {
+    // prettier-ignore
+    if (!isEqual(config.email?.client, "courier") && !isNil(config.email?.client)) {
       // Creating nodemailer transport with the supplied configuration
       const nodemailer = createTransport({
         auth: {
@@ -86,7 +88,7 @@ class Mailer {
   public static async send(
     options: Partial<IMailerConfig>
   ): Promise<{ successful: boolean }> {
-    if (config.email?.client === "courier") {
+    if (isEqual(config.email?.client, "courier")) {
       try {
         await Mailer.courier?.send({
           profile: {

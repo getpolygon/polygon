@@ -1,3 +1,4 @@
+import { isNil } from "lodash";
 import getFirst from "util/sql/getFirst";
 import checkStatus from "util/sql/checkStatus";
 import type { Request, Response } from "express";
@@ -28,7 +29,7 @@ const others = async (req: Request, res: Response) => {
     );
 
     // If the user doesn't exist
-    if (!user) return res.sendStatus(404);
+    if (isNil(user)) return res.sendStatus(404);
 
     // Checking if that user has blocked current user
     const status = await checkStatus({

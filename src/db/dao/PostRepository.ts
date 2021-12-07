@@ -1,7 +1,7 @@
 import { Post } from "./entities/Post";
-import { BaseRepository } from "./common/BaseRepository";
+import { PostgresBaseRepository } from "./common/PostgresBaseRepository";
 
-export class PostRepository extends BaseRepository<Post> {
+export class PostRepository extends PostgresBaseRepository<Post> {
   constructor() {
     super("posts");
   }

@@ -1,4 +1,4 @@
-import { map, join } from "lodash";
+import { map, join, range } from "lodash";
 
 /**
  * A function for preparing **`SET`** statements
@@ -31,4 +31,27 @@ export const prepareSetStatement = <T>(columns: Array<keyof T>): string => {
 
   // Merging it all to a string
   return join(generated, " ");
+};
+
+/**
+ * A function for preparing statements with supplied column size
+ *
+ * @param size The `length` of the selected columns
+ *
+ * @example
+ *
+ * ```js
+ * const prepared = prepareValuesStatement(2);
+ * ```
+ *
+ * Will return a prepared SQL statement
+ *
+ * ```sql
+ * ($1, $2)
+ * ```
+ */
+export const prepareValuesStatement = (size: number): string => {
+  const generated: string[] = [];
+  range(1, size + 1).map((idx, _) => generated.push(`$${idx}`));
+  return join(generated, ", ");
 };

@@ -1,16 +1,17 @@
 import pg from "db/pg";
-import { isEqual } from "lodash";
+import { isEmpty, isEqual } from "lodash";
 import getFirst from "util/sql/getFirst";
 import { IRead } from "dao/interfaces/IRead";
 import { KeyValuePair } from "./KeyValuePair";
 import { IWrite } from "dao/interfaces/IWrite";
 import { normalizeColumns } from "util/sql/normalizeColumns";
-import { prepareSetStatement } from "util/sql/prepareSetStatement";
+// prettier-ignore
+import { prepareSetStatement, prepareValuesStatement } from "util/sql/prepareStatement";
 
 /**
  * A class for implementing DAOs for database entities
  */
-export abstract class BaseRepository<T> implements IWrite<T>, IRead<T> {
+export abstract class PostgresBaseRepository<T> implements IWrite<T>, IRead<T> {
   constructor(
     /**
      * The table name for the entity
@@ -24,9 +25,20 @@ export abstract class BaseRepository<T> implements IWrite<T>, IRead<T> {
       throw new Error(
         "`columns` and `values` cannot have different array sizes"
       );
+    } else if (isEmpty(columns) || isEmpty(values) || isEmpty(returning)) {
+      throw new Error(
+        "`columns` and `values` should not have an array size of `0`"
+      )
     }
 
-    throw new Error("Method is not implemented.");
+    const command = `
+      INSERT INTO ${this.tableName} (${columns}) 
+      VALUES (${prepareValuesStatement(columns.length)})
+      RETURNING ${returning}
+    `;
+
+    const item = await getFirst<T>(command, values);
+    return item;
   }
 
   // prettier-ignore

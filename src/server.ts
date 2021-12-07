@@ -6,9 +6,10 @@ import morgan from "morgan";
 import logger from "util/logger";
 import { port } from "config/env";
 import errorHandler from "errorhandler";
+import { isEqual } from "lodash";
 
 // Applying development middleware
-if (process.env.NODE_ENV === "development") {
+if (isEqual(process.env.NODE_ENV, "development")) {
   app.use(morgan("dev"));
 
   // For printing the full stacktrace

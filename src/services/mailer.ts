@@ -119,7 +119,7 @@ class Mailer {
         console.error(error);
         return { successful: false };
       }
-    } else if (config.email?.client === "nodemailer") {
+    } else if (isEqual(config.email?.client, "nodemailer")) {
       try {
         // Rendering the template
         const template = TemplateUtils.renderTemplate(

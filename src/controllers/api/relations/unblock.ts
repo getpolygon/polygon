@@ -1,4 +1,5 @@
 import pg from "db/pg";
+import { isEqual } from "lodash";
 import type { Request, Response } from "express";
 
 // For unblocking users
@@ -8,7 +9,7 @@ const unblock = async (req: Request, res: Response) => {
 
   try {
     // If the user is trying to unblock himself
-    if (id === (req?.user as any)?.id) return res.sendStatus(406);
+    if (isEqual(id, req.user?.id)) return res.sendStatus(406);
 
     await pg.query(
       "DELETE FROM relations WHERE from_user = $1 AND to_user = $2 AND status = 'BLOCKED'",

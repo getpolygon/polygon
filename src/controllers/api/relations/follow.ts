@@ -1,6 +1,7 @@
 import getFirst from "util/sql/getFirst";
 import { Request, Response } from "express";
 import checkStatus from "util/sql/checkStatus";
+import { isEqual } from "lodash";
 
 // For following another user
 const follow = async (req: Request, res: Response) => {
@@ -8,7 +9,7 @@ const follow = async (req: Request, res: Response) => {
 
   try {
     // If the user tries to follow himself
-    if (id === req.user?.id) return res.sendStatus(406);
+    if (isEqual(id, req.user?.id)) return res.sendStatus(406);
 
     // Checking if the other user has blocked current user
     const status = await checkStatus({
@@ -17,7 +18,7 @@ const follow = async (req: Request, res: Response) => {
     });
 
     // Not blocked
-    if (status !== "BLOCKED") {
+    if (!isEqual(status, "BLOCKED")) {
       // Creating the relation
       const response = await getFirst<any>(
         `

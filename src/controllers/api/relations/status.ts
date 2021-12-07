@@ -24,6 +24,7 @@ const status = async (req: Request, res: Response) => {
 
     return res.json(relation?.status || null);
   } catch (error: any) {
+    // Invalid user ID
     if (error?.code === "22P02") return res.sendStatus(400);
 
     console.error(error);

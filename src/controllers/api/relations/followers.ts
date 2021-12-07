@@ -1,6 +1,7 @@
 import pg from "db/pg";
 import checkStatus from "util/sql/checkStatus";
 import type { Request, Response } from "express";
+import { isEqual } from "lodash";
 
 // For getting the followers of an account
 const followers = async (req: Request, res: Response) => {
@@ -15,7 +16,7 @@ const followers = async (req: Request, res: Response) => {
     });
 
     // If current user is blocked by the other one
-    if (status !== "BLOCKED") {
+    if (isEqual(status, "BLOCKED")) {
       const { rows: followers } = await pg.query(
         `
             SELECT Follower.* FROM relations Relation
@@ -43,6 +44,7 @@ const followers = async (req: Request, res: Response) => {
 
     return res.sendStatus(403);
   } catch (error: any) {
+    // Invalid user ID
     if (error?.code === "22P02") return res.sendStatus(400);
 
     console.error(error);

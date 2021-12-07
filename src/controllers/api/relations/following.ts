@@ -1,6 +1,7 @@
 import pg from "db/pg";
 import checkStatus from "util/sql/checkStatus";
 import type { Request, Response } from "express";
+import { isEqual } from "lodash";
 
 // For getting the people whom the account follows
 const following = async (req: Request, res: Response) => {
@@ -14,7 +15,7 @@ const following = async (req: Request, res: Response) => {
     });
 
     // If not blocked
-    if (status !== "BLOCKED") {
+    if (!isEqual(status, "BLOCKED")) {
       // Getting the users other user follows
       const { rows: following } = await pg.query(
         `

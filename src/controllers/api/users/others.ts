@@ -1,5 +1,5 @@
 import { isNil } from "lodash";
-import getFirst from "util/sql/getFirst";
+import { userRepository } from "db/dao";
 import checkStatus from "util/sql/checkStatus";
 import type { Request, Response } from "express";
 
@@ -10,22 +10,21 @@ const others = async (req: Request, res: Response) => {
 
   try {
     // Getting the account
-    const user = await getFirst<any>(
-      `
-        SELECT 
-          id,
-          bio,
-          cover,
-          avatar,
-          username,
-          last_name,
-          first_name,
-          created_at
-  
-          FROM users
-          WHERE username = $1;
-      `,
-      [username]
+    const user = await userRepository.findOne(
+      {
+        key: "username",
+        value: username,
+      },
+      [
+        "id",
+        "bio",
+        "cover",
+        "avatar",
+        "username",
+        "last_name",
+        "first_name",
+        "created_at",
+      ]
     );
 
     // If the user doesn't exist

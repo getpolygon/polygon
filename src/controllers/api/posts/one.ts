@@ -1,10 +1,10 @@
 import getFirst from "util/sql/getFirst";
 import checkStatus from "util/sql/checkStatus";
 import type { Request, Response } from "express";
+import { isEqual, isNil } from "lodash";
 
 // For fetching one post
 const one = async (req: Request, res: Response) => {
-  // The id of the post
   const { id } = req.params;
 
   try {
@@ -49,18 +49,18 @@ const one = async (req: Request, res: Response) => {
 
     // Fetching the relation status between users
     const status = await checkStatus({
+      other: post?.user_id!!,
       current: req.user?.id!!,
-      other: post?.user_id!! as string,
     });
 
-    // If post exists
-    if (!post) return res.sendStatus(404);
-
+    // If the post does not exist
+    if (isNil(post)) return res.sendStatus(404);
     // If post author has blocked current user
-    if (status === "BLOCKED") return res.sendStatus(403);
+    if (isEqual(status, "BLOCKED")) return res.sendStatus(403);
+
     return res.json(post);
   } catch (error: any) {
-    if (error?.code === "22P02") return res.sendStatus(400);
+    if (isEqual(error?.code, "22P02")) return res.sendStatus(400);
 
     console.error(error);
     return res.sendStatus(500);

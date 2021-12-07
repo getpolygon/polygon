@@ -3,7 +3,6 @@ import type { Request, Response } from "express";
 
 // For creating a post
 const create = async (req: Request, res: Response) => {
-  // Getting the title of the post and optional body
   const { title, body } = req.body;
 
   try {

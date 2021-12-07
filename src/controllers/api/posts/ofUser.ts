@@ -1,19 +1,20 @@
 import pg from "db/pg";
+import { isEqual, isNil, nth } from "lodash";
 import getFirst from "util/sql/getFirst";
 import checkStatus from "util/sql/checkStatus";
 import type { Request, Response } from "express";
+import { userRepository } from "db/dao";
 
 // For fetching one user's post
 const ofUser = async (req: Request, res: Response) => {
-  // Optional of last post
+  // Previous post cursor
   const { cursor } = req.query;
-  // The username of the user to fetch posts from
   const { username } = req.params;
 
   // Getting post author
-  const user = await getFirst<{ id: string }>(
-    "SELECT id FROM users WHERE username = $1",
-    [username]
+  const user = await userRepository.findOne(
+    { key: "username", value: username },
+    ["id"]
   );
 
   // Checking the relation between this and author account
@@ -23,9 +24,9 @@ const ofUser = async (req: Request, res: Response) => {
   });
 
   // If other account has blocked this one
-  if (status === "BLOCKED") return res.sendStatus(403);
+  if (isEqual(status, "BLOCKED")) return res.sendStatus(403);
   else {
-    if (!cursor) {
+    if (isNil(cursor)) {
       const { rows: posts } = await pg.query(
         `
           SELECT
@@ -65,7 +66,7 @@ const ofUser = async (req: Request, res: Response) => {
 
       return res.json({
         data: posts,
-        next: posts[posts.length - 1]?.id || null,
+        next: nth(posts, -1)?.id || null,
       });
     }
     // If cursor was given
@@ -112,11 +113,11 @@ const ofUser = async (req: Request, res: Response) => {
 
         return res.json({
           data: posts,
-          next: posts[posts.length - 1]?.id || null,
+          next: nth(posts, -1)?.id || null,
         });
       } catch (error: any) {
         // Invalid cursor ID
-        if (error?.code === "22P02") return res.sendStatus(400);
+        if (isEqual(error?.code, "22P02")) return res.sendStatus(400);
 
         console.error(error);
         return res.sendStatus(500);

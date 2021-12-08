@@ -1,6 +1,6 @@
 import pg from "db/pg";
-import { isEmpty, isEqual } from "lodash";
 import getFirst from "util/sql/getFirst";
+import { isEmpty, isEqual } from "lodash";
 import { IRead } from "dao/interfaces/IRead";
 import { KeyValuePair } from "./KeyValuePair";
 import { IWrite } from "dao/interfaces/IWrite";
@@ -11,7 +11,7 @@ import { prepareSetStatement, prepareValuesStatement } from "util/sql/prepareSta
 /**
  * A class for implementing DAOs for database entities
  */
-export abstract class PostgresBaseRepository<T> implements IWrite<T>, IRead<T> {
+export class PostgresBaseRepository<T> implements IWrite<T>, IRead<T> {
   constructor(
     /**
      * The table name for the entity
@@ -20,7 +20,7 @@ export abstract class PostgresBaseRepository<T> implements IWrite<T>, IRead<T> {
   ) {}
 
   // prettier-ignore
-  public async create(columns: Array<keyof T>, values: any[], returning: Array<keyof T | string> = ["*"]): Promise<T> {
+  public async create(columns: Array<keyof T> | string[], values: any[], returning: Array<keyof T> | string[] = ["*"]): Promise<T> {
     if (!isEqual(columns.length, values.length)) {
       throw new Error(
         "`columns` and `values` cannot have different array sizes"
@@ -42,7 +42,7 @@ export abstract class PostgresBaseRepository<T> implements IWrite<T>, IRead<T> {
   }
 
   // prettier-ignore
-  public async update(pair: KeyValuePair<T>, columns: Array<keyof T>, values: any[], returning: Array<keyof T | string>): Promise<T> {
+  public async update(pair: KeyValuePair<T>, columns: Array<keyof T> | string[], values: any[], returning: Array<keyof T> | string[]): Promise<T> {
     if (!isEqual(columns.length, values.length)) {
       throw new Error(
         "`columns` and `values` cannot have different array sizes"
@@ -70,7 +70,7 @@ export abstract class PostgresBaseRepository<T> implements IWrite<T>, IRead<T> {
   }
 
   // prettier-ignore
-  public async findOne({ key, value }: KeyValuePair<T>, columns: Array<keyof T | string>): Promise<T> {
+  public async findOne({ key, value }: KeyValuePair<T>, columns: Array<keyof T> | string[]): Promise<T> {
     const __cols = normalizeColumns<T>(columns);
     // Preparing the command
     const command = `SELECT ${__cols} FROM ${this.tableName} WHERE ${key} = $1`;

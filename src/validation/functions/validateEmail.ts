@@ -1,5 +1,6 @@
-import getFirst from "util/sql/getFirst";
+import { userRepository } from "db/dao";
 import emailValidator from "deep-email-validator-extended";
+import { isNil } from "lodash";
 
 // Middleware function for express-validator for validating user emails
 export default async (value: string) => {
@@ -17,13 +18,13 @@ export default async (value: string) => {
   // If the email is valid
   if (valid) {
     // Checking for existing users with that email
-    const existingUser = await getFirst<{ id: string }>(
-      "SELECT id FROM users WHERE email = $1",
-      [value]
+    const existingUser = await userRepository.findOne(
+      { key: "email", value: value },
+      ["id"]
     );
 
     // If there is no user with that email
-    if (!existingUser) return Promise.resolve(valid);
+    if (isNil(existingUser)) return Promise.resolve(valid);
     else return Promise.reject("Email is taken");
   } else return Promise.reject("Invalid email");
 };

@@ -24,7 +24,7 @@ export interface IWrite<T> {
    * ```
    */
   // prettier-ignore
-  create(columns: Array<keyof T>, values: any[], returning: Array<keyof T | string>): Promise<T>;
+  create(columns: Array<keyof T>, values: any[], returning: Array<keyof T> | string[]): Promise<T>;
 
   /**
    * For updating records
@@ -47,5 +47,5 @@ export interface IWrite<T> {
    * ```
    */
   // prettier-ignore
-  update(pair: KeyValuePair<T>, columns: Array<keyof T>, values: any[], returning: Array<keyof T | string>): Promise<T>;
+  update(pair: KeyValuePair<T>, columns: Array<keyof T> | string[], values: any[], returning: Array<keyof T> | string[]): Promise<T>;
 }

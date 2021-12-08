@@ -28,5 +28,5 @@ import { isEmpty } from "lodash";
  * SELECT * FROM table;
  * ```
  */
-export const normalizeColumns = <T>(cols: Array<keyof T>): string =>
+export const normalizeColumns = <T>(cols: Array<keyof T | string>): string =>
   `${isEmpty(cols) ? "*" : cols}`;

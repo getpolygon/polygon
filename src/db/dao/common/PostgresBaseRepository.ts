@@ -70,7 +70,7 @@ export abstract class PostgresBaseRepository<T> implements IWrite<T>, IRead<T> {
   }
 
   // prettier-ignore
-  public async findOne({ key, value }: KeyValuePair<T>, columns: Array<keyof T>): Promise<T> {
+  public async findOne({ key, value }: KeyValuePair<T>, columns: Array<keyof T | string>): Promise<T> {
     const __cols = normalizeColumns<T>(columns);
     // Preparing the command
     const command = `SELECT ${__cols} FROM ${this.tableName} WHERE ${key} = $1`;

@@ -1,13 +1,13 @@
-import { isNil } from "lodash";
+import { isNil, nth } from "lodash";
 import { verifyJwt } from "util/jwt";
-import getFirst from "util/sql/getFirst";
+import { userRepository } from "db/dao";
 import { JsonWebTokenError } from "jsonwebtoken";
 import type { Request, Response, NextFunction } from "express";
 
 export default () => {
   return async (req: Request, res: Response, next: NextFunction) => {
-    const authorization = req.headers["authorization"];
-    const token = authorization?.trim().split(" ")!![1];
+    const authorization = req.headers.authorization;
+    const token = nth(authorization?.trim().split(" "), 1);
 
     // Checking if the token exists
     if (isNil(token)) return res.sendStatus(401);
@@ -17,7 +17,7 @@ export default () => {
       const data = verifyJwt<any>(token!!);
       // Finding the user with the ID
       // prettier-ignore
-      const user = await getFirst<any>("SELECT * FROM users WHERE id = $1", [data.id]);
+      const user = await userRepository.findOne({ key: "id", value: data.id }, ["*"]);
 
       // If the account does not exist
       if (isNil(user)) return res.sendStatus(401);

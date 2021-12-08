@@ -8,5 +8,5 @@ export interface IRead<T> {
    * @param columns The columns to include in the result
    */
 
-  findOne(pair: KeyValuePair<T>, columns: Array<keyof T>): Promise<T>;
+  findOne(pair: KeyValuePair<T>, columns: Array<keyof T | string>): Promise<T>;
 }

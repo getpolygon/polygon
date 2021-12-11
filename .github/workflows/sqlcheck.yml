@@ -1,8 +1,5 @@
 name: SQLCheck
 
-env:
-  GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}
-
 # Controls when the workflow will run
 on:
   # Triggers the workflow on push or pull request events but only for the nightly branch
@@ -28,3 +25,5 @@ jobs:
       
       - name: SQLCheck Action
         uses: yokawasa/action-sqlcheck@v1.3.0
+        with:
+          token: ${{secrets.GITHUB_TOKEN}}

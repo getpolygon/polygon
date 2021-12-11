@@ -96,4 +96,4 @@ $ git fetch
 $ git pull origin nightly
 ```
 
-<small>Again, this guide is not intended for production purposes. Current version of `core` is unstable and has some problems that we still have to deal with.</small>
+> Again, this guide is not intended for production purposes. Current version of `core` is unstable and has some problems that we still have to deal with.

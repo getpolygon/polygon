@@ -19,10 +19,11 @@
     // prettier-ignore
     "paths": {
       "db/*"          :["db/*"],
+      "lib/*"         :["lib/*"],
       "util/*"        :["util/*"],
       "dao/*"         :["db/dao/*"],
       "routes/*"      :["routes/*"],
-      "config/*"       :["config/*"],
+      "config/*"      :["config/*"],
       "services/*"    :["services/*"],
       "validation/*"  :["validation/*"],
       "middleware/*"  :["middleware/*"],
@@ -35,6 +36,6 @@
       { "transform": "typescript-transform-paths" }
     ]
   },
-  "include": ["src/**/*"],
+  "include": ["src/**/*", "spec"],
   "exclude": ["node_modules", "build"]
 }

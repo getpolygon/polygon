@@ -9,6 +9,8 @@ on:
       - "examples/**"
       - "templates/**"
       - "migrations/**"
+  pull_request:
+    branches: [ nightly ]
 
 jobs:
   build:

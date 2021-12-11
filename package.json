@@ -2,8 +2,10 @@
   "private": true,
   "scripts": {
     "test": "ava",
+    "husky": "husky install",
     "clean": "rimraf build/",
     "build": "tsc --project .",
+    "postinstall": "yarn husky",
     "prestart": "yarn migrate up",
     "prepare": "ts-patch install -s",
     "prebuild": "yarn clean && yarn prepare",
@@ -53,6 +55,7 @@
     "errorhandler": "^1.5.1",
     "eslint": "^8.4.0",
     "express-router-dependency-graph": "^1.1.1",
+    "husky": "^7.0.4",
     "nodemon": "^2.0.15",
     "rimraf": "^3.0.2",
     "ts-node": "^10.4.0",

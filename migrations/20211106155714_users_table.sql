@@ -8,8 +8,8 @@ CREATE TABLE users (
   password VARCHAR NOT NULL,
   last_name VARCHAR NOT NULL,
   first_name VARCHAR NOT NULL,
-  email VARCHAR NOT NULL UNIQUE,
-  username VARCHAR NOT NULL UNIQUE,
+  email VARCHAR NOT NULL,
+  username VARCHAR NOT NULL,
   created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
 );
 -- +goose StatementEnd

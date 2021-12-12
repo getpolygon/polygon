@@ -6,6 +6,7 @@ import type { Request, Response } from "express";
 
 const login = async (req: Request, res: Response) => {
   const { password, email } = req.body;
+
   const user = await getFirst<{ id: string; password: string }>(
     "SELECT id, password FROM users WHERE email = $1",
     [email]

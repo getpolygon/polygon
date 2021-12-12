@@ -1,3 +1,13 @@
+/**
+ * Partial configuration error class.
+ *
+ * @example
+ * ```js
+ * const error = new PartialConfigError("`smtp.host`");
+ * throw error;
+ * // Uncaught PartialConfigError
+ * ```
+ */
 export class PartialConfigError extends Error {
   constructor(property: string) {
     super(

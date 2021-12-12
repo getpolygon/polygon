@@ -10,7 +10,13 @@ on:
       - "templates/**"
       - "migrations/**"
   pull_request:
-    branches: [ nightly ]
+    branches: [nightly]
+    paths-ignore:
+      - "bin/**"
+      - "docs/**"
+      - "examples/**"
+      - "templates/**"
+      - "migrations/**"
 
 jobs:
   build:
@@ -22,6 +28,9 @@ jobs:
 
       - name: Install
         run: yarn install
+
+      - name: Lint
+        run: yarn lint
 
       - name: Test
         run: yarn test

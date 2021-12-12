@@ -4,6 +4,7 @@ import { createClient } from "redis";
 
 const connectionUrl = config.databases?.redis || redis;
 const client = createClient({ url: connectionUrl });
+
 // Opening a connection
 client.connect().catch(console.error);
 

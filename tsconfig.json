@@ -1,11 +1,12 @@
 {
   "compilerOptions": {
-    "pretty": true,
     "strict": true,
+    "pretty": false,
     "target": "ES6",
     "baseUrl": "src",
     "sourceMap": true,
     "outDir": "build/",
+    "incremental": true,
     "declaration": false,
     "alwaysStrict": true,
     "module": "CommonJS",

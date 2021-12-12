@@ -9,9 +9,10 @@ const verify = async (req: Request, res: Response) => {
   const { password: suppliedPassword } = req.body;
 
   try {
-    const redisPayload = await redis.get(suppliedToken);
     // prettier-ignore
-    const { email, password, username, lastName, firstName } = JSON.parse(redisPayload!!);
+    const redisPayload = await redis.get(suppliedToken) as string;
+    // prettier-ignore
+    const { email, password, username, lastName, firstName } = JSON.parse(redisPayload);
     // Checking passwords
     const same = bcrypt.compareSync(suppliedPassword, password);
 
@@ -24,6 +25,7 @@ const verify = async (req: Request, res: Response) => {
 
       await redis.del(suppliedToken);
       const token = createJwt({ id: user?.id });
+
       return res.status(201).json({ ...user, token });
     } else return res.sendStatus(401);
   } catch (error) {

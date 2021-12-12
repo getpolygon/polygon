@@ -28,7 +28,7 @@ export class PostgresBaseRepository<T> implements IWrite<T>, IRead<T> {
     } else if (isEmpty(columns) || isEmpty(values) || isEmpty(returning)) {
       throw new Error(
         "`columns` and `values` should not have an array size of `0`"
-      )
+      );
     }
 
     const command = `

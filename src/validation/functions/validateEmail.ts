@@ -1,6 +1,6 @@
+import { isNil } from "lodash";
 import { userRepository } from "db/dao";
 import emailValidator from "deep-email-validator-extended";
-import { isNil } from "lodash";
 
 // Middleware function for express-validator for validating user emails
 export default async (value: string) => {

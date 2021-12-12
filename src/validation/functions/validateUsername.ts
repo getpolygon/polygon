@@ -3,7 +3,7 @@ import getFirst from "util/sql/getFirst";
 // Middleware function for express-validator for validating user usernames
 export default async (value: string) => {
   // Validating the username with a regex
-  const validRegex = /^[a-z0-9_\.]+$/.test(value);
+  const validRegex = /^[a-z0-9_.]+$/.test(value);
 
   // If the regex isn't valid
   if (!validRegex) return Promise.reject("Invalid username");

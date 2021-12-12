@@ -14,7 +14,7 @@ export default () => {
 
     // Validating the token
     try {
-      const data = verifyJwt<any>(token!!);
+      const data = verifyJwt<{ id: string }>(token);
       // Finding the user with the ID
       // prettier-ignore
       const user = await userRepository.findOne({ key: "id", value: data.id }, ["*"]);

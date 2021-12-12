@@ -1,22 +1,30 @@
 import express from "express";
-import { body } from "express-validator";
-import validate from "validation/middleware";
+import { uuidValidator } from "util/uuidValidator";
+import { celebrate, Joi, Segments } from "celebrate";
 import { one, create, remove, ofUser } from "controllers/api/posts";
 
 const router = express.Router();
 
 // To fetch only one post with ID
-router.get("/only/:id", one);
-// To fetch posts of an account
-router.get("/:username", ofUser);
-// To delete a post
-router.delete("/:id/delete", remove);
+router.get("/only/:id", uuidValidator(), one);
 
-const createPostRules = [
-  body("title").notEmpty().isLength({ max: 300 }),
-  body("body").optional(),
-];
+// To fetch posts of an account
+// prettier-ignore
+router.get("/:username", celebrate({ [Segments.PARAMS]: { username: Joi.string().exist() }}), ofUser);
+
+// To delete a post
+router.delete("/:id/delete", uuidValidator(), remove);
+
 // To create a post
-router.post("/create", createPostRules, validate(), create);
+// prettier-ignore
+router.post("/create", celebrate({
+    [Segments.BODY]: {
+        title: Joi.string().max(100).exist(),
+        content: Joi.string().optional().default(null),
+      }
+    },
+  ),
+  create
+);
 
 export default router;

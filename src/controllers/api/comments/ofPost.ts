@@ -66,8 +66,6 @@ const ofPost = async (req: Request, res: Response) => {
       return res.json("not implemented");
     }
   } catch (error: any) {
-    if (error?.code === "22P02") return res.sendStatus(400);
-
     console.error(error);
     return res.sendStatus(500);
   }

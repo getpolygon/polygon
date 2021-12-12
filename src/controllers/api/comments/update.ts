@@ -35,7 +35,7 @@ const update = async (req: Request, res: Response) => {
       if (isEqual(comment.user_id, req.user?.id)) {
         // Update the comment
         const comment = await getFirst<Partial<Comment>>(
-          "UPDATE comments SET body = $1WHERE id = $2 RETURNING *",
+          "UPDATE comments SET body = $1 WHERE id = $2 RETURNING *",
           [body, commentId]
         );
 

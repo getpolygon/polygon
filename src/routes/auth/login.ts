@@ -1,15 +1,11 @@
 import express from "express";
-import { body } from "express-validator";
 import { login } from "controllers/auth";
-import validate from "validation/middleware";
+import { celebrate, Joi, Segments } from "celebrate";
 
 const router = express.Router();
 
-const loginRules = [
-  body("password").isLength({ min: 8 }),
-  body("email").normalizeEmail().toLowerCase().isEmail(),
-];
 // Main login endpoint
-router.post("/", loginRules, validate(), login);
+// prettier-ignore
+router.post("/", celebrate({ [Segments.BODY]: { email: Joi.string().email().exist(), password: Joi.string().min(8).exist() }}), login);
 
 export default router;

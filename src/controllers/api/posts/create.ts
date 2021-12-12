@@ -3,7 +3,7 @@ import type { Request, Response } from "express";
 
 // For creating a post
 const create = async (req: Request, res: Response) => {
-  const { title, body } = req.body;
+  const { title, content } = req.body;
 
   try {
     const created = await getFirst<any>(
@@ -11,7 +11,7 @@ const create = async (req: Request, res: Response) => {
       INSERT INTO posts (title, content, user_id)
       VALUES ($1, $2, $3) RETURNING id
       `,
-      [title, body, req.user?.id]
+      [title, content, req.user?.id]
     );
 
     // Getting newly created post with the auther

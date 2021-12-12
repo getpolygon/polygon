@@ -1,7 +1,7 @@
 import pg from "db/pg";
-import { isNil, gt, filter, nth } from "lodash";
 import { Request, Response } from "express";
 import checkStatus from "util/sql/checkStatus";
+import { isNil, gt, filter, nth } from "lodash";
 
 // For post discovery
 const posts = async (req: Request, res: Response) => {
@@ -139,9 +139,6 @@ const posts = async (req: Request, res: Response) => {
       });
     }
   } catch (error: any) {
-    // Invalid cursor ID
-    if (error?.code === "22P02") return res.sendStatus(400);
-
     console.error(error);
     return res.sendStatus(500);
   }

@@ -1,4 +1,5 @@
 import express from "express";
+import { celebrate, Joi, Segments } from "celebrate";
 import { me, others, close } from "controllers/api/users";
 
 const router = express.Router();
@@ -7,7 +8,9 @@ const router = express.Router();
 router.get("/me", me);
 // For closing account
 router.delete("/close", close);
+
 // For fetching account details
-router.get("/:username", others);
+// prettier-ignore
+router.get("/:username", celebrate({ [Segments.PARAMS]: { username: Joi.string().exist() }}), others);
 
 export default router;

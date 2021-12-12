@@ -116,9 +116,6 @@ const ofUser = async (req: Request, res: Response) => {
           next: nth(posts, -1)?.id || null,
         });
       } catch (error: any) {
-        // Invalid cursor ID
-        if (isEqual(error?.code, "22P02")) return res.sendStatus(400);
-
         console.error(error);
         return res.sendStatus(500);
       }

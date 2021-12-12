@@ -22,9 +22,6 @@ const remove = async (req: Request, res: Response) => {
 
     return res.sendStatus(404);
   } catch (error: any) {
-    // Invalid cursor ID
-    if (isEqual(error?.code, "22P02")) return res.sendStatus(400);
-
     console.error(error);
     return res.sendStatus(500);
   }

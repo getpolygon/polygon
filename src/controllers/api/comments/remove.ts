@@ -49,8 +49,6 @@ const remove = async (req: Request, res: Response) => {
       return res.sendStatus(404);
     }
   } catch (error: any) {
-    if (error?.code === "22P02") return res.sendStatus(400);
-
     console.error(error);
     return res.status(500).json();
   }

@@ -1,23 +1,27 @@
 import config from "config/index";
 import { compile } from "handlebars";
 import { isEqual, isNil } from "lodash";
+import { itOrError } from "lib/itOrError";
 import { createTransport } from "nodemailer";
 import { readTemplate } from "lib/readTemplate";
-import { NodemailerSMTPConfigError } from "./errors";
+import { itOrDefaultTo } from "lib/itOrDefaultTo";
+// prettier-ignore
+import { NodemailerSMTPConfigError, smtpHostNotSupplied, smtpPassNotSupplied, smtpPortNotSupplied, smtpUserNotSupplied } from "./errors";
 
-// Initialization checks
 // prettier-ignore
 if (!isEqual(config.email?.client, "courier") && (isEqual(config.polygon?.emailEnableVerification, false) || isNil(config.polygon?.emailEnableVerification))) {
   if (isNil(config.smtp)) throw new NodemailerSMTPConfigError();
 }
 
+// Creating a Nodemailer transport
 const nodemailer = createTransport({
   auth: {
-    user: config.smtp?.user,
-    pass: config.smtp?.pass,
+    user: itOrError(config.smtp?.user, smtpUserNotSupplied),
+    pass: itOrError(config.smtp?.pass, smtpPassNotSupplied),
   },
-  host: config.smtp?.host,
-  port: config.smtp?.port,
+  secure: itOrDefaultTo(config.smtp?.secure, true),
+  host: itOrError(config.smtp?.host, smtpHostNotSupplied),
+  port: itOrError(config.smtp?.port, smtpPortNotSupplied),
 });
 
 /**
@@ -31,11 +35,7 @@ const nodemailer = createTransport({
 export const send = async (email: string, templateName: string, data?: object) => {
   const template = readTemplate(templateName);
   const html = compile(template)(data || {});
-  const response = await nodemailer.sendMail({
-    html,
-    to: email,
-    from: config.smtp?.user
-  });
-
+  // prettier-ignore
+  const response = await nodemailer.sendMail({ html, to: email, from: config.smtp?.user });
   return response;
 };

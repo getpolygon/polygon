@@ -1,7 +1,8 @@
 {
   "env": {
+    "node": true,
     "es2021": true,
-    "node": true
+    "browser": false
   },
   "extends": [
     "eslint:recommended",
@@ -16,6 +17,7 @@
   "rules": {
     "tsdoc/syntax": "warn",
     "semi": ["warn", "always"],
-    "quotes": ["warn", "double"]
+    "quotes": ["warn", "double"],
+    "prettier/prettier": ["error", { "endOfLine": "auto" }]
   }
 }

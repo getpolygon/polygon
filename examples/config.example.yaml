@@ -9,6 +9,7 @@ smtp:
   pass: ""
   host: ""
   user: ""
+  secure: true
 
 # Email configuration
 email:

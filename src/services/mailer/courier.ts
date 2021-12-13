@@ -1,6 +1,7 @@
 import config from "config/index";
 import { isEqual, isNil } from "lodash";
 import { itOrError } from "lib/itOrError";
+import { itOrDefaultTo } from "lib/itOrDefaultTo";
 import { CourierClient } from "@trycourier/courier";
 // prettier-ignore
 import {  CourierTokenError, smtpHostNotSupplied, smtpPassNotSupplied, smtpPortNotSupplied, smtpUserNotSupplied } from "./errors";
@@ -30,7 +31,7 @@ export const send = async (email: string, eventId: string, data?: object) => {
               user: itOrError(config.smtp?.user, smtpUserNotSupplied),
               pass: itOrError(config.smtp?.pass, smtpPassNotSupplied),
             },
-            secure: true,
+            secure: itOrDefaultTo(config.smtp?.secure, true),
             host: itOrError(config.smtp?.host, smtpHostNotSupplied),
             port: itOrError(config.smtp?.port, smtpPortNotSupplied),
           },

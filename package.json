@@ -61,6 +61,7 @@
     "express-router-dependency-graph": "^1.1.1",
     "husky": "^7.0.4",
     "nodemon": "^2.0.15",
+    "prettier": "^2.5.1",
     "rimraf": "^3.0.2",
     "ts-node": "^10.4.0",
     "ts-patch": "^2.0.1",

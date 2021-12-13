@@ -60,6 +60,10 @@ interface ISmtpConfig {
    * SMTP port
    */
   port: number;
+  /**
+   * Defines if the connection should use SSL (if true) or not (if false)
+   */
+  secure: boolean;
 }
 
 /**

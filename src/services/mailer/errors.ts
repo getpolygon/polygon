@@ -1,5 +1,8 @@
 import { PartialConfigError } from "lib/PartialConfigError";
 
+/**
+ * Whenever Courier token is missing
+ */
 export class CourierTokenError extends Error {
   constructor() {
     super(
@@ -8,6 +11,9 @@ export class CourierTokenError extends Error {
   }
 }
 
+/**
+ * Whenever SMTP configuration for Nodemailer is missing
+ */
 export class NodemailerSMTPConfigError extends Error {
   constructor() {
     super(
@@ -16,6 +22,7 @@ export class NodemailerSMTPConfigError extends Error {
   }
 }
 
+// Default errors for both Courier and Nodemailer
 export const smtpUserNotSupplied = new PartialConfigError("`smtp.user`");
 export const smtpHostNotSupplied = new PartialConfigError("`smtp.host`");
 export const smtpPassNotSupplied = new PartialConfigError("`smtp.pass`");

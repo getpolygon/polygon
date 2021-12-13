@@ -1,5 +1,5 @@
 import express from "express";
-import { uuidValidator } from "util/uuidValidator";
+import { uuidValidator } from "middleware/uuidValidator";
 import { status, heartbeat } from "controllers/api/network";
 
 const router = express.Router();

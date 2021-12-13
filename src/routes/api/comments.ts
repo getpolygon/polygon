@@ -1,5 +1,5 @@
 import express from "express";
-import { uuidValidator } from "util/uuidValidator";
+import { uuidValidator } from "middleware/uuidValidator";
 import { create, ofPost, remove, update } from "controllers/api/comments";
 
 const router = express.Router();

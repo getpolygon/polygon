@@ -8,7 +8,7 @@ import {
   followers,
   following,
 } from "controllers/api/relations";
-import { uuidValidator } from "util/uuidValidator";
+import { uuidValidator } from "middleware/uuidValidator";
 
 const router = express.Router();
 

@@ -1,5 +1,5 @@
 import express from "express";
-import { uuidValidator } from "util/uuidValidator";
+import { uuidValidator } from "middleware/uuidValidator";
 import { celebrate, Joi, Segments } from "celebrate";
 import { one, create, remove, ofUser } from "controllers/api/posts";
 

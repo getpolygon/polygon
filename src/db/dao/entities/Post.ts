@@ -3,8 +3,7 @@ export class Post {
     public readonly id: string,
     public readonly title: string,
     public readonly user_id: string,
-
-    public readonly content?: string,
-    public readonly created_at?: Date
+    public readonly created_at: Date,
+    public readonly content?: string
   ) {}
 }

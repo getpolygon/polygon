@@ -1,11 +1,38 @@
 import { Pool } from "pg";
-import config from "config/index";
+import config from "config";
+import { isNil } from "lodash";
+import { Service } from "typedi";
 import { postgres } from "config/env";
+import { IDatabase } from "./common/IDatabase";
+import { PartialConfigError } from "lib/PartialConfigError";
+import { IDatabaseResult } from "./common/IDatabaseResult";
 
 const connectionString = postgres || config.databases?.postgres;
-const pg = new Pool({ connectionString });
+if (isNil(connectionString))
+  throw new PartialConfigError("`database.postgres`");
 
-// Connecting to postgres
-pg.connect();
+/**
+ * PostgreSQL database implementation
+ */
+@Service()
+export class Postgres implements IDatabase {
+  private readonly pg: Pool;
 
-export default pg;
+  constructor() {
+    this.pg = new Pool({ connectionString });
+    // Connecting to the database
+    this.connect().catch(console.error);
+  }
+
+  public async query(statement: string, args?: any[]): Promise<IDatabaseResult> {
+    const result = await this.pg.query(statement, args);
+    return result;
+  }
+
+  public async connect(): Promise<void> {
+    await this.pg.connect();
+  }
+}
+
+// Raw Postgres connection for execution of queries that cannot be made through DAOs
+export default new Postgres();

@@ -1,10 +1,10 @@
-import config from "config/index";
+import config from "config";
 import { isEqual, isNil } from "lodash";
 import { itOrError } from "lib/itOrError";
 import { itOrDefaultTo } from "lib/itOrDefaultTo";
 import { CourierClient } from "@trycourier/courier";
 // prettier-ignore
-import {  CourierTokenError, smtpHostNotSupplied, smtpPassNotSupplied, smtpPortNotSupplied, smtpUserNotSupplied } from "./errors";
+import { CourierTokenError, smtpHostNotSupplied, smtpPassNotSupplied, smtpPortNotSupplied, smtpUserNotSupplied } from "./errors";
 
 // Initialization checks
 // prettier-ignore

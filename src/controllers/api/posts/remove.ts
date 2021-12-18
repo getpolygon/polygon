@@ -1,5 +1,5 @@
+import { postDao } from "container";
 import { isEqual, isNil } from "lodash";
-import { postRepository } from "db/dao";
 import type { Request, Response } from "express";
 
 // For removing a post
@@ -7,13 +7,13 @@ const remove = async (req: Request, res: Response) => {
   const { id } = req.params;
 
   try {
-    // prettier-ignore
-    const post = await postRepository.findOne({ key: "id", value: id }, ["user_id"]);
+    const post = await postDao.getPostById(id);
 
+    // Checking if post exists
     if (!isNil(post)) {
       // Checking whether the author is the same as the current user
-      if (isEqual(post.user_id, req.user?.id)) {
-        await postRepository.remove({ key: "id", value: id });
+      if (isEqual(post.user?.id || post.user_id, req.user?.id)) {
+        await postDao.deletePostById(id);
         return res.sendStatus(204);
       }
 

@@ -8,8 +8,6 @@ export class User {
     public readonly first_name: string,
 
     public readonly bio?: string,
-    public readonly cover?: string,
-    public readonly avatar?: string,
     public readonly created_at?: Date
   ) {}
 }

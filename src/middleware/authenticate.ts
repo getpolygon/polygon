@@ -1,6 +1,6 @@
 import { isNil, nth } from "lodash";
+import { userDao } from "container";
 import { verifyJwt } from "util/jwt";
-import { userRepository } from "db/dao";
 import { JsonWebTokenError } from "jsonwebtoken";
 import type { Request, Response, NextFunction } from "express";
 
@@ -12,12 +12,10 @@ export default () => {
     // Checking if the token exists
     if (isNil(token)) return res.sendStatus(401);
 
-    // Validating the token
     try {
+      // Validating the token and getting the user
       const data = verifyJwt<{ id: string }>(token);
-      // Finding the user with the ID
-      // prettier-ignore
-      const user = await userRepository.findOne({ key: "id", value: data.id }, ["*"]);
+      const user = await userDao.getUserById(data.id);
 
       // If the account does not exist
       if (isNil(user)) return res.sendStatus(401);
@@ -28,7 +26,7 @@ export default () => {
       return next(null);
     } catch (error) {
       // If token is invalid
-      if (error instanceof JsonWebTokenError) return res.sendStatus(400);
+      if (error instanceof JsonWebTokenError) return res.sendStatus(403);
 
       console.error(error);
       return res.sendStatus(500);

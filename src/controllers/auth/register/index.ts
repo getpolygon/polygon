@@ -1,10 +1,10 @@
 import crypto from "crypto";
 import bcrypt from "bcrypt";
 import redis from "db/redis";
-import config from "config/index";
+import config from "config";
 import { createJwt } from "util/jwt";
 import { send } from "services/mailer";
-import { userRepository } from "db/dao";
+// import { userRepository } from "db/dao";
 import { isEqual, isNil } from "lodash";
 import { itOrError } from "lib/itOrError";
 import type { Request, Response } from "express";
@@ -21,10 +21,12 @@ const register = async (req: Request, res: Response) => {
     isEqual(config.polygon?.emailEnableVerification, false)
   ) {
     // Creating a user
-    const { id } = await userRepository.create(
-      ["email", "password", "username", "last_name", "first_name"],
-      [email, encryptedPassword, username, lastName, firstName]
-    );
+    const id = null;
+    throw new Error("Method not implemented");
+    // const { id } = await userRepository.create(
+    //   ["email", "password", "username", "last_name", "first_name"],
+    //   [email, encryptedPassword, username, lastName, firstName]
+    // );
 
     const token = createJwt({ id });
     return res.status(204).json({ token });

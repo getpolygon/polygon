@@ -1,10 +1,14 @@
 import jwt from "jsonwebtoken";
 import { isNil } from "lodash";
+import config from "config";
 import type { SignOptions } from "jsonwebtoken";
 import { PartialConfigError } from "lib/PartialConfigError";
 
-const SECRET = process.env.JWT_SECRET;
-if (isNil(SECRET)) throw new PartialConfigError("`jwt.secret`");
+// Configuration validation
+const jwtSecret = process.env.JWT_SECRET || config.jwt?.secret;
+const jwtRefresh = process.env.JWT_REFRESH || config.jwt?.refresh;
+if (isNil(jwtSecret)) throw new PartialConfigError("`jwt.secret`");
+else if (isNil(jwtRefresh)) throw new PartialConfigError("`jwt.refresh`");
 
 /**
  * Utility for creating JWTs
@@ -13,7 +17,7 @@ if (isNil(SECRET)) throw new PartialConfigError("`jwt.secret`");
  * @param options - JWT options
  */
 export const createJwt = (payload: object, options?: SignOptions): string => {
-  return jwt.sign(payload, SECRET, options);
+  return jwt.sign(payload, jwtSecret, options);
 };
 
 /**
@@ -22,5 +26,5 @@ export const createJwt = (payload: object, options?: SignOptions): string => {
  * @param token - JWT string
  */
 export const verifyJwt = <T>(token: string): T => {
-  return jwt.verify(token, SECRET) as T;
+  return jwt.verify(token, jwtSecret) as T;
 };

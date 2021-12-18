@@ -1,4 +1,4 @@
-import config from "config/index";
+import config from "config";
 import { isEqual, isNil } from "lodash";
 import { send as CourierSend } from "./courier";
 import { send as NodemailerSend } from "./nodemailer";

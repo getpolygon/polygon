@@ -1,4 +1,4 @@
-import config from "config/index";
+import config from "config";
 import { createClient } from "redis";
 import { redis as redisEnv } from "config/env";
 

@@ -3,8 +3,6 @@
 CREATE TABLE users (
   id UUID NOT NULL PRIMARY KEY DEFAULT gen_random_uuid(),
   bio TEXT NULL,
-  cover VARCHAR,
-  avatar VARCHAR,
   password VARCHAR NOT NULL,
   last_name VARCHAR NOT NULL,
   first_name VARCHAR NOT NULL,

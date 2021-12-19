@@ -13,7 +13,7 @@ export const send = async (email: string, template: string, data?: object) => {
     if (isNil(config.polygon?.frontendUrl)) {
       throw new PartialConfigError("`polygon.frontendUrl`");
     }
-    // Frontend URL is not a valid URI 
+    // Frontend URL is not a valid URI
     else if (!isUri(config.polygon?.frontendUrl!)) {
       throw new InvalidConfigError("`polygon.frontendUrl`", "URL");
     } else {

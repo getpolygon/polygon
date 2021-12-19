@@ -1,6 +1,6 @@
 #!/bin/sh
 . "$(dirname "$0")/_/husky.sh"
 
-yarn test
 yarn build
-# yarn lint --fix
+yarn test
+yarn lint --fix

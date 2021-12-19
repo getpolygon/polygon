@@ -1,11 +1,12 @@
 import pg from "db/pg";
+import { relationDao } from "container";
 import { Request, Response } from "express";
-import checkStatus from "util/sql/checkStatus";
 import { isNil, gt, filter, nth } from "lodash";
 
 // For post discovery
 const posts = async (req: Request, res: Response) => {
   // Getting next page cursor and post limit per page
+  // eslint-disable-next-line prefer-const
   let { cursor, limit = 2 } = req.query;
 
   // Not letting more than 10 posts per page
@@ -57,15 +58,11 @@ const posts = async (req: Request, res: Response) => {
       // Filtering out posts from blocked users
       for (const post of posts) {
         // Checking relationship status
-        const status = await checkStatus({
-          current: req.user?.id!!,
-          other: post?.user?.id!! as string,
-        });
-
-        // If either of the sides has blocked one or another, remove the post from the array
-        if (status === "BLOCKED") {
-          filter(posts, (p) => p.id !== post.id);
-        }
+        const status = await relationDao.getRelationByUserIds(
+          req.user?.id!,
+          post?.user?.id
+        );
+        if (status === "BLOCKED") filter(posts, (p) => p.id !== post.id);
       }
 
       return res.json({
@@ -118,17 +115,16 @@ const posts = async (req: Request, res: Response) => {
         WHERE post.created_at < $1 OR (post.created_at = $1 AND post.id < $2)
         ORDER BY post.created_at DESC, post.id DESC LIMIT 2;
       `,
-        [cursorPost?.created_at!!, cursorPost?.id, req.user?.id]
+        [cursorPost?.created_at!, cursorPost?.id, req.user?.id]
       );
 
       // Filtering out posts from blocked users
       for (const post of posts) {
         // Checking relationship status
-        const status = await checkStatus({
-          current: req.user?.id!!,
-          other: post?.user?.id!! as string,
-        });
-
+        const status = await relationDao.getRelationByUserIds(
+          req.user?.id!,
+          post?.user?.id
+        );
         // If either of the sides has blocked one or another, remove the post from the array
         if (status === "BLOCKED") filter(posts, (p) => p.id !== post.id);
       }

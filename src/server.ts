@@ -1,22 +1,16 @@
+import dotenv = require("dotenv");
+dotenv.config();
+
 // Required by `typedi`
 import "reflect-metadata";
 
-import * as dotenv from "dotenv";
-dotenv.config();
-
 import app from "./app";
 import http from "http";
-import { isEqual } from "lodash";
-import logger from "util/logger";
 import { port } from "config/env";
-import errorHandler from "errorhandler";
-
-// Applying development middleware
-if (isEqual(process.env.NODE_ENV, "development")) {
-  // For printing the full stacktrace
-  app.use(errorHandler());
-}
+import { logger } from "container";
 
 http
   .createServer(app)
-  .listen(port, () => logger.info(`Backend started at port ${port}`));
+  .listen(port, () =>
+    logger.info(`Server started at http://127.0.0.1:${port}/`)
+  );

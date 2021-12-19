@@ -1,7 +1,6 @@
 import pg from "db/pg";
-import checkStatus from "util/sql/checkStatus";
+import { relationDao } from "container";
 import type { Request, Response } from "express";
-import { isEqual } from "lodash";
 
 // For getting the followers of an account
 const followers = async (req: Request, res: Response) => {
@@ -10,13 +9,8 @@ const followers = async (req: Request, res: Response) => {
 
   try {
     // Checking the status between 2 users
-    const status = await checkStatus({
-      other: id,
-      current: req.user?.id!!,
-    });
-
-    // If current user is blocked by the other one
-    if (isEqual(status, "BLOCKED")) {
+    const status = await relationDao.getRelationByUserIds(id, req.user?.id!);
+    if (status === "BLOCKED") {
       const { rows: followers } = await pg.query(
         `
             SELECT Follower.* FROM relations Relation

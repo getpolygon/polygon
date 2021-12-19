@@ -1,4 +1,3 @@
-// import { userRepository } from "db/dao";
 import type { Request, Response } from "express";
 
 // For fetching current account details

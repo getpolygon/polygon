@@ -1,10 +1,9 @@
 import crypto from "crypto";
 import bcrypt from "bcrypt";
 import redis from "db/redis";
-import config from "config";
+import config from "config/index";
 import { createJwt } from "util/jwt";
 import { send } from "services/mailer";
-// import { userRepository } from "db/dao";
 import { isEqual, isNil } from "lodash";
 import { itOrError } from "lib/itOrError";
 import type { Request, Response } from "express";

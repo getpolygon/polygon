@@ -1,7 +1,6 @@
 import pg from "db/pg";
-import checkStatus from "util/sql/checkStatus";
+import { relationDao } from "container";
 import type { Request, Response } from "express";
-import { isEqual } from "lodash";
 
 // For getting the people whom the account follows
 const following = async (req: Request, res: Response) => {
@@ -9,13 +8,8 @@ const following = async (req: Request, res: Response) => {
 
   try {
     // Checking the relation between 2 users
-    const status = await checkStatus({
-      other: id,
-      current: req.user?.id!!,
-    });
-
-    // If not blocked
-    if (!isEqual(status, "BLOCKED")) {
+    const status = await relationDao.getRelationByUserIds(id, req.user?.id!);
+    if (status !== "BLOCKED") {
       // Getting the users other user follows
       const { rows: following } = await pg.query(
         `

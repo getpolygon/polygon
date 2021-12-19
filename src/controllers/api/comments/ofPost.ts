@@ -1,7 +1,7 @@
 import pg from "db/pg";
-import { isNil, isEmpty, nth } from "lodash";
+import { relationDao } from "container";
 import getFirst from "util/sql/getFirst";
-import checkStatus from "util/sql/checkStatus";
+import { isNil, isEmpty, nth } from "lodash";
 import type { Request, Response } from "express";
 
 // For fetching comments of a post
@@ -22,12 +22,10 @@ const ofPost = async (req: Request, res: Response) => {
     if (isNil(post)) return res.sendStatus(404);
     else {
       // Checking the relations between current user and post author
-      const status = await checkStatus({
-        other: post.user_id!!,
-        current: req.user?.id!!,
-      });
-
-      // If the relation between 2 users is BLOCKED
+      const status = await relationDao.getRelationByUserIds(
+        post?.user_id,
+        req.user?.id!
+      );
       if (status === "BLOCKED") return res.sendStatus(403);
 
       // If no comment cursor was supplied
@@ -42,19 +40,19 @@ const ofPost = async (req: Request, res: Response) => {
         )) as { rows: { id: string; created_at: Date }[] };
 
         // Getting next cursor
-        const next = await new Promise(async (resolve, _) => {
+        const next = await new Promise((resolve, reject) => {
           if (isEmpty(comments)) return null;
 
-          const nextComment = await getFirst<{ id: string }>(
+          return getFirst<{ id: string }>(
             `
               SELECT id FROM comments WHERE post_id = $1
               AND id > $2 AND created_at > $3
               ORDER BY created_at DESC LIMIT 1;
               `,
             [post.id, nth(comments, -1)?.id, nth(comments, -1)?.created_at]
-          );
-
-          return resolve(nextComment);
+          )
+            .then(resolve)
+            .catch(reject);
         });
 
         return res.json({

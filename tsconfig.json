@@ -25,10 +25,10 @@
       "lib/*"         :["lib/*"],
       "util/*"        :["util/*"],
       "routes/*"      :["routes/*"],
-      "dao/*"          :["db/dao/*"],
+      "config/*"      :["config/*"],
+      "dao/*"         :["db/dao/*"],
       "services/*"    :["services/*"],
       "validation/*"  :["validation/*"],
-      "config"        :["config/index"],
       "middleware/*"  :["middleware/*"],
       "controllers/*" :["controllers/*"],
       "templates/*"   :["../templates/*"],
@@ -40,6 +40,6 @@
       { "transform": "typescript-transform-paths" }
     ]
   },
-  "include": ["src/**/*", "spec"],
+  "include": ["src/**/*"],
   "exclude": ["node_modules", "build"]
 }

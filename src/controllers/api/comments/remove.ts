@@ -1,7 +1,7 @@
 import pg from "db/pg";
+import { relationDao } from "container";
 import { isEqual, isNil } from "lodash";
 import getFirst from "util/sql/getFirst";
-import checkStatus from "util/sql/checkStatus";
 import type { Request, Response } from "express";
 
 // For deleting a comment
@@ -18,12 +18,10 @@ const remove = async (req: Request, res: Response) => {
     // If post exists
     if (post) {
       // Checking the relation between accounts
-      const status = await checkStatus({
-        other: post?.user_id!!,
-        current: req.user?.id!!,
-      });
-
-      // If the other user has blocked current account
+      const status = await relationDao.getRelationByUserIds(
+        post?.user_id,
+        req.user?.id!
+      );
       if (status === "BLOCKED") return res.sendStatus(403);
 
       // Find the comment
@@ -35,7 +33,7 @@ const remove = async (req: Request, res: Response) => {
       // If comment exists
       if (!isNil(comment)) {
         // If the author of the post is the same
-        if (isEqual(comment.user_id, req.user?.id!!)) {
+        if (isEqual(comment.user_id, req.user?.id!)) {
           // Delete the comment
           await pg.query("DELETE FROM comments WHERE id = $1", [commentId]);
           return res.sendStatus(204);

@@ -1,4 +1,4 @@
-import config from "config";
+import config from "config/index";
 import { isEqual, isNil } from "lodash";
 import { itOrError } from "lib/itOrError";
 import { itOrDefaultTo } from "lib/itOrDefaultTo";
@@ -25,18 +25,18 @@ export const send = async (email: string, eventId: string, data?: object) => {
     // Only overriding SMTP configuration if SMTP configuration was supplied
     override: !isNil(config.smtp)
       ? {
-        smtp: {
-          config: {
-            auth: {
-              user: itOrError(config.smtp?.user, smtpUserNotSupplied),
-              pass: itOrError(config.smtp?.pass, smtpPassNotSupplied),
+          smtp: {
+            config: {
+              auth: {
+                user: itOrError(config.smtp?.user, smtpUserNotSupplied),
+                pass: itOrError(config.smtp?.pass, smtpPassNotSupplied),
+              },
+              secure: itOrDefaultTo(config.smtp?.secure, true),
+              host: itOrError(config.smtp?.host, smtpHostNotSupplied),
+              port: itOrError(config.smtp?.port, smtpPortNotSupplied),
             },
-            secure: itOrDefaultTo(config.smtp?.secure, true),
-            host: itOrError(config.smtp?.host, smtpHostNotSupplied),
-            port: itOrError(config.smtp?.port, smtpPortNotSupplied),
           },
-        },
-      }
+        }
       : {},
   });
 

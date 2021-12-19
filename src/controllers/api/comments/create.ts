@@ -1,6 +1,6 @@
 import { isEqual, isNil } from "lodash";
+import { relationDao } from "container";
 import getFirst from "util/sql/getFirst";
-import checkStatus from "util/sql/checkStatus";
 import type { Request, Response } from "express";
 
 // For creating a comment
@@ -17,10 +17,8 @@ const create = async (req: Request, res: Response) => {
 
     if (!isNil(post)) {
       // Checking if the other user has blocked current user
-      const status = await checkStatus({
-        other: post?.user_id!!,
-        current: req.user?.id!!,
-      });
+      // prettier-ignore
+      const status = await relationDao.getRelationByUserIds(post.user_id, req.user?.id!);
 
       // Not letting current user to comment on that post
       if (isEqual(status, "BLOCKED")) return res.sendStatus(403);

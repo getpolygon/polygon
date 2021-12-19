@@ -1,7 +1,7 @@
 import { Pool } from "pg";
-import config from "config";
 import { isNil } from "lodash";
 import { Service } from "typedi";
+import config from "config/index";
 import { postgres } from "config/env";
 import { IDatabase } from "./common/IDatabase";
 import { PartialConfigError } from "lib/PartialConfigError";
@@ -24,6 +24,7 @@ export class Postgres implements IDatabase {
     this.connect().catch(console.error);
   }
 
+  // prettier-ignore
   public async query(statement: string, args?: any[]): Promise<IDatabaseResult> {
     const result = await this.pg.query(statement, args);
     return result;

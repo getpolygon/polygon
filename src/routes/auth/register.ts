@@ -1,6 +1,6 @@
-import config from "config";
 import express from "express";
 import { isEqual } from "lodash";
+import config from "config/index";
 import { verify, register } from "controllers/auth";
 import { celebrate, Joi, Segments } from "celebrate";
 

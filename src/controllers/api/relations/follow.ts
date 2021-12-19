@@ -1,7 +1,7 @@
+import { isEqual } from "lodash";
+import { relationDao } from "container";
 import getFirst from "util/sql/getFirst";
 import { Request, Response } from "express";
-import checkStatus from "util/sql/checkStatus";
-import { isEqual } from "lodash";
 
 // For following another user
 const follow = async (req: Request, res: Response) => {
@@ -12,19 +12,14 @@ const follow = async (req: Request, res: Response) => {
     if (isEqual(id, req.user?.id)) return res.sendStatus(406);
 
     // Checking if the other user has blocked current user
-    const status = await checkStatus({
-      other: id!!,
-      current: req.user?.id!!,
-    });
-
-    // Not blocked
-    if (!isEqual(status, "BLOCKED")) {
+    const status = await relationDao.getRelationByUserIds(id!, req.user?.id!);
+    if (status !== "BLOCKED") {
       // Creating the relation
       const response = await getFirst<any>(
         `
-          INSERT INTO relations (status, to_user, from_user) 
-          VALUES ('FOLLOWING', $1, $2) RETURNING status;
-          `,
+        INSERT INTO relations (status, to_user, from_user) 
+        VALUES ('FOLLOWING', $1, $2) RETURNING status;
+        `,
         [id, req.user?.id]
       );
 
@@ -34,9 +29,7 @@ const follow = async (req: Request, res: Response) => {
 
     return res.sendStatus(403);
   } catch (error: any) {
-    // TODO: Handle all error cases
-    // Invalid UUID
-    if (error?.code === "22P02") return res.sendStatus(400);
+    // TODO: Handle all errors
     // Already exists
     if (error?.code === "23505") return res.sendStatus(409);
     else {

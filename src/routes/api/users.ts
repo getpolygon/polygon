@@ -1,6 +1,7 @@
 import express from "express";
 import { celebrate, Joi, Segments } from "celebrate";
 import { me, others, close } from "controllers/api/users";
+import { verifyNotBlockedWithParams } from "middleware/verifyNotBlockedWithParams";
 
 const router = express.Router();
 
@@ -11,6 +12,9 @@ router.delete("/close", close);
 
 // For fetching account details
 // prettier-ignore
-router.get("/:username", celebrate({ [Segments.PARAMS]: { username: Joi.string().exist() }}), others);
+router.get(
+    "/:username", celebrate({ [Segments.PARAMS]: { username: Joi.string().exist() } }),
+    verifyNotBlockedWithParams("username"), others
+);
 
 export default router;

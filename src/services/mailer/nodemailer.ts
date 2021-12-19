@@ -1,4 +1,4 @@
-import config from "config";
+import config from "config/index";
 import { compile } from "handlebars";
 import { isEqual, isNil } from "lodash";
 import { itOrError } from "lib/itOrError";

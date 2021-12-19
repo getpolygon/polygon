@@ -1,6 +1,6 @@
 import jwt from "jsonwebtoken";
 import { isNil } from "lodash";
-import config from "config";
+import config from "config/index";
 import type { SignOptions } from "jsonwebtoken";
 import { PartialConfigError } from "lib/PartialConfigError";
 

@@ -1,7 +1,7 @@
-import getFirst from "util/sql/getFirst";
-import checkStatus from "util/sql/checkStatus";
-import type { Request, Response } from "express";
+import { relationDao } from "container";
 import { isEqual, isNil } from "lodash";
+import getFirst from "util/sql/getFirst";
+import type { Request, Response } from "express";
 
 // For updating a comment
 const update = async (req: Request, res: Response) => {
@@ -18,12 +18,12 @@ const update = async (req: Request, res: Response) => {
 
   if (!isNil(post)) {
     // Checking if the other user has blocked current user
-    const status = await checkStatus({
-      other: post?.user_id!!,
-      current: req.user?.id!!,
-    });
-
+    const status = await relationDao.getRelationByUserIds(
+      post.user_id,
+      req.user?.id!
+    );
     if (status === "BLOCKED") return res.sendStatus(403);
+
     const comment = await getFirst<{ user_id: string }>(
       "SELECT user_id FROM comments WHERE id = $1",
       [commentId]

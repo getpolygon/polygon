@@ -1,7 +1,3 @@
-// import pg from "db/pg";
-// import getFirst from "util/sql/getFirst";
-// import { isEqual, isNil, nth } from "lodash";
-// import checkStatus from "util/sql/checkStatus";
 import type { Request, Response } from "express";
 
 // For fetching one user's post

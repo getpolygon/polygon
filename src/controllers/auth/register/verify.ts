@@ -2,7 +2,6 @@ import bcrypt from "bcrypt";
 import redis from "db/redis";
 import { createJwt } from "util/jwt";
 import type { Request, Response } from "express";
-// import { userRepository } from "../../../db/dao";
 
 const verify = async (req: Request, res: Response) => {
   const { token: suppliedToken } = req.params;

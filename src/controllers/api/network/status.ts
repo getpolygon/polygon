@@ -8,7 +8,7 @@ const status = async (req: Request, res: Response) => {
 
   try {
     const __payload = await redis.get(id);
-    const payload = JSON.parse(__payload!!) || { connected: false };
+    const payload = JSON.parse(__payload!) || { connected: false };
 
     return res.json(payload);
   } catch (error) {

@@ -8,9 +8,9 @@
     "postinstall": "yarn husky",
     "lint": "eslint src/**/*.ts",
     "prepare": "ts-patch install -s",
-    "prestart": "yarn migrate postgres up",
+    "prestart": "yarn migrate up",
     "prebuild": "yarn clean && yarn prepare",
-    "migrate": "./bin/goose -dir=migrations",
+    "migrate": "./bin/goose -dir=migrations postgres",
     "start": "cross-env NODE_ENV=production node ./build/server.js",
     "express-graph": "express-router-dependency-graph --rootDir=./src/ --format=markdown",
     "dev": "yarn prepare && cross-env NODE_ENV=development nodemon --files ./src/server.ts"

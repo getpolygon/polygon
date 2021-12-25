@@ -1,4 +1,4 @@
-import { isEqual, isNil } from "lodash";
+import { isNil } from "lodash";
 import { relationDao } from "container";
 import getFirst from "util/sql/getFirst";
 import type { Request, Response } from "express";
@@ -21,15 +21,15 @@ const create = async (req: Request, res: Response) => {
       const status = await relationDao.getRelationByUserIds(post.user_id, req.user?.id!);
 
       // Not letting current user to comment on that post
-      if (isEqual(status, "BLOCKED")) return res.sendStatus(403);
+      if (status === "BLOCKED") return res.sendStatus(403);
       else {
         // Creating a comment and returning it afterwards
         const comment = await getFirst<Partial<Comment>>(
           `
-        INSERT INTO comments (body, post_id, user_id) 
-        VALUES ($1, $2, $3)
-        RETURNING created_at, body, id;
-        `,
+          INSERT INTO comments (body, post_id, user_id) 
+          VALUES ($1, $2, $3)
+          RETURNING created_at, body, id;
+          `,
           [body, postId, req.user?.id]
         );
 

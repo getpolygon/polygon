@@ -3,6 +3,7 @@ import { Postgres } from "db/pg";
 import { Service } from "typedi";
 import { User } from "./entities/User";
 import { UserDao } from "./interfaces/UserDao";
+import { DuplicateRecordError } from "./errors/DuplicateRecordError";
 
 @Service()
 export class UserDaoImpl implements UserDao {
@@ -11,6 +12,34 @@ export class UserDaoImpl implements UserDao {
    * and use it for internal operations. The injected class is Postgres in this case
    */
   constructor(private readonly db: Postgres) {}
+
+  public async createUser(user: User): Promise<Partial<User> | null> {
+    try {
+      const result = await this.db.query(
+        `
+        INSERT INTO users (
+          email,
+          password, 
+          username, 
+          last_name, 
+          first_name 
+        ) VALUES ($1, $2, $3, $4, $5);
+        `,
+        [
+          user.email,
+          user.password,
+          user.username,
+          user.last_name,
+          user.first_name,
+        ]
+      );
+
+      return nth(result.rows, 0);
+    } catch (error: any) {
+      if (error?.code === "23505") throw new DuplicateRecordError(error);
+      else throw error;
+    }
+  }
 
   public async getUserById(id: string): Promise<Partial<User> | null> {
     const result = await this.db.query(

@@ -2,13 +2,16 @@ import crypto from "crypto";
 import bcrypt from "bcrypt";
 import redis from "db/redis";
 import config from "config/index";
+import { userDao } from "container";
 import { createJwt } from "util/jwt";
 import { send } from "services/mailer";
 import { isEqual, isNil } from "lodash";
+import { User } from "dao/entities/User";
 import { itOrError } from "lib/itOrError";
 import type { Request, Response } from "express";
 import { itOrDefaultTo } from "lib/itOrDefaultTo";
 import { PartialConfigError } from "lib/PartialConfigError";
+import { DuplicateRecordError } from "dao/errors/DuplicateRecordError";
 
 const register = async (req: Request, res: Response) => {
   const { firstName, lastName, email, password, username } = req.body;
@@ -19,16 +22,21 @@ const register = async (req: Request, res: Response) => {
     isNil(config.polygon?.emailEnableVerification) ||
     isEqual(config.polygon?.emailEnableVerification, false)
   ) {
-    // Creating a user
-    const id = null;
-    throw new Error("Method not implemented");
-    // const { id } = await userRepository.create(
-    //   ["email", "password", "username", "last_name", "first_name"],
-    //   [email, encryptedPassword, username, lastName, firstName]
-    // );
+    try {
+      // Creating a user
+      const user = await userDao.createUser(
+        new User(email, encryptedPassword, username, lastName, firstName)
+      );
+      const token = createJwt({ id: user?.id });
 
-    const token = createJwt({ id });
-    return res.status(204).json({ token });
+      return res.status(201).json({ token });
+    } catch (error) {
+      if (error instanceof DuplicateRecordError) return res.sendStatus(403);
+      else {
+        console.error(error);
+        return res.sendStatus(500);
+      }
+    }
   } else {
     const token = crypto.randomBytes(12).toString("hex");
     // Creating a JSON payload with the specified information and converting it to a base64 string
@@ -48,6 +56,7 @@ const register = async (req: Request, res: Response) => {
         "`courier.events.VERIFICATION` event was not supplied in the `config.yaml` file."
       );
 
+      // Sending an email with courier with the specified `VERIFICATION` event ID.
       // prettier-ignore
       await send(email, itOrError(config.courier?.events.VERIFICATION, invalidCourierEvent), data);
     } else await send(email, "email/verification", data);

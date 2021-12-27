@@ -23,8 +23,8 @@ const applyLocalValidators = () =>
 // For getting the first paginated set of posts without allowing cursors
 router.get("/posts", applyLocalValidators(), posts);
 
-// For getting paginated set of posts with cursors. 
-// This is used for infinite scrolling. 
+// For getting paginated set of posts with cursors
+// This is used for infinite scrolling
 router.get(
   "/posts/:cursor",
   uuidValidator(["cursor"]),

@@ -1,8 +1,8 @@
 import { celebrate, Joi, Segments } from "celebrate";
 
 /**
- * Validates the UUID from a request.
- * 
+ * Validates the UUID from a request
+ *
  * @param fields - Fields to be validated
  * @param segments - Segments to be validated
  */

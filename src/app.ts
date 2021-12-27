@@ -28,7 +28,7 @@ if (process.env.NODE_ENV === "development") {
 app.use(routes);
 
 // `celebrate` error handling middleware. Will return JSON response
-// with invalid fields instead of HTML. The error middleware should 
+// with invalid fields instead of HTML. The error middleware should
 // invoke after a route is executed.
 app.use(errors({ statusCode: 400 }));
 

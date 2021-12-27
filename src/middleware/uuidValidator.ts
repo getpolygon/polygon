@@ -1,13 +1,19 @@
 import { celebrate, Joi, Segments } from "celebrate";
 
 /**
- * small `celebrate` function for validating the `id` parameter of each request
+ * Validates the UUID from a request.
+ * 
+ * @param fields - Fields to be validated
+ * @param segments - Segments to be validated
  */
-export const uuidValidator = (fields: string[] = ["id"]) => {
+export const uuidValidator = (
+  fields: string[] = ["id"],
+  segments = Segments.PARAMS
+) => {
   const pathParams: any = {};
   fields.map((field) => (pathParams[field] = Joi.string().uuid().exist()));
 
   return celebrate({
-    [Segments.PARAMS]: pathParams,
+    [segments]: pathParams,
   });
 };

@@ -1,5 +1,5 @@
 /**
- * Partial configuration error class.
+ * Partial configuration error class. This is used to ensure that the configuration is complete.
  *
  * @example
  * ```js

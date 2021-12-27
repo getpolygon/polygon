@@ -2,10 +2,9 @@ import { User } from "dao/entities/User";
 
 declare module "express" {
   interface Request {
-    user?: Partial<User>;
-  }
-
-  interface Response {
+    /**
+     * The user making the request.
+     */
     user?: Partial<User>;
   }
 }

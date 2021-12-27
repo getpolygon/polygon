@@ -2,7 +2,7 @@ import fs from "fs";
 import path from "path";
 
 /**
- * Helper function for reading templates to string
+ * Helper function for reading templates to string.
  *
  * @param name - Template name or path without `.hbs` extension
  */

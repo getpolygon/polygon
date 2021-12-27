@@ -1,68 +1,35 @@
+import pg from "db/pg";
 import { isNil } from "lodash";
-import { relationDao } from "container";
-import getFirst from "util/sql/getFirst";
+import { postDao } from "container";
 import type { Request, Response } from "express";
 
-// For fetching one post
+// For fetching one post.
 const one = async (req: Request, res: Response) => {
+  // Get the post id from the request
   const { id } = req.params;
 
-  try {
-    // Getting the post
-    const post = await getFirst<any>(
-      `
-      SELECT
-        post.id,
-        post.title,
-        post.content,
-        post.created_at,
-        TO_JSON(author) AS user,
-        (
-          SELECT COUNT(*) FROM upvotes
-          WHERE upvotes.post_id = post.id
-        )::INT AS upvote_count,
-        (
-          SELECT COUNT(*) FROM comments
-          WHERE comments.post_id = post.id
-        ):: INT AS comment_count
+  // Get one post from post DAO. This includes checking user upvote status,
+  // comment count, and including user info. Moreover, it also checks
+  // if the user is blocked by the post's author. If the user is blocked,
+  // it will return null. If the user is not blocked, it will return the post.
+  const post = await postDao.getPostById(id, req.user?.id!);
 
-      FROM posts post
+  // Checking if the post is null
+  if (isNil(post)) {
+    // Besides from getting the post, we also need to check if the post actually exists
+    // since we are getting the post and checking user relationship in the same query
+    // in which we might end up with a post that doesn't "exist" but was actually
+    // filtered out by the query.
+    // prettier-ignore
+    const { rows: { 0: { exists } } } = await pg.query("SELECT EXISTS (SELECT 1 FROM posts WHERE id = $1)", [id]);
 
-      INNER JOIN (
-        SELECT
-            id,
-            avatar,
-            username
-            last_name,
-            first_name,
-            username
-
-        FROM users
-      ) author ON post.user_id = author.id
-
-      WHERE post.id = $1
-      GROUP BY post.id, author.*
-      ORDER BY post.created_at DESC;
-      `,
-      [id]
-    );
-
-    // Fetching the relation status between users
-    const status = await relationDao.getRelationByUserIds(
-      post?.user_id,
-      req.user?.id!
-    );
-
-    // If the post does not exist
-    if (isNil(post)) return res.sendStatus(404);
-    // If post author has blocked current user
-    if (status === "BLOCKED") return res.sendStatus(403);
-
-    return res.json(post);
-  } catch (error: any) {
-    console.error(error);
-    return res.sendStatus(500);
+    // The post exists, but the user doesn't have permission to see it.
+    if (exists) return res.sendStatus(403);
+    else return res.sendStatus(404);
   }
+
+  // Send the post
+  return res.json(post);
 };
 
 export default one;

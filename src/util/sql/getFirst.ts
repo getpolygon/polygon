@@ -2,7 +2,7 @@ import pg from "db/pg";
 import { nth } from "lodash";
 
 /**
- * SQL utility for getting the first row from a table
+ * SQL utility for getting the first row from a table.
  *
  * @param query - SQL query
  * @param values - Values for the prepared statement

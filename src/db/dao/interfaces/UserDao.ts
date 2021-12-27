@@ -10,11 +10,15 @@ export interface UserDao {
 
   /**
    * Find a user with the given ID
+   * 
+   * @param id - The ID of the user to be found
    */
   getUserById(id: string): Promise<Partial<User> | null>;
 
   /**
    * Find a user with the given username
+   * 
+   * @param username - The username of the user to be found
    */
   getUserByUsername(username: string): Promise<Partial<User> | null>;
 }

@@ -1,3 +1,4 @@
 import posts from "./posts";
+import withCursor from "./withCursor";
 
-export { posts };
+export { posts, withCursor };

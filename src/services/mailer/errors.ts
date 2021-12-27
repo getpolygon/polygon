@@ -12,7 +12,8 @@ export class CourierTokenError extends Error {
 }
 
 /**
- * Whenever SMTP configuration for Nodemailer is missing
+ * Whenever SMTP configuration for Nodemailer is missing.
+ * This is used to ensure that the configuration is complete.
  */
 export class NodemailerSMTPConfigError extends Error {
   constructor() {
@@ -22,7 +23,8 @@ export class NodemailerSMTPConfigError extends Error {
   }
 }
 
-// Default errors for both Courier and Nodemailer
+// Default errors for both Courier and Nodemailer.
+// These are used to ensure that the configuration is complete.
 export const smtpUserNotSupplied = new PartialConfigError("`smtp.user`");
 export const smtpHostNotSupplied = new PartialConfigError("`smtp.host`");
 export const smtpPassNotSupplied = new PartialConfigError("`smtp.pass`");

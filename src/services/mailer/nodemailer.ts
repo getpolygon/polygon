@@ -9,7 +9,10 @@ import { itOrDefaultTo } from "lib/itOrDefaultTo";
 import { NodemailerSMTPConfigError, smtpHostNotSupplied, smtpPassNotSupplied, smtpPortNotSupplied, smtpUserNotSupplied } from "./errors";
 
 // prettier-ignore
+// Initialization checks. These are used to ensure that the configuration is complete.
 if (!isEqual(config.email?.client, "courier") && (isEqual(config.polygon?.emailEnableVerification, false) || isNil(config.polygon?.emailEnableVerification))) {
+  // If the email client is Nodemailer, then we need to make sure that the SMTP configuration is supplied.
+  // It should not be partial.
   if (isNil(config.smtp)) throw new NodemailerSMTPConfigError();
 }
 
@@ -25,11 +28,11 @@ const nodemailer = createTransport({
 });
 
 /**
- * Function for sending emails with Nodemailer
+ * Function for sending emails with Nodemailer.
  *
  * @param email - Recipient email address
- * @param templateName - Template name or path without `.hbs` extension
  * @param data - Additional data to compile the template with
+ * @param templateName - Template name or path without `.hbs` extension
  */
 // prettier-ignore
 export const send = async (email: string, templateName: string, data?: object) => {

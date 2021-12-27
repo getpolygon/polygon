@@ -1,8 +1,35 @@
 import express from "express";
-import { posts } from "controllers/api/discover";
+import { celebrate, Joi, Segments } from "celebrate";
+import { uuidValidator } from "middleware/uuidValidator";
+import { posts, withCursor } from "controllers/api/discover";
 
 const router = express.Router();
 
-router.get("/posts", posts);
+const applyLocalValidators = () =>
+  celebrate(
+    {
+      [Segments.QUERY]: {
+        limit: Joi.number().greater(1).less(10).default(2),
+      },
+    },
+    {
+      cache: true,
+      abortEarly: true,
+      stripUnknown: true,
+      allowUnknown: false,
+    }
+  );
+
+// For getting the first paginated set of posts without allowing cursors
+router.get("/posts", applyLocalValidators(), posts);
+
+// For getting paginated set of posts with cursors. 
+// This is used for infinite scrolling. 
+router.get(
+  "/posts/:cursor",
+  uuidValidator(["cursor"]),
+  applyLocalValidators(),
+  withCursor
+);
 
 export default router;

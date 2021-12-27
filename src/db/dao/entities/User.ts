@@ -1,8 +1,8 @@
 export class User {
   // Fields that are most probably not gonna be used
-  public readonly id: any;
-  public readonly bio: any;
-  public readonly created_at: any;
+  public readonly id?: string;
+  public readonly bio?: string;
+  public readonly created_at?: Date;
 
   constructor(
     public readonly email: string,

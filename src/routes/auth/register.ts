@@ -20,8 +20,9 @@ router.post("/", celebrate({
   register
 );
 
-// Only enabling the verification route if it is specified in the configuration
+// Only enabling the verification route if it is specified in the configuration.
 if (isEqual(config.polygon?.emailEnableVerification, true)) {
+  // Verification endpoint. This is used to verify the email address of a temporary user.
   // prettier-ignore
   router.post("/verify/:token", celebrate({ [Segments.BODY]: { password: Joi.string().min(8).exist() }}), verify);
 }

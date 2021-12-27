@@ -4,27 +4,27 @@ import type { Request, Response } from "express";
 
 // For removing a post
 const remove = async (req: Request, res: Response) => {
+  // Get the post id from the request
   const { id } = req.params;
 
-  try {
-    const post = await postDao.getPostById(id);
+  // Find the post.
+  const post = await postDao.getPostById(id, req.user?.id!);
 
-    // Checking if post exists
-    if (!isNil(post)) {
-      // Checking whether the author is the same as the current user
-      if (isEqual(post.user?.id || post.user_id, req.user?.id)) {
-        await postDao.deletePostById(id);
-        return res.sendStatus(204);
-      }
-
-      return res.sendStatus(403);
+  // Checking if post exists. This includes checking if post's author
+  // is the same as the user making the request.
+  if (!isNil(post)) {
+    if (isEqual(post.user?.id || post.user_id, req.user?.id)) {
+      // Delete the post
+      await postDao.deletePostById(id);
+      return res.sendStatus(204);
     }
 
-    return res.sendStatus(404);
-  } catch (error: any) {
-    console.error(error);
-    return res.sendStatus(500);
+    // The user is not the author of the post
+    return res.sendStatus(403);
   }
+
+  // The post doesn't exist
+  return res.sendStatus(404);
 };
 
 export default remove;

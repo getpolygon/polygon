@@ -2,7 +2,7 @@ import { isNil } from "lodash";
 
 /**
  * Helper function for defaulting to fallback value if the provided value is `null` or `undefined`
- *
+ * 
  * @param it - Default value
  * @param fallback - Fallback value
  */

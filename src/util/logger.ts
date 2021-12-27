@@ -2,6 +2,9 @@ import chalk from "chalk";
 import { Service } from "typedi";
 
 @Service()
+/**
+ * Logger service. Provides a simple interface for logging.
+ */
 export class Logger {
   public raw(...m: any) {
     console.log(m);

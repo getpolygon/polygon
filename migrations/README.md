@@ -1,6 +1,6 @@
 ## Polygon SQL standards
 
-Polygon mostly uses camel case(e.g. `first_name` not `firstName`) in SQL.
+Polygon mostly uses snake case(e.g. `first_name` not `firstName`) in SQL.
 
 Migrations of indexes, views etc. should be created in separate files, to make debugging easier.
 
@@ -49,7 +49,7 @@ DROP INDEX CONCURRENTLY users_id_pkey;
 
 When creating tables, follow these requirements:
 
-- Make sure that the table uses camel case naming
+- Make sure that the table uses snake case naming
 
 - Create table names which have a maximum name length of `24` characters
 - Use `TEXT` instead of `VARCHAR` for storing columns which may potentially be lengthy

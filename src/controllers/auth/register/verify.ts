@@ -1,43 +1,41 @@
-import bcrypt from "bcrypt";
 import redis from "db/redis";
+import { isNil } from "lodash";
+import { compare } from "bcrypt";
+import type { Payload } from ".";
+import { userDao } from "container";
 import { createJwt } from "util/jwt";
+import { User } from "dao/entities/User";
 import type { Request, Response } from "express";
 
 const verify = async (req: Request, res: Response) => {
   const { token: suppliedToken } = req.params;
   const { password: suppliedPassword } = req.body;
 
-  try {
-    // prettier-ignore
-    const redisPayload = await redis.get(suppliedToken) as string;
-    // prettier-ignore
-    const { 
-      // email,
-       password,
-        // username,
-        //  lastName, firstName 
-        } = JSON.parse(redisPayload);
-    // Checking passwords
-    const same = bcrypt.compareSync(suppliedPassword, password);
+  // Getting the verification token from Redis
+  const redisPayload = await redis.get(`verif:${suppliedToken}`);
 
-    // Passwords match
-    if (same) {
-      const user = {} as any;
-      throw new Error("Method not implemented.");
-      // const user = await userRepository.create(
-      //   ["email", "password", "username", "last_name", "first_name"],
-      //   [email, password, username, lastName, firstName]
-      // );
+  if (!isNil(redisPayload)) {
+    const parsed = JSON.parse(redisPayload) as Payload;
+    const correctPassword = await compare(suppliedPassword, parsed.password);
 
-      await redis.del(suppliedToken);
+    if (correctPassword) {
+      // Creating a user
+      const user = await userDao.createUser(
+        new User(
+          parsed.email,
+          parsed.password,
+          parsed.username,
+          parsed.lastName,
+          parsed.firstName
+        )
+      );
+
+      // Deleting the verification token from Redis
+      await redis.del(`verif:${suppliedToken}`);
       const token = createJwt({ id: user?.id });
-
       return res.status(201).json({ ...user, token });
     } else return res.sendStatus(401);
-  } catch (error) {
-    console.error(error);
-    return res.sendStatus(500);
-  }
+  } else return res.sendStatus(401);
 };
 
 export default verify;

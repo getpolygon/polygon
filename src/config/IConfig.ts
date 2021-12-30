@@ -100,12 +100,23 @@ interface ICourierConfig {
 }
 
 /**
+ * Session configuration
+ */
+interface ISessionConfig {
+  /**
+   * Session cookie secret
+   */
+  secret: string;
+}
+
+/**
  * Polygon configuration loaded from `config.yaml`
  */
 export interface IConfig {
   jwt: IJwtConfig;
   smtp?: ISmtpConfig;
   email?: IEmailConfig;
+  session: ISessionConfig;
   polygon?: IPolygonConfig;
   courier?: ICourierConfig;
   databases: IDatabaseConfig;

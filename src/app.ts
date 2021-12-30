@@ -2,9 +2,15 @@ import cors from "cors";
 import morgan from "morgan";
 import helmet from "helmet";
 import express from "express";
+import config from "config/index";
 import routes from "routes/index";
 import { errors } from "celebrate";
 import compression from "compression";
+import session from "express-session";
+import { itOrError } from "lib/itOrError";
+import { sessionSecret } from "config/env";
+import { itOrDefaultTo } from "lib/itOrDefaultTo";
+import { PartialConfigError } from "lib/PartialConfigError";
 
 // Create the express app. We will use this app to create the server.
 const app = express();
@@ -13,6 +19,16 @@ const app = express();
 // Helmet is a collection of tools for securing Express apps. It is
 // designed to protect against well known web vulnerabilities.
 app.use(helmet());
+app.use(
+  session({
+    resave: false,
+    saveUninitialized: true,
+    secret: itOrError(
+      itOrDefaultTo(sessionSecret!, config.session?.secret),
+      new PartialConfigError("`session.secret`")
+    ),
+  })
+);
 app.use(compression());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));

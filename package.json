@@ -26,6 +26,7 @@
     "deep-email-validator-extended": "^0.2.0",
     "dotenv": "^10.0.0",
     "express": "^4.17.1",
+    "express-session": "^1.17.2",
     "handlebars": "^4.7.7",
     "helmet": "^4.4.1",
     "jose": "^4.3.7",
@@ -38,7 +39,6 @@
     "reflect-metadata": "^0.1.13",
     "typedi": "^0.10.0",
     "uuid-validate": "^0.0.3",
-    "valid-url": "^1.0.9",
     "yaml": "^1.10.2"
   },
   "devDependencies": {
@@ -48,6 +48,7 @@
     "@types/cors": "^2.8.12",
     "@types/errorhandler": "^1.5.0",
     "@types/express": "^4.17.13",
+    "@types/express-session": "^1.17.4",
     "@types/jsonwebtoken": "^8.5.6",
     "@types/lodash": "^4.14.177",
     "@types/morgan": "^1.9.3",

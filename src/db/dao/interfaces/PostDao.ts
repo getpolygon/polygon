@@ -19,8 +19,6 @@ export interface PostDao {
    * A method for fetching user's posts
    *
    * @param options - Options for fetching the posts
-   * @param options.limit - The limit for pagination
-   * @param options.cursor - The cursor for pagination
    * @param userId - The ID of the user to get posts for
    * @param currentUserId - The ID of the user who is currently logged in
    */

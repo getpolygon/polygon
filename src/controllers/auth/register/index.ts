@@ -13,6 +13,44 @@ import { itOrDefaultTo } from "lib/itOrDefaultTo";
 import { PartialConfigError } from "lib/PartialConfigError";
 import { DuplicateRecordError } from "dao/errors/DuplicateRecordError";
 
+const verificationEnabled = itOrDefaultTo(
+  config.polygon?.emailEnableVerification,
+  false
+);
+
+// Default expiration time for temporary verification tokens
+const expiryTime = itOrDefaultTo(
+  config.polygon?.emailExpireVerification,
+  // 5 minutes
+  60 * 5
+);
+
+// Default verification event for usage with Courier
+// prettier-ignore
+const verificationEvent = verificationEnabled && itOrError(
+  config.courier?.events.VERIFICATION,
+  new PartialConfigError("`courier.events.VERIFICATION`")
+);
+
+// Frontend URL that will be used for authentication
+// prettier-ignore
+const frontendUrl = verificationEnabled && itOrError(
+  config.polygon?.frontendUrl,
+  new PartialConfigError("`polygon.frontendUrl`")
+);
+
+/**
+ * Temporary payload that will be deserialized from
+ * Redis for finalizing user registration
+ */
+export type Payload = {
+  email: string;
+  password: string;
+  lastName: string;
+  username: string;
+  firstName: string;
+};
+
 const register = async (req: Request, res: Response) => {
   const { firstName, lastName, email, password, username } = req.body;
   const encryptedPassword = bcrypt.hashSync(password, bcrypt.genSaltSync());
@@ -27,8 +65,8 @@ const register = async (req: Request, res: Response) => {
       const user = await userDao.createUser(
         new User(email, encryptedPassword, username, lastName, firstName)
       );
-      const token = createJwt({ id: user?.id });
 
+      const token = createJwt({ id: user?.id });
       return res.status(201).json({ token });
     } catch (error) {
       if (error instanceof DuplicateRecordError) return res.sendStatus(403);
@@ -38,45 +76,26 @@ const register = async (req: Request, res: Response) => {
       }
     }
   } else {
+    const payload: Payload = { email, password, lastName, username, firstName };
     const token = crypto.randomBytes(12).toString("hex");
-    // Creating a JSON payload with the specified information and converting it to a base64 string
+    const stringified = JSON.stringify(payload);
+
+    // The event or the template that is going to be used while sending a verification email
     // prettier-ignore
-    const payload = JSON.stringify({ email, username, lastName, firstName, password: encryptedPassword });
-    const data = {
+    const eventOrTemplate = config.email?.client === "courier" ? verificationEvent : "email/verification";
+
+    // Sending a verification email
+    await send(email, eventOrTemplate, {
       email,
       token,
       firstName,
-      // prettier-ignore
-      frontendUrl: itOrError(config.polygon?.frontendUrl, new PartialConfigError("`polygon.frontendUrl`")),
-    };
+      frontendUrl,
+    });
 
-    // If the default email client was set to Courier
-    if (isEqual(config.email?.client, "courier")) {
-      const invalidCourierEvent = new Error(
-        "`courier.events.VERIFICATION` event was not supplied in the `config.yaml` file."
-      );
+    await redis.set(`verif:${token}`, stringified);
+    await redis.expire(`verif:${token}`, expiryTime);
 
-      // Sending an email with courier with the specified `VERIFICATION` event ID.
-      // prettier-ignore
-      await send(email, itOrError(config.courier?.events.VERIFICATION, invalidCourierEvent), data);
-    } else await send(email, "email/verification", data);
-
-    try {
-      await redis.set(token, payload);
-      await redis.expire(
-        token,
-        itOrDefaultTo(
-          config.polygon?.emailExpireVerification,
-          // 5 minutes
-          60 * 5
-        )
-      );
-
-      return res.sendStatus(204);
-    } catch (error) {
-      console.error(error);
-      return res.sendStatus(500);
-    }
+    return res.sendStatus(204);
   }
 };
 

@@ -57,7 +57,6 @@
     "@types/pg": "^8.6.1",
     "@types/redis": "^4.0.11",
     "@types/uuid-validate": "^0.0.1",
-    "@types/valid-url": "^1.0.3",
     "@typescript-eslint/eslint-plugin": "^5.5.0",
     "@typescript-eslint/parser": "^5.5.0",
     "ava": "^3.15.0",

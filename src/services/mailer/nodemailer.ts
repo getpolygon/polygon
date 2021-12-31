@@ -25,15 +25,17 @@ if (isNodemailerAndEnabled) {
 }
 
 // Creating a Nodemailer transport
-const nodemailer = createTransport({
-  auth: {
-    user: itOrError(config.smtp?.user, smtpUserNotSupplied),
-    pass: itOrError(config.smtp?.pass, smtpPassNotSupplied),
-  },
-  secure: itOrDefaultTo(config.smtp?.secure, true),
-  host: itOrError(config.smtp?.host, smtpHostNotSupplied),
-  port: itOrError(config.smtp?.port, smtpPortNotSupplied),
-});
+const nodemailer = isNodemailerAndEnabled
+  ? createTransport({
+      auth: {
+        user: itOrError(config.smtp?.user, smtpUserNotSupplied),
+        pass: itOrError(config.smtp?.pass, smtpPassNotSupplied),
+      },
+      secure: itOrDefaultTo(config.smtp?.secure, true),
+      host: itOrError(config.smtp?.host, smtpHostNotSupplied),
+      port: itOrError(config.smtp?.port, smtpPortNotSupplied),
+    })
+  : null;
 
 /**
  * Function for sending emails with Nodemailer.
@@ -46,7 +48,7 @@ export const send = async (email: string, templateName: string, data = {}) => {
   const template = readTemplate(templateName);
   const html = compile(template)(data);
 
-  const response = await nodemailer.sendMail({
+  const response = await nodemailer?.sendMail({
     html,
     to: email,
     from: config.smtp?.user,

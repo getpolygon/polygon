@@ -13,9 +13,12 @@ import { createTransport } from "nodemailer";
 import { readTemplate } from "lib/readTemplate";
 import { itOrDefaultTo } from "lib/itOrDefaultTo";
 
-// prettier-ignore
+const isNodemailerAndEnabled =
+  (config.email?.client === "nodemailer" || isNil(config.email?.client)) &&
+  config.polygon?.emailEnableVerification === true;
+
 // Initialization checks. These are used to ensure that the configuration is complete.
-if (config.email?.client !== "courier" && (config.polygon?.emailEnableVerification === false || isNil(config.polygon?.emailEnableVerification))) {
+if (isNodemailerAndEnabled) {
   // If the email client is Nodemailer, then we need to make sure that the SMTP configuration is supplied.
   // It should not be partial.
   if (isNil(config.smtp)) throw new NodemailerSMTPConfigError();

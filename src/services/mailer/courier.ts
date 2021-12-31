@@ -11,19 +11,22 @@ import { itOrError } from "lib/itOrError";
 import { itOrDefaultTo } from "lib/itOrDefaultTo";
 import { CourierClient } from "@trycourier/courier";
 
-// Initialization checks. These are used to ensure that the configuration is complete.
-if (
+const isCourierAndEnabled =
   config.polygon?.emailEnableVerification === true &&
-  config.email?.client === "courier"
-) {
+  config.email?.client === "courier";
+
+// Initialization checks. These are used to ensure that the configuration is complete.
+if (isCourierAndEnabled) {
   // If the email client is Courier, then we need to make sure that the courier token is supplied.
   if (isNil(config.courier?.token)) throw new CourierTokenError();
 }
 
 // Initializing courier client
-const courier = CourierClient({
-  authorizationToken: itOrDefaultTo(config.courier?.token, ""),
-});
+const courier = isCourierAndEnabled
+  ? CourierClient({
+      authorizationToken: config.courier?.token,
+    })
+  : null;
 
 /**
  * Sends an email using Courier. This is a wrapper around the Courier client.
@@ -33,7 +36,7 @@ const courier = CourierClient({
  * @param email - Email address to send to
  */
 export const send = async (email: string, eventId: string, data?: object) => {
-  const response = await courier.send({
+  const response = await courier?.send({
     data,
     eventId,
     // prettier-ignore

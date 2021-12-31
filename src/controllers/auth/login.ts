@@ -1,5 +1,5 @@
-import bcrypt from "bcrypt";
 import { isNil } from "lodash";
+import bcrypt from "@node-rs/bcrypt";
 import { createJwt } from "util/jwt";
 import getFirst from "util/sql/getFirst";
 import type { Request, Response } from "express";
@@ -15,7 +15,7 @@ const login = async (req: Request, res: Response) => {
   // User exists
   if (!isNil(user)) {
     // If passwords match
-    const same = await bcrypt.compare(password, user.password);
+    const same = await bcrypt.verify(password, user.password);
 
     if (same) {
       // Create a JWT

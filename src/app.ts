@@ -22,6 +22,7 @@ app.use(helmet());
 app.use(
   session({
     resave: false,
+    name: "polygon.sid",
     saveUninitialized: true,
     secret: itOrError(
       itOrDefaultTo(sessionSecret!, config.session?.secret),

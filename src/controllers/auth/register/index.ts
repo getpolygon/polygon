@@ -1,9 +1,9 @@
 import crypto from "crypto";
-import bcrypt from "bcrypt";
 import redis from "db/redis";
 import config from "config/index";
 import { userDao } from "container";
 import { createJwt } from "util/jwt";
+import bcrypt from "@node-rs/bcrypt";
 import { send } from "services/mailer";
 import { isEqual, isNil } from "lodash";
 import { User } from "dao/entities/User";
@@ -53,7 +53,7 @@ export type Payload = {
 
 const register = async (req: Request, res: Response) => {
   const { firstName, lastName, email, password, username } = req.body;
-  const encryptedPassword = bcrypt.hashSync(password, bcrypt.genSaltSync());
+  const encryptedPassword = await bcrypt.hash(password);
 
   // If email verification is disabled
   if (

@@ -1,8 +1,8 @@
 import redis from "db/redis";
 import { isNil } from "lodash";
-import { compare } from "bcrypt";
 import type { Payload } from ".";
 import { userDao } from "container";
+import bcrypt from "@node-rs/bcrypt";
 import { createJwt } from "util/jwt";
 import { User } from "dao/entities/User";
 import type { Request, Response } from "express";
@@ -16,7 +16,10 @@ const verify = async (req: Request, res: Response) => {
 
   if (!isNil(redisPayload)) {
     const parsed = JSON.parse(redisPayload) as Payload;
-    const correctPassword = await compare(suppliedPassword, parsed.password);
+    const correctPassword = await bcrypt.verify(
+      suppliedPassword,
+      parsed.password
+    );
 
     if (correctPassword) {
       // Creating a user

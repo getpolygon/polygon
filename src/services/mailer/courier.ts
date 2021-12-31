@@ -5,21 +5,25 @@ import {
   smtpPortNotSupplied,
   smtpUserNotSupplied,
 } from "./errors";
+import { isNil } from "lodash";
 import config from "config/index";
-import { isEqual, isNil } from "lodash";
 import { itOrError } from "lib/itOrError";
 import { itOrDefaultTo } from "lib/itOrDefaultTo";
 import { CourierClient } from "@trycourier/courier";
 
 // Initialization checks. These are used to ensure that the configuration is complete.
-// prettier-ignore
-if (isEqual(config.polygon?.emailEnableVerification, true) && isEqual(config.email?.client, "courier")) {
+if (
+  config.polygon?.emailEnableVerification === true &&
+  config.email?.client === "courier"
+) {
   // If the email client is Courier, then we need to make sure that the courier token is supplied.
   if (isNil(config.courier?.token)) throw new CourierTokenError();
 }
 
 // Initializing courier client
-const courier = CourierClient({ authorizationToken: config.courier?.token });
+const courier = CourierClient({
+  authorizationToken: itOrDefaultTo(config.courier?.token, ""),
+});
 
 /**
  * Sends an email using Courier. This is a wrapper around the Courier client.

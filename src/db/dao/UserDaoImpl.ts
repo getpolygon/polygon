@@ -13,6 +13,10 @@ export class UserDaoImpl implements UserDao {
    */
   constructor(private readonly db: Postgres) {}
 
+  public async deleteUserById(id: string): Promise<void> {
+    await this.db.query("DELETE FROM users WHERE id = $1;", [id]);
+  }
+
   public async createUser(user: User): Promise<Partial<User> | null> {
     try {
       const result = await this.db.query(

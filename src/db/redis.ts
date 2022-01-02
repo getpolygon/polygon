@@ -10,8 +10,13 @@ if (isNil(connectionUrl)) {
   throw new PartialConfigError("`databases.redis`");
 }
 
-const redis = createClient({ url: connectionUrl });
-redis.connect().catch(logger.error);
+const redis = createClient({ url: connectionUrl, legacyMode: true });
+// prettier-ignore
+redis.connect().then(() => logger.info("Connection to Redis established successfully"))
+  .catch((e) => {
+    logger.error("There was an error while connecting to Redis");
+    throw e;
+  });
 
 export default redis;
 

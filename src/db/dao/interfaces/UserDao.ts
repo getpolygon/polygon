@@ -21,4 +21,11 @@ export interface UserDao {
    * @param username - The username of the user to be found
    */
   getUserByUsername(username: string): Promise<Partial<User> | null>;
+
+  /**
+   * Delete a user with the given ID
+   *
+   * @param id - The ID of the user to be deleted
+   */
+  deleteUserById(id: string): Promise<void>;
 }

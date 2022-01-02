@@ -13,7 +13,10 @@ export class PartialConfigError extends Error {
     super(
       `${property} was not supplied in \`config.yaml\`. Cannot use partial \`${property
         .split(".")[0]
-        .replace("`", "")}\` configuration. Consider updating \`config.yaml\``
+        .replace(
+          "`",
+          ""
+        )}\` configuration. Consider updating \`config.yaml\` or specifying an environment variable.`
     );
   }
 }

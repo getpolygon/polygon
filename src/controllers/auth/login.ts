@@ -2,26 +2,22 @@ import { isNil } from "lodash";
 import bcrypt from "@node-rs/bcrypt";
 import { createJwt } from "util/jwt";
 import getFirst from "util/sql/getFirst";
+import type { User } from "dao/entities/User";
 import type { Request, Response } from "express";
 
 const login = async (req: Request, res: Response) => {
-  const { password, email } = req.body;
+  const { email, password } = req.body;
 
-  const user = await getFirst<{ id: string; password: string }>(
+  // Find the user by email
+  const user = await getFirst<Partial<User>>(
     "SELECT id, password FROM users WHERE email = $1",
     [email]
   );
 
-  // User exists
   if (!isNil(user)) {
-    // If passwords match
-    const same = await bcrypt.verify(password, user.password);
-
-    if (same) {
-      // Create a JWT
+    const correctPassword = await bcrypt.verify(password, user?.password!);
+    if (correctPassword) {
       const token = createJwt({ id: user.id });
-
-      // Send the token
       return res.json({ token });
     }
 
@@ -30,7 +26,7 @@ const login = async (req: Request, res: Response) => {
   }
 
   // User does not exist
-  return res.sendStatus(404);
+  return res.sendStatus(401);
 };
 
 export default login;

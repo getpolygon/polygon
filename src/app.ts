@@ -1,12 +1,14 @@
 import cors from "cors";
-import morgan from "morgan";
 import helmet from "helmet";
+import redis from "db/redis";
 import express from "express";
 import config from "config/index";
 import routes from "routes/index";
 import { errors } from "celebrate";
 import compression from "compression";
 import session from "express-session";
+import { trace } from "middleware/trace";
+import connectRedis from "connect-redis";
 import { itOrError } from "lib/itOrError";
 import { sessionSecret } from "config/env";
 import { itOrDefaultTo } from "lib/itOrDefaultTo";
@@ -14,6 +16,10 @@ import { PartialConfigError } from "lib/PartialConfigError";
 
 // Create the express app. We will use this app to create the server.
 const app = express();
+
+// Initializing `connect-redis` to use with `express-session` middleware
+const RedisSessionStore = connectRedis(session);
+const sessionStore = new RedisSessionStore({ client: redis as any });
 
 // Configure the app to use helmet. This will help us secure our app.
 // Helmet is a collection of tools for securing Express apps. It is
@@ -23,6 +29,7 @@ app.use(
   session({
     resave: false,
     name: "polygon.sid",
+    store: sessionStore,
     saveUninitialized: true,
     secret: itOrError(
       itOrDefaultTo(sessionSecret!, config.session?.secret),
@@ -38,7 +45,7 @@ app.use(cors({ origin: true, credentials: true }));
 // Middleware for development purposes. This will log all requests to the console.
 // This is useful for debugging. It is not recommended to use this in production.
 if (process.env.NODE_ENV === "development") {
-  app.use(morgan("dev"));
+  app.use(trace());
 }
 
 // Mount the routes to the app.

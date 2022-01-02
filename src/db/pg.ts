@@ -1,8 +1,9 @@
 import { Pool } from "pg";
 import { isNil } from "lodash";
-import { Service } from "typedi";
 import config from "config/index";
+import { Logger } from "util/logger";
 import { postgres } from "config/env";
+import Container, { Service } from "typedi";
 import { IDatabase } from "./common/IDatabase";
 import { PartialConfigError } from "lib/PartialConfigError";
 import { IDatabaseResult } from "./common/IDatabaseResult";
@@ -18,22 +19,31 @@ if (isNil(connectionString))
 export class Postgres implements IDatabase {
   private readonly pg: Pool;
 
-  constructor() {
+  constructor(private readonly logger: Logger) {
     this.pg = new Pool({ connectionString });
+
     // Connecting to the database
-    this.connect().catch(console.error);
+    this.connect();
   }
 
-  // prettier-ignore
-  public async query(statement: string, args?: any[]): Promise<IDatabaseResult> {
+  public async query(
+    statement: string,
+    args?: any[]
+  ): Promise<IDatabaseResult> {
     const result = await this.pg.query(statement, args);
     return result;
   }
 
   public async connect(): Promise<void> {
-    await this.pg.connect();
+    try {
+      await this.pg.connect();
+      this.logger.info("Connection to PostgreSQL established successfully");
+    } catch (e) {
+      this.logger.error("There was an error while connecting to PostgreSQL");
+      throw e;
+    }
   }
 }
 
 // Raw Postgres connection for execution of queries that cannot be made through DAOs
-export default new Postgres();
+export default Container.get(Postgres);

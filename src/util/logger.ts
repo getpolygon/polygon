@@ -24,4 +24,9 @@ export class Logger {
     const prefix = `[${chalk.yellowBright("WARNING")}]`;
     console.log(`${prefix} > ${m}`);
   }
+
+  public debug(...m: any) {
+    const prefix = `[${chalk.gray("DEBUG")}]`;
+    console.log(`${prefix} > ${m}`);
+  }
 }

@@ -1,7 +1,7 @@
 import { nth } from "lodash";
 import { Service } from "typedi";
 import { Postgres } from "db/pg";
-import { Status } from "./entities/Relation";
+import type { Status } from "./entities/Relation";
 import { RelationDao } from "./interfaces/RelationDao";
 
 @Service()
@@ -17,11 +17,13 @@ export class RelationDaoImpl implements RelationDao {
       await this.db.query("SELECT id FROM users WHERE username = $1", [second]),
     ]);
 
-    const firstUserId = nth(firstQuery.rows, 0)?.id;
-    const secondUserId = nth(secondQuery.rows, 0)?.id;
+    const [firstUserId, secondUserId] = [
+      nth(firstQuery.rows, 0)?.id,
+      nth(secondQuery.rows, 0)?.id,
+    ];
 
-    const status = await this.getRelationByUserIds(firstUserId, secondUserId);
-    return status;
+    // Calling an internal method for getting the relation status by user IDs
+    return await this.getRelationByUserIds(firstUserId, secondUserId);
   }
 
   public async getRelationByUserIds(
@@ -30,15 +32,18 @@ export class RelationDaoImpl implements RelationDao {
   ): Promise<Status> {
     const result = await this.db.query(
       `
-      SELECT * FROM relations WHERE 
-      (to_user = $1 AND from_user = $2)
+      SELECT
+        status
+      FROM relations 
+      
+      WHERE 
+        (to_user = $1 AND from_user = $2)
       OR 
-      (to_user = $2 AND from_user = $1)
-      LIMIT 1;
+        (to_user = $2 AND from_user = $1);
       `,
       [first, second]
     );
 
-    return nth(result.rows, 0);
+    return nth(result.rows, 0)?.status;
   }
 }

@@ -1,6 +1,7 @@
 import { Postgres } from "db/pg";
 import { Service } from "typedi";
-import { Post } from "./entities/Post";
+import type { Post } from "./entities/Post";
+import type { User } from "./entities/User";
 import { nth, isNil, isEmpty } from "lodash";
 import { PostDao } from "./interfaces/PostDao";
 
@@ -174,7 +175,19 @@ export class PostDaoImpl implements PostDao {
   public async getPostById(
     id: string,
     currentUserId: string
-  ): Promise<Partial<Post>> {
+  ): Promise<
+    Partial<Post> & {
+      upvotes: number;
+      comments: number;
+      upvoted: boolean;
+      user: Partial<User>;
+    }
+  > {
+    // Will get the post, including the user who created it
+    // and the number of upvotes and comments. Will also
+    // check if current user has upvoted the post. Will filter
+    // out the post if the current user is blocked by the user
+    // who created it.
     const result = await this.db.query(
       `
         SELECT

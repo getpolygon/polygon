@@ -4,14 +4,11 @@ import { Service } from "typedi";
 import { User } from "./entities/User";
 import { UserDao } from "./interfaces/UserDao";
 import { DuplicateRecordError } from "./errors/DuplicateRecordError";
+import { Logger } from "util/logger";
 
 @Service()
 export class UserDaoImpl implements UserDao {
-  /**
-   * Using IoC(Inversion of Control) to inject the database
-   * and use it for internal operations. The injected class is Postgres in this case
-   */
-  constructor(private readonly db: Postgres) {}
+  constructor(private readonly db: Postgres, private readonly logger: Logger) {}
 
   public async deleteUserById(id: string): Promise<void> {
     await this.db.query("DELETE FROM users WHERE id = $1;", [id]);
@@ -41,7 +38,10 @@ export class UserDaoImpl implements UserDao {
       return nth(result.rows, 0);
     } catch (error: any) {
       if (error?.code === "23505") throw new DuplicateRecordError(error);
-      else throw error;
+      else {
+        this.logger.error((error as Error).message);
+        throw error;
+      }
     }
   }
 

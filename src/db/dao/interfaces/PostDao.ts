@@ -1,4 +1,5 @@
-import { Post } from "../entities/Post";
+import type { Post } from "../entities/Post";
+import type { User } from "../entities/User";
 
 export interface PostDao {
   /**
@@ -34,5 +35,15 @@ export interface PostDao {
    * @param id - The ID of the post to be found
    * @param currentUserId - The ID of the user who is making the request
    */
-  getPostById(id: string, currentUserId: string): Promise<Partial<Post>>;
+  getPostById(
+    id: string,
+    currentUserId: string
+  ): Promise<
+    Partial<Post> & {
+      upvotes: number;
+      comments: number;
+      upvoted: boolean;
+      user: Partial<User>;
+    }
+  >;
 }

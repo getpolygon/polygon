@@ -1,7 +1,7 @@
 import { nth } from "lodash";
 import { Service } from "typedi";
 import { Postgres } from "db/pg";
-import { Upvote } from "./entities/Upvote";
+import type { Upvote } from "./entities/Upvote";
 import { UpvoteDao } from "./interfaces/UpvoteDao";
 
 @Service()
@@ -11,7 +11,7 @@ export class UpvoteDaoImpl implements UpvoteDao {
   // prettier-ignore
   public async createUpvote(postId: string, userId: string): Promise<Partial<Upvote>> {
     const result = await this.db.query(
-      "INSERT INTO upvotes (post_id, user_id) VALUES ($1, $2) RETURNING *",
+      "INSERT INTO upvotes (post_id, user_id) VALUES ($1, $2) RETURNING id, created_at;",
       [postId, userId]
     );
 

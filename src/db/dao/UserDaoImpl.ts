@@ -1,10 +1,10 @@
 import { nth } from "lodash";
 import { Postgres } from "db/pg";
 import { Service } from "typedi";
+import { Logger } from "util/logger";
 import { User } from "./entities/User";
 import { UserDao } from "./interfaces/UserDao";
 import { DuplicateRecordError } from "./errors/DuplicateRecordError";
-import { Logger } from "util/logger";
 
 @Service()
 export class UserDaoImpl implements UserDao {

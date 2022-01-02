@@ -1,8 +1,8 @@
 import { Pool } from "pg";
 import { isNil } from "lodash";
 import config from "config/index";
+import { Logger } from "util/logger";
 import { postgres } from "config/env";
-import type { Logger } from "util/logger";
 import Container, { Service } from "typedi";
 import { IDatabase } from "./common/IDatabase";
 import { IDatabaseResult } from "./common/IDatabaseResult";

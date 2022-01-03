@@ -1,6 +1,6 @@
-import one from "./one";
+import only from "./only";
 import remove from "./remove";
 import create from "./create";
 import ofUser from "./ofUser";
 
-export { one, ofUser, create, remove };
+export { only, ofUser, create, remove };

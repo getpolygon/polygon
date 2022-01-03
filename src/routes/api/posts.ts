@@ -1,12 +1,12 @@
 import express from "express";
-import { uuidValidator } from "middleware/uuidValidator";
 import { celebrate, Joi, Segments } from "celebrate";
-import { one, create, remove, ofUser } from "controllers/api/posts";
+import { uuidValidator } from "middleware/uuidValidator";
+import { only, create, remove, ofUser } from "controllers/api/posts";
 
 const router = express.Router();
 
 // To fetch only one post with ID
-router.get("/only/:id", uuidValidator(), one);
+router.get("/only/:id", uuidValidator(), only);
 
 // To fetch posts of an account
 router.get(

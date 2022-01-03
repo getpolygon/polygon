@@ -28,6 +28,11 @@ app.use(helmet());
 app.use(
   session({
     resave: false,
+    cookie: {
+      signed: true,
+      httpOnly: true,
+      sameSite: "lax",
+    },
     name: "polygon.sid",
     store: sessionStore,
     saveUninitialized: true,

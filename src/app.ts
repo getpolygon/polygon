@@ -25,6 +25,22 @@ const sessionStore = new RedisSessionStore({
   ttl: 3600 * 24 * 3,
 });
 
+// Trust only the first proxy. This is important if the instance is
+// hosted behind a load balancer (e.g. Heroku). See:
+// https://expressjs.com/en/guide/behind-proxies.html
+app.set("trust proxy", 1);
+
+// CORS middleware to allow cross-origin requests.
+// Should be placed before other middleware. See:
+// https://expressjs.com/en/advanced/best-practice-security.html
+app.use(
+  cors({
+    origin: true,
+    credentials: true,
+    methods: ["GET", "PUT", "POST", "DELETE", "OPTIONS"],
+  })
+);
+
 // Configure the app to use helmet. This will help us secure our app.
 // Helmet is a collection of tools for securing Express apps. It is
 // designed to protect against well known web vulnerabilities.
@@ -46,10 +62,14 @@ app.use(
     ),
   })
 );
-app.use(compression());
+app.use(
+  compression({
+    level: 2,
+    memLevel: 9,
+  })
+);
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
-app.use(cors({ origin: true, credentials: true }));
 
 // Middleware for development purposes. This will log all requests to the console.
 // This is useful for debugging. It is not recommended to use this in production.

@@ -18,6 +18,7 @@ const login = async (req: Request, res: Response) => {
     const correctPassword = await bcrypt.verify(password, user?.password!);
     if (correctPassword) {
       const token = createJwt({ id: user.id });
+      req.session.token = token;
       return res.json({ token });
     }
 

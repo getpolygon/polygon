@@ -19,7 +19,11 @@ const app = express();
 
 // Initializing `connect-redis` to use with `express-session` middleware
 const RedisSessionStore = connectRedis(session);
-const sessionStore = new RedisSessionStore({ client: redis as any });
+const sessionStore = new RedisSessionStore({
+  client: redis as any,
+  // Expire sessions after 3 days
+  ttl: 3600 * 24 * 3,
+});
 
 // Configure the app to use helmet. This will help us secure our app.
 // Helmet is a collection of tools for securing Express apps. It is

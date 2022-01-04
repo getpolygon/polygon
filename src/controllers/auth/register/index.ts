@@ -67,6 +67,7 @@ const register = async (req: Request, res: Response) => {
       );
 
       const token = createJwt({ id: user?.id });
+      req.session.token = token;
       return res.status(201).json({ token });
     } catch (error) {
       if (error instanceof DuplicateRecordError) return res.sendStatus(403);

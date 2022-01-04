@@ -36,7 +36,8 @@ const verify = async (req: Request, res: Response) => {
       // Deleting the verification token from Redis
       await redis.del(`verif:${suppliedToken}`);
       const token = createJwt({ id: user?.id });
-      return res.status(201).json({ ...user, token });
+      req.session.token = token;
+      return res.status(201).json({ token });
     } else return res.sendStatus(401);
   } else return res.sendStatus(401);
 };

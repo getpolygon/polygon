@@ -76,7 +76,7 @@ const posts = async (req: Request, res: Response) => {
         END
     )
 
-    ORDER BY upvotes, comments, p.created_at DESC LIMIT $2;
+    ORDER BY upvotes DESC LIMIT $2;
     `,
     [currentUserId, limit]
   );

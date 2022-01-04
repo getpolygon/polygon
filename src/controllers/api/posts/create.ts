@@ -9,7 +9,9 @@ const create = async (req: Request, res: Response) => {
   const { title, content } = req.body;
 
   // Create a new post using the post DAO.
-  const post = postDao.createPost(new Post(title, userId!, content));
+  const { id } = await postDao.createPost(new Post(title, userId!, content));
+  const post = await postDao.getPostById(id!, userId!);
+
   // Send the post back to the client
   return res.status(201).json(post);
 };

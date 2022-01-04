@@ -10,25 +10,27 @@ const followers = async (req: Request, res: Response) => {
   try {
     // Checking the status between 2 users
     const status = await relationDao.getRelationByUserIds(id, req.user?.id!);
-    if (status === "BLOCKED") {
+
+    if (status !== "BLOCKED") {
       const { rows: followers } = await pg.query(
         `
-            SELECT Follower.* FROM relations Relation
+            SELECT 
+              f.* 
+            
+            FROM relations r
       
             LEFT OUTER JOIN (
               SELECT 
                   id,
-                  cover,
-                  avatar,
                   username,
                   last_name,
-                  first_name
+                  first_name,
+                  created_at
       
               FROM users
-            ) Follower ON Relation.from_user = Follower.id
+            ) f ON r.from_user = f.id
       
-            WHERE Relation.status = 'FOLLOWING' 
-            AND Relation.to_user = $1;
+            WHERE r.status = 'FOLLOWING' AND r.to_user = $1;
             `,
         [id]
       );

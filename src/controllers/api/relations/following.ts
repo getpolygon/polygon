@@ -9,26 +9,28 @@ const following = async (req: Request, res: Response) => {
   try {
     // Checking the relation between 2 users
     const status = await relationDao.getRelationByUserIds(id, req.user?.id!);
+
     if (status !== "BLOCKED") {
       // Getting the users other user follows
       const { rows: following } = await pg.query(
         `
-        SELECT UserFollowing.* FROM 
-        relations Following
+        SELECT 
+          f.*
+
+        FROM relations r
 
         LEFT OUTER JOIN (
           SELECT
             id,
-            cover,
-            avatar,
             username,
             last_name,
-            first_name
+            first_name,
+            created_at
 
           FROM users
-        ) UserFollowing ON Following.to_user = UserFollowing.id
+        ) f ON r.to_user = f.id
 
-        WHERE Following.from_user = $1 AND Following.status = 'FOLLOWING';
+        WHERE r.from_user = $1 AND r.status = 'FOLLOWING';
         `,
         [id]
       );

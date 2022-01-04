@@ -4,7 +4,7 @@ import { postDao } from "container";
 import type { Request, Response } from "express";
 
 // For fetching one post.
-const one = async (req: Request, res: Response) => {
+const only = async (req: Request, res: Response) => {
   // Get the post id from the request
   const { id } = req.params;
 
@@ -32,4 +32,4 @@ const one = async (req: Request, res: Response) => {
   return res.json(post);
 };
 
-export default one;
+export default only;

@@ -97,12 +97,7 @@ export class PostDaoImpl implements PostDao {
           : ""
       }
 
-      ORDER BY 
-        upvotes, 
-        comments, 
-        p.created_at 
-      DESC
-
+      ORDER BY upvotes DESC
       LIMIT $3;
       `,
       args
@@ -114,7 +109,7 @@ export class PostDaoImpl implements PostDao {
 
   public async createPost(post: Post): Promise<Partial<Post>> {
     // prettier-ignore
-    const { rows: { 0: createdPost } } = await this.db.query(
+    const { rows: { 0: created } } = await this.db.query(
       `
       INSERT INTO posts (title, content, user_id)
       VALUES ($1, $2, $3) RETURNING id;
@@ -122,50 +117,7 @@ export class PostDaoImpl implements PostDao {
       [post.title, post.content, post.user_id]
     );
 
-    // Query for the full post
-    const result = await this.db.query(
-      `
-      SELECT
-        p.id,
-        p.title,
-        p.content,
-        p.created_at,
-        TO_JSON(a) AS user,
-        (
-          SELECT COUNT(*) FROM upvotes u
-          WHERE u.post_id = p.id
-        )::INT as upvotes,
-        (
-          SELECT COUNT(*) FROM comments c
-          WHERE c.post_id = p.id
-        )::INT as comments,
-        (
-          SELECT CASE WHEN EXISTS (
-            SELECT 1 FROM upvotes u
-            WHERE u.user_id = $2 AND u.post_id = p.id
-          ) THEN TRUE ELSE FALSE END
-          SELECT TRUE
-        )::BOOL as upvoted
-
-      FROM posts p
-
-      INNER JOIN (
-        SELECT
-          id,
-          username,
-          last_name,
-          first_name
-
-        FROM users
-      ) a ON a.id = p.user_id
-
-      WHERE p.id = $1
-      ORDER BY upvotes, comments, p.created_at DESC;
-      `,
-      [createdPost.id, post.user_id]
-    );
-
-    return nth(result.rows, 0);
+    return created;
   }
 
   public async deletePostById(id: string): Promise<void> {

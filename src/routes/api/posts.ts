@@ -13,14 +13,11 @@ router.get(
   "/:username",
   celebrate({
     [Segments.PARAMS]: {
-      username: Joi.string()
-        // Standard username regex
-        .regex(/^(?=[a-zA-Z0-9._]{8,20}$)(?!.*[_.]{2})[^_.].*[^_.]$/)
-        .exist(),
+      username: Joi.string().exist(),
     },
     [Segments.QUERY]: {
-      cursor: Joi.string().optional().uuid().cache(),
-      limit: Joi.number().greater(2).less(10).default(2).cache(),
+      cursor: Joi.string().uuid().optional().cache(),
+      limit: Joi.number().greater(2).less(10).default(2).optional().cache(),
     },
   }),
   ofUser

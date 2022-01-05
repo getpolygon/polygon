@@ -30,8 +30,8 @@ router.delete("/:id/delete", uuidValidator(), remove);
 // prettier-ignore
 router.post("/create", celebrate({
     [Segments.BODY]: {
-        title: Joi.string().max(100).exist(),
-        content: Joi.string().optional().default(null),
+        title: Joi.string().max(100).exist().trim(),
+        content: Joi.string().optional().failover(null).trim()
       }
     },
   ),

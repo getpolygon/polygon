@@ -11,7 +11,7 @@ export class UpvoteDaoImpl implements UpvoteDao {
   // prettier-ignore
   public async createUpvote(postId: string, userId: string): Promise<Partial<Upvote>> {
     const result = await this.db.query(
-      "INSERT INTO upvotes (post_id, user_id) VALUES ($1, $2) RETURNING id, created_at;",
+      "INSERT INTO upvotes (post_id, user_id) VALUES ($1, $2) RETURNING created_at;",
       [postId, userId]
     );
 

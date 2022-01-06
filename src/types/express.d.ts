@@ -1,5 +1,5 @@
-import { User } from "dao/entities/User";
-import { Session } from "express-session";
+import type { User } from "dao/entities/User";
+import type { Session } from "express-session";
 
 declare module "express" {
   interface Request {

@@ -10,6 +10,17 @@ import { DuplicateRecordError } from "./errors/DuplicateRecordError";
 export class UserDaoImpl implements UserDao {
   constructor(private readonly db: Postgres, private readonly logger: Logger) {}
 
+  public async getUserByEmail(email: string): Promise<Partial<User> | null> {
+    // prettier-ignore
+    const { rows: { 0: { id } } } = await this.db.query(
+      "SELECT id FROM users WHERE email = $1", [
+      email,
+    ]);
+
+    const user = await this.getUserById(id);
+    return user;
+  }
+
   public async deleteUserById(id: string): Promise<void> {
     await this.db.query("DELETE FROM users WHERE id = $1;", [id]);
   }
@@ -56,11 +67,12 @@ export class UserDaoImpl implements UserDao {
 
   // prettier-ignore
   public async getUserByUsername(username: string): Promise<Partial<User> | null> {
-    const result = await this.db.query(
-      "SELECT id, bio, username, last_name, first_name, created_at FROM users WHERE username = $1;",
+    const { rows: { 0: { id } } } = await this.db.query(
+      "SELECT id FROM users WHERE username = $1",
       [username]
     );
 
-    return nth(result.rows, 0);
+    const user = await this.getUserById(id);
+    return user;
   }
 }

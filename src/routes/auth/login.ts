@@ -6,6 +6,13 @@ const router = express.Router();
 
 // Main login endpoint
 // prettier-ignore
-router.post("/", celebrate({ [Segments.BODY]: { email: Joi.string().email().exist(), password: Joi.string().min(8).exist() }}), login);
+router.post("/", celebrate({
+    [Segments.BODY]: {
+      email: Joi.string().email().exist().cache(),
+      password: Joi.string().alphanum().min(8).exist().cache(),
+    },
+  }),
+  login
+);
 
 export default router;

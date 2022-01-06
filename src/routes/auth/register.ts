@@ -13,8 +13,8 @@ router.post("/", celebrate({
       lastName: Joi.string().exist(),
       firstName: Joi.string().exist(),
       email: Joi.string().email().exist(),
-      password: Joi.string().min(8).exist(),
       username: Joi.string().alphanum().exist(),
+      password: Joi.string().alphanum().min(8).exist(),
     },
   }),
   register

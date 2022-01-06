@@ -19,11 +19,7 @@ const app = express();
 
 // Initializing `connect-redis` to use with `express-session` middleware
 const RedisSessionStore = connectRedis(session);
-const sessionStore = new RedisSessionStore({
-  client: redis as any,
-  // Expire sessions after 3 days
-  ttl: 3600 * 24 * 3,
-});
+const sessionStore = new RedisSessionStore({ client: redis as any });
 
 // Trust only the first proxy. This is important if the instance is
 // hosted behind a load balancer (e.g. Heroku). See:
@@ -51,7 +47,6 @@ app.use(
     cookie: {
       signed: true,
       httpOnly: true,
-      sameSite: "lax",
     },
     name: "polygon.sid",
     store: sessionStore,

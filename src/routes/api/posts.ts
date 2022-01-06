@@ -27,14 +27,14 @@ router.get(
 router.delete("/:id/delete", uuidValidator(), remove);
 
 // To create a post
-// prettier-ignore
-router.post("/create", celebrate({
+router.post(
+  "/create",
+  celebrate({
     [Segments.BODY]: {
-        title: Joi.string().max(100).exist().trim(),
-        content: Joi.string().optional().failover(null).trim()
-      }
+      title: Joi.string().max(100).exist().trim(),
+      content: Joi.string().optional().failover(null).trim(),
     },
-  ),
+  }),
   create
 );
 

@@ -16,6 +16,13 @@ export interface UserDao {
   getUserById(id: string): Promise<Partial<User> | null>;
 
   /**
+   * Find a user with the given email
+   *
+   * @param email - The email of the user to be found
+   */
+  getUserByEmail(email: string): Promise<Partial<User> | null>;
+
+  /**
    * Find a user with the given username
    *
    * @param username - The username of the user to be found

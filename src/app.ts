@@ -47,6 +47,8 @@ app.use(
     cookie: {
       signed: true,
       httpOnly: true,
+      // 2 Days
+      maxAge: new Date().getMilliseconds() + 1000 * 60 ** 2 * 48,
     },
     name: "polygon.sid",
     store: sessionStore,

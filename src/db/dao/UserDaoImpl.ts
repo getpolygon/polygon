@@ -1,4 +1,3 @@
-import { nth } from "lodash";
 import { Postgres } from "db/pg";
 import { Service } from "typedi";
 import { Logger } from "util/logger";
@@ -11,13 +10,12 @@ export class UserDaoImpl implements UserDao {
   constructor(private readonly db: Postgres, private readonly logger: Logger) {}
 
   public async getUserByEmail(email: string): Promise<Partial<User> | null> {
-    // prettier-ignore
-    const { rows: { 0: { id } } } = await this.db.query(
-      "SELECT id FROM users WHERE email = $1", [
-      email,
-    ]);
+    const { rows } = await this.db.query(
+      "SELECT id FROM users WHERE email = $1",
+      [email]
+    );
 
-    const user = await this.getUserById(id);
+    const user = await this.getUserById(rows[0]?.id);
     return user;
   }
 
@@ -27,7 +25,7 @@ export class UserDaoImpl implements UserDao {
 
   public async createUser(user: User): Promise<Partial<User> | null> {
     try {
-      const result = await this.db.query(
+      const { rows } = await this.db.query(
         `
         INSERT INTO users (
           email,
@@ -46,7 +44,7 @@ export class UserDaoImpl implements UserDao {
         ]
       );
 
-      return nth(result.rows, 0);
+      return rows[0];
     } catch (error: any) {
       if (error?.code === "23505") throw new DuplicateRecordError(error);
       else {
@@ -57,22 +55,22 @@ export class UserDaoImpl implements UserDao {
   }
 
   public async getUserById(id: string): Promise<Partial<User> | null> {
-    const result = await this.db.query(
+    const { rows } = await this.db.query(
       "SELECT id, bio, username, last_name, first_name, created_at FROM users WHERE id = $1;",
       [id]
     );
 
-    return nth(result.rows, 0);
+    return rows[0];
   }
 
   // prettier-ignore
   public async getUserByUsername(username: string): Promise<Partial<User> | null> {
-    const { rows: { 0: { id } } } = await this.db.query(
+    const { rows } = await this.db.query(
       "SELECT id FROM users WHERE username = $1",
       [username]
     );
 
-    const user = await this.getUserById(id);
+    const user = await this.getUserById(rows[0]?.id);
     return user;
   }
 }

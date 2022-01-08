@@ -1,5 +1,4 @@
 import pg from "db/pg";
-import { isEqual } from "lodash";
 import type { Request, Response } from "express";
 
 const unfollow = async (req: Request, res: Response) => {
@@ -7,7 +6,7 @@ const unfollow = async (req: Request, res: Response) => {
   const { id } = req.params;
 
   try {
-    if (isEqual(id, req.user?.id)) return res.sendStatus(406);
+    if (id === req.user?.id) return res.sendStatus(406);
 
     // Deleting the relation
     await pg.query(

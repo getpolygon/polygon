@@ -1,5 +1,4 @@
 import express from "express";
-import { isEqual } from "lodash";
 import config from "config/index";
 import { verify, register } from "controllers/auth";
 import { celebrate, Joi, Segments } from "celebrate";
@@ -21,7 +20,7 @@ router.post("/", celebrate({
 );
 
 // Only enabling the verification route if it is specified in the configuration.
-if (isEqual(config.polygon?.emailEnableVerification, true)) {
+if (config.email.enableVerification) {
   // Verification endpoint. This is used to verify the email address of a temporary user.
   // prettier-ignore
   router.post("/verify/:token", celebrate({ [Segments.BODY]: { password: Joi.string().min(8).exist() }}), verify);

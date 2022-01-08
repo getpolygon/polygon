@@ -1,5 +1,4 @@
 import {
-  CourierTokenError,
   smtpHostNotSupplied,
   smtpPassNotSupplied,
   smtpPortNotSupplied,
@@ -8,18 +7,11 @@ import {
 import { isNil } from "lodash";
 import config from "config/index";
 import { itOrError } from "lib/itOrError";
-import { itOrDefaultTo } from "lib/itOrDefaultTo";
 import { CourierClient } from "@trycourier/courier";
 
 const isCourierAndEnabled =
-  config.polygon?.emailEnableVerification === true &&
+  config.email?.enableVerification === true &&
   config.email?.client === "courier";
-
-// Initialization checks. These are used to ensure that the configuration is complete.
-if (isCourierAndEnabled) {
-  // If the email client is Courier, then we need to make sure that the courier token is supplied.
-  if (isNil(config.courier?.token)) throw new CourierTokenError();
-}
 
 // Initializing courier client
 const courier = isCourierAndEnabled
@@ -39,7 +31,6 @@ export const send = async (email: string, eventId: string, data?: object) => {
   const response = await courier?.send({
     data,
     eventId,
-    // prettier-ignore
     profile: { email },
     recipientId: email,
     // Only overriding SMTP configuration if SMTP configuration was supplied
@@ -51,7 +42,7 @@ export const send = async (email: string, eventId: string, data?: object) => {
                 user: itOrError(config.smtp?.user, smtpUserNotSupplied),
                 pass: itOrError(config.smtp?.pass, smtpPassNotSupplied),
               },
-              secure: itOrDefaultTo(config.smtp?.secure, true),
+              secure: config.smtp?.secure ?? true,
               host: itOrError(config.smtp?.host, smtpHostNotSupplied),
               port: itOrError(config.smtp?.port, smtpPortNotSupplied),
             },

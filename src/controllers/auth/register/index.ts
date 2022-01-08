@@ -1,40 +1,26 @@
 import crypto from "crypto";
 import redis from "db/redis";
+import { isNil } from "lodash";
 import config from "config/index";
 import { userDao } from "container";
 import { createJwt } from "util/jwt";
 import bcrypt from "@node-rs/bcrypt";
 import { send } from "services/mailer";
-import { isEqual, isNil } from "lodash";
 import { User } from "dao/entities/User";
 import { itOrError } from "lib/itOrError";
 import type { Request, Response } from "express";
-import { itOrDefaultTo } from "lib/itOrDefaultTo";
 import { PartialConfigError } from "lib/PartialConfigError";
-import { DuplicateRecordError } from "dao/errors/DuplicateRecordError";
-
-const verificationEnabled = itOrDefaultTo(
-  config.polygon?.emailEnableVerification,
-  false
-);
+import { DuplicateRecordException } from "dao/errors/DuplicateRecordException";
 
 // Default expiration time for temporary verification tokens
-const expiryTime = itOrDefaultTo(
-  config.polygon?.emailExpireVerification,
+const expiryTime =
+  config.email?.expireVerification ??
   // 5 minutes
-  60 * 5
-);
-
-// Default verification event for usage with Courier
-// prettier-ignore
-const verificationEvent = verificationEnabled && itOrError(
-  config.courier?.events.VERIFICATION,
-  new PartialConfigError("`courier.events.VERIFICATION`")
-);
+  60 * 5;
 
 // Frontend URL that will be used for authentication
 // prettier-ignore
-const frontendUrl = verificationEnabled && itOrError(
+const frontendUrl = config.email?.enableVerification && itOrError(
   config.polygon?.frontendUrl,
   new PartialConfigError("`polygon.frontendUrl`")
 );
@@ -58,8 +44,8 @@ const register = async (req: Request, res: Response) => {
 
   // If email verification is disabled
   if (
-    isNil(config.polygon?.emailEnableVerification) ||
-    isEqual(config.polygon?.emailEnableVerification, false)
+    isNil(config.email?.enableVerification) ||
+    config.email?.enableVerification === false
   ) {
     try {
       // Creating a user
@@ -71,7 +57,7 @@ const register = async (req: Request, res: Response) => {
       req.session.token = token;
       return res.status(201).json({ token });
     } catch (error) {
-      if (error instanceof DuplicateRecordError) return res.sendStatus(403);
+      if (error instanceof DuplicateRecordException) return res.sendStatus(403);
       else {
         console.error(error);
         return res.sendStatus(500);
@@ -83,8 +69,11 @@ const register = async (req: Request, res: Response) => {
     const stringified = JSON.stringify(payload);
 
     // The event or the template that is going to be used while sending a verification email
-    // prettier-ignore
-    const eventOrTemplate = config.email?.client === "courier" ? verificationEvent : "email/verification";
+    const eventOrTemplate =
+      config.email?.client === "courier"
+        ? // This will be present, since we are doing configuration validation on startup
+          config.courier?.events?.verification!
+        : "email/verification";
 
     // Sending a verification email
     await send(email, eventOrTemplate, {

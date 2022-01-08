@@ -6,7 +6,7 @@ import type { Request, Response } from "express";
 // For creating a comment
 const create = async (req: Request, res: Response) => {
   // Post content
-  const { body } = req.body;
+  const { content } = req.body;
   const { post: postId } = req.params;
 
   try {
@@ -26,11 +26,11 @@ const create = async (req: Request, res: Response) => {
         // Creating a comment and returning it afterwards
         const comment = await getFirst<Partial<Comment>>(
           `
-          INSERT INTO comments (body, post_id, user_id) 
+          INSERT INTO comments (content, post_id, user_id) 
           VALUES ($1, $2, $3)
-          RETURNING created_at, body, id;
+          RETURNING created_at, content, id;
           `,
-          [body, postId, req.user?.id]
+          [content, postId, req.user?.id]
         );
 
         return res.json(comment);

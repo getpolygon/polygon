@@ -1,5 +1,5 @@
+import { isNil } from "lodash";
 import { relationDao } from "container";
-import { isEqual, isNil } from "lodash";
 import getFirst from "util/sql/getFirst";
 import type { Request, Response } from "express";
 
@@ -32,7 +32,7 @@ const update = async (req: Request, res: Response) => {
     // If comment exists
     if (!isNil(comment)) {
       // If the author of the comment is the same as current user
-      if (isEqual(comment.user_id, req.user?.id)) {
+      if (comment.user_id === req.user?.id) {
         // Update the comment
         const comment = await getFirst<Partial<Comment>>(
           "UPDATE comments SET body = $1 WHERE id = $2 RETURNING *",

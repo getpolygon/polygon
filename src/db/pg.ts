@@ -1,16 +1,9 @@
 import { Pool } from "pg";
-import { isNil } from "lodash";
 import config from "config/index";
 import { Logger } from "util/logger";
-import { postgres } from "config/env";
 import Container, { Service } from "typedi";
 import { IDatabase } from "./common/IDatabase";
 import { IDatabaseResult } from "./common/IDatabaseResult";
-import { PartialConfigError } from "lib/PartialConfigError";
-
-const connectionString = postgres || config.databases?.postgres;
-if (isNil(connectionString))
-  throw new PartialConfigError("`database.postgres`");
 
 /**
  * PostgreSQL database implementation
@@ -20,8 +13,7 @@ export class Postgres implements IDatabase {
   private readonly pg: Pool;
 
   constructor(private readonly logger: Logger) {
-    this.pg = new Pool({ connectionString });
-
+    this.pg = new Pool({ connectionString: config.databases.postgres });
     // Connecting to the database
     this.connect();
   }

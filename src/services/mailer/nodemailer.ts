@@ -11,11 +11,10 @@ import { compile } from "handlebars";
 import { itOrError } from "lib/itOrError";
 import { createTransport } from "nodemailer";
 import { readTemplate } from "lib/readTemplate";
-import { itOrDefaultTo } from "lib/itOrDefaultTo";
 
 const isNodemailerAndEnabled =
   (config.email?.client === "nodemailer" || isNil(config.email?.client)) &&
-  config.polygon?.emailEnableVerification === true;
+  config.email?.enableVerification === true;
 
 // Initialization checks. These are used to ensure that the configuration is complete.
 if (isNodemailerAndEnabled) {
@@ -31,7 +30,7 @@ const nodemailer = isNodemailerAndEnabled
         user: itOrError(config.smtp?.user, smtpUserNotSupplied),
         pass: itOrError(config.smtp?.pass, smtpPassNotSupplied),
       },
-      secure: itOrDefaultTo(config.smtp?.secure, true),
+      secure: config.smtp?.secure ?? true,
       host: itOrError(config.smtp?.host, smtpHostNotSupplied),
       port: itOrError(config.smtp?.port, smtpPortNotSupplied),
     })

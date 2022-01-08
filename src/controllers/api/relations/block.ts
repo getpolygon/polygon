@@ -1,4 +1,3 @@
-import { isEqual } from "lodash";
 import getFirst from "util/sql/getFirst";
 import type { Request, Response } from "express";
 
@@ -9,7 +8,7 @@ const block = async (req: Request, res: Response) => {
 
   try {
     // If the user tries to block himself
-    if (isEqual(id, req.user?.id!)) return res.sendStatus(406);
+    if (id === req.user?.id!) return res.sendStatus(406);
     else {
       /**
        * If there's an existing relation between these users

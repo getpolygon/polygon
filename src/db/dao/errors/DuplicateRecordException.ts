@@ -1,4 +1,4 @@
-export class DuplicateRecordError extends Error {
+export class DuplicateRecordException extends Error {
   constructor(error: any) {
     super(
       `

@@ -1,6 +1,6 @@
+import { isNil } from "lodash";
 import config from "config/index";
 import { isUri } from "lib/isUri";
-import { isEqual, isNil } from "lodash";
 import { send as CourierSend } from "./courier";
 import { send as NodemailerSend } from "./nodemailer";
 import { PartialConfigError } from "lib/PartialConfigError";
@@ -13,7 +13,7 @@ import { InvalidConfigError } from "lib/InvalidConfigError";
  */
 export const send = async (email: string, template: string, data?: object) => {
   // Check whether email verification is enabled
-  if (isEqual(config.polygon?.emailEnableVerification, true)) {
+  if (config.email?.enableVerification === true) {
     // If email verification is enabled, then we need to make sure that the frontend URL is supplied.
     if (isNil(config.polygon?.frontendUrl)) {
       throw new PartialConfigError("`polygon.frontendUrl`");
@@ -23,7 +23,7 @@ export const send = async (email: string, template: string, data?: object) => {
       throw new InvalidConfigError("`polygon.frontendUrl`", "URL");
     } else {
       // Default client is set to Courier
-      if (isEqual(config.email?.client, "courier")) {
+      if (config.email?.client === "courier") {
         const response = await CourierSend(email, template, data);
         return response;
       } else {
@@ -33,5 +33,5 @@ export const send = async (email: string, template: string, data?: object) => {
     }
   }
   // If email verification is disabled, throw an error.
-  else throw new PartialConfigError("`polygon.emailEnableVerification`");
+  else throw new PartialConfigError("`email.enableVerification`");
 };

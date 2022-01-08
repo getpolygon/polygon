@@ -1,5 +1,5 @@
+import { isNil } from "lodash";
 import { postDao } from "container";
-import { isEqual, isNil } from "lodash";
 import type { Request, Response } from "express";
 
 // For removing a post
@@ -13,7 +13,7 @@ const remove = async (req: Request, res: Response) => {
   // Checking if post exists. This includes checking if post's author
   // is the same as the user making the request.
   if (!isNil(post)) {
-    if (isEqual(post.user?.id || post.user_id, req.user?.id)) {
+    if ((post.user?.id || post.user_id) === req.user?.id) {
       // Delete the post
       await postDao.deletePostById(id);
       return res.sendStatus(204);

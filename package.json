@@ -1,7 +1,6 @@
 {
   "private": true,
   "scripts": {
-    "test": "ava",
     "husky": "husky install",
     "clean": "rimraf build/",
     "prebuild": "yarn prepare",
@@ -10,6 +9,7 @@
     "lint": "eslint src/**/*.ts",
     "prestart": "yarn migrate up",
     "prepare": "ts-patch install -s",
+    "test": "cross-env NODE_ENV=test ava",
     "migrate": "./bin/goose -dir=migrations -s postgres",
     "start": "cross-env NODE_ENV=production node ./build/server.js",
     "express-graph": "express-router-dependency-graph --rootDir=./src/ --format=markdown",
@@ -26,6 +26,7 @@
     "cross-env": "^7.0.3",
     "deep-email-validator-extended": "^0.2.0",
     "dotenv": "^10.0.0",
+    "env-var": "^7.1.1",
     "express": "^4.17.1",
     "express-session": "^1.17.2",
     "handlebars": "^4.7.7",
@@ -38,7 +39,8 @@
     "reflect-metadata": "^0.1.13",
     "typedi": "^0.10.0",
     "uuid-validate": "^0.0.3",
-    "yaml": "^1.10.2"
+    "yaml": "^1.10.2",
+    "zod": "^3.11.6"
   },
   "devDependencies": {
     "@babel/eslint-parser": "^7.16.3",

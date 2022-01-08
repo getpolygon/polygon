@@ -9,10 +9,7 @@ import compression from "compression";
 import session from "express-session";
 import { trace } from "middleware/trace";
 import connectRedis from "connect-redis";
-import { itOrError } from "lib/itOrError";
 import { sessionSecret } from "config/env";
-import { itOrDefaultTo } from "lib/itOrDefaultTo";
-import { PartialConfigError } from "lib/PartialConfigError";
 
 // Create the express app. We will use this app to create the server.
 const app = express();
@@ -53,10 +50,7 @@ app.use(
     name: "polygon.sid",
     store: sessionStore,
     saveUninitialized: true,
-    secret: itOrError(
-      itOrDefaultTo(sessionSecret!, config.session?.secret),
-      new PartialConfigError("`session.secret`")
-    ),
+    secret: sessionSecret ?? config.session.secret,
   })
 );
 app.use(

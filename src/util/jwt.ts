@@ -5,8 +5,12 @@ import type { SignOptions } from "jsonwebtoken";
 import { PartialConfigError } from "lib/PartialConfigError";
 
 // Configuration validation
-const jwtSecret = process.env.JWT_SECRET || config.jwt?.secret;
-const jwtRefresh = process.env.JWT_REFRESH || config.jwt?.refresh;
+const jwtSecret = config.jwt?.secret;
+const jwtRefresh = config.jwt?.refresh;
+
+// JWT metadata
+const jwtIssuer = "@polygon-isecure/core";
+const jwtAudience = ["@polygon-isecure/polygon", "@polygon-isecure/next"];
 
 // If the configuration is not complete, throw an error.
 if (isNil(jwtSecret)) throw new PartialConfigError("`jwt.secret`");
@@ -19,7 +23,11 @@ else if (isNil(jwtRefresh)) throw new PartialConfigError("`jwt.refresh`");
  * @param payload - Payload to sign
  */
 export const createJwt = (payload: object, options?: SignOptions): string => {
-  return jwt.sign(payload, jwtSecret, options);
+  return jwt.sign(payload, jwtSecret, {
+    issuer: jwtIssuer,
+    audience: jwtAudience,
+    ...options,
+  });
 };
 
 /**
@@ -28,5 +36,8 @@ export const createJwt = (payload: object, options?: SignOptions): string => {
  * @param token - JWT to verify
  */
 export const verifyJwt = <T>(token: string): T => {
-  return jwt.verify(token, jwtSecret) as T;
+  return jwt.verify(token, jwtSecret, {
+    issuer: jwtIssuer,
+    audience: jwtAudience,
+  }) as T;
 };

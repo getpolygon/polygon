@@ -3,7 +3,7 @@ import { Service } from "typedi";
 import { Logger } from "util/logger";
 import { User } from "./entities/User";
 import { UserDao } from "./interfaces/UserDao";
-import { DuplicateRecordError } from "./errors/DuplicateRecordError";
+import { DuplicateRecordException } from "./errors/DuplicateRecordException";
 
 @Service()
 export class UserDaoImpl implements UserDao {
@@ -46,7 +46,7 @@ export class UserDaoImpl implements UserDao {
 
       return rows[0];
     } catch (error: any) {
-      if (error?.code === "23505") throw new DuplicateRecordError(error);
+      if (error?.code === "23505") throw new DuplicateRecordException(error);
       else {
         this.logger.error((error as Error).message);
         throw error;

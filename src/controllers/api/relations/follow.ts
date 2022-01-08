@@ -1,4 +1,3 @@
-import { isEqual } from "lodash";
 import { relationDao } from "container";
 import getFirst from "util/sql/getFirst";
 import { Request, Response } from "express";
@@ -9,7 +8,7 @@ const follow = async (req: Request, res: Response) => {
 
   try {
     // If the user tries to follow himself
-    if (isEqual(id, req.user?.id)) return res.sendStatus(406);
+    if (id === req.user?.id) return res.sendStatus(406);
 
     // Checking if the other user has blocked current user
     const status = await relationDao.getRelationByUserIds(id!, req.user?.id!);

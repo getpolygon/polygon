@@ -6,27 +6,27 @@ import { Service } from "typedi";
  * Logger service. Provides a simple interface for logging.
  */
 export class Logger {
-  public raw(m: any, ...optionalParams: any[]) {
-    console.log(m, ...optionalParams);
+  public raw(m: any, ...op: any[]) {
+    console.log(m, ...op);
   }
 
-  public info(m: any, ...optionalParams: any[]) {
+  public info(m: any, ...op: any[]) {
     const prefix = `[${chalk.blueBright("INFO")}]`;
-    console.log(`${prefix} >`, m, ...optionalParams);
+    console.log(`${prefix} >`, m, ...op);
   }
 
-  public error(e: any, ...optionalParams: any[]) {
+  public error(e: any, ...op: any[]) {
     const prefix = `[${chalk.redBright("ERROR")}]`;
-    console.error(`${prefix} >`, e, ...optionalParams);
+    console.error(`${prefix} >`, e, ...op);
   }
 
-  public warn(m: any, ...optionalParams: any[]) {
+  public warn(m: any, ...op: any[]) {
     const prefix = `[${chalk.yellowBright("WARNING")}]`;
-    console.log(`${prefix} >`, m, ...optionalParams);
+    console.log(`${prefix} >`, m, ...op);
   }
 
-  public debug(m: any, ...optionalParams: any[]) {
+  public debug(m: any, ...op: any[]) {
     const prefix = `[${chalk.gray("DEBUG")}]`;
-    console.log(`${prefix} >`, m, ...optionalParams);
+    console.log(`${prefix} >`, m, ...op);
   }
 }

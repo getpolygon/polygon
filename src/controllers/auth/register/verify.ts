@@ -22,19 +22,21 @@ const verify = async (req: Request, res: Response) => {
     );
 
     if (correctPassword) {
-      // Creating a user
-      const user = await userDao.createUser(
-        new User(
-          parsed.email,
-          parsed.password,
-          parsed.username,
-          parsed.lastName,
-          parsed.firstName
-        )
-      );
+      const [user] = await Promise.all([
+        // Creating a user
+        await userDao.createUser(
+          new User(
+            parsed.email,
+            parsed.password,
+            parsed.username,
+            parsed.lastName,
+            parsed.firstName
+          )
+        ),
+        // Deleting the verification token from Redis
+        await redis.del(`verif:${suppliedToken}`),
+      ]);
 
-      // Deleting the verification token from Redis
-      await redis.del(`verif:${suppliedToken}`);
       const token = createJwt({ id: user?.id });
       req.session.token = token;
       return res.status(201).json({ token });

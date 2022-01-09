@@ -2,14 +2,13 @@ import cors from "cors";
 import helmet from "helmet";
 import redis from "db/redis";
 import express from "express";
-import config from "config/index";
 import routes from "routes/index";
-import { errors } from "celebrate";
+import config from "config/index";
+import celebrate from "celebrate";
 import compression from "compression";
 import session from "express-session";
 import { trace } from "middleware/trace";
 import connectRedis from "connect-redis";
-import { sessionSecret } from "config/env";
 
 // Create the express app. We will use this app to create the server.
 const app = express();
@@ -50,7 +49,7 @@ app.use(
     name: "polygon.sid",
     store: sessionStore,
     saveUninitialized: true,
-    secret: sessionSecret ?? config.session.secret,
+    secret: config.session.secret,
   })
 );
 app.use(
@@ -74,6 +73,6 @@ app.use(routes);
 // `celebrate` error handling middleware. Will return JSON response
 // with invalid fields instead of HTML. The error middleware should
 // invoke after a route is executed.
-app.use(errors({ statusCode: 400 }));
+app.use(celebrate.errors({ statusCode: 400 }));
 
 export default app;

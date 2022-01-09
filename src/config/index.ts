@@ -2,7 +2,9 @@ import fs from "fs";
 import yaml from "yaml";
 import path from "path";
 import env from "env-var";
+import util from "node:util";
 import { z, ZodError } from "zod";
+import { isUri } from "lib/isUri";
 import { Logger } from "util/logger";
 import { EventEmitter } from "events";
 import { YAMLError } from "yaml/util";
@@ -33,8 +35,10 @@ const CONFIG_SCHEMA = z
     session: z.object({
       secret: z.string().min(1),
     }),
+
     polygon: z
       .object({
+        port: z.number().default(3001),
         frontendUrl: z.optional(z.string().min(1).url()).default(""),
       })
       .default({}),
@@ -64,7 +68,7 @@ const CONFIG_SCHEMA = z
             message,
             fatal: true,
             code: z.ZodIssueCode.custom,
-            path: ["email", "enableVerification"],
+            path: ["enableVerification"],
           });
         }
 
@@ -76,24 +80,55 @@ const CONFIG_SCHEMA = z
             message,
             fatal: true,
             code: z.ZodIssueCode.custom,
-            path: ["email", "enableVerification"],
+            path: ["enableVerification"],
           });
         }
       }),
 
-    databases: z.object({
-      redis: z.string(),
-      stormi: z.string(),
-      postgres: z.string(),
-    }),
+    databases: z
+      .object({
+        redis: z.string(),
+        stormi: z.string(),
+        postgres: z.string(),
+      })
+      .superRefine((v, c) => {
+        const message = "%s connection string should be a valid URI";
+
+        if (!isUri(v.redis)) {
+          c.addIssue({
+            fatal: true,
+            path: ["redis"],
+            code: z.ZodIssueCode.custom,
+            message: util.format(message, "Redis"),
+          });
+        }
+
+        if (!isUri(v.postgres)) {
+          c.addIssue({
+            fatal: true,
+            path: ["postgres"],
+            code: z.ZodIssueCode.custom,
+            message: util.format(message, "PostgreSQL"),
+          });
+        }
+
+        if (!isUri(v.stormi)) {
+          c.addIssue({
+            fatal: true,
+            path: ["stormi"],
+            code: z.ZodIssueCode.custom,
+            message: util.format(message, "Stormi"),
+          });
+        }
+      }),
 
     smtp: z
       .object({
-        host: z.optional(z.string()).default(null as any),
-        port: z.optional(z.number()).default(null as any),
-        user: z.optional(z.string()).default(null as any),
-        pass: z.optional(z.string()).default(null as any),
-        secure: z.optional(z.boolean()).default(null as any),
+        host: z.optional(z.string()).nullable().default(null),
+        port: z.optional(z.number()).nullable().default(null),
+        user: z.optional(z.string()).nullable().default(null),
+        pass: z.optional(z.string()).nullable().default(null),
+        secure: z.optional(z.boolean()).default(true),
       })
       .default({}),
 

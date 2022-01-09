@@ -1,12 +1,4 @@
-import {
-  smtpHostNotSupplied,
-  smtpPassNotSupplied,
-  smtpPortNotSupplied,
-  smtpUserNotSupplied,
-} from "./errors";
-import { isNil } from "lodash";
 import config from "config/index";
-import { itOrError } from "lib/itOrError";
 import { CourierClient } from "@trycourier/courier";
 
 const isCourierAndEnabled =
@@ -33,22 +25,19 @@ export const send = async (email: string, eventId: string, data?: object) => {
     eventId,
     profile: { email },
     recipientId: email,
-    // Only overriding SMTP configuration if SMTP configuration was supplied
-    override: !isNil(config.smtp)
-      ? {
-          smtp: {
-            config: {
-              auth: {
-                user: itOrError(config.smtp?.user, smtpUserNotSupplied),
-                pass: itOrError(config.smtp?.pass, smtpPassNotSupplied),
-              },
-              secure: config.smtp?.secure ?? true,
-              host: itOrError(config.smtp?.host, smtpHostNotSupplied),
-              port: itOrError(config.smtp?.port, smtpPortNotSupplied),
-            },
+    override: {
+      smtp: {
+        config: {
+          auth: {
+            user: config.smtp.user,
+            pass: config.smtp.pass,
           },
-        }
-      : {},
+          host: config.smtp.host,
+          port: config.smtp.port,
+          secure: config.smtp.secure,
+        },
+      },
+    },
   });
 
   return response;

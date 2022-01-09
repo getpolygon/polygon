@@ -1,20 +1,14 @@
 import jwt from "jsonwebtoken";
-import { isNil } from "lodash";
 import config from "config/index";
 import type { SignOptions } from "jsonwebtoken";
-import { PartialConfigError } from "lib/PartialConfigError";
 
 // Configuration validation
 const jwtSecret = config.jwt?.secret;
-const jwtRefresh = config.jwt?.refresh;
+// const jwtRefresh = config.jwt?.refresh;
 
 // JWT metadata
 const jwtIssuer = "@polygon-isecure/core";
 const jwtAudience = ["@polygon-isecure/polygon", "@polygon-isecure/next"];
-
-// If the configuration is not complete, throw an error.
-if (isNil(jwtSecret)) throw new PartialConfigError("`jwt.secret`");
-else if (isNil(jwtRefresh)) throw new PartialConfigError("`jwt.refresh`");
 
 /**
  * Utility for creating JWTs.

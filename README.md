@@ -6,7 +6,7 @@
 
 > Warning: None of the branches is currently stable. The code is not guaranteed to work. Database schemas are sometimes being updated without creating new migration files. Currently, this is a work-in-progress.
 
-The core powering [Polygon](https://polygon.am/): an upcoming open-source & privacy-oriented social network that is not hungry for your data. 
+The core powering [Polygon](https://polygon.am/): an upcoming open-source & privacy-oriented social network that is not hungry for your data.
 
 # Development configuration
 
@@ -18,34 +18,49 @@ For that you will need:
 
 - [Yarn](https://yarnpkg.com/) installed.
 - [Node.js](https://nodejs.org/) runtime installed. Version **`14.17.6`** is recommended.
-- [Docker](https://www.docker.com/) installed. Will be used for provisioning [Redis](https://redis.io/) and [PostgreSQL](https://www.postgresql.org/) databases.
+- [Docker](https://www.docker.com/) installed. Will be used for provisioning [Redis](https://redis.io/),
+  [Stormi](https://github.com/polygon-isecure/stormi) and [PostgreSQL](https://www.postgresql.org/) databases.
 
 ### Provisioning the databases
 
 Polygon's `core` depends on Redis and PostgreSQL. Let's setup a Redis instance using the following Docker command:
 
-```shell
-$ docker run -dp 6379:6379 --name redis redis-cli --requirepass <password>
+```bash
+docker run --name redis -dp 6379:6379 redis-cli --requirepass <password>
 ```
 
 and replace the `<password>` with a secure password. You redis connection URL should now look something like this:
 
-```
+```txt
 redis://default:<password>@localhost:6379/
 ```
 
-we will need this for later.
-
 Now let's setup PostgreSQL. From the terminal, execute the following command:
 
-```shell
-$ docker run -dp 5432:5432 --name polygon-postgres -e POSTGRES_PASSWORD=<password> postgres
+```bash
+docker run --name postgres -dp 5432:5432 -e POSTGRES_PASSWORD=<password> postgres
 ```
 
 and replace the `<password>` with a secure password. After doing these steps your PostgreSQL connection URL should look like this:
 
-```
+```txt
 postgres://postgres:<password>@localhost:5432/postgres
+```
+
+Finally, let's configure Stormi, which is a simple, hash-based
+and open-source file server.
+
+```bash
+docker run --name stormi -dp 6345:6345 ghcr.io/polygon-isecure/stormi:master
+```
+
+By default, the username and password are `admin`
+and `stormi-admin`.
+
+Stormi connection string has the following structure:
+
+```txt
+https://admin:stormi-admin@localhost:6345/
 ```
 
 ### Configuring the `core`
@@ -53,51 +68,60 @@ postgres://postgres:<password>@localhost:5432/postgres
 Now, after the databases have been provisioned, we will need to configure the `core` itself. For now create a `config.yaml` in root directory and add the following properties to it:
 
 ```yaml
-# JWT configuration
+session:
+  secret: "<something super random>"
+
 jwt:
   secret: "<something super random>"
   refresh: "<something super random>"
 
-# Polygon configuration
-# polygon:
-# Only needed if email verification is enabled
-# frontend_url: "http://localhost:3000"
-
-# Database configuration
 databases:
   redis: "redis://default:<password>@localhost:6379/"
+  stormi: "https://admin:stormi-admin@localhost:6345/"
   postgres: "postgres://postgres:<password>@localhost:5432/postgres"
 ```
 
-Replace `<something super random>` with a random. We recommend a string value with a length of at least `512` bits(64 characters).
+Replace `<something super random>` with a random string. We recommend a
+string value with a length of at least `512` bits(64 characters).
 
 #### Running migrations
 
-We will need to sync the migrations with the database. To do that run the following command:
+To sync the migrations with the database, run the following
+command:
 
-```shell
-$ yarn migrate postgres "user=postgres password=<password> sslmode=disable dbname=postgres" up
+```bash
+yarn migrate "user=postgres password=<password> sslmode=disable dbname=postgres" up
 ```
 
-and replace `<password>` with the password that you defined earlier for PostgreSQL. This will ensure that the SQL models are up-to-date.
+and replace `<password>` with the password that you defined
+earlier for PostgreSQL. This will ensure that everything
+related to SQL is up-to-date.
 
 #### Building the project
 
-Now it is time to install the dependencies and transpile the project and run it:
+Now it is time to install the dependencies, transpile the project and run it:
 
 ```shell
-$ yarn install
-$ yarn build
-$ yarn start
+yarn install
+yarn build
+yarn start
 ```
 
-By default, the server will start at the `http://localhost:3001/` address. To set a custom port, you can either set the `POLYGON_PORT` or `PORT` environment variables to your desired number(ranging from `0-65535`).
+By default, the server will start at `http://localhost:3001/`. To set a
+custom port, you can specify the `polygon.port` variable in your configuration
+file:
+
+```yaml
+polygon:
+  port: 5000
+  # ...
+```
 
 Congratulations 🎊 You should now have a complete version of `polygon-isecure/core` running. To sync with the nightly branch just run the following commands:
 
 ```shell
-$ git fetch
-$ git pull origin nightly
+git fetch
+git pull origin nightly
 ```
 
 > Again, this guide is not intended for production purposes. Current version of `core` is unstable and has some problems that we still have to deal with.

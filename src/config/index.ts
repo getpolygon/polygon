@@ -2,13 +2,13 @@ import fs from "fs";
 import yaml from "yaml";
 import path from "path";
 import env from "env-var";
-import util from "node:util";
+import { format } from "util";
+import { isNil } from "lodash";
 import { z, ZodError } from "zod";
 import { isUri } from "lib/isUri";
 import { Logger } from "util/logger";
 import { EventEmitter } from "events";
 import { YAMLError } from "yaml/util";
-import { isEmpty, isNil } from "lodash";
 import Container, { Service } from "typedi";
 
 class UninitializedConfigError extends Error {
@@ -38,8 +38,11 @@ const CONFIG_SCHEMA = z
 
     polygon: z
       .object({
-        port: z.number().default(3001),
-        frontendUrl: z.optional(z.string().min(1).url()).default(""),
+        port: z.optional(z.number()).default(3001),
+        frontendUrl: z
+          .optional(z.string().min(1).url())
+          .nullable()
+          .default(null),
       })
       .default({}),
 
@@ -83,7 +86,8 @@ const CONFIG_SCHEMA = z
             path: ["enableVerification"],
           });
         }
-      }),
+      })
+      .default({}),
 
     databases: z
       .object({
@@ -99,7 +103,7 @@ const CONFIG_SCHEMA = z
             fatal: true,
             path: ["redis"],
             code: z.ZodIssueCode.custom,
-            message: util.format(message, "Redis"),
+            message: format(message, "Redis"),
           });
         }
 
@@ -108,7 +112,7 @@ const CONFIG_SCHEMA = z
             fatal: true,
             path: ["postgres"],
             code: z.ZodIssueCode.custom,
-            message: util.format(message, "PostgreSQL"),
+            message: format(message, "PostgreSQL"),
           });
         }
 
@@ -117,7 +121,7 @@ const CONFIG_SCHEMA = z
             fatal: true,
             path: ["stormi"],
             code: z.ZodIssueCode.custom,
-            message: util.format(message, "Stormi"),
+            message: format(message, "Stormi"),
           });
         }
       }),
@@ -133,25 +137,27 @@ const CONFIG_SCHEMA = z
       .default({}),
 
     courier: z
-      .object({
-        token: z.optional(z.string()).default(""),
-        brand: z.optional(z.string()).default(""),
-        events: z
-          .optional(
-            z.object({
-              verification: z.string().default(""),
-            })
-          )
-          .default({}),
-      })
-
+      .optional(
+        z.object({
+          token: z.optional(z.string()).nullable().default(null),
+          brand: z.optional(z.string()).nullable().default(null),
+          events: z
+            .optional(
+              z.object({
+                verification: z.string().nullable().default(null),
+              })
+            )
+            .nullable()
+            .default(null),
+        })
+      )
       .default({}),
   })
   .superRefine((v, c) => {
     if (
       v.email.enableVerification &&
       v.email.client !== "none" &&
-      v.polygon.frontendUrl === ""
+      v.polygon.frontendUrl === null
     ) {
       c.addIssue({
         fatal: true,
@@ -179,13 +185,23 @@ const CONFIG_SCHEMA = z
       });
     }
 
-    if (v.email.client === "courier" && isEmpty(v.courier)) {
-      c.addIssue({
-        fatal: true,
-        path: ["courier"],
-        code: z.ZodIssueCode.custom,
-        message:
-          "To use `courier` as an email client, property `courier` should be defined in the configuration file",
+    /**
+     * If the selected email client is courier
+     * we will need to check if all the required
+     * properties of the optional `courier` object
+     * are present. If they are not, zod will throw
+     * an error.
+     */
+    if (v.email.client === "courier") {
+      Object.entries(v.courier).map(([__k, __v]) => {
+        if (isNil(__v)) {
+          c.addIssue({
+            fatal: true,
+            path: ["courier", __k],
+            code: z.ZodIssueCode.custom,
+            message: `To use \`courier\` as an email client, property \`courier.${__k}\` should be defined in the configuration file`,
+          });
+        }
       });
     }
   });
@@ -268,7 +284,8 @@ class Config {
         // Something wrong with validating the JSON with Zod
         else if (error instanceof ZodError) {
           this.logger.error("Invalid configuration error");
-        } // Undefined behavior
+        }
+        // Undefined behavior
         else {
           this.logger.error(
             "There was an error while loading the configuration"

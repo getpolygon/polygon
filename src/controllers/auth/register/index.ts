@@ -53,8 +53,9 @@ const register = async (req: Request, res: Response) => {
       // Sending a verification email
       send(
         email,
-        // prettier-ignore
-        config.email.client === "courier" ? config.courier.events.verification : "email/verification",
+        config.email.client === "courier"
+          ? config.courier.events?.verification!
+          : "email/verification",
         {
           email,
           token,

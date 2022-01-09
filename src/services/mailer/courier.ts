@@ -8,7 +8,7 @@ const isCourierAndEnabled =
 // Initializing courier client
 const courier = isCourierAndEnabled
   ? CourierClient({
-      authorizationToken: config.courier?.token,
+      authorizationToken: config.courier?.token!,
     })
   : null;
 

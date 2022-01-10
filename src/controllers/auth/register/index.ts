@@ -2,7 +2,7 @@ import crypto from "crypto";
 import redis from "db/redis";
 import config from "config/index";
 import { userDao } from "container";
-import { createJwt } from "util/jwt";
+import { createJwt } from "lib/jwt";
 import bcrypt from "@node-rs/bcrypt";
 import { send } from "services/mailer";
 import { User } from "dao/entities/User";

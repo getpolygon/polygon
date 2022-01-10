@@ -1,5 +1,5 @@
 import { isNil } from "lodash";
-import { createJwt } from "util/jwt";
+import { createJwt } from "lib/jwt";
 import bcrypt from "@node-rs/bcrypt";
 import getFirst from "util/sql/getFirst";
 import type { User } from "dao/entities/User";

@@ -1,5 +1,5 @@
 import { isNil, nth } from "lodash";
-import { verifyJwt } from "util/jwt";
+import { verifyJwt } from "lib/jwt";
 import { logger, userDao } from "container";
 import { JsonWebTokenError } from "jsonwebtoken";
 import type { Request, Response, NextFunction } from "express";

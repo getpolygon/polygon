@@ -7,14 +7,16 @@ const router = express.Router();
 
 // For fetching current account details
 router.get("/me", me);
+
 // For closing account
 router.delete("/close", close);
 
 // For fetching account details
-// prettier-ignore
 router.get(
-    "/:username", celebrate({ [Segments.PARAMS]: { username: Joi.string().exist() } }),
-    verifyNotBlockedWithParams("username"), others
+  "/:username",
+  celebrate({ [Segments.PARAMS]: { username: Joi.string().exist() } }),
+  verifyNotBlockedWithParams("username"),
+  others
 );
 
 export default router;

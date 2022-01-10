@@ -3,7 +3,7 @@ import { isNil } from "lodash";
 import type { Payload } from ".";
 import { userDao } from "container";
 import bcrypt from "@node-rs/bcrypt";
-import { createJwt } from "util/jwt";
+import { createJwt } from "lib/jwt";
 import { User } from "dao/entities/User";
 import type { Request, Response } from "express";
 

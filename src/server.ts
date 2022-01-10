@@ -14,8 +14,6 @@ import { logger } from "container";
 const address = `http://127.0.0.1:${config.polygon.port}`;
 
 // Create the server and start listening on the supplied port.
-http
-  .createServer(app)
-  .listen(config.polygon.port, () =>
-    logger.info(`Server started at ${address}`)
-  );
+http.createServer(app).listen(config.polygon.port, () => {
+  logger.info(`Server started at ${address}`);
+});

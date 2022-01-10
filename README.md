@@ -8,7 +8,7 @@
 
 The core powering [Polygon](https://polygon.am/): an upcoming open-source & privacy-oriented social network that is not hungry for your data.
 
-# Development configuration
+## Development configuration
 
 > Warning: this guide is not created for production purposes. Using this as a way to self-host Polygon is not recommended and may cause errors in the long-term.
 

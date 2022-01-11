@@ -1,6 +1,6 @@
 import crypto from "crypto";
+import config from "config";
 import redis from "db/redis";
-import config from "config/index";
 import { createJwt } from "lib/jwt";
 import bcrypt from "@node-rs/bcrypt";
 import { send } from "services/mailer";

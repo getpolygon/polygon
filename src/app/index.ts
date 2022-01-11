@@ -1,11 +1,11 @@
 import cors from "cors";
+import config from "config";
 import helmet from "helmet";
 import express from "express";
-import config from "config/index";
+import routes from "api/routes";
 import celebrate from "celebrate";
+import { trace } from "util/trace";
 import compression from "compression";
-import routes from "api/routes/index";
-import { trace } from "middleware/trace";
 
 // Create the express app. We will use this app to create the server.
 const app = express();

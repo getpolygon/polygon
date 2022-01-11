@@ -1,5 +1,5 @@
 import { Pool } from "pg";
-import config from "config/index";
+import config from "config";
 import { Logger } from "util/logger";
 import Container, { Service } from "typedi";
 import type { IDatabase } from "./common/IDatabase";
@@ -13,7 +13,10 @@ export class Postgres implements IDatabase {
   private readonly pg: Pool;
 
   constructor(private readonly logger: Logger) {
-    this.pg = new Pool({ connectionString: config.databases.postgres });
+    this.pg = new Pool({
+      connectionTimeoutMillis: 1000 * 60,
+      connectionString: config.databases.postgres,
+    });
     // Connecting to the database
     this.connect();
   }

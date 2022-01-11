@@ -1,5 +1,5 @@
+import config from "config";
 import jwt from "jsonwebtoken";
-import config from "config/index";
 import type { SignOptions } from "jsonwebtoken";
 
 // Configuration validation

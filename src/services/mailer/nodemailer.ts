@@ -1,4 +1,4 @@
-import config from "config/index";
+import config from "config";
 import { compile } from "handlebars";
 import { createTransport } from "nodemailer";
 import { readTemplate } from "lib/readTemplate";

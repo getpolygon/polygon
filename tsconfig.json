@@ -19,21 +19,16 @@
     "preserveConstEnums": true,
     "emitDecoratorMetadata": true,
     "experimentalDecorators": true,
-    // prettier-ignore
     "paths": {
-      "db/*"          :["db/*"],
-      "dao/*"         :["db/dao/*"],
-
-      "lib/*"         :["lib/*"],
-      "util/*"        :["util/*"],
-      "services/*"    :["services/*"],
-      "container"     :["container/index"],
-
-      "api/*"         :["app/api/*"],
-      "middleware/*"  :["middleware/*"],
-
-      "config/*"      :["config/*"],
-      "templates/*"   :["../templates/*"],
+      "db/*": ["db/*"],
+      "lib/*": ["lib/*"],
+      "util/*": ["util/*"],
+      "dao/*": ["db/dao/*"],
+      "api/*": ["app/api/*"],
+      "config": ["config/index"],
+      "services/*": ["services/*"],
+      "container": ["container/index"],
+      "middleware/*": ["app/api/middleware/*"]
     },
     "typeRoots": ["./src/types", "./node_modules/@types"],
     "plugins": [

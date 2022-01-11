@@ -1,6 +1,6 @@
 import { nth } from "lodash";
 import { Service } from "typedi";
-import { Postgres } from "db/pg";
+import { Postgres } from "@db/pg";
 import type { Status } from "./entities/Relation";
 import { RelationDao } from "./interfaces/RelationDao";
 

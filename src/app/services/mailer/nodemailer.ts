@@ -1,7 +1,7 @@
-import config from "config";
+import config from "@config";
 import { compile } from "handlebars";
 import { createTransport } from "nodemailer";
-import { readTemplate } from "lib/readTemplate";
+import { readTemplate } from "@lib/readTemplate";
 
 const isNodemailerAndEnabled =
   config.email?.client === "nodemailer" && config.email?.enableVerification;

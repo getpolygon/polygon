@@ -1,4 +1,4 @@
-import pg from "db/pg";
+import pg from "@db/pg";
 import { Request, Response } from "express";
 
 // For post discovery

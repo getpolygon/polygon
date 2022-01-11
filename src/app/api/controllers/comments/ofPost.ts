@@ -1,4 +1,4 @@
-import pg from "db/pg";
+import pg from "@db/pg";
 import type { Request, Response } from "express";
 
 // For fetching comments of a post

@@ -1,10 +1,10 @@
-import redis from "db/redis";
+import redis from "@db/redis";
 import { isNil } from "lodash";
 import type { Payload } from ".";
-import { userDao } from "container";
+import { userDao } from "@container";
 import bcrypt from "@node-rs/bcrypt";
-import { createJwt } from "lib/jwt";
-import { User } from "dao/entities/User";
+import { createJwt } from "@lib/jwt";
+import { User } from "@db/dao/entities/User";
 import type { Request, Response } from "express";
 
 const verify = async (req: Request, res: Response) => {
@@ -37,9 +37,9 @@ const verify = async (req: Request, res: Response) => {
         await redis.del(`verif:${suppliedToken}`),
       ]);
 
-      const token = createJwt({ id: user?.id });
-      req.session.token = token;
-      return res.status(201).json({ token });
+      const access = createJwt({ id: user?.id }, { expiresIn: "2d" });
+      const refresh = createJwt({}, { expiresIn: "30d" });
+      return res.status(201).json({ access, refresh, user });
     } else return res.sendStatus(401);
   } else return res.sendStatus(401);
 };

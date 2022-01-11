@@ -1,5 +1,5 @@
-import config from "config";
-import { logger } from "container";
+import config from "@config";
+import { logger } from "@container";
 import { createClient } from "redis";
 
 const redis = createClient({ url: config.databases.redis, legacyMode: true });

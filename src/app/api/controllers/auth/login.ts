@@ -1,8 +1,8 @@
-import pg from "db/pg";
+import pg from "@db/pg";
 import { isNil } from "lodash";
-import { createJwt } from "lib/jwt";
+import { createJwt } from "@lib/jwt";
 import bcrypt from "@node-rs/bcrypt";
-import type { User } from "dao/entities/User";
+import type { User } from "@dao/entities/User";
 import type { Request, Response } from "express";
 
 const login = async (req: Request, res: Response) => {

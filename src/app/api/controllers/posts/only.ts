@@ -1,6 +1,6 @@
-import pg from "db/pg";
+import pg from "@db/pg";
 import { isNil } from "lodash";
-import { postDao } from "container";
+import { postDao } from "@container";
 import type { Request, Response } from "express";
 
 // For fetching one post.

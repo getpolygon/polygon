@@ -1,5 +1,5 @@
 import { isNil } from "lodash";
-import { userDao } from "container";
+import { userDao } from "@container";
 import type { Request, Response } from "express";
 
 // For fetching other accounts

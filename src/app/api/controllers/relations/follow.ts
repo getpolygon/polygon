@@ -1,8 +1,8 @@
-import pg from "db/pg";
+import pg from "@db/pg";
 import { DatabaseError } from "pg";
 import { Request, Response } from "express";
-import { logger, relationDao } from "container";
-import type { Status } from "dao/entities/Relation";
+import { logger, relationDao } from "@container";
+import type { Status } from "@db/dao/entities/Relation";
 
 // For following another user
 const follow = async (req: Request, res: Response) => {

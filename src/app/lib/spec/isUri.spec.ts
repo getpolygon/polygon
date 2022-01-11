@@ -1,5 +1,5 @@
 import test from "ava";
-import { isUri } from "lib/isUri";
+import { isUri } from "@lib/isUri";
 
 /**
  * List of valid URLs

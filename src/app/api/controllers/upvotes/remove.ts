@@ -1,4 +1,4 @@
-import { upvoteDao } from "container";
+import { upvoteDao } from "@container";
 import type { Request, Response } from "express";
 
 /**

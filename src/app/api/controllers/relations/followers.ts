@@ -1,5 +1,5 @@
-import pg from "db/pg";
-import { relationDao } from "container";
+import pg from "@db/pg";
+import { relationDao } from "@container";
 import type { Request, Response } from "express";
 
 // For getting the followers of an account

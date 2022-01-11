@@ -1,7 +1,7 @@
-import { Postgres } from "db/pg";
+import { Postgres } from "@db/pg";
 import { Service } from "typedi";
 import { DatabaseError } from "pg";
-import { Logger } from "util/logger";
+import { Logger } from "@util/logger";
 import { User } from "./entities/User";
 import { UserDao } from "./interfaces/UserDao";
 import { DuplicateRecordException } from "./errors/DuplicateRecordException";

@@ -1,5 +1,5 @@
 import chalk from "chalk";
-import { logger } from "container";
+import { logger } from "@container";
 import type { Handler, NextFunction, Request, Response } from "express";
 
 /**

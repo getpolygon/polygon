@@ -1,6 +1,6 @@
 import express from "express";
-import { uuidValidator } from "middleware/uuidValidator";
-import { status, heartbeat } from "api/controllers/network";
+import { uuidValidator } from "@middleware/uuidValidator";
+import { status, heartbeat } from "@api/controllers/network";
 
 const router = express.Router();
 

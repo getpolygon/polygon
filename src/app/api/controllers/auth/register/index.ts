@@ -1,13 +1,13 @@
 import crypto from "crypto";
-import config from "config";
-import redis from "db/redis";
-import { createJwt } from "lib/jwt";
+import config from "@config";
+import redis from "@db/redis";
+import { createJwt } from "@lib/jwt";
 import bcrypt from "@node-rs/bcrypt";
-import { send } from "services/mailer";
-import { User } from "dao/entities/User";
-import { logger, userDao } from "container";
+import { send } from "@services/mailer";
+import { User } from "@dao/entities/User";
+import { logger, userDao } from "@container";
 import type { Request, Response } from "express";
-import { DuplicateRecordException } from "dao/errors/DuplicateRecordException";
+import { DuplicateRecordException } from "@dao/errors/DuplicateRecordException";
 
 /**
  * Temporary payload that will be deserialized from

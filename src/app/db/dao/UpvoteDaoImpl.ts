@@ -1,8 +1,8 @@
 import { nth } from "lodash";
 import { Service } from "typedi";
-import { Postgres } from "db/pg";
+import { Postgres } from "@db/pg";
 import { DatabaseError } from "pg";
-import { Logger } from "util/logger";
+import { Logger } from "@util/logger";
 import type { Upvote } from "./entities/Upvote";
 import { UpvoteDao } from "./interfaces/UpvoteDao";
 import { DuplicateRecordException } from "./errors/DuplicateRecordException";

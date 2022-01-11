@@ -1,4 +1,4 @@
-import config from "config";
+import config from "@config";
 import { CourierClient } from "@trycourier/courier";
 
 const isCourierAndEnabled =

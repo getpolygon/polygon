@@ -1,5 +1,5 @@
 import { isNil } from "lodash";
-import { postDao } from "container";
+import { postDao } from "@container";
 import type { Request, Response } from "express";
 
 // For removing a post

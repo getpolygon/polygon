@@ -1,4 +1,4 @@
-import { Postgres } from "db/pg";
+import { Postgres } from "@db/pg";
 import { Service } from "typedi";
 import type { Post } from "./entities/Post";
 import type { User } from "./entities/User";

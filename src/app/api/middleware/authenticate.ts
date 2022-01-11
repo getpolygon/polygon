@@ -1,6 +1,6 @@
 import { isNil } from "lodash";
-import { verifyJwt } from "lib/jwt";
-import { logger, userDao } from "container";
+import { verifyJwt } from "@lib/jwt";
+import { logger, userDao } from "@container";
 import type { Request, Response, NextFunction } from "express";
 import { JsonWebTokenError, TokenExpiredError } from "jsonwebtoken";
 

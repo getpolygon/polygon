@@ -1,4 +1,4 @@
-import { postDao } from "container";
+import { postDao } from "@container";
 import type { Request, Response } from "express";
 
 // For fetching one user's post

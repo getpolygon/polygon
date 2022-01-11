@@ -1,5 +1,5 @@
-import { postDao } from "container";
-import { Post } from "dao/entities/Post";
+import { postDao } from "@container";
+import { Post } from "@db/dao/entities/Post";
 import type { Request, Response } from "express";
 
 // For creating a post

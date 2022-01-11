@@ -1,6 +1,6 @@
-import { relationDao } from "container";
+import { relationDao } from "@container";
 import validateUUID from "uuid-validate";
-import type { Status } from "dao/entities/Relation";
+import type { Status } from "@db/dao/entities/Relation";
 import type { Request, Response, NextFunction } from "express";
 
 /**

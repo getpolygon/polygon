@@ -1,4 +1,4 @@
-import redis from "db/redis";
+import redis from "@db/redis";
 import { isNil } from "lodash";
 import type { Request, Response } from "express";
 

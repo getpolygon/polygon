@@ -1,6 +1,6 @@
 import { Pool } from "pg";
-import config from "config";
-import { Logger } from "util/logger";
+import config from "@config";
+import { Logger } from "@util/logger";
 import Container, { Service } from "typedi";
 import type { IDatabase } from "./common/IDatabase";
 import type { IDatabaseResult } from "./common/IDatabaseResult";

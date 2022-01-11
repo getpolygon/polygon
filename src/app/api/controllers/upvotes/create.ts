@@ -1,6 +1,6 @@
-import { logger, upvoteDao } from "container";
+import { logger, upvoteDao } from "@container";
 import type { Request, Response } from "express";
-import { DuplicateRecordException } from "dao/errors/DuplicateRecordException";
+import { DuplicateRecordException } from "@db/dao/errors/DuplicateRecordException";
 
 /**
  * This endpoint will attempt to create an upvote on

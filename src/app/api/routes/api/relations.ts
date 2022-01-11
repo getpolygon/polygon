@@ -7,8 +7,8 @@ import {
   unfollow,
   followers,
   following,
-} from "api/controllers/relations";
-import { uuidValidator } from "middleware/uuidValidator";
+} from "@api/controllers/relations";
+import { uuidValidator } from "@middleware/uuidValidator";
 
 const router = express.Router();
 

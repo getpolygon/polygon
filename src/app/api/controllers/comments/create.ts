@@ -1,6 +1,6 @@
-import pg from "db/pg";
+import pg from "@db/pg";
 import { isNil } from "lodash";
-import { relationDao } from "container";
+import { relationDao } from "@container";
 import type { Request, Response } from "express";
 
 // For creating a comment

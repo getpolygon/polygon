@@ -1,4 +1,4 @@
-import config from "config";
+import config from "@config";
 import { send as CourierSend } from "./courier";
 import { send as NodemailerSend } from "./nodemailer";
 

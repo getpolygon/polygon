@@ -1,4 +1,4 @@
-import { userDao } from "container";
+import { userDao } from "@container";
 import type { Request, Response } from "express";
 
 // For closing an account

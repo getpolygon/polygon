@@ -5,10 +5,10 @@ import env from "env-var";
 import { format } from "util";
 import { isNil } from "lodash";
 import { z, ZodError } from "zod";
-import { isUri } from "lib/isUri";
-import { Logger } from "util/logger";
+import { isUri } from "@lib/isUri";
 import { EventEmitter } from "events";
 import { YAMLError } from "yaml/util";
+import { Logger } from "@util/logger";
 import Container, { Service } from "typedi";
 
 class UninitializedConfigError extends Error {

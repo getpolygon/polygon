@@ -1,9 +1,9 @@
 import Container from "typedi";
-import { Logger } from "util/logger";
-import { PostDaoImpl } from "dao/PostDaoImpl";
-import { UserDaoImpl } from "dao/UserDaoImpl";
-import { UpvoteDaoImpl } from "dao/UpvoteDaoImpl";
-import { RelationDaoImpl } from "dao/RelationDaoImpl";
+import { Logger } from "@util/logger";
+import { PostDaoImpl } from "@dao/PostDaoImpl";
+import { UserDaoImpl } from "@dao/UserDaoImpl";
+import { UpvoteDaoImpl } from "@dao/UpvoteDaoImpl";
+import { RelationDaoImpl } from "@dao/RelationDaoImpl";
 
 export const logger = Container.get(Logger);
 export const userDao = Container.get(UserDaoImpl);

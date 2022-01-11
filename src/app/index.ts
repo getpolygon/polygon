@@ -1,10 +1,10 @@
 import cors from "cors";
-import config from "config";
 import helmet from "helmet";
+import config from "@config";
 import express from "express";
-import routes from "api/routes";
+import routes from "@api/routes";
 import celebrate from "celebrate";
-import { trace } from "util/trace";
+import { trace } from "@util/trace";
 import compression from "compression";
 
 // Create the express app. We will use this app to create the server.
@@ -34,21 +34,6 @@ app.use(
 // Helmet is a collection of tools for securing Express apps. It is
 // designed to protect against well known web vulnerabilities.
 app.use(helmet());
-// app.use(
-//   session({
-//     resave: false,
-//     cookie: {
-//       signed: true,
-//       httpOnly: true,
-//       // 2 Days
-//       maxAge: new Date().getMilliseconds() + 1000 * 60 ** 2 * 48,
-//     },
-//     name: "polygon.sid",
-//     store: sessionStore,
-//     saveUninitialized: true,
-//     secret: config.session.secret,
-//   })
-// );
 app.use(
   compression({
     level: 2,

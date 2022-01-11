@@ -7,7 +7,7 @@ import network from "./network";
 import comments from "./comments";
 import discover from "./discover";
 import relations from "./relations";
-import authenticate from "middleware/authenticate";
+import authenticate from "@middleware/authenticate";
 
 const router = express.Router();
 

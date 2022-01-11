@@ -33,5 +33,5 @@ export const verifyJwt = <T>(token: string): T => {
   return jwt.verify(token, jwtSecret, {
     issuer: jwtIssuer,
     audience: jwtAudience,
-  }) as T;
+  }) as unknown as T;
 };

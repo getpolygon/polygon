@@ -1,7 +1,7 @@
 import type { Request, Response } from "express";
 
-const withCursor = (_req: Request, _res: Response) => {
-  throw new Error("Method not implemented.");
+const withCursor = (_: Request, res: Response) => {
+  return res.sendStatus(501);
 };
 
 export default withCursor;

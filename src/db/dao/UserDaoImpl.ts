@@ -1,5 +1,6 @@
 import { Postgres } from "db/pg";
 import { Service } from "typedi";
+import { DatabaseError } from "pg";
 import { Logger } from "util/logger";
 import { User } from "./entities/User";
 import { UserDao } from "./interfaces/UserDao";
@@ -45,9 +46,11 @@ export class UserDaoImpl implements UserDao {
       );
 
       return rows[0];
-    } catch (error: any) {
-      if (error?.code === "23505") throw new DuplicateRecordException(error);
-      else {
+    } catch (error) {
+      if (error instanceof DatabaseError) {
+        if (error.code === "23505") throw new DuplicateRecordException(error);
+        else throw error;
+      } else {
         this.logger.error((error as Error).message);
         throw error;
       }

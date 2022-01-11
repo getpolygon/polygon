@@ -1,6 +1,7 @@
 import { nth } from "lodash";
 import { Service } from "typedi";
 import { Postgres } from "db/pg";
+import { DatabaseError } from "pg";
 import { Logger } from "util/logger";
 import type { Upvote } from "./entities/Upvote";
 import { UpvoteDao } from "./interfaces/UpvoteDao";
@@ -21,11 +22,12 @@ export class UpvoteDaoImpl implements UpvoteDao {
       );
 
       return nth(result.rows, 0);
-    } catch (error: any) {
-      if (error.code === "23505") throw new DuplicateRecordException(error);
-      else {
-        this.logger.error("Unhandled error at dao/UpvoteDaoImpl.ts:26");
-        this.logger.error(error.message);
+    } catch (error) {
+      if (error instanceof DatabaseError) {
+        if (error.code === "23505") throw new DuplicateRecordException(error);
+        else throw error;
+      } else {
+        this.logger.error(error);
         throw error;
       }
     }

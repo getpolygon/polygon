@@ -10,7 +10,7 @@ export const uuidValidator = (
   fields: string[] = ["id"],
   segments = Segments.PARAMS
 ) => {
-  const pathParams: any = {};
+  const pathParams: { [key: string]: unknown } = {};
   fields.map((field) => (pathParams[field] = Joi.string().uuid().exist()));
 
   return celebrate({

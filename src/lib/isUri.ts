@@ -7,7 +7,7 @@ export const isUri = (url: string): boolean => {
   try {
     new URL(url);
     return true;
-  } catch (_: any) {
+  } catch (_) {
     return false;
   }
 };

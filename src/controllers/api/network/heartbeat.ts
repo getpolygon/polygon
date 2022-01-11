@@ -9,14 +9,12 @@ import type { Request, Response } from "express";
 const heartbeat = async (req: Request, res: Response) => {
   const id = req.user?.id!;
 
-  try {
-    await redis.set(id, JSON.stringify({ connected: true }));
-    await redis.expire(id, 10 * 60);
-    return res.json({ connected: true });
-  } catch (error) {
-    console.error(error);
-    return res.sendStatus(500);
-  }
+  await Promise.all([
+    redis.set(id, JSON.stringify({ connected: true })),
+    redis.expire(id, 10 * 60),
+  ]);
+
+  return res.json({ connected: true });
 };
 
 export default heartbeat;

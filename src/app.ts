@@ -27,9 +27,9 @@ app.set("trust proxy", 1);
 // https://expressjs.com/en/advanced/best-practice-security.html
 app.use(
   cors({
-    origin: true,
     credentials: true,
     methods: ["GET", "PUT", "POST", "DELETE", "OPTIONS"],
+    origin: [config.polygon.frontend].concat(...config.polygon.origins),
   })
 );
 

@@ -18,9 +18,14 @@ export class Postgres implements IDatabase {
     this.connect();
   }
 
+  public async getFirst<T>(query: string, args?: unknown[]): Promise<T> {
+    const result = await this.pg.query(query, args);
+    return result.rows[0];
+  }
+
   public async query(
     statement: string,
-    args?: any[]
+    args?: unknown[]
   ): Promise<IDatabaseResult> {
     const result = await this.pg.query(statement, args);
     return result;

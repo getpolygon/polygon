@@ -1,6 +1,8 @@
-import { relationDao } from "container";
-import getFirst from "util/sql/getFirst";
+import pg from "db/pg";
+import { DatabaseError } from "pg";
 import { Request, Response } from "express";
+import { logger, relationDao } from "container";
+import type { Status } from "dao/entities/Relation";
 
 // For following another user
 const follow = async (req: Request, res: Response) => {
@@ -14,7 +16,7 @@ const follow = async (req: Request, res: Response) => {
     const status = await relationDao.getRelationByUserIds(id!, req.user?.id!);
     if (status !== "BLOCKED") {
       // Creating the relation
-      const response = await getFirst<any>(
+      const response = await pg.getFirst<{ status: Status }>(
         `
         INSERT INTO relations (status, to_user, from_user) 
         VALUES ('FOLLOWING', $1, $2) RETURNING status;
@@ -27,22 +29,24 @@ const follow = async (req: Request, res: Response) => {
     }
 
     return res.sendStatus(403);
-  } catch (error: any) {
-    // TODO: Handle all errors
-    // Already exists
-    if (error?.code === "23505") return res.sendStatus(409);
-    else {
-      console.error(error);
+  } catch (error) {
+    if (error instanceof DatabaseError) {
+      // TODO: Handle all errors
+      // Already exists
+      if (error.code === "23505") return res.sendStatus(409);
+
+      // // When other user doesn't exist
+      // if (error instanceof ForeignKeyIntegrityConstraintViolationError) {
+      //   return res.status(404).json();
+      // }
+      // // When same user tries to follow himself
+      // else if (error instanceof UniqueIntegrityConstraintViolationError) {
+      //   return res.status(409).json();
+      // }
+    } else {
+      logger.error(error);
       return res.sendStatus(500);
     }
-    // // When other user doesn't exist
-    // if (error instanceof ForeignKeyIntegrityConstraintViolationError) {
-    //   return res.status(404).json();
-    // }
-    // // When same user tries to follow himself
-    // else if (error instanceof UniqueIntegrityConstraintViolationError) {
-    //   return res.status(409).json();
-    // }
   }
 };
 

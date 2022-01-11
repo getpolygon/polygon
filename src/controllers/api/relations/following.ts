@@ -6,45 +6,38 @@ import type { Request, Response } from "express";
 const following = async (req: Request, res: Response) => {
   const { id } = req.params;
 
-  try {
-    // Checking the relation between 2 users
-    const status = await relationDao.getRelationByUserIds(id, req.user?.id!);
+  // Checking the relation between 2 users
+  const status = await relationDao.getRelationByUserIds(id, req.user?.id!);
 
-    if (status !== "BLOCKED") {
-      // Getting the users other user follows
-      const { rows: following } = await pg.query(
-        `
-        SELECT 
-          f.*
+  if (status !== "BLOCKED") {
+    // Getting the users other user follows
+    const { rows: following } = await pg.query(
+      `
+      SELECT 
+        f.*
 
-        FROM relations r
+      FROM relations r
 
-        LEFT OUTER JOIN (
-          SELECT
-            id,
-            username,
-            last_name,
-            first_name,
-            created_at
+      LEFT OUTER JOIN (
+        SELECT
+          id,
+          username,
+          last_name,
+          first_name,
+          created_at
 
-          FROM users
-        ) f ON r.to_user = f.id
+        FROM users
+      ) f ON r.to_user = f.id
 
-        WHERE r.from_user = $1 AND r.status = 'FOLLOWING';
-        `,
-        [id]
-      );
+      WHERE r.from_user = $1 AND r.status = 'FOLLOWING';
+      `,
+      [id]
+    );
 
-      return res.json(following);
-    }
-
-    return res.sendStatus(403);
-  } catch (error: any) {
-    if (error?.code === "22P02") return res.sendStatus(400);
-
-    console.error(error);
-    return res.sendStatus(500);
+    return res.json(following);
   }
+
+  return res.sendStatus(403);
 };
 
 export default following;

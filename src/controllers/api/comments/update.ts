@@ -1,6 +1,6 @@
+import pg from "db/pg";
 import { isNil } from "lodash";
 import { relationDao } from "container";
-import getFirst from "util/sql/getFirst";
 import type { Request, Response } from "express";
 
 // For updating a comment
@@ -11,7 +11,7 @@ const update = async (req: Request, res: Response) => {
   const { post: postId, comment: commentId } = req.params;
 
   // Checking if the post exists
-  const post = await getFirst<{ user_id: string }>(
+  const post = await pg.getFirst<{ user_id: string }>(
     "SELECT user_id FROM posts WHERE id = $1",
     [postId]
   );
@@ -24,7 +24,7 @@ const update = async (req: Request, res: Response) => {
     );
     if (status === "BLOCKED") return res.sendStatus(403);
 
-    const comment = await getFirst<{ user_id: string }>(
+    const comment = await pg.getFirst<{ user_id: string }>(
       "SELECT user_id FROM comments WHERE id = $1",
       [commentId]
     );
@@ -34,7 +34,7 @@ const update = async (req: Request, res: Response) => {
       // If the author of the comment is the same as current user
       if (comment.user_id === req.user?.id) {
         // Update the comment
-        const comment = await getFirst<Partial<Comment>>(
+        const comment = await pg.getFirst<Partial<Comment>>(
           "UPDATE comments SET body = $1 WHERE id = $2 RETURNING *",
           [body, commentId]
         );

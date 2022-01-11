@@ -13,6 +13,7 @@
     "migrate": "./bin/goose -dir=migrations -s postgres",
     "start": "cross-env NODE_ENV=production node ./build/server.js",
     "license:compliance": "license-compliance --production --direct",
+    "docker:build": "docker build . -t polygon-isecure/core:local --no-cache",
     "express-graph": "express-router-dependency-graph --rootDir=./src/ --format=markdown",
     "dev": "yarn prepare && cross-env NODE_ENV=development nodemon --files ./src/server.ts"
   },
@@ -26,7 +27,6 @@
     "cors": "^2.8.5",
     "cross-env": "^7.0.3",
     "deep-email-validator-extended": "^0.2.0",
-    "dotenv": "^10.0.0",
     "env-var": "^7.1.1",
     "express": "^4.17.1",
     "express-session": "^1.17.2",

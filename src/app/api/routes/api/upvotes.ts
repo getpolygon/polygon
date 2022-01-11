@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { create, remove } from "controllers/api/upvotes";
+import { create, remove } from "api/controllers/upvotes";
 import { uuidValidator } from "middleware/uuidValidator";
 
 const router = Router();

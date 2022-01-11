@@ -1,6 +1,3 @@
-import dotenv = require("dotenv");
-dotenv.config();
-
 // `reflect-metadata` will allow us to use decorators.
 // This is required by `typedi` for dependency injection.
 import "reflect-metadata";

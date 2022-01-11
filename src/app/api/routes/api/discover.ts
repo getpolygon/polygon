@@ -1,7 +1,7 @@
 import express from "express";
 import { celebrate, Joi, Segments } from "celebrate";
 import { uuidValidator } from "middleware/uuidValidator";
-import { posts, withCursor } from "controllers/api/discover";
+import { posts, withCursor } from "api/controllers/discover";
 
 const router = express.Router();
 

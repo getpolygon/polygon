@@ -34,9 +34,9 @@ const register = async (req: Request, res: Response) => {
         new User(email, encryptedPassword, username, lastName, firstName)
       );
 
-      const token = createJwt({ id: user?.id });
-      req.session.token = token;
-      return res.status(201).json({ token });
+      const access = createJwt({ id: user?.id }, { expiresIn: "2d" });
+      const refresh = createJwt({}, { expiresIn: "30d" });
+      return res.status(201).json({ access, refresh });
     } catch (error) {
       if (error instanceof DuplicateRecordException) return res.sendStatus(403);
       else {

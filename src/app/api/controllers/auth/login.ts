@@ -18,10 +18,9 @@ const login = async (req: Request, res: Response) => {
   if (!isNil(user)) {
     const correctPassword = await bcrypt.verify(password, user?.password!);
     if (correctPassword) {
-      const token = createJwt({ id: user.id });
-      req.session.token = token;
-
-      return res.json({ token });
+      const access = createJwt({ id: user.id }, { expiresIn: "2d" });
+      const refresh = createJwt({}, { expiresIn: "30d" });
+      return res.json({ access, refresh, user });
     }
 
     // Passwords do not match

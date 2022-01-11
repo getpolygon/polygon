@@ -22,17 +22,18 @@
     // prettier-ignore
     "paths": {
       "db/*"          :["db/*"],
+      "dao/*"         :["db/dao/*"],
+
       "lib/*"         :["lib/*"],
       "util/*"        :["util/*"],
-      "routes/*"      :["routes/*"],
-      "config/*"      :["config/*"],
-      "dao/*"         :["db/dao/*"],
       "services/*"    :["services/*"],
-      "validation/*"  :["validation/*"],
-      "middleware/*"  :["middleware/*"],
-      "controllers/*" :["controllers/*"],
-      "templates/*"   :["../templates/*"],
       "container"     :["container/index"],
+
+      "api/*"         :["app/api/*"],
+      "middleware/*"  :["middleware/*"],
+
+      "config/*"      :["config/*"],
+      "templates/*"   :["../templates/*"],
     },
     "typeRoots": ["./src/types", "./node_modules/@types"],
     "plugins": [

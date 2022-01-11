@@ -1,6 +1,6 @@
 import express from "express";
 import { celebrate, Joi, Segments } from "celebrate";
-import { me, others, close } from "controllers/api/users";
+import { me, others, close } from "api/controllers/users";
 import { verifyNotBlockedWithParams } from "middleware/verifyNotBlockedWithParams";
 
 const router = express.Router();

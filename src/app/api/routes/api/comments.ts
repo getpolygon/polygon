@@ -1,6 +1,6 @@
 import express from "express";
 import { uuidValidator } from "middleware/uuidValidator";
-import { create, ofPost, remove, update } from "controllers/api/comments";
+import { create, ofPost, remove, update } from "api/controllers/comments";
 
 const router = express.Router();
 

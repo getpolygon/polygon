@@ -1,21 +1,18 @@
 import cors from "cors";
 import helmet from "helmet";
-import redis from "db/redis";
 import express from "express";
-import routes from "routes/index";
 import config from "config/index";
 import celebrate from "celebrate";
 import compression from "compression";
-import session from "express-session";
+import routes from "api/routes/index";
 import { trace } from "middleware/trace";
-import connectRedis from "connect-redis";
 
 // Create the express app. We will use this app to create the server.
 const app = express();
 
 // Initializing `connect-redis` to use with `express-session` middleware
-const RedisSessionStore = connectRedis(session);
-const sessionStore = new RedisSessionStore({ client: redis as any });
+// const RedisSessionStore = connectRedis(session);
+// const sessionStore = new RedisSessionStore({ client: redis as any });
 
 // Trust only the first proxy. This is important if the instance is
 // hosted behind a load balancer (e.g. Heroku). See:
@@ -37,21 +34,21 @@ app.use(
 // Helmet is a collection of tools for securing Express apps. It is
 // designed to protect against well known web vulnerabilities.
 app.use(helmet());
-app.use(
-  session({
-    resave: false,
-    cookie: {
-      signed: true,
-      httpOnly: true,
-      // 2 Days
-      maxAge: new Date().getMilliseconds() + 1000 * 60 ** 2 * 48,
-    },
-    name: "polygon.sid",
-    store: sessionStore,
-    saveUninitialized: true,
-    secret: config.session.secret,
-  })
-);
+// app.use(
+//   session({
+//     resave: false,
+//     cookie: {
+//       signed: true,
+//       httpOnly: true,
+//       // 2 Days
+//       maxAge: new Date().getMilliseconds() + 1000 * 60 ** 2 * 48,
+//     },
+//     name: "polygon.sid",
+//     store: sessionStore,
+//     saveUninitialized: true,
+//     secret: config.session.secret,
+//   })
+// );
 app.use(
   compression({
     level: 2,

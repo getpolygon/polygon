@@ -2,8 +2,12 @@ spec/
 build/
 .husky/
 .github/
+/node_modules/
+
+*.spec.ts
 README.md
+.gitignore
 config*.yaml
-node_modules/
+.eslintrc.json
 yarn-debug.log*
 yarn-error.log*

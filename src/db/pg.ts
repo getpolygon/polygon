@@ -2,8 +2,8 @@ import { Pool } from "pg";
 import config from "config/index";
 import { Logger } from "util/logger";
 import Container, { Service } from "typedi";
-import { IDatabase } from "./common/IDatabase";
-import { IDatabaseResult } from "./common/IDatabaseResult";
+import type { IDatabase } from "./common/IDatabase";
+import type { IDatabaseResult } from "./common/IDatabaseResult";
 
 /**
  * PostgreSQL database implementation

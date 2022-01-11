@@ -1,11 +1,11 @@
 import crypto from "crypto";
 import redis from "db/redis";
 import config from "config/index";
-import { userDao } from "container";
 import { createJwt } from "lib/jwt";
 import bcrypt from "@node-rs/bcrypt";
 import { send } from "services/mailer";
 import { User } from "dao/entities/User";
+import { logger, userDao } from "container";
 import type { Request, Response } from "express";
 import { DuplicateRecordException } from "dao/errors/DuplicateRecordException";
 
@@ -40,7 +40,7 @@ const register = async (req: Request, res: Response) => {
     } catch (error) {
       if (error instanceof DuplicateRecordException) return res.sendStatus(403);
       else {
-        console.error(error);
+        logger.error(error);
         return res.sendStatus(500);
       }
     }
@@ -60,7 +60,7 @@ const register = async (req: Request, res: Response) => {
           email,
           token,
           firstName,
-          frontendUrl: config.polygon.frontendUrl,
+          frontend: config.polygon.frontend,
         }
       ),
       redis.set(`verif:${token}`, stringified),

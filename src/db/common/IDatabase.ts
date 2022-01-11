@@ -1,4 +1,4 @@
-import { ISqlUtil } from "./ISQLUtil";
+import { ISqlUtil } from "./ISqlUtil";
 import { IDatabaseResult } from "./IDatabaseResult";
 
 export interface IDatabase extends ISqlUtil {

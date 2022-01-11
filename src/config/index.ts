@@ -36,15 +36,11 @@ const CONFIG_SCHEMA = z
       secret: z.string().min(1),
     }),
 
-    polygon: z
-      .object({
-        port: z.optional(z.number()).default(3001),
-        frontendUrl: z
-          .optional(z.string().min(1).url())
-          .nullable()
-          .default(null),
-      })
-      .default({}),
+    polygon: z.object({
+      port: z.number().default(3001),
+      frontend: z.string().min(1).url(),
+      origins: z.optional(z.array(z.string())).default([]),
+    }),
 
     jwt: z.object({
       secret: z.string(),
@@ -154,20 +150,6 @@ const CONFIG_SCHEMA = z
       .default({}),
   })
   .superRefine((v, c) => {
-    if (
-      v.email.enableVerification &&
-      v.email.client !== "none" &&
-      v.polygon.frontendUrl === null
-    ) {
-      c.addIssue({
-        fatal: true,
-        code: z.ZodIssueCode.custom,
-        path: ["polygon", "frontendUrl"],
-        message:
-          "To use an email client, property `frontendUrl` should be defined in the configuration file",
-      });
-    }
-
     /**
      * If email verification is enabled, with a selected
      * email client but the SMTP configuration is empty
@@ -212,6 +194,10 @@ const CONFIG_SCHEMA = z
  * in the `Config` class.
  */
 type ConfigType = z.infer<typeof CONFIG_SCHEMA>;
+/**
+ * Node environment configuration
+ */
+type NodeEnv = "production" | "test" | "development";
 
 @Service()
 class Config {
@@ -234,12 +220,12 @@ class Config {
    * not equal to `test`.
    */
   private emitter: EventEmitter | undefined;
-  private readonly nodeEnv: "production" | "test" | "development";
+  private readonly nodeEnv: NodeEnv;
 
   constructor(private readonly logger: Logger) {
     this.initialized = false;
-    this.internal = {} as any;
-    this.nodeEnv = process.env.NODE_ENV as any;
+    this.internal = {} as unknown as ConfigType;
+    this.nodeEnv = process.env.NODE_ENV as unknown as NodeEnv;
     this.configPath = path.resolve(
       env
         .get("POLYGON.CONFIG.PATH")

@@ -26,7 +26,11 @@ const nodemailer = isNodemailerAndEnabled
  * @param data - Additional data to compile the template with
  * @param templateName - Template name or path without `.hbs` extension
  */
-export const send = async (email: string, templateName: string, data = {}) => {
+export const send = async (
+  email: string,
+  templateName: string,
+  data?: object
+) => {
   const template = readTemplate(templateName);
   const html = compile(template)(data);
 

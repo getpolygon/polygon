@@ -7,15 +7,13 @@ import { JsonWebTokenError, TokenExpiredError } from "jsonwebtoken";
 export default () => {
   return async (req: Request, res: Response, next: NextFunction) => {
     const token = req.headers.authorization!.split(" ")[1];
-
     if (isNil(token)) return res.sendStatus(401);
 
     try {
-      // Validating the token and getting the user
       const data = verifyJwt<{ id: string }>(token);
       const user = await userDao.getUserById(data.id);
       req.user = user!;
-      return next(null);
+      return next();
     } catch (error) {
       // If token is invalid
       if (error instanceof JsonWebTokenError) return res.sendStatus(400);

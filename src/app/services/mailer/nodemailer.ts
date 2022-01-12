@@ -31,7 +31,7 @@ export const send = async (
   templateName: string,
   data?: object
 ) => {
-  const template = readTemplate(templateName);
+  const template = await readTemplate(templateName);
   const html = compile(template)(data);
 
   const response = await nodemailer?.sendMail({

@@ -2,13 +2,9 @@ import config from "@config";
 import jwt from "jsonwebtoken";
 import type { SignOptions } from "jsonwebtoken";
 
-// Configuration validation
-const jwtSecret = config.jwt?.secret;
-// const jwtRefresh = config.jwt?.refresh;
-
-// JWT metadata
-const jwtIssuer = "@polygon-isecure/core";
-const jwtAudience = ["@polygon-isecure/polygon", "@polygon-isecure/next"];
+const jwtSecret = config.jwt.secret;
+const jwtIssuer = config.jwt.issuer;
+const jwtAudience = config.jwt.audience;
 
 /**
  * Utility for creating JWTs.

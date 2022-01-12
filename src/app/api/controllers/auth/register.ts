@@ -34,9 +34,14 @@ const register = async (req: Request, res: Response) => {
         new User(email, encryptedPassword, username, lastName, firstName)
       );
 
-      const access = createJwt({ id: user?.id }, { expiresIn: "2d" });
-      const refresh = createJwt({}, { expiresIn: "30d" });
-      return res.status(201).json({ access, refresh });
+      const refresh_token = createJwt({}, { expiresIn: "30d" });
+      const access_token = createJwt({ id: user?.id }, { expiresIn: "2d" });
+      return res.status(201).json({
+        access_token,
+        refresh_token,
+        token_type: "Bearer",
+        expires_in: new Date().getUTCMilliseconds() + 1000 * 60 ** 2 * 24 * 2,
+      });
     } catch (error) {
       if (error instanceof DuplicateRecordException) return res.sendStatus(403);
       else {
@@ -55,7 +60,7 @@ const register = async (req: Request, res: Response) => {
         email,
         config.email.client === "courier"
           ? config.courier.events?.verification!
-          : "email/verification",
+          : "verification",
         {
           email,
           token,

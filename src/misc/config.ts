@@ -32,19 +32,25 @@ class UninitializedConfigError extends Error {
  */
 const CONFIG_SCHEMA = z
   .object({
-    session: z.object({
-      secret: z.string().min(1),
-    }),
-
     polygon: z.object({
       port: z.number().default(3001),
       frontend: z.string().min(1).url(),
+      templates: z
+        .optional(
+          z.object({
+            path: z.optional(z.string()).default("templates/"),
+          })
+        )
+        .default({}),
       origins: z.optional(z.array(z.string())).default([]),
     }),
 
     jwt: z.object({
       secret: z.string(),
-      refresh: z.string(),
+      issuer: z.string().default("@polygon-isecure/core"),
+      audience: z
+        .array(z.string())
+        .default(["@polygon-isecure/polygon", "@polygon-isecure/next"]),
     }),
 
     email: z
@@ -57,8 +63,6 @@ const CONFIG_SCHEMA = z
       })
       .superRefine((v, c) => {
         const caseOne = v.client !== "none" && !v.enableVerification;
-        const caseTwo = v.client === "none" && v.enableVerification;
-
         if (caseOne) {
           const message =
             "`email.enableVerification` should be `true` when `email.client` is not `none`";
@@ -71,6 +75,7 @@ const CONFIG_SCHEMA = z
           });
         }
 
+        const caseTwo = v.client === "none" && v.enableVerification;
         if (caseTwo) {
           const message =
             "`email.enableVerification` should be `false` when `email.client` is `none`";
@@ -152,7 +157,9 @@ const CONFIG_SCHEMA = z
   .superRefine((v, c) => {
     /**
      * If email verification is enabled, with a selected
-     * email client but the SMTP configuration is empty
+     * email client we will need to validate the `smtp`
+     * configuration in order to not cause errors and
+     * undefined behavior at runtime.
      */
     if (v.email.enableVerification && v.email.client !== "none") {
       Object.entries(v.smtp).map(([__k, __v]) => {
@@ -168,11 +175,10 @@ const CONFIG_SCHEMA = z
     }
 
     /**
-     * If the selected email client is courier
-     * we will need to check if all the required
-     * properties of the optional `courier` object
-     * are present. If they are not, zod will throw
-     * an error.
+     * If the selected email client is courier we will
+     * need to check if all the required properties of
+     * the optional `courier` object are present. If they
+     * are not, zod will throw an error.
      */
     if (v.email.client === "courier") {
       Object.entries(v.courier).map(([__k, __v]) => {
@@ -194,6 +200,7 @@ const CONFIG_SCHEMA = z
  * in the `Config` class.
  */
 type ConfigType = z.infer<typeof CONFIG_SCHEMA>;
+
 /**
  * Node environment configuration
  */

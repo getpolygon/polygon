@@ -1,9 +1,9 @@
 import redis from "@db/redis";
 import { isNil } from "lodash";
-import type { Payload } from ".";
 import { userDao } from "@container";
 import bcrypt from "@node-rs/bcrypt";
 import { createJwt } from "@lib/jwt";
+import type { Payload } from "./register";
 import { User } from "@db/dao/entities/User";
 import type { Request, Response } from "express";
 
@@ -37,9 +37,17 @@ const verify = async (req: Request, res: Response) => {
         await redis.del(`verif:${suppliedToken}`),
       ]);
 
-      const access = createJwt({ id: user?.id }, { expiresIn: "2d" });
-      const refresh = createJwt({}, { expiresIn: "30d" });
-      return res.status(201).json({ access, refresh, user });
+      // TODO: This part should be updated
+
+      const refresh_token = createJwt({}, { expiresIn: "30d" });
+      const access_token = createJwt({ id: user?.id }, { expiresIn: "2d" });
+
+      return res.status(201).json({
+        access_token,
+        refresh_token,
+        token_type: "Bearer",
+        expires_in: new Date().getUTCMilliseconds() + 1000 * 60 ** 2 * 24 * 2,
+      });
     } else return res.sendStatus(401);
   } else return res.sendStatus(401);
 };

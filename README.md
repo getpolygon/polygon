@@ -26,7 +26,7 @@ For that you will need:
 Polygon's `core` depends on Redis and PostgreSQL. Let's setup a Redis instance using the following Docker command:
 
 ```bash
-docker run --name redis -dp 6379:6379 redis-cli --requirepass <password>
+docker run --name redis -dp 6379:6379 redis redis-server --requirepass "<password>"
 ```
 
 and replace the `<password>` with a secure password. You redis connection URL should now look something like this:

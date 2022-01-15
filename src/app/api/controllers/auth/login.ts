@@ -27,7 +27,7 @@ const login = async (req: Request, res: Response) => {
         refresh_token,
         token_type: "Bearer",
         // 2 days
-        expires_in: new Date().getUTCMilliseconds() + 1000 * 60 ** 2 * 24 * 2,
+        expires_in: 1000 * 60 ** 2 * 24 * 2,
       });
     }
 

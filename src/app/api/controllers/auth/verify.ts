@@ -46,7 +46,7 @@ const verify = async (req: Request, res: Response) => {
         access_token,
         refresh_token,
         token_type: "Bearer",
-        expires_in: new Date().getUTCMilliseconds() + 1000 * 60 ** 2 * 24 * 2,
+        expires_in: 1000 * 60 ** 2 * 24 * 2,
       });
     } else return res.sendStatus(401);
   } else return res.sendStatus(401);

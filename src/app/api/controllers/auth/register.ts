@@ -39,7 +39,7 @@ const register = async (req: Request, res: Response) => {
         access_token,
         refresh_token,
         token_type: "Bearer",
-        expires_in: new Date().getUTCMilliseconds() + 1000 * 60 ** 2 * 24 * 2,
+        expires_in: 1000 * 60 ** 2 * 24 * 2,
       });
     } catch (error) {
       if (error instanceof DuplicateRecordException) return res.sendStatus(403);

@@ -6,8 +6,7 @@ import type { User } from "@dao/entities/User";
 import type { Request, Response } from "express";
 
 const login = async (req: Request, res: Response) => {
-  const { password } = req.body;
-  const email = req.body.email.toLowerCase();
+  const { email, password } = req.body;
 
   // Find the user by email
   const user = await pg.getFirst<Partial<User>>(

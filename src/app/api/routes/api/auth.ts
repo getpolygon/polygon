@@ -1,6 +1,7 @@
 import config from "@config";
 import express from "express";
 import { celebrate, Joi, Segments } from "celebrate";
+import { normalizeEmail } from "@middleware/normalizeEmail";
 import { login, register, verify } from "@api/controllers/auth";
 
 const router = express.Router();
@@ -13,6 +14,7 @@ router.post(
       password: Joi.string().alphanum().min(8).exist().cache(),
     },
   }),
+  normalizeEmail(["email"]),
   login
 );
 
@@ -28,6 +30,7 @@ router.post(
       password: Joi.string().alphanum().min(8).exist(),
     },
   }),
+  normalizeEmail(["email"]),
   register
 );
 

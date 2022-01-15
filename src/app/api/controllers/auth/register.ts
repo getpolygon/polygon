@@ -22,9 +22,8 @@ export type Payload = {
 };
 
 const register = async (req: Request, res: Response) => {
-  const { firstName, lastName, password, username } = req.body;
+  const { firstName, lastName, password, username, email } = req.body;
   const encryptedPassword = await bcrypt.hash(password);
-  const email = String(req.body.email).toLowerCase();
 
   // If email verification is disabled
   if (!config.email.enableVerification) {

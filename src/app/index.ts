@@ -10,13 +10,9 @@ import compression from "compression";
 // Create the express app. We will use this app to create the server.
 const app = express();
 
-// Initializing `connect-redis` to use with `express-session` middleware
-// const RedisSessionStore = connectRedis(session);
-// const sessionStore = new RedisSessionStore({ client: redis as any });
-
 // Trust only the first proxy. This is important if the instance is
-// hosted behind a load balancer (e.g. Heroku). See:
-// https://expressjs.com/en/guide/behind-proxies.html
+// hosted behind a load balancer (e.g. Heroku). 
+// See: https://expressjs.com/en/guide/behind-proxies.html
 app.set("trust proxy", 1);
 
 // CORS middleware to allow cross-origin requests.

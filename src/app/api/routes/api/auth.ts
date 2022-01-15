@@ -1,7 +1,7 @@
 import config from "@config";
 import express from "express";
-import { login, register, verify } from "@api/controllers/auth";
 import { celebrate, Joi, Segments } from "celebrate";
+import { login, register, verify } from "@api/controllers/auth";
 
 const router = express.Router();
 

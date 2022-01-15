@@ -1,15 +1,15 @@
 import { relationDao } from "@container";
 import validateUUID from "uuid-validate";
-import type { Status } from "@db/dao/entities/Relation";
-import type { Request, Response, NextFunction } from "express";
+import type { Request, Handler } from "express";
+import type { Status } from "@dao/entities/Relation";
 
 /**
  * Middleware for checking relation status between 2 users
  *
  * @param paramName - Parameter specified in path. Default: `"id"`
  */
-export const verifyNotBlockedWithParams = (paramName = "id") => {
-  return async (req: Request, res: Response, next: NextFunction) => {
+export const verifyNotBlockedWithParams = (paramName = "id"): Handler => {
+  return async (req: Request, res, next) => {
     let status: Status;
     // ID or username
     const other = req.params[paramName];
@@ -19,7 +19,7 @@ export const verifyNotBlockedWithParams = (paramName = "id") => {
       const currentId = req.user?.id!;
       status = await relationDao.getRelationByUserIds(currentId, other);
     }
-    // If not, validating the status with usernames
+    // If not, validating the status with username
     else {
       const currentUsername = req.user?.username!;
       status = await relationDao.getRelationByUsernames(currentUsername, other);

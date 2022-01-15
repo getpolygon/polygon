@@ -1,4 +1,4 @@
-import type { User } from "@db/dao/entities/User";
+import type { User } from "@dao/entities/User";
 
 declare module "express" {
   interface Request {

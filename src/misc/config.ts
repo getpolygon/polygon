@@ -133,7 +133,7 @@ const CONFIG_SCHEMA = z
         port: z.optional(z.number()).nullable().default(null),
         user: z.optional(z.string()).nullable().default(null),
         pass: z.optional(z.string()).nullable().default(null),
-        secure: z.optional(z.boolean()).default(true),
+        secure: z.optional(z.boolean()).default(false),
       })
       .default({}),
 
@@ -304,8 +304,8 @@ class Config {
 
   /**
    * This method will attempt to read, parse and validate
-   * provided YAML configuration if it is not initialized.
-   * Calling this method for the second time will not change
+   * provided YAML configuration. If it is already initialized,
+   * calling this method for the second time will not change
    * anything.
    */
   public init() {
@@ -336,4 +336,8 @@ class Config {
   }
 }
 
+/**
+ * Initializing the configuration here since we
+ * are not going to use it as a dependency
+ */
 export default Container.get(Config).init().get();

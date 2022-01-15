@@ -5,10 +5,9 @@ const isCourierAndEnabled =
   config.email?.enableVerification === true &&
   config.email?.client === "courier";
 
-// Initializing courier client
 const courier = isCourierAndEnabled
   ? CourierClient({
-      authorizationToken: config.courier?.token!,
+      authorizationToken: config.courier.token!,
     })
   : null;
 

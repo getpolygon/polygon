@@ -1,6 +1,6 @@
 import chalk from "chalk";
 import { logger } from "@container";
-import type { Handler, NextFunction, Request, Response } from "express";
+import type { Handler } from "express";
 
 /**
  * Calculates the time taken to execute a request.
@@ -41,9 +41,11 @@ const getColoredMethod = (method: string): string => {
     case "delete": {
       return chalk.red(method);
     }
+    case "options": {
+      return chalk.blue(method);
+    }
     case "put":
-    case "post":
-    case "patch": {
+    case "post": {
       return chalk.yellow(method);
     }
     default: {
@@ -53,12 +55,11 @@ const getColoredMethod = (method: string): string => {
 };
 
 /**
- * Simple middleware for logging requests
- * and related information in a development
- * environment.
+ * Simple middleware for logging requests and related
+ * information in a development environment.
  */
 export const trace = (): Handler => {
-  return (req: Request, res: Response, next: NextFunction) => {
+  return (req, res, next) => {
     const start = process.hrtime();
 
     res.on("close", () => {

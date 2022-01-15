@@ -4,7 +4,7 @@ import { userDao } from "@container";
 import bcrypt from "@node-rs/bcrypt";
 import { createJwt } from "@lib/jwt";
 import type { Payload } from "./register";
-import { User } from "@db/dao/entities/User";
+import { User } from "@dao/entities/User";
 import type { Request, Response } from "express";
 
 const verify = async (req: Request, res: Response) => {

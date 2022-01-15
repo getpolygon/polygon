@@ -1,6 +1,6 @@
 import pg from "@db/pg";
 import type { Request, Response } from "express";
-import type { Status } from "@db/dao/entities/Relation";
+import type { Status } from "@dao/entities/Relation";
 
 // For checking relation status
 const status = async (req: Request, res: Response) => {

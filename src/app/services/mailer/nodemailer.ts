@@ -37,7 +37,10 @@ export const send = async (
   const response = await nodemailer?.sendMail({
     html,
     to: email,
-    from: config.smtp.user!,
+    priority: "high",
+    sender: config.smtp.user!,
+    subject: "Polygon email verification",
+    from: `Polygon <${config.smtp.user!}>`,
   });
 
   return response;

@@ -3,48 +3,68 @@
     <meta charset="UTF-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    {{! Google Fonts }}
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Mulish:wght@300&family=Roboto&display=swap"
+      rel="stylesheet"
+    />
+
+    <style>
+      h1, h2 { font-family: "Mulish"; } h1 { font-weight: 700; } h2
+      {font-weight: 300;} p, small { font-weight: 300; font-family: "Roboto"; }
+      small, a { font-weight: 300; font-family: "Mulish"; }
+    </style>
     <title>Polygon email verification</title>
   </head>
   <body>
-    <h2>Dear {{firstName}},</h2>
-    <h3>Thank you for registering at Polygon!</h3>
+    <div>
+      <h1 style="font-weight: 400;">Dear {{firstName}},</h1>
+      <h2 style="font-weight: 400;">Thank you for registering at Polygon!</h2>
+    </div>
 
-    <p>To keep our users
-      <b>safe</b>
-      from
-      <b>spam</b>
-      , we kindly ask you to verify your identity by clicking on the button
-      below</p>
-    <a
-      role="button"
-      style="
-        padding: 5px;
-        color: white;
-        border-radius: 1rem;
-        text-decoration: none;
-        background-color: rgb(167, 21, 167);
-      "
-      href="{{frontend}}/verify/{{token}}"
-    >Verify my account</a>
+    <p>To keep our users safe from spam , we kindly ask you to verify your
+      identity by clicking on the button below</p>
+
+    <div>
+      <a
+        role="button"
+        style="
+          padding: 10px;
+          color: white;
+          border-radius: 1rem;
+          text-decoration: none;
+          background-color: rgb(167, 21, 167);
+        "
+        target="_blank"
+        href="{{frontend}}/verify/{{token}}"
+        rel="noopener noreferrer"
+      >Verify my account</a>
+    </div>
+
     <p>
       Or by visiting the link below:
     </p>
 
-    <p>
-      <a
-        rel="noopener noreferrer"
-        target="_blank"
-        href="{{frontend}}/verify/{{token}}"
-      >
-        {{frontend}}/verify/{{token}}
-      </a>
-    </p>
+    <div>
+      <p>
+        <a
+          target="_blank"
+          rel="noopener noreferrer"
+          href="{{frontend}}/verify/{{token}}"
+        >
+          {{frontend}}/verify/{{token}}
+        </a>
+      </p>
+    </div>
 
     <p>
       Regards,
     </p>
 
-    <p>Polygon Team.</p>
+    <p>Polygon Team</p>
 
     <small>This email was sent to
       <b>{{email}}</b>

@@ -11,7 +11,7 @@ import compression from "compression";
 const app = express();
 
 // Trust only the first proxy. This is important if the instance is
-// hosted behind a load balancer (e.g. Heroku). 
+// hosted behind a load balancer (e.g. Heroku).
 // See: https://expressjs.com/en/guide/behind-proxies.html
 app.set("trust proxy", 1);
 

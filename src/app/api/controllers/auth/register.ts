@@ -54,23 +54,32 @@ const register = async (req: Request, res: Response) => {
     const token = crypto.randomBytes(12).toString("hex");
     const stringified = JSON.stringify(payload);
 
-    await Promise.all([
-      // Sending a verification email
-      send(
-        email,
-        config.email.client === "courier"
-          ? config.courier.events?.verification!
-          : "verification",
-        {
+    try {
+      await Promise.all([
+        // Sending a verification email
+        send(
           email,
-          token,
-          firstName,
-          frontend: config.polygon.frontend,
-        }
-      ),
-      redis.set(`verif:${token}`, stringified),
-      redis.expire(`verif:${token}`, config.email.expireVerification),
-    ]);
+          config.email.client === "courier"
+            ? config.courier.events?.verification!
+            : "verification",
+          {
+            email,
+            token,
+            firstName,
+            frontend: config.polygon.frontend,
+          }
+        ),
+        redis.set(`verif:${token}`, stringified),
+        redis.expire(`verif:${token}`, config.email.expireVerification),
+      ]);
+    } catch (error) {
+      logger.error(error);
+      logger.warn(
+        "..The error above might occur because of the current value of `smtp.secure` property in the configuration."
+      );
+
+      return res.sendStatus(500);
+    }
 
     return res.sendStatus(204);
   }

@@ -9,7 +9,7 @@ import {
   following,
 } from "@api/controllers/relations";
 import { uuidValidator } from "@middleware/uuidValidator";
-import { verifyNotBlockedWithParams } from "@app/api/middleware/verifyNotBlockedWithParams";
+import { verifyNotBlockedWithParams } from "@middleware/verifyNotBlockedWithParams";
 
 const router = express.Router();
 

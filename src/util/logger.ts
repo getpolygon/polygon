@@ -1,5 +1,6 @@
 import chalk from "chalk";
 import { Service } from "typedi";
+import { format } from "date-fns";
 
 @Service()
 /**
@@ -7,26 +8,33 @@ import { Service } from "typedi";
  */
 export class Logger {
   public raw(m: unknown, ...op: unknown[]) {
-    console.log(m, ...op);
+    console.log(this.getDateString(), m, ...op);
   }
 
   public info(m: unknown, ...op: unknown[]) {
     const prefix = `[${chalk.blueBright("INFO")}]`;
-    console.log(`${prefix} >`, m, ...op);
+    console.log(`${this.getDateString()} ${prefix} >`, m, ...op);
   }
 
   public error(e: unknown, ...op: unknown[]) {
     const prefix = `[${chalk.redBright("ERROR")}]`;
-    console.error(`${prefix} >`, e, ...op);
+    console.error(`${this.getDateString()} ${prefix} >`, e, ...op);
   }
 
   public warn(m: unknown, ...op: unknown[]) {
     const prefix = `[${chalk.yellowBright("WARNING")}]`;
-    console.log(`${prefix} >`, m, ...op);
+    console.log(`${this.getDateString()} ${prefix} >`, m, ...op);
   }
 
   public debug(m: unknown, ...op: unknown[]) {
-    const prefix = `[${chalk.gray("DEBUG")}]`;
-    console.log(`${prefix} >`, m, ...op);
+    const prefix = `[${chalk.blackBright("DEBUG")}]`;
+    console.log(`${this.getDateString()} ${prefix} >`, m, ...op);
+  }
+
+  private getDateString(): string {
+    const now = new Date();
+    // dd/mm/yyyy@hh:mm:ssAM/PM
+    const formatted = format(now, "dd.MM.uuuu@hh:mm:sbb");
+    return chalk.dim(formatted);
   }
 }

@@ -1,8 +1,14 @@
+import {
+  login,
+  logout,
+  refreshToken,
+  register,
+  verify,
+} from "@api/controllers/auth";
 import config from "@config";
 import express from "express";
 import { celebrate, Joi, Segments } from "celebrate";
 import { normalizeEmail } from "@middleware/normalizeEmail";
-import { login, register, verify } from "@api/controllers/auth";
 
 const router = express.Router();
 
@@ -17,6 +23,9 @@ router.post(
   normalizeEmail(["email"]),
   login
 );
+
+router.post("/logout", logout);
+router.post("/refresh-token", refreshToken);
 
 // Main registration endpoint
 router.post(

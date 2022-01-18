@@ -35,12 +35,20 @@ const register = async (req: Request, res: Response) => {
 
       const refresh_token = createJwt({}, { expiresIn: "30d" });
       const access_token = createJwt({ id: user?.id }, { expiresIn: "2d" });
-      return res.status(201).json({
-        access_token,
-        refresh_token,
-        token_type: "Bearer",
-        expires_in: 1000 * 60 ** 2 * 24 * 2,
-      });
+      return res
+        .cookie("@polygon/refresh", refresh_token, {
+          secure: false,
+          httpOnly: true,
+          // 30 days
+          maxAge: 1000 * 60 ** 2 * 24 * 30,
+        })
+        .status(201)
+        .json({
+          access_token,
+          refresh_token,
+          token_type: "Bearer",
+          expires_in: 1000 * 60 ** 2 * 24 * 2,
+        });
     } catch (error) {
       if (error instanceof DuplicateRecordException) return res.sendStatus(403);
       else {

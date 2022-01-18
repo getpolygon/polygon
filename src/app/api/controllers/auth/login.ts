@@ -17,18 +17,23 @@ const login = async (req: Request, res: Response) => {
   if (!isNil(user)) {
     const correctPassword = await bcrypt.verify(password, user?.password!);
     if (correctPassword) {
-      // TODO: This part should be updated
-
       const access_token = createJwt({ id: user.id }, { expiresIn: "2d" });
-      const refresh_token = createJwt({}, { expiresIn: "30d" });
+      const refresh_token = createJwt({ id: user.id }, { expiresIn: "30d" });
 
-      return res.json({
-        access_token,
-        refresh_token,
-        token_type: "Bearer",
-        // 2 days
-        expires_in: 1000 * 60 ** 2 * 24 * 2,
-      });
+      return res
+        .cookie("@polygon/refresh", refresh_token, {
+          secure: false,
+          httpOnly: true,
+          // 30 days
+          maxAge: 1000 * 60 ** 2 * 24 * 30,
+        })
+        .json({
+          access_token,
+          refresh_token,
+          token_type: "Bearer",
+          // 2 days
+          expires_in: 1000 * 60 ** 2 * 24 * 2,
+        });
     }
 
     // Passwords do not match

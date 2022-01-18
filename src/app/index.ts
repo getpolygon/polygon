@@ -6,6 +6,7 @@ import routes from "@api/routes";
 import celebrate from "celebrate";
 import { trace } from "@util/trace";
 import compression from "compression";
+import cookieParser from "cookie-parser";
 
 // Create the express app. We will use this app to create the server.
 const app = express();
@@ -36,6 +37,7 @@ app.use(
     memLevel: 9,
   })
 );
+app.use(cookieParser());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 

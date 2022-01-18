@@ -11,12 +11,11 @@ const unblock = async (req: Request, res: Response) => {
 
   await pg.query(
     `
-    DELETE FROM 
-      relations
+    DELETE FROM relations
     WHERE
-      from_user = $1 
+      from_user IN ($1, $2) 
     AND 
-      to_user = $2 
+      to_user IN ($1, $2)
     AND 
       status = 'BLOCKED'
     `,

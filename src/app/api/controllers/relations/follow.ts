@@ -1,8 +1,7 @@
 import pg from "@db/pg";
 import { DatabaseError } from "pg";
+import { logger } from "@container";
 import { Request, Response } from "express";
-import { logger, relationDao } from "@container";
-import type { Status } from "@dao/entities/Relation";
 
 // For following another user
 const follow = async (req: Request, res: Response) => {
@@ -12,23 +11,15 @@ const follow = async (req: Request, res: Response) => {
     // If the user tries to follow himself
     if (id === req.user?.id) return res.sendStatus(406);
 
-    // Checking if the other user has blocked current user
-    const status = await relationDao.getRelationByUserIds(id!, req.user?.id!);
-    if (status !== "BLOCKED") {
-      // Creating the relation
-      const response = await pg.getFirst<{ status: Status }>(
-        `
-        INSERT INTO relations (status, to_user, from_user) 
-        VALUES ('FOLLOWING', $1, $2) RETURNING status;
-        `,
-        [id, req.user?.id]
-      );
+    await pg.query(
+      `
+      INSERT INTO relations (status, to_user, from_user) 
+      VALUES ('FOLLOWING', $1, $2);
+      `,
+      [id, req.user?.id]
+    );
 
-      // Sending the status
-      return res.json(response?.status || null);
-    }
-
-    return res.sendStatus(403);
+    return res.sendStatus(200);
   } catch (error) {
     if (error instanceof DatabaseError) {
       // Already exists

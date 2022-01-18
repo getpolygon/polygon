@@ -10,13 +10,10 @@ const status = async (req: Request, res: Response) => {
   // Finding the relation
   const relation = await pg.getFirst<{ status: Status }>(
     `
-    SELECT
-      status 
-    FROM 
-      relations 
-    WHERE 
-      to_user IN ($1, $2) 
-      AND 
+    SELECT status FROM relations
+    WHERE
+      to_user IN ($1, $2)
+    AND
       from_user IN ($1, $2)
     `,
     [id, req.user?.id]

@@ -31,18 +31,14 @@ const follow = async (req: Request, res: Response) => {
     return res.sendStatus(403);
   } catch (error) {
     if (error instanceof DatabaseError) {
-      // TODO: Handle all errors
       // Already exists
       if (error.code === "23505") return res.sendStatus(409);
-
-      // // When other user doesn't exist
-      // if (error instanceof ForeignKeyIntegrityConstraintViolationError) {
-      //   return res.status(404).json();
-      // }
-      // // When same user tries to follow himself
-      // else if (error instanceof UniqueIntegrityConstraintViolationError) {
-      //   return res.status(409).json();
-      // }
+      // When other user doesn't exist
+      else if (error.code === "23503") return res.sendStatus(406);
+      else {
+        logger.error(error);
+        return res.sendStatus(500);
+      }
     } else {
       logger.error(error);
       return res.sendStatus(500);

@@ -1,7 +1,7 @@
 import pg from "@db/pg";
 import { isNil } from "lodash";
-import { createJwt } from "@lib/jwt";
 import bcrypt from "@node-rs/bcrypt";
+import { createJwt } from "@lib/jwt";
 import type { User } from "@dao/entities/User";
 import type { Request, Response } from "express";
 

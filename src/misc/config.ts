@@ -1,3 +1,34 @@
+/**
+ * BSD 3-Clause License
+ *
+ * Copyright (c) 2021, Michael Grigoryan
+ * All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions are met:
+ *
+ * 1. Redistributions of source code must retain the above copyright notice, this
+ *    list of conditions and the following disclaimer.
+ *
+ * 2. Redistributions in binary form must reproduce the above copyright notice,
+ *    this list of conditions and the following disclaimer in the documentation
+ *    and/or other materials provided with the distribution.
+ *
+ * 3. Neither the name of the copyright holder nor the names of its
+ *    contributors may be used to endorse or promote products derived from
+ *    this software without specific prior written permission.
+ *
+ * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+ * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+ * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+ * DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE
+ * FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
+ * DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
+ * SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
+ * CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
+ * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ */
 import fs from "fs";
 import yaml from "yaml";
 import path from "path";
@@ -143,13 +174,11 @@ const CONFIG_SCHEMA = z
           token: z.optional(z.string()).nullable().default(null),
           brand: z.optional(z.string()).nullable().default(null),
           events: z
-            .optional(
-              z.object({
-                verification: z.string().nullable().default(null),
-              })
-            )
-            .nullable()
-            .default(null),
+            .object({
+              verification: z.string().nullable().default(null),
+              "reset-password": z.string().nullable().default(null),
+            })
+            .default({}),
         })
       )
       .default({}),
@@ -191,6 +220,17 @@ const CONFIG_SCHEMA = z
           });
         }
       });
+
+      Object.entries(v.courier.events).map(([__k, __v]) => {
+        if (isNil(__v)) {
+          c.addIssue({
+            fatal: true,
+            code: z.ZodIssueCode.custom,
+            path: ["courier", "events", __k],
+            message: `Event ID for ${__k} cannot be \`null\`. Usage with Courier requires valid event IDs.`,
+          });
+        }
+      });
     }
   });
 
@@ -217,6 +257,7 @@ class Config {
    * initialized or not.
    */
   public initialized: boolean;
+  private readonly nodeEnv: NodeEnv;
   /**
    * The configuration file path for Polygon
    */
@@ -227,7 +268,6 @@ class Config {
    * not equal to `test`.
    */
   private emitter: EventEmitter | undefined;
-  private readonly nodeEnv: NodeEnv;
 
   constructor(private readonly logger: Logger) {
     this.initialized = false;
@@ -260,12 +300,10 @@ class Config {
          * configuration logging by default, so that it is
          * easier to find configuration validation errors.
          */
-        if (this.nodeEnv === "development") {
-          this.logger.debug(
-            "config/index.ts:147 <class Config> :",
-            this.internal
-          );
-        }
+        this.logger.debug(
+          "config/index.ts:147 <class Config> :",
+          this.internal
+        );
 
         this.logger.info("Configuration loaded successfully");
       });

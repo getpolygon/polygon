@@ -14,7 +14,7 @@ const TEMPLATES_PATH = path.resolve(config.polygon.templates?.path);
  * @param name - Template name or path without `.hbs` extension
  */
 export const readTemplate = async (name: string): Promise<string> => {
-  const templatePath = path.resolve(`${TEMPLATES_PATH}/${name}.hbs`);
+  const templatePath = path.resolve(`${TEMPLATES_PATH}/${name}.html`);
   const template = await fs.readFile(templatePath);
   return template.toString();
 };

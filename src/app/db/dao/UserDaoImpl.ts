@@ -1,6 +1,7 @@
-import { Postgres } from "@db/pg";
 import { Service } from "typedi";
+import { Postgres } from "@db/pg";
 import { DatabaseError } from "pg";
+import bcrypt from "@node-rs/bcrypt";
 import { Logger } from "@util/logger";
 import { User } from "./entities/User";
 import { UserDao } from "./interfaces/UserDao";
@@ -38,7 +39,7 @@ export class UserDaoImpl implements UserDao {
         `,
         [
           user.email,
-          user.password,
+          await bcrypt.hash(user.password),
           user.username,
           user.last_name,
           user.first_name,

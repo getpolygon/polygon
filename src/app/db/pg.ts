@@ -17,6 +17,7 @@ export class Postgres implements IDatabase {
       connectionTimeoutMillis: 1000 * 60,
       connectionString: config.databases.postgres,
     });
+
     // Connecting to the database
     this.connect();
   }
@@ -36,6 +37,7 @@ export class Postgres implements IDatabase {
 
   public async connect(): Promise<void> {
     try {
+      this.logger.debug("Connecting to PostgreSQL...");
       await this.pg.connect();
       this.logger.info("Connection to PostgreSQL established successfully");
     } catch (e) {

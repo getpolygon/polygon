@@ -29,17 +29,52 @@
  * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-// `reflect-metadata` will allow us to use decorators.
-// This is required by `typedi` for dependency injection.
-import "reflect-metadata";
-
-import app from "./app";
-import http from "http";
+import crypto from "crypto";
 import config from "@config";
-import { logger } from "@container";
+import redis from "@db/redis";
+import { isNil } from "lodash";
+import { add } from "date-fns";
+import { Pair } from "@lib/Pair";
+import type { Handler } from "express";
+import { send } from "@services/mailer";
+import { logger, userDao } from "@container";
 
-// Create the server and start listening on the supplied port.
-http.createServer(app).listen(config.polygon.port, () => {
-  const address = `http://127.0.0.1:${config.polygon.port}`;
-  logger.info(`Server started at ${address}`);
-});
+const handler: Handler = async (req, res) => {
+  const { email } = req.body;
+  const user = await userDao.getUserByEmail(email);
+
+  if (isNil(user)) return res.sendStatus(422);
+  else {
+    const payload = JSON.stringify({ email });
+    const token = crypto.randomBytes(12).toString("hex");
+
+    try {
+      const now = new Date();
+
+      await Promise.all([
+        redis.set(`reset:${token}`, payload),
+        redis.expire(`reset:${token}`, config.email.expireVerification),
+        send(
+          email,
+          new Pair("reset-password", config.courier.events["reset-password"]!),
+          {
+            token,
+            date: now,
+            to: user.email,
+            frontend: config.polygon.frontend,
+            expires: add(now, {
+              seconds: config.email.expireVerification,
+            }).toUTCString(),
+          }
+        ),
+      ]);
+
+      return res.sendStatus(204);
+    } catch (error) {
+      logger.error(error);
+      return res.sendStatus(500);
+    }
+  }
+};
+
+export default handler;

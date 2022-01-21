@@ -29,50 +29,60 @@
  * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-import pg from "@db/pg";
+import redis from "@db/redis";
 import { isNil } from "lodash";
+import { userDao } from "@container";
 import bcrypt from "@node-rs/bcrypt";
 import { createJwt } from "@lib/jwt";
-import type { User } from "@dao/entities/User";
+import type { Payload } from "./register";
+import { User } from "@dao/entities/User";
 import type { Request, Response } from "express";
 
-const login = async (req: Request, res: Response) => {
-  const { email, password } = req.body;
+const handler = async (req: Request, res: Response) => {
+  const { token: suppliedToken } = req.params;
+  const { password: suppliedPassword } = req.body;
 
-  // Find the user by email
-  const user = await pg.getFirst<Partial<User>>(
-    "SELECT id, password FROM users WHERE email = $1",
-    [email]
-  );
+  // Getting the verification token from Redis
+  const redisPayload = await redis.get(`verif:${suppliedToken}`);
 
-  if (!isNil(user)) {
-    const correctPassword = await bcrypt.verify(password, user?.password!);
+  if (!isNil(redisPayload)) {
+    const parsed = JSON.parse(
+      Buffer.from(redisPayload, "base64").toString()
+    ) as Payload;
+
+    const correctPassword = await bcrypt.verify(
+      suppliedPassword,
+      parsed.password
+    );
+
     if (correctPassword) {
-      const accessToken = createJwt({ id: user.id }, { expiresIn: "2d" });
-      const refreshToken = createJwt({ id: user.id }, { expiresIn: "30d" });
+      const [user] = await Promise.all([
+        // Creating a user
+        userDao.createUser(
+          new User(
+            parsed.email,
+            parsed.password,
+            parsed.username,
+            parsed.lastName,
+            parsed.firstName
+          )
+        ),
+        // Deleting the verification token from Redis
+        redis.del(`verif:${suppliedToken}`),
+      ]);
 
-      return res
-        .cookie("@polygon/refresh", refreshToken, {
-          secure: false,
-          httpOnly: true,
-          // 30 days
-          maxAge: 1000 * 60 ** 2 * 24 * 30,
-        })
-        .json({
-          accessToken,
-          refreshToken,
-          tokenType: "Bearer",
-          // 2 days
-          expiresIn: 1000 * 60 ** 2 * 24 * 2,
-        });
-    }
+      // TODO: This part should be updated
+      const accessToken = createJwt({ id: user?.id }, { expiresIn: "2d" });
+      const refreshToken = createJwt({ id: user?.id }, { expiresIn: "30d" });
 
-    // Passwords do not match
-    return res.sendStatus(403);
-  }
-
-  // User does not exist
-  return res.sendStatus(401);
+      return res.status(201).json({
+        accessToken,
+        refreshToken,
+        tokenType: "Bearer",
+        expiresIn: 1000 * 60 ** 2 * 24 * 2,
+      });
+    } else return res.sendStatus(401);
+  } else return res.sendStatus(401);
 };
 
-export default login;
+export default handler;

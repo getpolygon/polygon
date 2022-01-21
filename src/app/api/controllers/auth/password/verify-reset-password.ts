@@ -29,17 +29,42 @@
  * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-// `reflect-metadata` will allow us to use decorators.
-// This is required by `typedi` for dependency injection.
-import "reflect-metadata";
-
-import app from "./app";
-import http from "http";
-import config from "@config";
+import pg from "@db/pg";
+import redis from "@db/redis";
+import { isNil } from "lodash";
 import { logger } from "@container";
+import bcrypt from "@node-rs/bcrypt";
+import type { Handler } from "express";
 
-// Create the server and start listening on the supplied port.
-http.createServer(app).listen(config.polygon.port, () => {
-  const address = `http://127.0.0.1:${config.polygon.port}`;
-  logger.info(`Server started at ${address}`);
-});
+const handler: Handler = async (req, res) => {
+  const { token: suppliedToken } = req.params;
+  const { password: suppliedPassword } = req.body;
+
+  // Checking if the token is valid
+  const existingRecord = await redis.get(`reset:${suppliedToken}`);
+  if (isNil(existingRecord)) return res.sendStatus(403);
+  else {
+    // We will need to parse the stringified value from
+    // Redis in order to get the email of the user.
+    const payload = JSON.parse(existingRecord);
+    const hashedPassword = await bcrypt.hash(suppliedPassword);
+
+    try {
+      // Updating the password and removing the token from Redis
+      await Promise.all([
+        pg.query("UPDATE users SET password = $1 WHERE email = $2", [
+          payload.email,
+          hashedPassword,
+        ]),
+        redis.del(`reset:${suppliedToken}`),
+      ]);
+
+      return res.sendStatus(201);
+    } catch (error) {
+      logger.error(error);
+      return res.sendStatus(500);
+    }
+  }
+};
+
+export default handler;

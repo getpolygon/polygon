@@ -29,17 +29,18 @@
  * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-// `reflect-metadata` will allow us to use decorators.
-// This is required by `typedi` for dependency injection.
-import "reflect-metadata";
+export class Pair<F, S> {
+  private readonly internal: [F, S];
 
-import app from "./app";
-import http from "http";
-import config from "@config";
-import { logger } from "@container";
+  constructor(first: F, second: S) {
+    this.internal = [first, second];
+  }
 
-// Create the server and start listening on the supplied port.
-http.createServer(app).listen(config.polygon.port, () => {
-  const address = `http://127.0.0.1:${config.polygon.port}`;
-  logger.info(`Server started at ${address}`);
-});
+  public getFirst(): F {
+    return this.internal[0];
+  }
+
+  public getSecond(): S {
+    return this.internal[1];
+  }
+}

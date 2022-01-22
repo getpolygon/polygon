@@ -70,8 +70,7 @@ Create a `config.yaml` in root directory and add the following properties to it:
 
 ```yaml
 jwt:
-  access: "<something super random>"
-  refresh: "<something super random>"
+  secret: "<something super random>"
 
 databases:
   redis: "redis://default:<password>@localhost:6379/"
@@ -79,8 +78,8 @@ databases:
   postgres: "postgres://postgres:<password>@localhost:5432/postgres"
 ```
 
-Replace `<something super random>` with a random string.
-We recommend a string value with a length of at least `512` bits(64 characters).
+Replace `<something super random>` with a random string. We recommend a string value
+with a length of at least `512` bits(64 characters).
 
 #### Running migrations
 

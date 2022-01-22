@@ -65,7 +65,7 @@ const CONFIG_SCHEMA = z
   .object({
     polygon: z.object({
       port: z.number().default(3001),
-      frontend: z.string().min(1).url(),
+      frontend: z.string().min(1).url().nullable().default(null),
       templates: z
         .optional(
           z.object({
@@ -191,6 +191,16 @@ const CONFIG_SCHEMA = z
      * undefined behavior at runtime.
      */
     if (v.email.enableVerification && v.email.client !== "none") {
+      if (v.polygon.frontend === null) {
+        c.addIssue({
+          fatal: true,
+          code: z.ZodIssueCode.custom,
+          path: ["polygon", "frontend"],
+          message:
+            "`polygon.frontend` should be supplied for usage with email clients.",
+        });
+      }
+
       Object.entries(v.smtp).map(([__k, __v]) => {
         if (isNil(__v)) {
           c.addIssue({

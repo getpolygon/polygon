@@ -219,6 +219,18 @@ const CONFIG_SCHEMA = z
             message: `To use \`courier\` as an email client, property \`courier.${__k}\` should be defined in the configuration file`,
           });
         }
+
+        // Verify the presence of required Courier events.
+        Object.entries(v.courier.events).map(([__k, __v]) => {
+          if (isNil(__v)) {
+            c.addIssue({
+              fatal: true,
+              path: ["courier", "events", __k],
+              code: z.ZodIssueCode.custom,
+              message: `To use \`courier\` as an email client, a valid event ID for \`courier.events.${__k}\` should be specified.`,
+            });
+          }
+        });
       });
 
       Object.entries(v.courier.events).map(([__k, __v]) => {

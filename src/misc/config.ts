@@ -63,18 +63,20 @@ class UninitializedConfigError extends Error {
  */
 const CONFIG_SCHEMA = z
   .object({
-    polygon: z.object({
-      port: z.number().default(3001),
-      frontend: z.string().min(1).url().nullable().default(null),
-      templates: z
-        .optional(
-          z.object({
-            path: z.optional(z.string()).default("templates/"),
-          })
-        )
-        .default({}),
-      origins: z.optional(z.array(z.string())).default([]),
-    }),
+    polygon: z
+      .object({
+        port: z.number().default(3001),
+        frontend: z.string().min(1).url().nullable().default(null),
+        templates: z
+          .optional(
+            z.object({
+              path: z.optional(z.string()).default("templates/"),
+            })
+          )
+          .default({}),
+        origins: z.optional(z.array(z.string())).default([]),
+      })
+      .default({}),
 
     jwt: z.object({
       secret: z.string(),

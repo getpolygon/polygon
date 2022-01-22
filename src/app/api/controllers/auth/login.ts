@@ -35,6 +35,7 @@ import bcrypt from "@node-rs/bcrypt";
 import { createJwt } from "@lib/jwt";
 import type { User } from "@dao/entities/User";
 import type { Request, Response } from "express";
+import { AuthResponse } from "./common/AuthResponse";
 
 const login = async (req: Request, res: Response) => {
   const { email, password } = req.body;
@@ -50,21 +51,8 @@ const login = async (req: Request, res: Response) => {
     if (correctPassword) {
       const accessToken = createJwt({ id: user.id }, { expiresIn: "2d" });
       const refreshToken = createJwt({ id: user.id }, { expiresIn: "30d" });
-
-      return res
-        .cookie("@polygon/refresh", refreshToken, {
-          secure: false,
-          httpOnly: true,
-          // 30 days
-          maxAge: 1000 * 60 ** 2 * 24 * 30,
-        })
-        .json({
-          accessToken,
-          refreshToken,
-          tokenType: "Bearer",
-          // 2 days
-          expiresIn: 1000 * 60 ** 2 * 24 * 2,
-        });
+      const response = new AuthResponse({ accessToken, refreshToken });
+      return res.json(response);
     }
 
     // Passwords do not match

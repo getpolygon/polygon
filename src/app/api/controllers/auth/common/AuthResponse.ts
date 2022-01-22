@@ -29,28 +29,18 @@
  * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-import login from "./login";
-import {
-  registerWithVerification,
-  registerWithoutVerification,
-} from "./registration/register";
-import refreshToken from "./refresh-token";
-import resetPassword from "./password/reset-password";
-import verifyResetPassword from "./password/verify-reset-password";
-import registrationVerification from "./registration/registration-verification";
 
-export default {
-  login,
-  refreshToken,
+interface IAuthResponseProps {
+  accessToken: string;
+  refreshToken: string;
+}
 
-  password: {
-    resetPassword,
-    verifyResetPassword,
-  },
-
-  register: {
-    registrationVerification,
-    registerWithVerification,
-    registerWithoutVerification,
-  },
-};
+export class AuthResponse {
+  constructor(props: IAuthResponseProps) {
+    return {
+      ...props,
+      tokenType: "Bearer",
+      expiresIn: 1000 * 60 ** 2 * 24 * 2,
+    };
+  }
+}

@@ -37,6 +37,7 @@ import { createJwt } from "@lib/jwt";
 import type { Payload } from "./register";
 import { User } from "@dao/entities/User";
 import type { Request, Response } from "express";
+import { AuthResponse } from "../common/AuthResponse";
 
 const handler = async (req: Request, res: Response) => {
   const { token: suppliedToken } = req.params;
@@ -71,16 +72,10 @@ const handler = async (req: Request, res: Response) => {
         redis.del(`verif:${suppliedToken}`),
       ]);
 
-      // TODO: This part should be updated
       const accessToken = createJwt({ id: user?.id }, { expiresIn: "2d" });
       const refreshToken = createJwt({ id: user?.id }, { expiresIn: "30d" });
-
-      return res.status(201).json({
-        accessToken,
-        refreshToken,
-        tokenType: "Bearer",
-        expiresIn: 1000 * 60 ** 2 * 24 * 2,
-      });
+      const response = new AuthResponse({ accessToken, refreshToken });
+      return res.status(201).json(response);
     } else return res.sendStatus(401);
   } else return res.sendStatus(401);
 };

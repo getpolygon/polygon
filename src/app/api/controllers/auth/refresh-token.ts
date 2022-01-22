@@ -33,25 +33,18 @@ import { logger } from "@container";
 import { createJwt, verifyJwt } from "@lib/jwt";
 import type { Handler, Request } from "express";
 import { JsonWebTokenError } from "jsonwebtoken";
+import { AuthResponse } from "./common/AuthResponse";
 
 const handler: Handler = async (req: Request, res) => {
-  const suppliedRefreshToken = req.cookies["@polygon/refresh"];
-
+  const suppliedRefreshToken = req.headers["X-Refresh-Token"] as string;
   if (!suppliedRefreshToken) return res.sendStatus(401);
   else {
     try {
       const { id } = verifyJwt<{ id: string }>(suppliedRefreshToken);
       const accessToken = createJwt({ id }, { expiresIn: "2d" });
       const refreshToken = createJwt({ id }, { expiresIn: "30d" });
-
-      return res
-        .cookie("@polygon/refresh", refreshToken, {
-          secure: false,
-          httpOnly: true,
-          // 30 days
-          maxAge: 1000 * 60 ** 2 * 24 * 30,
-        })
-        .json({ accessToken });
+      const response = new AuthResponse({ accessToken, refreshToken });
+      return res.json(response);
     } catch (error) {
       if (error instanceof JsonWebTokenError) return res.sendStatus(401);
       else {

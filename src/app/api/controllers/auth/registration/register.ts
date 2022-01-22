@@ -42,6 +42,7 @@ import { User } from "@dao/entities/User";
 import { logger, userDao } from "@container";
 import type { Request, Response } from "express";
 import { DuplicateRecordException } from "@dao/errors/DuplicateRecordException";
+import { AuthResponse } from "../common/AuthResponse";
 
 /**
  * Temporary payload that will be deserialized from
@@ -70,27 +71,16 @@ export const registerWithoutVerification = async (
   const { firstName, lastName, password, username, email } = req.body;
 
   try {
-    const user = await userDao.createUser(
-      new User(email, password, username, lastName, firstName)
-    );
+    const user = new User(email, password, username, lastName, firstName);
+    const { id } = (await userDao.createUser(user)) as {
+      [key: string]: unknown;
+    };
 
-    const accessToken = createJwt({ id: user?.id }, { expiresIn: "2d" });
-    const refreshToken = createJwt({ id: user?.id }, { expiresIn: "30d" });
+    const accessToken = createJwt({ id }, { expiresIn: "2d" });
+    const refreshToken = createJwt({ id }, { expiresIn: "30d" });
 
-    return res
-      .cookie("@polygon/refresh", refreshToken, {
-        secure: false,
-        httpOnly: true,
-        // 30 days
-        maxAge: 1000 * 60 ** 2 * 24 * 30,
-      })
-      .status(201)
-      .json({
-        accessToken,
-        refreshToken,
-        tokenType: "Bearer",
-        expiresIn: 1000 * 60 ** 2 * 24 * 2,
-      });
+    const response = new AuthResponse({ accessToken, refreshToken });
+    return res.status(201).json(response);
   } catch (error) {
     // If a user with similar credentials exists
     if (error instanceof DuplicateRecordException) return res.sendStatus(409);

@@ -7,8 +7,8 @@ const ofUser = async (req: Request, res: Response) => {
   const { username } = req.params;
 
   // Get optional the cursor and the limit from the query.
-  // It's guaranteed to be a valid UUID string by `celebrate`
-  // middleware.
+  // It's guaranteed to be a valid UUID string, so we do
+  // not need to handle anything else.
   const { cursor, limit } = req.query as unknown as {
     limit: number;
     cursor: string;

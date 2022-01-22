@@ -1,5 +1,6 @@
+import { z } from "zod";
 import express from "express";
-import { celebrate, Joi, Segments } from "celebrate";
+import { zodiac } from "@middleware/zodiac";
 import { me, others, close } from "@api/controllers/users";
 import { verifyNotBlockedWithParams } from "@middleware/verifyNotBlockedWithParams";
 
@@ -14,7 +15,11 @@ router.delete("/close", close);
 // For fetching account details
 router.get(
   "/:username",
-  celebrate({ [Segments.PARAMS]: { username: Joi.string().exist() } }),
+  zodiac({
+    params: z.object({
+      username: z.string().regex(/^[a-zA-Z0-9]+([_ -]?[a-zA-Z0-9])*$/),
+    }),
+  }),
   verifyNotBlockedWithParams("username"),
   others
 );

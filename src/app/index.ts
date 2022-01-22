@@ -34,7 +34,6 @@ import helmet from "helmet";
 import config from "@config";
 import express from "express";
 import routes from "@api/routes";
-import celebrate from "celebrate";
 import { trace } from "@util/trace";
 import compression from "compression";
 import cookieParser from "cookie-parser";
@@ -80,10 +79,5 @@ if (process.env.NODE_ENV === "development") {
 
 // Mount the routes to the app.
 app.use(routes);
-
-// `celebrate` error handling middleware. Will return JSON response
-// with invalid fields instead of HTML. The error middleware should
-// invoke after a route is executed.
-app.use(celebrate.errors({ statusCode: 400 }));
 
 export default app;

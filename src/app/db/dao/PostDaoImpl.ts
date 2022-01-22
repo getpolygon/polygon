@@ -1,7 +1,6 @@
 import { Postgres } from "@db/pg";
 import { Service } from "typedi";
 import type { Post } from "./entities/Post";
-import type { User } from "./entities/User";
 import { nth, isNil, isEmpty } from "lodash";
 import { PostDao } from "./interfaces/PostDao";
 
@@ -23,7 +22,7 @@ export class PostDaoImpl implements PostDao {
       // Check if the cursor is valid. If not, we won't assign it to the cursor.
       // This is to prevent the user from providing an invalid cursor.
       // prettier-ignore
-      const { rows: { 0: __cursor } } = await this.db.query(
+      const __cursor = await this.db.getFirst<Partial<Post> | null>(
         `
         SELECT id, created_at FROM posts WHERE id = $1
         ORDER BY created_at DESC
@@ -127,14 +126,7 @@ export class PostDaoImpl implements PostDao {
   public async getPostById(
     id: string,
     currentUserId: string
-  ): Promise<
-    Partial<Post> & {
-      upvotes: number;
-      comments: number;
-      upvoted: boolean;
-      user: Partial<User>;
-    }
-  > {
+  ): Promise<Partial<Post>> {
     // Will get the post, including the user who created it
     // and the number of upvotes and comments. Will also
     // check if current user has upvoted the post. Will filter

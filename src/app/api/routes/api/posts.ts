@@ -1,39 +1,40 @@
+import { z } from "zod";
 import express from "express";
-import { celebrate, Joi, Segments } from "celebrate";
+import { zodiac } from "@middleware/zodiac";
 import { uuidValidator } from "@middleware/uuidValidator";
 import { only, create, remove, ofUser } from "@api/controllers/posts";
 
 const router = express.Router();
 
-// To fetch only one post with ID
+// For fetching only one post
 router.get("/only/:id", uuidValidator(), only);
+// For deleting a post
+router.delete("/:id/delete", uuidValidator(), remove);
 
-// To fetch posts of an account
+// For fetching the posts of a user
 router.get(
   "/:username",
-  celebrate({
-    [Segments.PARAMS]: {
-      username: Joi.string().exist(),
-    },
-    [Segments.QUERY]: {
-      cursor: Joi.string().uuid().optional().cache(),
-      limit: Joi.number().greater(2).less(10).default(2).optional().cache(),
-    },
+  zodiac({
+    params: z.object({
+      username: z.string(),
+    }),
+
+    query: z.object({
+      cursor: z.string().uuid().optional(),
+      limit: z.number().min(2).max(10).default(2),
+    }),
   }),
   ofUser
 );
 
-// To delete a post
-router.delete("/:id/delete", uuidValidator(), remove);
-
-// To create a post
+// For creating a post
 router.post(
   "/create",
-  celebrate({
-    [Segments.BODY]: {
-      title: Joi.string().max(100).exist().trim(),
-      content: Joi.string().optional().failover(null).trim(),
-    },
+  zodiac({
+    body: z.object({
+      title: z.string(),
+      content: z.string().nullable().default(null),
+    }),
   }),
   create
 );

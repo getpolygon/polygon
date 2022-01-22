@@ -53,8 +53,8 @@ const handler: Handler = async (req, res) => {
       // Updating the password and removing the token from Redis
       await Promise.all([
         pg.query("UPDATE users SET password = $1 WHERE email = $2", [
-          payload.email,
           hashedPassword,
+          payload.email,
         ]),
         redis.del(`reset:${suppliedToken}`),
       ]);

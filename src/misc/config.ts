@@ -296,7 +296,8 @@ class Config {
   constructor(private readonly logger: Logger) {
     this.initialized = false;
     this.internal = {} as unknown as ConfigType;
-    this.nodeEnv = process.env.NODE_ENV as unknown as NodeEnv;
+    // Default to "production" environment if `process.env` is undefined
+    this.nodeEnv = (process.env.NODE_ENV as unknown as NodeEnv) || "production";
     this.configPath = path.resolve(
       env
         .get("POLYGON.CONFIG.PATH")

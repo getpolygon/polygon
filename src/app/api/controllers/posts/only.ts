@@ -20,8 +20,10 @@ const only = async (req: Request, res: Response) => {
     // since we are getting the post and checking user relationship in the same query
     // in which we might end up with a post that doesn't "exist" but was actually
     // filtered out by the query.
-    // prettier-ignore
-    const { rows: { 0: { exists } } } = await pg.query("SELECT EXISTS (SELECT 1 FROM posts WHERE id = $1)", [id]);
+    const exists = await pg.getFirst(
+      "SELECT EXISTS (SELECT 1 FROM posts WHERE id = $1)",
+      [id]
+    );
 
     // The post exists, but the user doesn't have permission to see it.
     if (exists) return res.sendStatus(403);

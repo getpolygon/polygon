@@ -11,10 +11,10 @@ export const uuidValidator = (
   fields: string[] = ["id"],
   segment = Segments.PARAMS
 ) => {
-  const pathParams: { [key: string]: unknown } = {};
+  const pathParams: { [key: string]: any } = {};
   fields.map((field) => (pathParams[field] = z.string().uuid()));
 
   return zodiac({
-    [segment]: pathParams,
+    [segment]: z.object(pathParams),
   });
 };

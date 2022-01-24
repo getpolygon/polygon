@@ -8,6 +8,7 @@ const router = express.Router();
 
 // For fetching only one post
 router.get("/only/:id", uuidValidator(), only);
+
 // For deleting a post
 router.delete("/:id/delete", uuidValidator(), remove);
 
@@ -33,7 +34,7 @@ router.post(
   zodiac({
     body: z.object({
       title: z.string(),
-      content: z.string().nullable().default(null),
+      content: z.optional(z.string()).nullable().default(null),
     }),
   }),
   create

@@ -19,20 +19,18 @@
     "preserveConstEnums": true,
     "emitDecoratorMetadata": true,
     "experimentalDecorators": true,
-    // prettier-ignore
     "paths": {
-      "db/*"          :["db/*"],
-      "lib/*"         :["lib/*"],
-      "util/*"        :["util/*"],
-      "routes/*"      :["routes/*"],
-      "config/*"      :["config/*"],
-      "dao/*"         :["db/dao/*"],
-      "services/*"    :["services/*"],
-      "validation/*"  :["validation/*"],
-      "middleware/*"  :["middleware/*"],
-      "controllers/*" :["controllers/*"],
-      "templates/*"   :["../templates/*"],
-      "container"     :["container/index"],
+      "@app/*": ["app/*"],
+      "@db/*": ["app/db/*"],
+      "@util/*": ["util/*"],
+      "@api/*": ["app/api/*"],
+      "@lib/*": ["app/lib/*"],
+      "@vendor/*": ["vendor/*"],
+      "@dao/*": ["app/db/dao/*"],
+      "@config": ["misc/config"],
+      "@container": ["misc/container"],
+      "@services/*": ["app/services/*"],
+      "@middleware/*": ["app/api/middleware/*"]
     },
     "typeRoots": ["./src/types", "./node_modules/@types"],
     "plugins": [
@@ -41,5 +39,5 @@
     ]
   },
   "include": ["src/**/*"],
-  "exclude": ["node_modules", "build", "*.spec.ts"]
+  "exclude": ["node_modules", "build", "**/*.spec.ts/**"]
 }

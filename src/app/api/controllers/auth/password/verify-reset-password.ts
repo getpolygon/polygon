@@ -29,44 +29,42 @@
  * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-import chalk from "chalk";
-import { Service } from "typedi";
-import { format } from "date-fns";
+import pg from "@db/pg";
+import redis from "@db/redis";
+import { isNil } from "lodash";
+import { logger } from "@container";
+import bcrypt from "@node-rs/bcrypt";
+import type { Handler } from "express";
 
-@Service()
-/**
- * Logger service. Provides a simple interface for logging.
- */
-export class Logger {
-  public raw(m: unknown, ...op: unknown[]) {
-    console.log(this.getDateString(), m, ...op);
-  }
+const handler: Handler = async (req, res) => {
+  const { token: suppliedToken } = req.params;
+  const { password: suppliedPassword } = req.body;
 
-  public info(m: unknown, ...op: unknown[]) {
-    const prefix = `[${chalk.blueBright("INFO")}]`;
-    console.info(`${this.getDateString()} ${prefix} >`, m, ...op);
-  }
+  // Checking if the token is valid
+  const existingRecord = await redis.get(`reset:${suppliedToken}`);
+  if (isNil(existingRecord)) return res.sendStatus(403);
+  else {
+    // We will need to parse the stringified value from
+    // Redis in order to get the email of the user.
+    const payload = JSON.parse(existingRecord);
+    const hashedPassword = await bcrypt.hash(suppliedPassword);
 
-  public error(e: unknown, ...op: unknown[]) {
-    const prefix = `[${chalk.redBright("ERROR")}]`;
-    console.error(`${this.getDateString()} ${prefix} >`, e, ...op);
-  }
+    try {
+      // Updating the password and removing the token from Redis
+      await Promise.all([
+        pg.query("UPDATE users SET password = $1 WHERE email = $2", [
+          hashedPassword,
+          payload.email,
+        ]),
+        redis.del(`reset:${suppliedToken}`),
+      ]);
 
-  public warn(m: unknown, ...op: unknown[]) {
-    const prefix = `[${chalk.yellowBright("WARNING")}]`;
-    console.warn(`${this.getDateString()} ${prefix} >`, m, ...op);
-  }
-
-  public debug(m: unknown, ...op: unknown[]) {
-    if (process.env.NODE_ENV !== "production") {
-      const prefix = `[${chalk.blackBright("DEBUG")}]`;
-      console.log(`${this.getDateString()} ${prefix} >`, m, ...op);
+      return res.sendStatus(201);
+    } catch (error) {
+      logger.error(error);
+      return res.sendStatus(500);
     }
   }
+};
 
-  private getDateString(): string {
-    // dd/mm/yyyy@hh:mm:ssAM/PM by default
-    const formatted = format(new Date(), "dd.MM.uuuu@hh:mm:saa");
-    return chalk.dim(formatted);
-  }
-}
+export default handler;

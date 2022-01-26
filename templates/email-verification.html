@@ -1,0 +1,54 @@
+<div class="m-4 p-4 border-gray-300 border-2 rounded-xl bg-gray-100">
+  <div class="flex align-middle justify-between">
+    <div>
+      <h1 class="text-4xl font-bold text-purple-600">Polygon</h1>
+      <p class="text-md font-semibold text-gray-900">
+        Email verification request
+      </p>
+    </div>
+
+    <div>
+      <p class="text-sm text-gray-700">
+        at: <span class="text-gray-600 font-semibold">{{date}}</span>
+      </p>
+      <p class="text-sm text-gray-700">
+        to: <span class="text-gray-600 font-semibold">{{to}}</span>
+      </p>
+    </div>
+  </div>
+
+  <hr class="my-3" />
+
+  <div class="container leading-tight text-md">
+    <div>
+      <p>Hi {{name}},</p>
+      <br />
+      <p>
+        You are receiving this email because you tried to open an account at
+        Polygon. To start using Polygon, please verify your email address, by
+        clicking on the button below:
+      </p>
+      <button class="my-3 rounded-md bg-purple-500 text-gray-50 p-2">
+        Reset password
+      </button>
+    </div>
+
+    <div>
+      <p>or by using the following link:</p>
+      <a
+        class="text-sm text-blue-500"
+        href="{{frontend}}/reset-password/{{token}}"
+        >{{frontend}}/reset-password/{{token}}</a
+      >
+    </div>
+  </div>
+
+  <div class="mt-4">
+    <p class="text-xs text-gray-500">
+      This email will expire at
+      <span class="font-semibold italic text-gray-500">{{expires}}</span>. If you
+      did not try to create an account at Polygon, you can safely ignore this
+      email.
+    </p>
+  </div>
+</div>

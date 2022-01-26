@@ -29,44 +29,38 @@
  * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-import chalk from "chalk";
-import { Service } from "typedi";
-import { format } from "date-fns";
+import pg from "@db/pg";
+import { isNil } from "lodash";
+import bcrypt from "@node-rs/bcrypt";
+import { createJwt } from "@lib/jwt";
+import type { User } from "@dao/entities/User";
+import type { Request, Response } from "express";
+import { AuthResponse } from "./common/AuthResponse";
 
-@Service()
-/**
- * Logger service. Provides a simple interface for logging.
- */
-export class Logger {
-  public raw(m: unknown, ...op: unknown[]) {
-    console.log(this.getDateString(), m, ...op);
-  }
+const login = async (req: Request, res: Response) => {
+  const { email, password } = req.body;
 
-  public info(m: unknown, ...op: unknown[]) {
-    const prefix = `[${chalk.blueBright("INFO")}]`;
-    console.info(`${this.getDateString()} ${prefix} >`, m, ...op);
-  }
+  // Find the user by email
+  const user = await pg.getFirst<Partial<User>>(
+    "SELECT id, password FROM users WHERE email = $1",
+    [email]
+  );
 
-  public error(e: unknown, ...op: unknown[]) {
-    const prefix = `[${chalk.redBright("ERROR")}]`;
-    console.error(`${this.getDateString()} ${prefix} >`, e, ...op);
-  }
-
-  public warn(m: unknown, ...op: unknown[]) {
-    const prefix = `[${chalk.yellowBright("WARNING")}]`;
-    console.warn(`${this.getDateString()} ${prefix} >`, m, ...op);
-  }
-
-  public debug(m: unknown, ...op: unknown[]) {
-    if (process.env.NODE_ENV !== "production") {
-      const prefix = `[${chalk.blackBright("DEBUG")}]`;
-      console.log(`${this.getDateString()} ${prefix} >`, m, ...op);
+  if (!isNil(user)) {
+    const correctPassword = await bcrypt.verify(password, user?.password!);
+    if (correctPassword) {
+      const accessToken = createJwt({ id: user.id }, { expiresIn: "2d" });
+      const refreshToken = createJwt({ id: user.id }, { expiresIn: "30d" });
+      const response = new AuthResponse({ accessToken, refreshToken });
+      return res.json(response);
     }
+
+    // Passwords do not match
+    return res.sendStatus(403);
   }
 
-  private getDateString(): string {
-    // dd/mm/yyyy@hh:mm:ssAM/PM by default
-    const formatted = format(new Date(), "dd.MM.uuuu@hh:mm:saa");
-    return chalk.dim(formatted);
-  }
-}
+  // User does not exist
+  return res.sendStatus(401);
+};
+
+export default login;

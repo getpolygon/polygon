@@ -29,44 +29,28 @@
  * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-import chalk from "chalk";
-import { Service } from "typedi";
-import { format } from "date-fns";
+import login from "./login";
+import {
+  registerWithVerification,
+  registerWithoutVerification,
+} from "./registration/register";
+import refreshToken from "./refresh-token";
+import resetPassword from "./password/reset-password";
+import verifyResetPassword from "./password/verify-reset-password";
+import registrationVerification from "./registration/registration-verification";
 
-@Service()
-/**
- * Logger service. Provides a simple interface for logging.
- */
-export class Logger {
-  public raw(m: unknown, ...op: unknown[]) {
-    console.log(this.getDateString(), m, ...op);
-  }
+export default {
+  login,
+  refreshToken,
 
-  public info(m: unknown, ...op: unknown[]) {
-    const prefix = `[${chalk.blueBright("INFO")}]`;
-    console.info(`${this.getDateString()} ${prefix} >`, m, ...op);
-  }
+  password: {
+    resetPassword,
+    verifyResetPassword,
+  },
 
-  public error(e: unknown, ...op: unknown[]) {
-    const prefix = `[${chalk.redBright("ERROR")}]`;
-    console.error(`${this.getDateString()} ${prefix} >`, e, ...op);
-  }
-
-  public warn(m: unknown, ...op: unknown[]) {
-    const prefix = `[${chalk.yellowBright("WARNING")}]`;
-    console.warn(`${this.getDateString()} ${prefix} >`, m, ...op);
-  }
-
-  public debug(m: unknown, ...op: unknown[]) {
-    if (process.env.NODE_ENV !== "production") {
-      const prefix = `[${chalk.blackBright("DEBUG")}]`;
-      console.log(`${this.getDateString()} ${prefix} >`, m, ...op);
-    }
-  }
-
-  private getDateString(): string {
-    // dd/mm/yyyy@hh:mm:ssAM/PM by default
-    const formatted = format(new Date(), "dd.MM.uuuu@hh:mm:saa");
-    return chalk.dim(formatted);
-  }
-}
+  register: {
+    registrationVerification,
+    registerWithVerification,
+    registerWithoutVerification,
+  },
+};

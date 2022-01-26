@@ -29,44 +29,50 @@
  * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-import chalk from "chalk";
-import { Service } from "typedi";
-import { format } from "date-fns";
+import config from "@config";
+import { compile } from "handlebars";
+import { createTransport } from "nodemailer";
+import { readTemplate } from "@lib/readTemplate";
 
-@Service()
+const isNodemailerAndEnabled =
+  config.email.client === "nodemailer" && config.email.enableVerification;
+
+// Creating a Nodemailer transport
+const nodemailer = isNodemailerAndEnabled
+  ? createTransport({
+      auth: {
+        user: config.smtp.user!,
+        pass: config.smtp.pass!,
+      },
+      host: config.smtp.host!,
+      port: config.smtp.port!,
+      secure: config.smtp.secure,
+    })
+  : null;
+
 /**
- * Logger service. Provides a simple interface for logging.
+ * Function for sending emails with Nodemailer.
+ *
+ * @param email - Recipient email address
+ * @param data - Additional data to compile the template with
+ * @param templateName - Template name or path without `.hbs` extension
  */
-export class Logger {
-  public raw(m: unknown, ...op: unknown[]) {
-    console.log(this.getDateString(), m, ...op);
-  }
+export const send = async (
+  email: string,
+  templateName: string,
+  data?: object
+) => {
+  const template = await readTemplate(templateName);
+  const html = compile(template)(data);
 
-  public info(m: unknown, ...op: unknown[]) {
-    const prefix = `[${chalk.blueBright("INFO")}]`;
-    console.info(`${this.getDateString()} ${prefix} >`, m, ...op);
-  }
+  const response = await nodemailer?.sendMail({
+    html,
+    to: email,
+    priority: "high",
+    sender: config.smtp.user!,
+    subject: "Polygon email verification",
+    from: `Polygon <${config.smtp.user!}>`,
+  });
 
-  public error(e: unknown, ...op: unknown[]) {
-    const prefix = `[${chalk.redBright("ERROR")}]`;
-    console.error(`${this.getDateString()} ${prefix} >`, e, ...op);
-  }
-
-  public warn(m: unknown, ...op: unknown[]) {
-    const prefix = `[${chalk.yellowBright("WARNING")}]`;
-    console.warn(`${this.getDateString()} ${prefix} >`, m, ...op);
-  }
-
-  public debug(m: unknown, ...op: unknown[]) {
-    if (process.env.NODE_ENV !== "production") {
-      const prefix = `[${chalk.blackBright("DEBUG")}]`;
-      console.log(`${this.getDateString()} ${prefix} >`, m, ...op);
-    }
-  }
-
-  private getDateString(): string {
-    // dd/mm/yyyy@hh:mm:ssAM/PM by default
-    const formatted = format(new Date(), "dd.MM.uuuu@hh:mm:saa");
-    return chalk.dim(formatted);
-  }
-}
+  return response;
+};

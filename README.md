@@ -65,15 +65,12 @@ https://admin:stormi-admin@localhost:6345/
 
 ### Configuring the `core`
 
-Now, after the databases have been provisioned, we will need to configure the `core` itself. For now create a `config.yaml` in root directory and add the following properties to it:
+After the databases have been provisioned, we will need to configure the `core`.
+Create a `config.yaml` in root directory and add the following properties to it:
 
 ```yaml
-session:
-  secret: "<something super random>"
-
 jwt:
   secret: "<something super random>"
-  refresh: "<something super random>"
 
 databases:
   redis: "redis://default:<password>@localhost:6379/"
@@ -81,8 +78,8 @@ databases:
   postgres: "postgres://postgres:<password>@localhost:5432/postgres"
 ```
 
-Replace `<something super random>` with a random string. We recommend a
-string value with a length of at least `512` bits(64 characters).
+Replace `<something super random>` with a random string. We recommend a string value
+with a length of at least `512` bits(64 characters).
 
 #### Running migrations
 
@@ -99,7 +96,7 @@ related to SQL is up-to-date.
 
 #### Building the project
 
-Now it is time to install the dependencies, transpile the project and run it:
+To install the dependencies, transpile the project and run it:
 
 ```shell
 yarn install
@@ -117,7 +114,9 @@ polygon:
   # ...
 ```
 
-Congratulations 🎊 You should now have a complete version of `polygon-isecure/core` running. To sync with the nightly branch just run the following commands:
+## **Congratulations 🎊**
+
+You should now have a complete version of `polygon-isecure/core` running. To sync with the nightly branch just run the following commands:
 
 ```shell
 git fetch

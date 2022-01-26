@@ -29,44 +29,52 @@
  * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-import chalk from "chalk";
-import { Service } from "typedi";
-import { format } from "date-fns";
+import crypto from "crypto";
+import config from "@config";
+import redis from "@db/redis";
+import { isNil } from "lodash";
+import { add } from "date-fns";
+import { Pair } from "@lib/Pair";
+import type { Handler } from "express";
+import { send } from "@services/mailer";
+import { logger, userDao } from "@container";
 
-@Service()
-/**
- * Logger service. Provides a simple interface for logging.
- */
-export class Logger {
-  public raw(m: unknown, ...op: unknown[]) {
-    console.log(this.getDateString(), m, ...op);
-  }
+const handler: Handler = async (req, res) => {
+  const { email } = req.body;
+  const user = await userDao.getUserByEmail(email);
 
-  public info(m: unknown, ...op: unknown[]) {
-    const prefix = `[${chalk.blueBright("INFO")}]`;
-    console.info(`${this.getDateString()} ${prefix} >`, m, ...op);
-  }
+  if (isNil(user)) return res.sendStatus(422);
+  else {
+    const payload = JSON.stringify({ email });
+    const token = crypto.randomBytes(12).toString("hex");
 
-  public error(e: unknown, ...op: unknown[]) {
-    const prefix = `[${chalk.redBright("ERROR")}]`;
-    console.error(`${this.getDateString()} ${prefix} >`, e, ...op);
-  }
+    try {
+      const now = new Date();
 
-  public warn(m: unknown, ...op: unknown[]) {
-    const prefix = `[${chalk.yellowBright("WARNING")}]`;
-    console.warn(`${this.getDateString()} ${prefix} >`, m, ...op);
-  }
+      await Promise.all([
+        redis.set(`reset:${token}`, payload),
+        redis.expire(`reset:${token}`, config.email.expireVerification),
+        send(
+          email,
+          new Pair("reset-password", config.courier.events["reset-password"]!),
+          {
+            token,
+            date: now,
+            to: user.email,
+            frontend: config.polygon.frontend,
+            expires: add(now, {
+              seconds: config.email.expireVerification,
+            }).toUTCString(),
+          }
+        ),
+      ]);
 
-  public debug(m: unknown, ...op: unknown[]) {
-    if (process.env.NODE_ENV !== "production") {
-      const prefix = `[${chalk.blackBright("DEBUG")}]`;
-      console.log(`${this.getDateString()} ${prefix} >`, m, ...op);
+      return res.sendStatus(204);
+    } catch (error) {
+      logger.error(error);
+      return res.sendStatus(500);
     }
   }
+};
 
-  private getDateString(): string {
-    // dd/mm/yyyy@hh:mm:ssAM/PM by default
-    const formatted = format(new Date(), "dd.MM.uuuu@hh:mm:saa");
-    return chalk.dim(formatted);
-  }
-}
+export default handler;

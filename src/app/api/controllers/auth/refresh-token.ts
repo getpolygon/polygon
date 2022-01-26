@@ -29,44 +29,30 @@
  * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-import chalk from "chalk";
-import { Service } from "typedi";
-import { format } from "date-fns";
+import { logger } from "@container";
+import { createJwt, verifyJwt } from "@lib/jwt";
+import type { Handler, Request } from "express";
+import { JsonWebTokenError } from "jsonwebtoken";
+import { AuthResponse } from "./common/AuthResponse";
 
-@Service()
-/**
- * Logger service. Provides a simple interface for logging.
- */
-export class Logger {
-  public raw(m: unknown, ...op: unknown[]) {
-    console.log(this.getDateString(), m, ...op);
-  }
-
-  public info(m: unknown, ...op: unknown[]) {
-    const prefix = `[${chalk.blueBright("INFO")}]`;
-    console.info(`${this.getDateString()} ${prefix} >`, m, ...op);
-  }
-
-  public error(e: unknown, ...op: unknown[]) {
-    const prefix = `[${chalk.redBright("ERROR")}]`;
-    console.error(`${this.getDateString()} ${prefix} >`, e, ...op);
-  }
-
-  public warn(m: unknown, ...op: unknown[]) {
-    const prefix = `[${chalk.yellowBright("WARNING")}]`;
-    console.warn(`${this.getDateString()} ${prefix} >`, m, ...op);
-  }
-
-  public debug(m: unknown, ...op: unknown[]) {
-    if (process.env.NODE_ENV !== "production") {
-      const prefix = `[${chalk.blackBright("DEBUG")}]`;
-      console.log(`${this.getDateString()} ${prefix} >`, m, ...op);
+const handler: Handler = async (req: Request, res) => {
+  const suppliedRefreshToken = req.headers["X-Refresh-Token"] as string;
+  if (!suppliedRefreshToken) return res.sendStatus(401);
+  else {
+    try {
+      const { id } = verifyJwt<{ id: string }>(suppliedRefreshToken);
+      const accessToken = createJwt({ id }, { expiresIn: "2d" });
+      const refreshToken = createJwt({ id }, { expiresIn: "30d" });
+      const response = new AuthResponse({ accessToken, refreshToken });
+      return res.json(response);
+    } catch (error) {
+      if (error instanceof JsonWebTokenError) return res.sendStatus(401);
+      else {
+        logger.error(error);
+        return res.sendStatus(500);
+      }
     }
   }
+};
 
-  private getDateString(): string {
-    // dd/mm/yyyy@hh:mm:ssAM/PM by default
-    const formatted = format(new Date(), "dd.MM.uuuu@hh:mm:saa");
-    return chalk.dim(formatted);
-  }
-}
+export default handler;

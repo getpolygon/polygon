@@ -4,7 +4,7 @@
 ![Docker](https://github.com/polygon-isecure/core/actions/workflows/docker-publish.yml/badge.svg)
 [![FOSSA Status](https://app.fossa.com/api/projects/git%2Bgithub.com%2Fpolygon-isecure%2Fcore.svg?type=small)](https://app.fossa.com/projects/git%2Bgithub.com%2Fpolygon-isecure%2Fcore?ref=badge_small)
 
-> Warning: None of the branches is currently stable. The code is not guaranteed to work. Database schemas are sometimes being updated without creating new migration files. Currently, this is a work-in-progress.
+> Warning, none of the branches are currently stable. The code is not guaranteed to work, and the database schemas sometimes are updated without creating new migration files. Currently, this is a work-in-progress.
 
 The core powering [Polygon](https://polygon.am/): an upcoming open-source & privacy-oriented social network that is not hungry for your data.
 

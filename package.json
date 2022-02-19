@@ -58,6 +58,7 @@
     "ava": "^4.0.0",
     "eslint": "^8.4.0",
     "eslint-config-prettier": "^8.3.0",
+    "eslint-plugin-prefer-arrow": "^1.2.3",
     "eslint-plugin-prettier": "^4.0.0",
     "eslint-plugin-tsdoc": "^0.2.14",
     "express-router-dependency-graph": "^1.1.1",

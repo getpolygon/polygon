@@ -13,11 +13,24 @@
   "parserOptions": {
     "ecmaVersion": 13
   },
-  "plugins": ["@typescript-eslint", "eslint-plugin-tsdoc", "prettier"],
+  "plugins": [
+    "@typescript-eslint",
+    "eslint-plugin-tsdoc",
+    "prettier",
+    "prefer-arrow"
+  ],
   "rules": {
     "tsdoc/syntax": "warn",
     "semi": ["warn", "always"],
     "quotes": ["warn", "double"],
+    "prefer-arrow/prefer-arrow-functions": [
+      "error",
+      {
+        "disallowPrototype": true,
+        "singleReturnOnly": false,
+        "classPropertiesAllowed": false
+      }
+    ],
     "@typescript-eslint/no-empty-interface": "off",
     "@typescript-eslint/no-non-null-assertion": "off",
     "prettier/prettier": ["error", { "endOfLine": "auto" }],

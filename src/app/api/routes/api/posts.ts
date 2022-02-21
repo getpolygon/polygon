@@ -21,8 +21,9 @@ router.get(
     }),
 
     query: z.object({
-      cursor: z.string().uuid().optional(),
+      cursor: z.optional(z.string().uuid()),
       limit: z.number().min(2).max(10).default(2),
+      order: z.enum(["asc", "desc"]).default("desc"),
     }),
   }),
   ofUser

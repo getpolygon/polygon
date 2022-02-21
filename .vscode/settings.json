@@ -1,0 +1,12 @@
+{
+  "eslint.run": "onSave",
+  "editor.formatOnSave": true,
+  "editor.codeActionsOnSave": {
+    "source.fixAll": true
+  },
+  "cSpell.enabled": true,
+  "cSpell.language": "en",
+  "cSpell.logLevel": "Information",
+  "typescript.tsdk": "./node_modules/typescript/lib",
+  "typescript.preferences.importModuleSpecifier": "non-relative"
+}

@@ -81,9 +81,10 @@ if (process.env.NODE_ENV === "development") {
   app.use(trace());
 }
 
-app.use(uncaughtErrorHandler());
-
 // Mount the routes to the app.
 app.use(routes);
+
+// Catchall route for errors
+app.use(uncaughtErrorHandler());
 
 export default app;

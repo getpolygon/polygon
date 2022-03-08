@@ -1,7 +1,8 @@
 import pg from "@db/pg";
-import { isNil } from "lodash";
 import { postDao } from "@container";
 import type { Request, Response } from "express";
+import { APIResponse } from "@app/api/common/APIResponse";
+import { APIErrorResponse } from "@app/api/common/APIErrorResponse";
 
 // For fetching one post.
 const only = async (req: Request, res: Response) => {
@@ -15,7 +16,7 @@ const only = async (req: Request, res: Response) => {
   const post = await postDao.getPostById(id, req.user?.id!);
 
   // Checking if the post is null
-  if (isNil(post)) {
+  if (post === null) {
     // Besides from getting the post, we also need to check if the post actually exists
     // since we are getting the post and checking user relationship in the same query
     // in which we might end up with a post that doesn't "exist" but was actually
@@ -25,13 +26,21 @@ const only = async (req: Request, res: Response) => {
       [id]
     );
 
-    // The post exists, but the user doesn't have permission to see it.
-    if (exists) return res.sendStatus(403);
-    else return res.sendStatus(404);
+    if (exists) {
+      // The post exists, but the user doesn't have permission to see it.
+      return new APIErrorResponse(res, {
+        status: 403,
+        data: { message: "Forbidden access" },
+      });
+    } else {
+      return new APIErrorResponse(res, {
+        status: 404,
+        data: { message: "Post does not exist" },
+      });
+    }
   }
 
-  // Send the post
-  return res.json(post);
+  return new APIResponse(res, { data: post });
 };
 
 export default only;

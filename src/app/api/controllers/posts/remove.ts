@@ -1,30 +1,31 @@
-import { isNil } from "lodash";
 import { postDao } from "@container";
 import type { Request, Response } from "express";
+import { APIResponse } from "@app/api/common/APIResponse";
+import { APIErrorResponse } from "@app/api/common/APIErrorResponse";
 
 // For removing a post
 const remove = async (req: Request, res: Response) => {
-  // Get the post id from the request
   const { id } = req.params;
-
-  // Find the post.
   const post = await postDao.getPostById(id, req.user?.id!);
 
   // Checking if post exists. This includes checking if post's author
   // is the same as the user making the request.
-  if (!isNil(post)) {
+  if (post !== null) {
     if ((post.user?.id || post.user_id) === req.user?.id) {
-      // Delete the post
       await postDao.deletePostById(id);
-      return res.sendStatus(204);
+      return new APIResponse(res, { data: null, status: 204 });
+    } else {
+      return new APIErrorResponse(res, {
+        status: 403,
+        data: { message: "Forbidden operation" },
+      });
     }
-
-    // The user is not the author of the post
-    return res.sendStatus(403);
+  } else {
+    return new APIErrorResponse(res, {
+      status: 403,
+      data: { message: "Post does not exist" },
+    });
   }
-
-  // The post doesn't exist
-  return res.sendStatus(404);
 };
 
 export default remove;

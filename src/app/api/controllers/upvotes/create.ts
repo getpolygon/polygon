@@ -1,5 +1,7 @@
-import { logger, upvoteDao } from "@container";
-import type { Request, Response } from "express";
+import type { Handler } from "express";
+import { upvoteDao } from "@container";
+import { APIResponse } from "@app/api/common/APIResponse";
+import { APIErrorResponse } from "@app/api/common/APIErrorResponse";
 import { DuplicateRecordException } from "@dao/errors/DuplicateRecordException";
 
 /**
@@ -8,16 +10,17 @@ import { DuplicateRecordException } from "@dao/errors/DuplicateRecordException";
  * post, the endpoint will return `409 (Conflict)` as a
  * response, otherwise `200`.
  */
-const create = async (req: Request, res: Response) => {
+const create: Handler = async (req, res, next) => {
   try {
     const upvote = await upvoteDao.createUpvote(req.params.id, req.user?.id!);
-    return res.json(upvote);
+    return new APIResponse(res, { data: upvote });
   } catch (error) {
-    if (error instanceof DuplicateRecordException) return res.sendStatus(409);
-    else {
-      logger.error(error);
-      return res.sendStatus(500);
-    }
+    if (error instanceof DuplicateRecordException) {
+      return new APIErrorResponse(res, {
+        status: 409,
+        data: { message: "Upvote already exists" },
+      });
+    } else return next(error);
   }
 };
 

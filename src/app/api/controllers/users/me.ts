@@ -1,10 +1,10 @@
 import { userDao } from "@container";
-import type { Request, Response } from "express";
+import type { Handler } from "express";
+import { APIResponse } from "@app/api/common/APIResponse";
 
-// For fetching current account details
-const me = async (req: Request, res: Response) => {
+const me: Handler = async (req, res) => {
   const user = await userDao.getUserById(req.user?.id!);
-  return res.json(user);
+  return new APIResponse(res, { data: user });
 };
 
 export default me;

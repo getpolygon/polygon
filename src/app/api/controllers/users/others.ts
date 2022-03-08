@@ -1,14 +1,21 @@
-import { isNil } from "lodash";
 import { userDao } from "@container";
-import type { Request, Response } from "express";
+import type { Handler } from "express";
+import { APIResponse } from "@app/api/common/APIResponse";
+import { APIErrorResponse } from "@app/api/common/APIErrorResponse";
 
 // For fetching other accounts
-const others = async (req: Request, res: Response) => {
+const others: Handler = async (req, res) => {
   const { username } = req.params;
-
   const user = await userDao.getUserByUsername(username);
-  if (isNil(user)) return res.sendStatus(404);
-  else return res.json(user);
+
+  if (user === null) {
+    return new APIErrorResponse(res, {
+      status: 403,
+      data: { message: "User not found" },
+    });
+  } else {
+    return new APIResponse(res, { data: user });
+  }
 };
 
 export default others;

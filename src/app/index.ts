@@ -38,6 +38,7 @@ import routes from "@api/routes";
 import { trace } from "@util/trace";
 import compression from "compression";
 import errorhandler from "errorhandler";
+import { uncaughtErrorHandler } from "@app/api/middleware/uncaughtErrorHandler";
 
 // Create the express app. We will use this app to create the server.
 const app = express();
@@ -79,6 +80,8 @@ if (process.env.NODE_ENV === "development") {
   app.use(errorhandler());
   app.use(trace());
 }
+
+app.use(uncaughtErrorHandler());
 
 // Mount the routes to the app.
 app.use(routes);

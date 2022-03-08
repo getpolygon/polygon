@@ -82,7 +82,7 @@ export const registerWithoutVerification: Handler = async (req, res, next) => {
     if (error instanceof DuplicateRecordException) {
       return new APIErrorResponse(res, {
         status: 409,
-        data: { message: "User already exists" },
+        data: { error: "User already exists" },
       });
     } else return next(error);
   }
@@ -106,7 +106,7 @@ export const registerWithVerification: Handler = async (req, res, next) => {
   if (existingUser !== null) {
     return new APIErrorResponse(res, {
       status: 409,
-      data: { message: "User already exists" },
+      data: { error: "User already exists" },
     });
   }
 

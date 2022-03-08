@@ -26,7 +26,7 @@ const create: Handler = async (req, res) => {
     if (status === "BLOCKED") {
       return new APIErrorResponse(res, {
         status: 403,
-        data: { message: "Forbidden access" },
+        data: { error: "Forbidden access" },
       });
     } else {
       const comment = await pg.getFirst<Partial<Comment>>(
@@ -44,7 +44,7 @@ const create: Handler = async (req, res) => {
 
   return new APIErrorResponse(res, {
     status: 404,
-    data: { message: "Post not found" },
+    data: { error: "Post not found" },
   });
 };
 

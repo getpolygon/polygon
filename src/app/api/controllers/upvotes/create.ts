@@ -18,7 +18,7 @@ const create: Handler = async (req, res, next) => {
     if (error instanceof DuplicateRecordException) {
       return new APIErrorResponse(res, {
         status: 409,
-        data: { message: "Upvote already exists" },
+        data: { error: "Upvote already exists" },
       });
     } else return next(error);
   }

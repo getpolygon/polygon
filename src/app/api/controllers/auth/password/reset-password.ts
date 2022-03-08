@@ -46,7 +46,7 @@ const handler: Handler = async (req, res, next) => {
   if (user === null) {
     return new APIErrorResponse(res, {
       status: 422,
-      data: { message: "User does not exist" },
+      data: { error: "User does not exist" },
     });
   } else {
     try {

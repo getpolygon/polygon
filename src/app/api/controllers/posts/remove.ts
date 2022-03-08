@@ -17,13 +17,13 @@ const remove = async (req: Request, res: Response) => {
     } else {
       return new APIErrorResponse(res, {
         status: 403,
-        data: { message: "Forbidden operation" },
+        data: { error: "Forbidden operation" },
       });
     }
   } else {
     return new APIErrorResponse(res, {
       status: 403,
-      data: { message: "Post does not exist" },
+      data: { error: "Post does not exist" },
     });
   }
 };

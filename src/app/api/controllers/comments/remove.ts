@@ -24,7 +24,7 @@ const remove = async (req: Request, res: Response) => {
     if (status === "BLOCKED") {
       return new APIErrorResponse(res, {
         status: 403,
-        data: { message: "Forbidden access" },
+        data: { error: "Forbidden access" },
       });
     }
 
@@ -40,14 +40,14 @@ const remove = async (req: Request, res: Response) => {
       } else {
         return new APIErrorResponse(res, {
           status: 403,
-          data: { message: "Forbidden operation" },
+          data: { error: "Forbidden operation" },
         });
       }
     }
 
     return new APIErrorResponse(res, {
       status: 404,
-      data: { message: "Comment does not exist" },
+      data: { error: "Comment does not exist" },
     });
   }
 };

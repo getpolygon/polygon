@@ -11,7 +11,7 @@ const others: Handler = async (req, res) => {
   if (user === null) {
     return new APIErrorResponse(res, {
       status: 403,
-      data: { message: "User not found" },
+      data: { error: "User not found" },
     });
   } else {
     return new APIResponse(res, { data: user });

@@ -1,39 +1,43 @@
 import pg from "@db/pg";
+import { Handler } from "express";
 import { DatabaseError } from "pg";
-import { logger } from "@container";
-import { Request, Response } from "express";
+import { APIResponse } from "@app/api/common/APIResponse";
+import { APIErrorResponse } from "@app/api/common/APIErrorResponse";
 
-// For following another user
-const follow = async (req: Request, res: Response) => {
-  const { id } = req.params;
-
+const follow: Handler = async (req, res, next) => {
   try {
-    // If the user tries to follow himself
-    if (id === req.user?.id) return res.sendStatus(406);
+    const { id } = req.params;
 
-    await pg.query(
-      `
-      INSERT INTO relations (status, to_user, from_user) 
-      VALUES ('FOLLOWING', $1, $2);
-      `,
-      [id, req.user?.id]
-    );
+    if (id === req.user?.id) {
+      return new APIErrorResponse(res, {
+        status: 406,
+        data: { error: "Forbidden operation" },
+      });
+    } else {
+      await pg.query(
+        `
+        INSERT INTO relations (status, to_user, from_user) 
+        VALUES ('FOLLOWING', $1, $2);
+        `,
+        [id, req.user?.id]
+      );
 
-    return res.sendStatus(200);
+      return new APIResponse(res, { data: null });
+    }
   } catch (error) {
     if (error instanceof DatabaseError) {
-      // Already exists
-      if (error.code === "23505") return res.sendStatus(409);
-      // When other user doesn't exist
-      else if (error.code === "23503") return res.sendStatus(406);
-      else {
-        logger.error(error);
-        return res.sendStatus(500);
-      }
-    } else {
-      logger.error(error);
-      return res.sendStatus(500);
-    }
+      if (error.code === "23505") {
+        return new APIErrorResponse(res, {
+          status: 409,
+          data: { error: "Relation already exists" },
+        });
+      } else if (error.code === "23503") {
+        return new APIErrorResponse(res, {
+          status: 409,
+          data: { error: "Recipient does not exist" },
+        });
+      } else return next(error);
+    } else return next(error);
   }
 };
 

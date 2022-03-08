@@ -8,7 +8,7 @@ router.use("/api", api);
 router.all("*", (_, res) => {
   return new APIErrorResponse(res, {
     status: 404,
-    data: { message: "Not found" },
+    data: { error: "Not found" },
   });
 });
 

@@ -1,12 +1,10 @@
+import { APIResponse } from "@app/api/common/APIResponse";
 import pg from "@db/pg";
-import type { Request, Response } from "express";
+import type { Handler } from "express";
 
 // For getting the people whom the account follows
-const following = async (req: Request, res: Response) => {
-  const { id } = req.params;
-
-  // Getting the users other user follows
-  const { rows: following } = await pg.query(
+const following: Handler = async (req, res) => {
+  const result = await pg.query(
     `
     SELECT 
       f.*
@@ -26,10 +24,10 @@ const following = async (req: Request, res: Response) => {
 
     WHERE r.from_user = $1 AND r.status = 'FOLLOWING';
     `,
-    [id]
+    [req.params.id]
   );
 
-  return res.json(following);
+  return new APIResponse(res, { data: result.rows });
 };
 
 export default following;

@@ -1,12 +1,10 @@
 import pg from "@db/pg";
-import type { Request, Response } from "express";
+import type { Handler } from "express";
+import { APIResponse } from "@app/api/common/APIResponse";
 
 // For getting the followers of an account
-const followers = async (req: Request, res: Response) => {
-  // The ID of the user
-  const { id } = req.params;
-
-  const { rows: followers } = await pg.query(
+const followers: Handler = async (req, res) => {
+  const result = await pg.query(
     `
     SELECT 
       f.* 
@@ -26,10 +24,10 @@ const followers = async (req: Request, res: Response) => {
 
     WHERE r.status = 'FOLLOWING' AND r.to_user = $1;
     `,
-    [id]
+    [req.params.id]
   );
 
-  return res.json(followers);
+  return new APIResponse(res, { data: result.rows });
 };
 
 export default followers;

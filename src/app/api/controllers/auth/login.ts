@@ -55,13 +55,13 @@ const login = async (req: Request, res: Response) => {
     } else {
       return new APIErrorResponse(res, {
         status: 403,
-        data: { message: "Passwords do not match" },
+        data: { error: "Passwords do not match" },
       });
     }
   } else {
     return new APIErrorResponse(res, {
       status: 401,
-      data: { message: "User does not exist" },
+      data: { error: "User does not exist" },
     });
   }
 };

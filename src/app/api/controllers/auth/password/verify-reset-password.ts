@@ -45,9 +45,9 @@ const handler: Handler = async (req, res, next) => {
   const existingRecord = await redis.get(`reset:${suppliedToken}`);
   if (isNil(existingRecord)) {
     return new APIErrorResponse(res, {
+      status: 401,
       data: {
-        status: 401,
-        message: "Token does not exist or was expired",
+        error: "Token does not exist or was expired",
       },
     });
   } else {

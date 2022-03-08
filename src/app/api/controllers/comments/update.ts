@@ -24,7 +24,7 @@ const update = async (req: Request, res: Response) => {
     if (status === "BLOCKED") {
       return new APIErrorResponse(res, {
         status: 403,
-        data: { message: "Forbidden access" },
+        data: { error: "Forbidden access" },
       });
     } else {
       const comment = await pg.getFirst<{ user_id: string }>(
@@ -43,20 +43,20 @@ const update = async (req: Request, res: Response) => {
         } else {
           return new APIErrorResponse(res, {
             status: 403,
-            data: { message: "Forbidden operation" },
+            data: { error: "Forbidden operation" },
           });
         }
       } else {
         return new APIErrorResponse(res, {
           status: 404,
-          data: { message: "Comment does not exist" },
+          data: { error: "Comment does not exist" },
         });
       }
     }
   } else {
     return new APIErrorResponse(res, {
       status: 404,
-      data: { message: "Post does not exist" },
+      data: { error: "Post does not exist" },
     });
   }
 };

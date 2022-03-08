@@ -30,12 +30,12 @@ const only = async (req: Request, res: Response) => {
       // The post exists, but the user doesn't have permission to see it.
       return new APIErrorResponse(res, {
         status: 403,
-        data: { message: "Forbidden access" },
+        data: { error: "Forbidden access" },
       });
     } else {
       return new APIErrorResponse(res, {
         status: 404,
-        data: { message: "Post does not exist" },
+        data: { error: "Post does not exist" },
       });
     }
   }

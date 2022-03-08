@@ -1,8 +1,9 @@
 import pg from "@db/pg";
-import { Request, Response } from "express";
+import { Handler } from "express";
+import { APIResponse } from "@app/api/common/APIResponse";
 
 // For post discovery
-const posts = async (req: Request, res: Response) => {
+const posts: Handler = async (req, res) => {
   const { limit } = req.query;
   const currentUserId = req.user?.id;
 
@@ -81,7 +82,7 @@ const posts = async (req: Request, res: Response) => {
     [currentUserId, limit]
   );
 
-  return res.json(result.rows);
+  return new APIResponse(res, { data: result.rows });
 };
 
 export default posts;

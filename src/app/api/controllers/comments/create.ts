@@ -1,10 +1,11 @@
 import pg from "@db/pg";
-import { isNil } from "lodash";
+import type { Handler } from "express";
 import { relationDao } from "@container";
-import type { Request, Response } from "express";
+import { APIResponse } from "@app/api/common/APIResponse";
+import { APIErrorResponse } from "@app/api/common/APIErrorResponse";
 
 // For creating a comment
-const create = async (req: Request, res: Response) => {
+const create: Handler = async (req, res) => {
   // Post content
   const { content } = req.body;
   const { post: postId } = req.params;
@@ -14,30 +15,37 @@ const create = async (req: Request, res: Response) => {
     [postId]
   );
 
-  if (!isNil(post)) {
+  if (post !== null) {
     // Checking if the other user has blocked current user
-    // prettier-ignore
-    const status = await relationDao.getRelationByUserIds(post.user_id, req.user?.id!);
+    const status = await relationDao.getRelationByUserIds(
+      post.user_id,
+      req.user?.id!
+    );
 
     // Not letting current user to comment on that post
-    if (status === "BLOCKED") return res.sendStatus(403);
-    else {
-      // Creating a comment and returning it afterwards
+    if (status === "BLOCKED") {
+      return new APIErrorResponse(res, {
+        status: 403,
+        data: { message: "Forbidden access" },
+      });
+    } else {
       const comment = await pg.getFirst<Partial<Comment>>(
         `
         INSERT INTO comments (content, post_id, user_id) 
         VALUES ($1, $2, $3)
-        RETURNING created_at, content, id;
+        RETURNING id, content, created_at;
         `,
         [content, postId, req.user?.id]
       );
 
-      return res.json(comment);
+      return new APIResponse(res, { data: comment });
     }
   }
 
-  // Post was not found
-  return res.sendStatus(404);
+  return new APIErrorResponse(res, {
+    status: 404,
+    data: { message: "Post not found" },
+  });
 };
 
 export default create;

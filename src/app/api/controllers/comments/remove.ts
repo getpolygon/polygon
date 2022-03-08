@@ -1,7 +1,8 @@
 import pg from "@db/pg";
-import { isNil } from "lodash";
 import { relationDao } from "@container";
 import type { Request, Response } from "express";
+import { APIResponse } from "@app/api/common/APIResponse";
+import { APIErrorResponse } from "@app/api/common/APIErrorResponse";
 
 // For deleting a comment
 const remove = async (req: Request, res: Response) => {
@@ -15,34 +16,39 @@ const remove = async (req: Request, res: Response) => {
 
   // If post exists
   if (post) {
-    // Checking the relation between accounts
     const status = await relationDao.getRelationByUserIds(
       post?.user_id,
       req.user?.id!
     );
-    if (status === "BLOCKED") return res.sendStatus(403);
 
-    // Find the comment
+    if (status === "BLOCKED") {
+      return new APIErrorResponse(res, {
+        status: 403,
+        data: { message: "Forbidden access" },
+      });
+    }
+
     const comment = await pg.getFirst<{ user_id: string }>(
       "SELECT user_id FROM comments WHERE id = $1",
       [commentId]
     );
 
-    // If comment exists
-    if (!isNil(comment)) {
-      // If the author of the post is the same
+    if (comment !== null) {
       if (comment.user_id === req.user?.id!) {
-        // Delete the comment
         await pg.query("DELETE FROM comments WHERE id = $1", [commentId]);
-        return res.sendStatus(204);
+        return new APIResponse(res, { data: null, status: 204 });
+      } else {
+        return new APIErrorResponse(res, {
+          status: 403,
+          data: { message: "Forbidden operation" },
+        });
       }
-
-      // If the author is different
-      return res.sendStatus(403);
     }
 
-    // If the comment doesn't exist
-    return res.sendStatus(404);
+    return new APIErrorResponse(res, {
+      status: 404,
+      data: { message: "Comment does not exist" },
+    });
   }
 };
 

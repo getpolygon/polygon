@@ -1,5 +1,6 @@
 import pg from "@db/pg";
 import type { Request, Response } from "express";
+import { APIResponse } from "@app/api/common/APIResponse";
 
 // For fetching comments of a post
 // TODO: Filter out comments made by blocked users
@@ -31,7 +32,7 @@ const ofPost = async (req: Request, res: Response) => {
     [postId]
   );
 
-  return res.json(result.rows);
+  return new APIResponse(res, { data: result.rows });
 };
 
 export default ofPost;

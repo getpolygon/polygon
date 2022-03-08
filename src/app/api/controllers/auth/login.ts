@@ -30,12 +30,12 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 import pg from "@db/pg";
-import { isNil } from "lodash";
 import bcrypt from "@node-rs/bcrypt";
 import { createJwt } from "@lib/jwt";
 import type { User } from "@dao/entities/User";
 import type { Request, Response } from "express";
-import { AuthResponse } from "./common/AuthResponse";
+import { APIAuthResponse } from "@app/api/common/APIAuthResponse";
+import { APIErrorResponse } from "@app/api/common/APIErrorResponse";
 
 const login = async (req: Request, res: Response) => {
   const { email, password } = req.body;
@@ -46,21 +46,24 @@ const login = async (req: Request, res: Response) => {
     [email]
   );
 
-  if (!isNil(user)) {
+  if (user !== null) {
     const correctPassword = await bcrypt.verify(password, user?.password!);
     if (correctPassword) {
       const accessToken = createJwt({ id: user.id }, { expiresIn: "2d" });
       const refreshToken = createJwt({ id: user.id }, { expiresIn: "30d" });
-      const response = new AuthResponse({ accessToken, refreshToken });
-      return res.json(response);
+      return new APIAuthResponse(res, { data: { accessToken, refreshToken } });
+    } else {
+      return new APIErrorResponse(res, {
+        status: 403,
+        data: { message: "Passwords do not match" },
+      });
     }
-
-    // Passwords do not match
-    return res.sendStatus(403);
+  } else {
+    return new APIErrorResponse(res, {
+      status: 401,
+      data: { message: "User does not exist" },
+    });
   }
-
-  // User does not exist
-  return res.sendStatus(401);
 };
 
 export default login;

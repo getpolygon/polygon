@@ -32,28 +32,31 @@
 import crypto from "crypto";
 import config from "@config";
 import redis from "@db/redis";
-import { isNil } from "lodash";
 import { add } from "date-fns";
 import { Pair } from "@lib/Pair";
+import { userDao } from "@container";
 import type { Handler } from "express";
 import { send } from "@services/mailer";
-import { logger, userDao } from "@container";
+import { APIResponse } from "@app/api/common/APIResponse";
+import { APIErrorResponse } from "@app/api/common/APIErrorResponse";
 
-const handler: Handler = async (req, res) => {
+const handler: Handler = async (req, res, next) => {
   const { email } = req.body;
   const user = await userDao.getUserByEmail(email);
-
-  if (isNil(user)) return res.sendStatus(422);
-  else {
-    const payload = JSON.stringify({ email });
-    const token = crypto.randomBytes(12).toString("hex");
-
+  if (user === null) {
+    return new APIErrorResponse(res, {
+      status: 422,
+      data: { message: "User does not exist" },
+    });
+  } else {
     try {
       const now = new Date();
+      const payload = JSON.stringify({ email });
+      const token = ["reset", crypto.randomBytes(12).toString("hex")];
 
       await Promise.all([
-        redis.set(`reset:${token}`, payload),
-        redis.expire(`reset:${token}`, config.email.expireVerification),
+        redis.set(token.join(":"), payload),
+        redis.expire(token.join(":"), config.email.expireVerification),
         send(
           email,
           new Pair("reset-password", config.courier.events["reset-password"]!),
@@ -62,17 +65,15 @@ const handler: Handler = async (req, res) => {
             date: now,
             to: user.email,
             frontend: config.polygon.frontend,
-            expires: add(now, {
-              seconds: config.email.expireVerification,
-            }).toUTCString(),
+            // prettier-ignore
+            expires: add(now, { seconds: config.email.expireVerification }).toUTCString(),
           }
         ),
       ]);
 
-      return res.sendStatus(204);
+      return new APIResponse(res, { data: null, status: 204 });
     } catch (error) {
-      logger.error(error);
-      return res.sendStatus(500);
+      return next(error);
     }
   }
 };

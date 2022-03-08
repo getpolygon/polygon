@@ -29,6 +29,7 @@
  * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
+
 import cors from "cors";
 import helmet from "helmet";
 import config from "@config";
@@ -36,6 +37,7 @@ import express from "express";
 import routes from "@api/routes";
 import { trace } from "@util/trace";
 import compression from "compression";
+import errorhandler from "errorhandler";
 
 // Create the express app. We will use this app to create the server.
 const app = express();
@@ -74,6 +76,7 @@ app.use(express.urlencoded({ extended: true }));
 // Middleware for development purposes. This will log all requests to the console.
 // This is useful for debugging. It is not recommended to use this in production.
 if (process.env.NODE_ENV === "development") {
+  app.use(errorhandler());
   app.use(trace());
 }
 

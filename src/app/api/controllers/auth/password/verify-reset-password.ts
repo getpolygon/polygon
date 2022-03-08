@@ -32,24 +32,29 @@
 import pg from "@db/pg";
 import redis from "@db/redis";
 import { isNil } from "lodash";
-import { logger } from "@container";
 import bcrypt from "@node-rs/bcrypt";
 import type { Handler } from "express";
+import { APIResponse } from "@app/api/common/APIResponse";
+import { APIErrorResponse } from "@app/api/common/APIErrorResponse";
 
-const handler: Handler = async (req, res) => {
+const handler: Handler = async (req, res, next) => {
   const { token: suppliedToken } = req.params;
   const { password: suppliedPassword } = req.body;
 
   // Checking if the token is valid
   const existingRecord = await redis.get(`reset:${suppliedToken}`);
-  if (isNil(existingRecord)) return res.sendStatus(403);
-  else {
-    // We will need to parse the stringified value from
-    // Redis in order to get the email of the user.
-    const payload = JSON.parse(existingRecord);
-    const hashedPassword = await bcrypt.hash(suppliedPassword);
-
+  if (isNil(existingRecord)) {
+    return new APIErrorResponse(res, {
+      data: {
+        status: 401,
+        message: "Token does not exist or was expired",
+      },
+    });
+  } else {
     try {
+      const payload = JSON.parse(existingRecord);
+      const hashedPassword = await bcrypt.hash(suppliedPassword);
+
       // Updating the password and removing the token from Redis
       await Promise.all([
         pg.query("UPDATE users SET password = $1 WHERE email = $2", [
@@ -59,10 +64,9 @@ const handler: Handler = async (req, res) => {
         redis.del(`reset:${suppliedToken}`),
       ]);
 
-      return res.sendStatus(201);
+      return new APIResponse(res, { data: null, status: 201 });
     } catch (error) {
-      logger.error(error);
-      return res.sendStatus(500);
+      return next(error);
     }
   }
 };

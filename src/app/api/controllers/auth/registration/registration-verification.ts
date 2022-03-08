@@ -37,7 +37,7 @@ import { createJwt } from "@lib/jwt";
 import type { Payload } from "./register";
 import { User } from "@dao/entities/User";
 import type { Request, Response } from "express";
-import { AuthResponse } from "../common/AuthResponse";
+import { APIAuthResponse } from "@app/api/common/APIAuthResponse";
 
 const handler = async (req: Request, res: Response) => {
   const { token: suppliedToken } = req.params;
@@ -74,8 +74,11 @@ const handler = async (req: Request, res: Response) => {
 
       const accessToken = createJwt({ id: user?.id }, { expiresIn: "2d" });
       const refreshToken = createJwt({ id: user?.id }, { expiresIn: "30d" });
-      const response = new AuthResponse({ accessToken, refreshToken });
-      return res.status(201).json(response);
+
+      return new APIAuthResponse(res, {
+        status: 201,
+        data: { accessToken, refreshToken },
+      });
     } else return res.sendStatus(401);
   } else return res.sendStatus(401);
 };

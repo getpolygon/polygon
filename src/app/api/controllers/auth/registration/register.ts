@@ -142,7 +142,7 @@ export const registerWithVerification: Handler = async (req, res, next) => {
           firstName,
           date: now,
           token: token[1],
-          frontend: config.polygon.frontend,
+          frontend: config.polygon.ui,
           // prettier-ignore
           expires: add(now, { seconds: config.email.expireVerification }).toUTCString(),
         }

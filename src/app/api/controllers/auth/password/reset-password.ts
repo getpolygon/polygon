@@ -64,7 +64,7 @@ const handler: Handler = async (req, res, next) => {
             token,
             date: now,
             to: user.email,
-            frontend: config.polygon.frontend,
+            frontend: config.polygon.ui,
             // prettier-ignore
             expires: add(now, { seconds: config.email.expireVerification }).toUTCString(),
           }

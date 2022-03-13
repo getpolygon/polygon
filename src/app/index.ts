@@ -55,8 +55,8 @@ app.use(
   cors({
     credentials: true,
     methods: ["GET", "PUT", "POST", "DELETE", "OPTIONS"],
-    origin: config.polygon.frontend
-      ? [config.polygon.frontend!].concat(config.polygon.origins)
+    origin: config.polygon.ui
+      ? [config.polygon.ui!].concat(config.polygon.origins)
       : config.polygon.origins,
   })
 );

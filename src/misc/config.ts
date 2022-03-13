@@ -42,31 +42,16 @@ import { YAMLError } from "yaml/util";
 import { Logger } from "@util/logger";
 import Container, { Service } from "typedi";
 
-class UninitializedConfigError extends Error {
-  constructor() {
-    super();
-    super.name = "UninitializedConfigError";
-    super.message = "`Config` should be initialized before use.";
-  }
-}
-
 /**
- * The schema for validating the configuration
- * file for Polygon. This will handle the validation
+ * The schema for validating the configuration file for Polygon and handles the validation
  * of the configuration file.
- *
- * - If the configuration file is not valid,
- * an error will be thrown.
- *
- * - If the configuration file is valid, the configuration
- * will be loaded into the application.
  */
 const CONFIG_SCHEMA = z
   .object({
     polygon: z
       .object({
         port: z.number().default(3001),
-        frontend: z.string().min(1).url().nullable().default(null),
+        ui: z.string().min(1).url().nullable().default(null),
         templates: z
           .optional(
             z.object({
@@ -187,19 +172,17 @@ const CONFIG_SCHEMA = z
   })
   .superRefine((v, c) => {
     /**
-     * If email verification is enabled, with a selected
-     * email client we will need to validate the `smtp`
-     * configuration in order to not cause errors and
-     * undefined behavior at runtime.
+     * If email verification is enabled, with a selected email client we will need to validate the `smtp`
+     * configuration in order to not cause errors and undefined behavior at runtime.
      */
     if (v.email.enableVerification && v.email.client !== "none") {
-      if (v.polygon.frontend === null) {
+      if (v.polygon.ui === null) {
         c.addIssue({
           fatal: true,
           code: z.ZodIssueCode.custom,
-          path: ["polygon", "frontend"],
+          path: ["polygon", "ui"],
           message:
-            "`polygon.frontend` should be supplied for usage with email clients.",
+            "`polygon.ui` should be supplied for usage with email clients.",
         });
       }
 
@@ -216,10 +199,8 @@ const CONFIG_SCHEMA = z
     }
 
     /**
-     * If the selected email client is courier we will
-     * need to check if all the required properties of
-     * the optional `courier` object are present. If they
-     * are not, zod will throw an error.
+     * If the selected email client is courier we will need to check if all the required properties of
+     * the optional `courier` object are present. If they are not, zod will throw an error.
      */
     if (v.email.client === "courier") {
       Object.entries(v.courier).map(([__k, __v]) => {
@@ -258,44 +239,30 @@ const CONFIG_SCHEMA = z
     }
   });
 
-/**
- * `zod` will automatically infer the type of the
- * configuration schema. This type will be used
- * in the `Config` class.
- */
-type ConfigType = z.infer<typeof CONFIG_SCHEMA>;
-
-/**
- * Node environment configuration
- */
+type Schema = z.infer<typeof CONFIG_SCHEMA>;
 type NodeEnv = "production" | "test" | "development";
 
 @Service()
 class Config {
-  /**
-   * Internal state of parsed configuration
-   */
-  private internal: ConfigType;
-  /**
-   * Indicates whether the configuration has been
-   * initialized or not.
-   */
-  public initialized: boolean;
+  private internal: Schema;
+  protected initialized: boolean;
   private readonly nodeEnv: NodeEnv;
-  /**
-   * The configuration file path for Polygon
-   */
   private readonly configPath: string;
-  /**
-   * This emitter will be used for logging configuration
-   * updates. Will only be initialized if `NODE_ENV` is
-   * not equal to `test`.
-   */
-  private emitter: EventEmitter | undefined;
+  private readonly emitter: EventEmitter | undefined;
+  protected static readonly UninitializedConfigError = class extends Error {
+    constructor() {
+      super();
+      super.name = "UninitializedConfigError";
+      super.message = "`Config` should be initialized before use.";
+    }
+  };
 
-  constructor(private readonly logger: Logger) {
+  constructor(
+    // The Logger class will be automatically injected by typedi
+    private readonly logger: Logger
+  ) {
     this.initialized = false;
-    this.internal = {} as unknown as ConfigType;
+    this.internal = {} as unknown as Schema;
     // Default to "production" environment if `process.env` is undefined
     this.nodeEnv = (process.env.NODE_ENV as unknown as NodeEnv) || "production";
     this.configPath = path.resolve(
@@ -307,74 +274,66 @@ class Config {
     );
 
     /**
-     * EventEmitter will only be initialized if `NODE_ENV`
-     * is not equal to `test`. Here we will initialize the
-     * EventEmitter and register the `loadStart` and `loadEnd`
-     * events.
+     * EventEmitter will only be initialized if `NODE_ENV`is not equal to `test`. Here we will initialize the
+     * EventEmitter and register the `loadStart` and `loadEnd` events.
      */
     if (this.nodeEnv !== "test") {
       // Only initializing the EventEmitter when NODE_ENV is not equal to `test`.
       this.emitter = new EventEmitter();
-      this.emitter.on("loadStart", () =>
-        this.logger.info("Loading configuration...")
-      );
 
-      this.emitter.on("loadEnd", () => {
-        /**
-         * For development purposes we are going to enable
-         * configuration logging by default, so that it is
-         * easier to find configuration validation errors.
-         */
-        this.logger.debug(
-          "config/index.ts:147 <class Config> :",
-          this.internal
-        );
-
-        this.logger.info("Configuration loaded successfully");
+      // This event will be triggered when the configuration starts loading
+      this.emitter.on("loadStart", () => {
+        return this.logger.debug("Loading the configuration...");
       });
 
-      this.emitter.on("error", (error: Error) => {
-        // Something wrong with YAML syntax
-        if (error instanceof YAMLError)
-          this.logger.error("Invalid YAML configuration error");
-        // Something wrong with validating the JSON with Zod
-        else if (error instanceof ZodError) {
-          this.logger.error("Invalid configuration error");
-        }
-        // Undefined behavior
-        else {
-          this.logger.error(
-            "There was an error while loading the configuration"
-          );
+      // This event will be triggered when the configuration ends loading
+      this.emitter.on("loadEnd", () => {
+        // prettier-ignore
+        if (JSON.parse(process.env["POLYGON.CORE.LOGGING.ENABLE_CONFIG_LOG"] || "false")) {
+          // prettier-ignore
+          this.logger.debug("<class Config> :", this.internal);
         }
 
-        this.logger.error(error.message);
-        process.exit(1);
+        return this.logger.debug("Finished loading the configuration...");
+      });
+
+      // This event will be triggered whenever an error occurs during the reading and the parsing
+      // of the configuration file
+      this.emitter.on("error", (error: Error) => {
+        if (!(error instanceof ZodError)) {
+          if (error instanceof YAMLError) {
+            this.logger.error("Invalid YAML syntax error...");
+          } else {
+            this.logger.error("Loading configuration failed...");
+          }
+
+          this.logger.error(error);
+        } else {
+          this.logger.error("Configuration validation error...");
+          error.issues.map((issue) => this.logger.error(issue.message));
+        }
+
+        return process.exit(1);
       });
     }
   }
 
   /**
-   * This method will attempt to get the internal
-   * parsed and validated state of the configuration.
-   * If the configuration is not initialized, this will
-   * throw an error.
+   * This method will attempt to get the internal parsed and validated state of the configuration.
+   * If the configuration is not initialized, this will throw an error.
    */
-  public get(): ConfigType {
+  public get(): Schema {
     if (this.initialized) return this.internal;
-    else throw new UninitializedConfigError();
+    else throw new Config.UninitializedConfigError();
   }
 
   /**
-   * This method will attempt to read, parse and validate
-   * provided YAML configuration. If it is already initialized,
-   * calling this method for the second time will not change
-   * anything.
+   * This method will attempt to read, parse and validate provided YAML configuration. If it is already initialized,
+   * calling this method for the second time will not change anything.
    */
   public init() {
     if (!this.initialized) {
       try {
-        // Indicate that the configuration has started to load
         this.emitter?.emit("loadStart");
 
         const file = fs.readFileSync(this.configPath).toString();
@@ -383,14 +342,8 @@ class Config {
 
         this.initialized = true;
         this.internal = internal;
-
-        // Indicate that the configuration has been loaded successfully
         this.emitter?.emit("loadEnd");
       } catch (error) {
-        /**
-         * Handling the error manually and exiting
-         * the process in the end.
-         */
         this.emitter?.emit("error", error);
       }
     }

@@ -1,14 +1,14 @@
 import { postDao } from "@container";
-import type { Request, Response } from "express";
+import type { Handler } from "express";
+import { APIResponse } from "@app/api/common/APIResponse";
 
 // For fetching one user's post
-const ofUser = async (req: Request, res: Response) => {
+const ofUser: Handler = async (req, res) => {
   // Get the username from the request
   const { username } = req.params;
 
-  // Get optional the cursor and the limit from the query.
-  // It's guaranteed to be a valid UUID string, so we do
-  // not need to handle anything else.
+  // Get optional the cursor and the limit from the query. It's guaranteed to be
+  // a valid UUID string, so we do not need to handle anything else.
   const { cursor, limit } = req.query as unknown as {
     limit: number;
     cursor: string;
@@ -21,8 +21,7 @@ const ofUser = async (req: Request, res: Response) => {
     { cursor, limit }
   );
 
-  // Send the posts to the client
-  return res.json(posts);
+  return new APIResponse(res, { data: posts });
 };
 
 export default ofUser;

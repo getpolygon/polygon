@@ -29,6 +29,7 @@
  * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
+
 import cors from "cors";
 import helmet from "helmet";
 import config from "@config";
@@ -36,6 +37,8 @@ import express from "express";
 import routes from "@api/routes";
 import { trace } from "@util/trace";
 import compression from "compression";
+import errorhandler from "errorhandler";
+import { uncaughtErrorHandler } from "@app/api/middleware/uncaughtErrorHandler";
 
 // Create the express app. We will use this app to create the server.
 const app = express();
@@ -52,8 +55,8 @@ app.use(
   cors({
     credentials: true,
     methods: ["GET", "PUT", "POST", "DELETE", "OPTIONS"],
-    origin: config.polygon.frontend
-      ? [config.polygon.frontend!].concat(config.polygon.origins)
+    origin: config.polygon.ui
+      ? [config.polygon.ui!].concat(config.polygon.origins)
       : config.polygon.origins,
   })
 );
@@ -74,10 +77,14 @@ app.use(express.urlencoded({ extended: true }));
 // Middleware for development purposes. This will log all requests to the console.
 // This is useful for debugging. It is not recommended to use this in production.
 if (process.env.NODE_ENV === "development") {
+  app.use(errorhandler());
   app.use(trace());
 }
 
 // Mount the routes to the app.
 app.use(routes);
+
+// Catchall route for errors
+app.use(uncaughtErrorHandler());
 
 export default app;

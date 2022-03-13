@@ -32,17 +32,18 @@
 import crypto from "crypto";
 import config from "@config";
 import redis from "@db/redis";
-import { isNil } from "lodash";
 import { add } from "date-fns";
 import { Pair } from "@lib/Pair";
+import { userDao } from "@container";
 import bcrypt from "@node-rs/bcrypt";
 import { createJwt } from "@lib/jwt";
+import type { Handler } from "express";
 import { send } from "@services/mailer";
 import { User } from "@dao/entities/User";
-import { logger, userDao } from "@container";
-import type { Request, Response } from "express";
+import { APIResponse } from "@app/api/common/APIResponse";
+import { APIAuthResponse } from "@app/api/common/APIAuthResponse";
+import { APIErrorResponse } from "@app/api/common/APIErrorResponse";
 import { DuplicateRecordException } from "@dao/errors/DuplicateRecordException";
-import { AuthResponse } from "../common/AuthResponse";
 
 /**
  * Temporary payload that will be deserialized from
@@ -64,30 +65,26 @@ export type Payload = {
  * the process of sending a verification email to the user and
  * temporarily persisting the payload in redis.
  */
-export const registerWithoutVerification = async (
-  req: Request,
-  res: Response
-) => {
-  const { firstName, lastName, password, username, email } = req.body;
-
+export const registerWithoutVerification: Handler = async (req, res, next) => {
   try {
+    const { firstName, lastName, password, username, email } = req.body;
     const user = new User(email, password, username, lastName, firstName);
-    const { id } = (await userDao.createUser(user)) as {
-      [key: string]: unknown;
-    };
+    const { id } = (await userDao.createUser(user)) as { id: string };
 
     const accessToken = createJwt({ id }, { expiresIn: "2d" });
     const refreshToken = createJwt({ id }, { expiresIn: "30d" });
 
-    const response = new AuthResponse({ accessToken, refreshToken });
-    return res.status(201).json(response);
+    return new APIAuthResponse(res, {
+      status: 201,
+      data: { accessToken, refreshToken },
+    });
   } catch (error) {
-    // If a user with similar credentials exists
-    if (error instanceof DuplicateRecordException) return res.sendStatus(409);
-    else {
-      logger.error(error);
-      return res.sendStatus(500);
-    }
+    if (error instanceof DuplicateRecordException) {
+      return new APIErrorResponse(res, {
+        status: 409,
+        data: { error: "User already exists" },
+      });
+    } else return next(error);
   }
 };
 
@@ -101,25 +98,29 @@ export const registerWithoutVerification = async (
  * to `/api/auth/registration-verification/:token` in order to finalize
  * the account creation process.
  */
-export const registerWithVerification = async (req: Request, res: Response) => {
+export const registerWithVerification: Handler = async (req, res, next) => {
   const { firstName, lastName, password, username, email } = req.body;
 
-  // Checking if a user already exists
+  // Checking if the user with the provided credentials already exists
   const existingUser = await userDao.getUserByEmail(email);
-  if (!isNil(existingUser)) return res.sendStatus(409);
-
-  const token = crypto.randomBytes(12).toString("hex");
-  // This payload will be persisted in Redis
-  const payload: Payload = {
-    email,
-    lastName,
-    username,
-    firstName,
-    password: await bcrypt.hash(password),
-  };
+  if (existingUser !== null) {
+    return new APIErrorResponse(res, {
+      status: 409,
+      data: { error: "User already exists" },
+    });
+  }
 
   try {
     const now = new Date();
+    const payload: Payload = {
+      email,
+      lastName,
+      username,
+      firstName,
+      password: await bcrypt.hash(password),
+    };
+
+    const token = ["verif", crypto.randomBytes(12).toString("hex")];
 
     /**
      * Temporarily persisting the token in Redis. Then,
@@ -128,33 +129,28 @@ export const registerWithVerification = async (req: Request, res: Response) => {
      */
     await Promise.all([
       redis.set(
-        `verif:${token}`,
+        token.join(":"),
         Buffer.from(JSON.stringify(payload)).toString("base64")
       ),
-      redis.expire(`verif:${token}`, config.email.expireVerification),
+      redis.expire(token.join(":"), config.email.expireVerification),
       send(
         email,
+        // Select the email template
         new Pair("email-verification", config.courier.events.verification!),
         {
           email,
-          token,
           firstName,
           date: now,
-          frontend: config.polygon.frontend,
-          expires: add(now, {
-            seconds: config.email.expireVerification,
-          }).toUTCString(),
+          token: token[1],
+          frontend: config.polygon.ui,
+          // prettier-ignore
+          expires: add(now, { seconds: config.email.expireVerification }).toUTCString(),
         }
       ),
     ]);
 
-    return res.sendStatus(204);
+    return new APIResponse(res, { data: null, status: 204 });
   } catch (error) {
-    logger.error(error);
-    logger.warn(
-      "..The error above might occur because of the current value of `smtp.secure` property in the configuration."
-    );
-
-    return res.sendStatus(500);
+    return next(error);
   }
 };

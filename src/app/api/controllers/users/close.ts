@@ -1,10 +1,10 @@
 import { userDao } from "@container";
-import type { Request, Response } from "express";
+import type { Handler } from "express";
+import { APIResponse } from "@app/api/common/APIResponse";
 
-// For closing an account
-const close = async (req: Request, res: Response) => {
+const close: Handler = async (req, res) => {
   await userDao.deleteUserById(req.user?.id!);
-  return res.sendStatus(204);
+  return new APIResponse(res, { data: null, status: 204 });
 };
 
 export default close;

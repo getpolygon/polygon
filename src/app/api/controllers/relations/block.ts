@@ -1,18 +1,21 @@
 import pg from "@db/pg";
-import type { Request, Response } from "express";
+import type { Handler } from "express";
+import { APIResponse } from "@app/api/common/APIResponse";
+import { APIErrorResponse } from "@app/api/common/APIErrorResponse";
 
-// For blocking users
-const block = async (req: Request, res: Response) => {
-  // Other user's ID
+const block: Handler = async (req, res) => {
   const { id } = req.params;
 
   // If the user tries to block himself
-  if (id === req.user?.id!) return res.sendStatus(406);
-  else {
+  if (id === req.user?.id!) {
+    return new APIErrorResponse(res, {
+      status: 406,
+      data: { error: "Forbidden operation" },
+    });
+  } else {
     /**
-     * If there's an existing relation between these users
-     * set the status of the relation to blocked, if a relation
-     * doesn't exist, then create one
+     * If there's an existing relation between these users set the status
+     * of the relation to blocked, if a relation doesn't exist, then create one
      */
     await pg.query(
       `
@@ -23,7 +26,7 @@ const block = async (req: Request, res: Response) => {
       [id, req.user?.id]
     );
 
-    return res.sendStatus(200);
+    return new APIResponse(res, { data: null });
   }
 };
 

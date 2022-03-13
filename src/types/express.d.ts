@@ -1,6 +1,6 @@
 import type { User } from "@dao/entities/User";
 
-declare module "express" {
+declare module "express-serve-static-core" {
   interface Request {
     user?: Partial<User>;
   }

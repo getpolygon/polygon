@@ -29,13 +29,12 @@
  * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-import { logger } from "@container";
+import type { Handler } from "express";
 import { createJwt, verifyJwt } from "@lib/jwt";
-import type { Handler, Request } from "express";
 import { JsonWebTokenError } from "jsonwebtoken";
-import { AuthResponse } from "./common/AuthResponse";
+import { APIAuthResponse } from "@app/api/common/APIAuthResponse";
 
-const handler: Handler = async (req: Request, res) => {
+const handler: Handler = async (req, res, next) => {
   const suppliedRefreshToken = req.headers["X-Refresh-Token"] as string;
   if (!suppliedRefreshToken) return res.sendStatus(401);
   else {
@@ -43,14 +42,11 @@ const handler: Handler = async (req: Request, res) => {
       const { id } = verifyJwt<{ id: string }>(suppliedRefreshToken);
       const accessToken = createJwt({ id }, { expiresIn: "2d" });
       const refreshToken = createJwt({ id }, { expiresIn: "30d" });
-      const response = new AuthResponse({ accessToken, refreshToken });
-      return res.json(response);
+
+      return new APIAuthResponse(res, { data: { accessToken, refreshToken } });
     } catch (error) {
       if (error instanceof JsonWebTokenError) return res.sendStatus(401);
-      else {
-        logger.error(error);
-        return res.sendStatus(500);
-      }
+      else return next(error);
     }
   }
 };

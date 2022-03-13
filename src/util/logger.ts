@@ -34,9 +34,6 @@ import { Service } from "typedi";
 import { format } from "date-fns";
 
 @Service()
-/**
- * Logger service. Provides a simple interface for logging.
- */
 export class Logger {
   public raw(m: unknown, ...op: unknown[]) {
     console.log(this.getDateString(), m, ...op);
